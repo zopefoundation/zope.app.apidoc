@@ -13,7 +13,7 @@
 ##############################################################################
 """Utility Module Views
 
-$Id: browser.py,v 1.3 2004/03/30 02:01:17 srichter Exp $
+$Id: browser.py,v 1.4 2004/04/17 14:33:21 srichter Exp $
 """
 from types import InstanceType
 from zope.app import zapi
@@ -33,12 +33,17 @@ class UtilityDetails(object):
 
         Examples::
 
+          >>> def makeRegistration(name):
+          ...     return type('RegistrationStub', (),
+          ...                 {'name': name, 'provided': None,
+          ...                  'component': None, 'doc': ''})()
+
           >>> details = UtilityDetails()
-          >>> details.context = Utility(None, 'myname', None, None)
+          >>> details.context = Utility(None, makeRegistration('myname'))
           >>> details.getName()
           'myname'
 
-          >>> details.context = Utility(None, NONAME, None, None)
+          >>> details.context = Utility(None, makeRegistration(NONAME))
           >>> details.getName()
           'no name'
         """
@@ -76,6 +81,12 @@ class UtilityDetails(object):
           >>> from zope.app.apidoc.utilitymodule import Utility
           >>> from zope.app.apidoc.tests import pprint
 
+          >>> def makeRegistration(name, component):
+          ...     return type(
+          ...         'RegistrationStub', (),
+          ...         {'name': name, 'provided': None,
+          ...          'component': component, 'doc': ''})()
+
           >>> class Foo(object):
           ...     pass
 
@@ -83,12 +94,12 @@ class UtilityDetails(object):
           ...     pass
 
           >>> details = UtilityDetails()
-          >>> details.context = Utility(None, '', None, Foo())
+          >>> details.context = Utility(None, makeRegistration('', Foo()))
           >>> pprint(details.getComponent())
           [('path', 'zope.app.apidoc.utilitymodule.browser.Foo'),
            ('url', 'zope/app/apidoc/utilitymodule/browser/Foo')]
 
-          >>> details.context = Utility(None, '', None, Bar())
+          >>> details.context = Utility(None, makeRegistration('', Bar()))
           >>> pprint(details.getComponent())
           [('path', 'zope.app.apidoc.utilitymodule.browser.Bar'),
            ('url', 'zope/app/apidoc/utilitymodule/browser/Bar')]
@@ -117,6 +128,11 @@ class Menu(object):
       >>> from zope.app.apidoc.tests import Root
       >>> menu = Menu()
 
+      >>> def makeRegistration(name):
+      ...     return type('RegistrationStub', (),
+      ...                 {'name': name, 'provided': None,
+      ...                  'component': None, 'doc': ''})()
+
       Get menu title and link for a utility interface
 
       >>> uiface = UtilityInterface(Root(), 'foo.bar.iface', None)
@@ -128,7 +144,7 @@ class Menu(object):
 
       Get menu title and link for a utility with a name
 
-      >>> util = Utility(uiface, 'FooBar', None, None)
+      >>> util = Utility(uiface, makeRegistration('FooBar'))
       >>> node = Node(util)
       >>> menu.getMenuTitle(node)
       'FooBar'
@@ -137,7 +153,7 @@ class Menu(object):
 
       Get menu title and link for a utility without a name
 
-      >>> util = Utility(uiface, None, None, None)
+      >>> util = Utility(uiface, makeRegistration(None))
       >>> node = Node(util)
       >>> menu.getMenuTitle(node)
       'no name'

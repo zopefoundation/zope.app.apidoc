@@ -13,7 +13,7 @@
 ##############################################################################
 """Utility Documentation Module
 
-$Id: __init__.py,v 1.5 2004/03/28 23:41:16 srichter Exp $
+$Id: __init__.py,v 1.6 2004/04/17 14:33:21 srichter Exp $
 """
 from zope.interface import implements
 
@@ -32,12 +32,15 @@ class Utility(object):
 
     implements(ILocation)
     
-    def __init__(self, parent, name, interface, component):
+    def __init__(self, parent, reg):
         """Initialize Utility object."""
         self.__parent__ = parent
-        self.__name__ = name or NONAME
-        self.interface = interface
-        self.component = component
+        self.__name__ = reg.name or NONAME
+        self.registration = reg
+        self.interface = reg.provided
+        self.component = reg.component
+        # Handle local and global utility registrations
+        self.doc = hasattr(reg, 'doc') and reg.doc or ''
 
 
 class UtilityInterface(ReadContainerBase):
@@ -77,25 +80,26 @@ class UtilityInterface(ReadContainerBase):
 
     def get(self, key, default=None):
         """See zope.app.container.interfaces.IReadContainer"""
-        service = zapi.getService(self, 'Utilities')        
+        service = zapi.getService(self, Utilities)        
         if key == NONAME:
             key = ''
-        util = service.queryUtility(self.interface, default, key)
-        if util != default:
-            util = Utility(self, key, self.interface, util)
+        utils = [Utility(self, reg)
+                 for reg in service.registrations()
+                 if reg.name == key and reg.provided == self.interface]
 
-        return util
+        return utils and utils[0] or default
 
     def items(self):
         """See zope.app.container.interfaces.IReadContainer"""
-        service = zapi.getService(self, 'Utilities')
+        service = zapi.getService(self, Utilities)
         items = []
 
         while service is not None:
-            items += service.getRegisteredMatching(self.interface)
+            items += [(reg.name or NONAME, Utility(self, reg))
+                      for reg in service.registrations()
+                      if self.interface == reg.provided]
             service = queryNextService(service, Utilities)
 
-        items = [(name or NONAME, self.get(name)) for iface, name, c in items]
         items.sort()
         return items
 
@@ -151,13 +155,12 @@ class UtilityModule(ReadContainerBase):
         service = zapi.getService(self, Utilities)
         ifaces = {}
         while service is not None:
-            matches = service.getRegisteredMatching()
-            for iface, name, c in matches:
-                path = getPythonPath(iface)
-                ifaces[path] = self.get(path)
+            for reg in service.registrations():
+                path = getPythonPath(reg.provided)
+                ifaces[path] = UtilityInterface(self, path, reg.provided)
             service = queryNextService(service, Utilities)
 
         items = ifaces.items()
-        items.sort()
+        items.sort(lambda x, y: cmp(x[0].split('.')[-1], y[0].split('.')[-1]))
         return items
 

@@ -8,7 +8,7 @@
   </class>
 
   <class class=".Utility">
-    <allow attributes="interface component" />
+    <allow attributes="registration interface component doc" />
   </class>
 
   <class class=".UtilityInterface">

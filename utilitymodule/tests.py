@@ -13,7 +13,7 @@
 ##############################################################################
 """Tests for the Utility Documentation Module
 
-$Id: tests.py,v 1.3 2004/03/28 23:41:35 srichter Exp $
+$Id: tests.py,v 1.4 2004/04/17 14:33:21 srichter Exp $
 """
 import unittest
 
@@ -52,11 +52,18 @@ def setUp():
 def tearDown():
     placelesssetup.tearDown()
 
+def makeRegistration(name, interface, component):
+    return type('RegistrationStub', (),
+                {'name': name, 'provided': interface,
+                 'component': component, 'doc': ''})()
+
 def getDetailsView():
     utils = UtilityModule()
     utils.__parent__ = Root
     utils.__name__ = 'Utility'
-    util = Utility(utils, 'Classes', IDocumentationModule, ClassModule())
+    util = Utility(
+        utils,
+        makeRegistration('Classes', IDocumentationModule, ClassModule()))
     details = UtilityDetails()
     details.context = util
     details.request = TestRequest()
