@@ -98,7 +98,7 @@ class SkinLayer(object):
          >>> pprint(skins)
          [SkinDocumentation(u'skinA', []),
           SkinDocumentation(u'skinB', [u'layer1', u'layer2']),
-          SkinDocumentation(u'skinC', [u'layer3', u'layer2'])]
+          SkinDocumentation(u'skinC', [u'layer2', u'layer3'])]
         """
         skins = self.context.getSkins()
         if columns:

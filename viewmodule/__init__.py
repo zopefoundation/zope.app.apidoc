@@ -137,7 +137,7 @@ class SkinDocumentation(object):
       >>> doc.default
       False
       >>> pprint(doc.layers)
-      [LayerDocumentation(u'layer3'), LayerDocumentation(u'layer2')]
+      [LayerDocumentation(u'layer2'), LayerDocumentation(u'layer3')]
       >>> doc.interface
       'zope.app.apidoc.viewmodule.tests.SkinC'
     """
@@ -174,6 +174,8 @@ class SkinDocumentation(object):
                   for reg in sm.registrations()
                   if reg.provided is ILayer and reg.name != '' and \
                      self.context.component.isOrExtends(reg.component)]
+        # Ensure a consistent ordering of the layers
+        layers.sort()
         
         # Make sure skins have a location
         [locate(layer, self, layer.name) for layer in layers]
@@ -265,3 +267,11 @@ class LayerDocumentation(object):
     def __repr__(self):
         """Representation of the object in a doctest-friendly format."""
         return '%s(%r)' % (self.__class__.__name__, self.name)        
+
+    def __lt__(self, other) :
+        """Define this so a list of LayerDocumention objects can be sorted."""
+        if isinstance(other, LayerDocumentation) :
+            return self.name < other.name
+        else :
+            return NotImplemented
+
