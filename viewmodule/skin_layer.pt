@@ -28,15 +28,27 @@
             <i style="font-weight: normal"
                tal:condition="skin/default" i18n:translate="">(default)</i>
           </h3>
-          <div class="small">
+          <span class="small">
+                  <a href=""
+                     tal:attributes="href 
+                      string:../Interface/${skin/interface}/apiindex.html"
+                     tal:content="skin/interface">Interface</a>
+          </span>      
+          <span class="small">
             <i tal:content="skin/doc">Skin Doc</i>
-          </div>      
+          </span>
 
           <div class="indent">
             <ul>
               <li tal:repeat="layer skin/layers">
                 <b tal:content="layer/name">default</b>
                 <br />
+                <span class="small">
+                  <a href=""
+                     tal:attributes="href 
+                      string:../Interface/${layer/interface}/apiindex.html"
+                     tal:content="layer/interface">Interface</a>
+                </span>      
                 <span class="small">
                   <i tal:content="layer/doc">Layer Doc</i>
                 </span>

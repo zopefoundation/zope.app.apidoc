@@ -16,17 +16,15 @@
 $Id$
 """
 import unittest
-from zope.interface import Interface
+
+from zope.interface import Interface, directlyProvides
 from zope.publisher.interfaces.browser import IBrowserRequest
+from zope.publisher.interfaces.browser import ISkin, ILayer, IDefaultSkin
 from zope.testing.doctestunit import DocTestSuite
+
 from zope.app import zapi
 from zope.app.tests import placelesssetup, ztapi
 from zope.app.component.interface import provideInterface
-
-from zope.app.apidoc.viewmodule import ISkinRegistration
-from zope.app.apidoc.viewmodule import ISkinDocumentation, SkinDocumentation
-from zope.app.apidoc.viewmodule import ILayerRegistration
-from zope.app.apidoc.viewmodule import ILayerDocumentation, LayerDocumentation
 
 class IFoo(Interface):
     pass
@@ -34,26 +32,36 @@ class IFoo(Interface):
 class FooView(object):
     pass
 
+class Layer1(IBrowserRequest): pass
+class Layer2(IBrowserRequest): pass
+class Layer3(IBrowserRequest): pass
+
+class SkinA(IBrowserRequest): pass
+class SkinB(Layer1, Layer2): pass
+class SkinC(Layer2, Layer3): pass
+
 def setUp(test):
     placelesssetup.setUp()
 
-    ztapi.provideAdapter(ISkinRegistration, ISkinDocumentation,
-                         SkinDocumentation)
-    ztapi.provideAdapter(ILayerRegistration, ILayerDocumentation,
-                         LayerDocumentation)
+    provideInterface(u'zope.app.layers.layer1', Layer1)
+    provideInterface(u'layer1', Layer1, ILayer, u'layer 1 doc')
+    provideInterface(u'zope.app.layers.layer2', Layer2)
+    provideInterface(u'layer2', Layer2, ILayer, u'layer 2 doc')
+    provideInterface(u'zope.app.layers.layer3', Layer3)
+    provideInterface(u'layer3', Layer3, ILayer, u'layer 3 doc')
 
-    pres = zapi.getGlobalService('Presentation')
-    for index in range(1, 6):
-        pres.defineLayer('layer'+str(index))
-    pres.defineSkin('skinA', ['default'], 'doc skin A')
-    pres.defineSkin('skinB', ['layer5', 'layer4', 'default'], 'doc skin B')
-    pres.defineSkin('skinC', ['layer4', 'layer2', 'layer1', 'default'],
-                    'doc skin C')
-    pres.setDefaultSkin('skinA', 'default is A')
+    provideInterface(u'zope.app.skins.skinA', SkinA)
+    provideInterface(u'skinA', SkinA, ISkin, u'skin 1 doc')
+    provideInterface(u'zope.app.skins.skinB', SkinB)
+    provideInterface(u'skinB', SkinB, ISkin, u'skin 2 doc')
+    provideInterface(u'zope.app.skins.skinC', SkinC)
+    provideInterface(u'skinC', SkinC, ISkin, u'skin 3 doc')
+
+    ztapi.provideAdapter((IBrowserRequest,), IDefaultSkin, SkinA, '')
 
     provideInterface('IFoo', IFoo)
     provideInterface('IBrowserRequest', IBrowserRequest)
-    ztapi.browserView(IFoo, 'index.html', FooView, layer='default')
+    ztapi.browserView(IFoo, 'index.html', FooView, layer=Layer1)
 
 
 def test_suite():

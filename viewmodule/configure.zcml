@@ -17,24 +17,10 @@
     <allow attributes="getLayers isDefault getDoc"/>
   </class>
 
-  <adapter
-      for=".ISkinRegistration"
-      provides=".ISkinDocumentation"
-      factory=".SkinDocumentation"
-      permission="zope.app.apidoc.UseAPIDoc"
-      trusted="True" />
-
   <class class=".LayerDocumentation">
     <allow interface=".ILayerDocumentation" />
     <allow attributes="getDoc"/>
   </class>
-
-  <adapter
-      for=".ILayerRegistration"
-      provides=".ILayerDocumentation"
-      factory=".LayerDocumentation"
-      permission="zope.app.apidoc.UseAPIDoc"
-      trusted="True" />
 
   <browser:page
       for=".ViewModule"

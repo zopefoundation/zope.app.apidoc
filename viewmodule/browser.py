@@ -18,6 +18,13 @@ $Id$
 from types import ClassType
 
 from zope.interface import Interface
+from zope.component.adapter import AdapterRegistration
+from zope.publisher.interfaces.browser import ILayer
+
+from zope.publisher.interfaces.browser import IBrowserRequest
+from zope.publisher.interfaces.xmlrpc import IXMLRPCRequest
+from zope.publisher.interfaces.http import IHTTPRequest
+from zope.publisher.interfaces.ftp import IFTPRequest
 
 from zope.app import zapi
 from zope.app.publisher.browser.icon import IconViewFactory
@@ -65,8 +72,10 @@ class Menu(object):
         Example::
 
           >>> menu = Menu()
-          >>> menu.getInterfaceIds()
-          [u'IBrowserRequest', u'IFoo']
+          >>> u'IFoo' in menu.getInterfaceIds()
+          True
+          >>> u'IBrowserRequest' in menu.getInterfaceIds()
+          True
         """
         ids = searchInterfaceIds(self)
         ids.sort()
@@ -87,9 +96,9 @@ class SkinLayer(object):
          >>> view.context = ViewModule()
          >>> skins = view.getSkins(False)
          >>> pprint(skins)
-         [SkinDocumentation('skinA', ['default']),
-          SkinDocumentation('skinB', ['layer5', 'layer4', 'default']),
-          SkinDocumentation('skinC', ['layer4', 'layer2', 'layer1', 'default'])]
+         [SkinDocumentation(u'skinA', []),
+          SkinDocumentation(u'skinB', [u'layer1', u'layer2']),
+          SkinDocumentation(u'skinC', [u'layer3', u'layer2'])]
         """
         skins = self.context.getSkins()
         if columns:
@@ -193,6 +202,32 @@ def _getFactoryData(factory):
     return info
 
 
+def _getPresentationType(iface):
+    """Get the presentation type from a layer interface.
+
+    Examples::
+
+      >>> class ILayer1(IBrowserRequest): pass
+      >>> _getPresentationType(ILayer1)
+      <InterfaceClass zope.publisher.interfaces.browser.IBrowserRequest>
+
+      >>> class ILayer2(IHTTPRequest): pass
+      >>> _getPresentationType(ILayer2)
+      <InterfaceClass zope.publisher.interfaces.http.IHTTPRequest>
+
+      >>> class ILayer3(Interface): pass
+      >>> _getPresentationType(ILayer3)
+      <InterfaceClass zope.app.apidoc.viewmodule.browser.ILayer3>
+    """
+    # Note that the order of the requests matters here, since we want to
+    # inspect the most specific one first. For example, IBrowserRequest is also
+    # an IHTTPRequest. 
+    for type in [IBrowserRequest, IXMLRPCRequest, IHTTPRequest, IFTPRequest]:
+        if iface.isOrExtends(type):
+            return type
+    return iface
+    
+
 class ViewsDetails(object):
     """View for Views"""
 
@@ -206,19 +241,20 @@ class ViewsDetails(object):
 
         self.show_all = request.has_key('all')
 
-        from zope.component.presentation import PresentationRegistration
-        from zope.proxy import removeAllProxies
-        service = zapi.getService('Presentation')
+        service = zapi.getService(zapi.servicenames.Adapters)
         # This is okay here, since we only read from the service. Once
         # registration objects have sensible security declarations, we can
         # remove that call. 
+        from zope.proxy import removeAllProxies
         service = removeAllProxies(service)
         self.regs = [reg
                      for reg in service.registrations()
-                     if (isinstance(reg, PresentationRegistration) and
+                     if (isinstance(reg, AdapterRegistration) and
+                         reg.required[-1] is not None and
                          # TODO: Handle multiple required ifaces at some point.
-                         self.iface.isOrExtends(reg.required[0]) and 
-                         self.type is reg.required[-1])]
+                         self.iface.isOrExtends(reg.required[0]
+                                                or Interface) and
+                         reg.required[-1].isOrExtends(self.type))]
 
 
     def getViewsByLayers(self):
@@ -235,7 +271,7 @@ class ViewsDetails(object):
           >>> view = ViewsDetails(None, TestRequest(form=form))
           >>> layer = view.getViewsByLayers()[0]
           >>> layer['name']
-          'default'
+          u'layer1'
           >>> view = layer['views'][0]
           >>> pprint(view)
           [('factory',
@@ -259,8 +295,9 @@ class ViewsDetails(object):
                 entry = {'name' : reg.name or '<i>no name</i>',
                          # TODO: Deal with tuple
                          'required' : getPythonPath(reg.required[0]),
-                         'type' : getPythonPath(reg.required[-1]),
-                         'factory' : _getFactoryData(reg.factory),
+                         'type' : getPythonPath(
+                                      _getPresentationType(reg.required[-1])),
+                         'factory' : _getFactoryData(reg.value),
                          'provided' : getPythonPath(reg.provided)
                          }
 
@@ -274,9 +311,18 @@ class ViewsDetails(object):
 
                 # Educated choice of the attribute name
                 entry.update(getPermissionIds('publishTraverse',
-                                              klass=reg.factory))
+                                              klass=reg.value))
 
-                layer = entries.setdefault(reg.layer, [])
+                # Determine the layer
+                layer = reg.required[-1]
+                name = [name for name, util in zapi.getUtilitiesFor(ILayer)
+                        if util is layer]
+                if name:
+                    name = name[0]
+                else:
+                    name = '<no layer>'
+                    
+                layer = entries.setdefault(name, [])
                 layer.append(entry)
 
         for entry in entries.values():

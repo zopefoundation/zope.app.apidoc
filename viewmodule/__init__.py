@@ -16,29 +16,23 @@
 $Id$
 """
 __docformat__ = 'restructuredtext'
+from zope.interface import Interface, Attribute
+from zope.interface import implements, classImplements, providedBy
+from zope.publisher.interfaces.browser import ISkin, ILayer, IDefaultSkin
+
 from zope.app import zapi
-from zope.interface import implements, classImplements, Interface, Attribute
-from zope.component.presentation import SkinRegistration
-from zope.component.presentation import DefaultSkinRegistration
-from zope.component.presentation import LayerRegistration
 from zope.app.apidoc.interfaces import IDocumentationModule
-from zope.app.apidoc.utilities import relativizePath
+from zope.app.apidoc.utilities import relativizePath, getPythonPath
 from zope.app.i18n import ZopeMessageIDFactory as _
 from zope.app.location import locate
-
-# TODO: Temporary hack, since registering an adapter for a particular class is
-# broken.
-class ISkinRegistration(Interface): pass
-classImplements(SkinRegistration, ISkinRegistration)
-
-class ILayerRegistration(Interface): pass
-classImplements(LayerRegistration, ILayerRegistration)
 
 
 class ISkinDocumentation(Interface):
     """Provides useful information of skins for documentation."""
 
     name = Attribute("""Name of the skin.""")
+
+    interface = Attribute("""The interface that represents the skin.""")
 
     layers = Attribute("A list of ILayerDocumentation objects that represent "
                        "the layers of this skin.")
@@ -52,6 +46,8 @@ class ILayerDocumentation(Interface):
     """Provides useful information of layers for documentation."""
 
     name = Attribute("""Name of the layer.""")
+
+    interface = Attribute("""The interface that represents the layer.""")
 
     doc = Attribute("A string that describes the skin and/or its origin.")
 
@@ -92,26 +88,19 @@ class ViewModule(object):
     def getSkins(self):
         """Get the names of all available skins.
 
-        Examples::
+        Example::
 
           >>> module = ViewModule()
           >>> skins = [skin.name for skin in module.getSkins()]
           >>> skins.sort()
           >>> skins
-          ['skinA', 'skinB', 'skinC']
-
-          >>> pres = zapi.getGlobalService('Presentation')
-          >>> pres.defineSkin('skinD', ['layer3'])
-          >>> skins = [skin.name for skin in module.getSkins()]
-          >>> skins.sort()
-          >>> skins
-          ['skinA', 'skinB', 'skinC', 'skinD']
+          [u'skinA', u'skinB', u'skinC']
         """ 
-        # Only the global presentation service defines skins 
-        service = zapi.getGlobalService('Presentation')
-        skins = [ISkinDocumentation(reg)
-                 for reg in service.registrations()
-                 if isinstance(reg, SkinRegistration)]
+        # Only the global presentation service defines skins
+        utils = zapi.getService(zapi.servicenames.Utilities)
+        skins = [SkinDocumentation(reg)
+                 for reg in utils.registrations()
+                 if reg.name != '' and reg.provided is ISkin]
         skins.sort(lambda x, y: cmp(x.name, y.name))
         # Make sure skins have a location
         [locate(skin, self, skin.name) for skin in skins]
@@ -129,27 +118,28 @@ class SkinDocumentation(object):
 
       >>> from zope.app.apidoc.tests import pprint
 
-      >>> pres = zapi.getGlobalService('Presentation')
-      >>> reg = pres._registrations[('skin', 'skinA')]
+      >>> utils = zapi.getGlobalService(zapi.servicenames.Utilities)
+      >>> reg = utils._registrations[(ISkin, 'skinA')]
       >>> doc = SkinDocumentation(reg)
       >>> doc.name
-      'skinA'
+      u'skinA'
       >>> doc.default
       True
       >>> pprint(doc.layers)
-      [LayerDocumentation('default')]
+      []
+      >>> doc.interface
+      'zope.app.apidoc.viewmodule.tests.SkinA'
 
-      >>> reg = pres._registrations[('skin', 'skinC')]
+      >>> reg = utils._registrations[(ISkin, 'skinC')]
       >>> doc = SkinDocumentation(reg)
       >>> doc.name
-      'skinC'
+      u'skinC'
       >>> doc.default
       False
       >>> pprint(doc.layers)
-      [LayerDocumentation('layer4'),
-       LayerDocumentation('layer2'),
-       LayerDocumentation('layer1'),
-       LayerDocumentation('default')]
+      [LayerDocumentation(u'layer3'), LayerDocumentation(u'layer2')]
+      >>> doc.interface
+      'zope.app.apidoc.viewmodule.tests.SkinC'
     """
     implements(ISkinDocumentation)
 
@@ -158,15 +148,17 @@ class SkinDocumentation(object):
         self.context = context
 
     # See ISkinDocumentation
-    name = property(lambda self: self.context.skin)
+    name = property(lambda self: self.context.name)
+
+    # See ISkinDocumentation
+    interface = property(lambda self: getPythonPath(self.context.component))
 
     def isDefault(self):
         """Return whether this skin is the default skin."""
-        service = zapi.getService('Presentation')
-        for registration in service.registrations():
-            if isinstance(registration, DefaultSkinRegistration) and \
-                   registration.skin == self.context.skin:
-                return True
+        adapters = zapi.getService(zapi.servicenames.Adapters)
+        skin = adapters.lookup((self.context.component,), IDefaultSkin, '')
+        if skin is self.context.component:
+            return True
         return False
 
     # See ISkinDocumentation
@@ -177,18 +169,12 @@ class SkinDocumentation(object):
 
         Each element of the list is a LayerDocumentation component.
         """
-        service = zapi.getService('Presentation')
-        layers = [ILayerDocumentation(reg)
-                  for reg in service.registrations()
-                  if (isinstance(reg, LayerRegistration) and
-                      reg.layer in self.context.layers)]
-
+        utils = zapi.getService(zapi.servicenames.Utilities)
+        layers = [LayerDocumentation(reg)
+                  for reg in utils.registrations()
+                  if reg.name != '' and reg.provided is ILayer and \
+                     self.context.component.isOrExtends(reg.component)]
         
-        if 'default' in self.context.layers:
-            default = LayerRegistration('default',
-                                        'This is a predefined layer.')
-            layers.append(ILayerDocumentation(default))
-
         # Make sure skins have a location
         [locate(layer, self, layer.name) for layer in layers]
         return layers
@@ -216,7 +202,7 @@ class SkinDocumentation(object):
         """Representation of the object in a doctest-friendly format."""
         return '%s(%r, %r)' % (
             self.__class__.__name__,
-            self.name, self.context.layers)        
+            self.name, [l.name for l in self.getLayers()])
 
 
 class LayerDocumentation(object):
@@ -230,19 +216,18 @@ class LayerDocumentation(object):
 
       >>> from zope.app.apidoc.tests import pprint
 
-      >>> LayerRegistration = type('LayerRegistration', (object,),
-      ...                          {'layer': u'help', 'doc': u'documentation'})
-
       >>> ParserInfo = type('ParserInfo', (object,),
       ...                   {'file': u'Zope3/src/zope/app/configure.zcml',
       ...                    'line': 5})
 
-      >>> reg = LayerRegistration()
+      >>> utils = zapi.getGlobalService(zapi.servicenames.Utilities)
+      >>> reg = utils._registrations[(ILayer, 'layer1')]
+
       >>> layerdoc = LayerDocumentation(reg)
       >>> layerdoc.name
-      u'help'
+      u'layer1'
       >>> layerdoc.doc
-      u'documentation'
+      u'layer 1 doc'
 
       >>> reg.doc = ParserInfo()
       >>> layerdoc.doc
@@ -256,7 +241,10 @@ class LayerDocumentation(object):
         self.context = context
 
     # See ILayerDocumentation
-    name = property(lambda self: self.context.layer)
+    name = property(lambda self: self.context.name)
+
+    # See ILayerDocumentation
+    interface = property(lambda self: getPythonPath(self.context.component))
 
     def getDoc(self):
         """Generate documentation."""
