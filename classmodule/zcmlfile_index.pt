@@ -1,0 +1,15 @@
+<html metal:use-macro="views/apidoc_macros/details">
+<body metal:fill-slot="contents">
+
+  <h1 class="details-header"
+      tal:content="context/path">
+    zope.app.Klass
+  </h1>
+
+  <code class="zcml" tal:content="structure view/getHTMLContents">
+    <configure> </configure>
+  </code>
+
+
+</body>
+</html>

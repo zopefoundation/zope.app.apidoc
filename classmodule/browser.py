@@ -16,23 +16,34 @@
 $Id$
 """
 __docformat__ = 'restructuredtext'
-
-import os
 import inspect
+import os
+import re
+from types import TypeType, ClassType, FunctionType, ModuleType
+import xml.dom.minidom
+import xml.sax.saxutils
 
+from zope.configuration import docutils, xmlconfig
 from zope.configuration.config import ConfigurationContext
+from zope.configuration.fields import GlobalObject, Tokens
 from zope.exceptions import NotFoundError
 from zope.interface import implementedBy
+from zope.interface.interface import InterfaceClass
 from zope.proxy import removeAllProxies
+from zope.schema import getFieldsInOrder
 
+import zope.app
 from zope.app import zapi
 from zope.app.i18n import ZopeMessageIDFactory as _
+from zope.app.apidoc.classmodule import Module, Class, Function, ZCMLFile
+from zope.app.apidoc.classmodule import classRegistry
+from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import getPythonPath, renderText, columnize
 from zope.app.apidoc.utilities import getPermissionIds, getFunctionSignature
 from zope.app.apidoc.utilities import getPublicAttributes
 from zope.app.apidoc.utilities import getInterfaceForAttribute
-from zope.app.apidoc.classmodule import Module, Class, Function, classRegistry
-from zope.app.apidoc.interfaces import IDocumentationModule
+from zope.app.apidoc.zcmlmodule import quoteNS
+
 
 class Menu(object):
     """Menu for the Class Documentation Module.
@@ -109,6 +120,244 @@ class Menu(object):
                      })
         results.sort(lambda x, y: cmp(x['path'], y['path']))
         return results
+
+
+_obj_attr_re = r'(?P<start>&lt;%s.*?%s=".*?)(?P<value>%s)(?P<end>".*?&gt;)'
+_attrname_re = r'(?P<start>&lt;.*?%s.*?)(?P<attr>%s)(?P<end>=".*?".*?&gt;)'
+directives = {}
+
+class ZCMLFileDetails(ConfigurationContext):
+    """Represents the details of the ZCML file."""
+
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+        package = removeAllProxies(zapi.getParent(context))._Module__module
+        # Keep track of the package that is used for relative paths
+        self._package_stack = [package]
+        # Keep track of completed actions, so none is executed twice
+        self._done = []
+        # Kepp track of the parent node, so that we know whether we deal with
+        # a directive or sub-directive 
+        self._parent_node_info = None
+
+    # See zope.configuration.config.ConfigurationContext
+    # The package is used to resolve relative paths.
+    package = property(lambda self: self._package_stack[-1])
+
+    # All registered directives. The availability of directives depends on
+    # whether we a re looking for a directive or a sub-directive.
+    directives = property(lambda self: directives[self._parent_node_info])
+
+    def getBaseURL(self):
+        """Return the URL for the API Documentation Tool.
+
+        Example::
+
+          >>> from tests import getClassDetailsView
+          >>> view = getClassDetailsView()
+
+          Note that the following output is a bit different than usual, since
+          we have not setup all path elements.
+
+          >>> view.getBaseURL()
+          'http://127.0.0.1'
+        """
+        m = zapi.getUtility(IDocumentationModule, "Class")
+        return zapi.getView(zapi.getParent(m), 'absolute_url', self.request)()
+
+    def getHTMLContents(self):
+        """Return an HTML markup version of the ZCML file with links to other
+        documentation modules."""
+        if not directives:
+            self._makeDocStructure()
+        dom = xml.dom.minidom.parse(self.context.path)
+        self.text = file(self.context.path, 'r').read()
+        self.text = xml.sax.saxutils.escape(self.text)
+        self.text = self.text.replace(' ', '&nbsp;')
+        self.text = self.text.replace('\n', '<br />\n')
+
+        # Link interface and other object references
+        for node in dom.childNodes:
+            self._linkObjectReferences(node)
+
+        # Link ZCML directives
+        for node in dom.childNodes:
+            self._linkDirectives(node)
+
+        # Color directive attributes
+        for node in dom.childNodes:
+            self._colorAttributeNames(node)
+
+        # Color comments
+        self._colorComments()
+        
+        return self.text
+
+    def _colorComments(self):
+        self.text = self.text.replace('&lt;!--',
+                                      '<span style="color: red">&lt;!--')
+        self.text = self.text.replace('--&gt;',
+                                      '--&gt;</span>')
+
+    def _colorAttributeNames(self, node):
+        if node.nodeType in (node.TEXT_NODE, node.COMMENT_NODE):
+            return
+
+        for attrName in node.attributes.keys():
+            disc = ('color attribute name', node.tagName, attrName)
+            if disc in self._done:
+                continue
+
+            expr = re.compile(_attrname_re %(node.tagName, attrName),
+                              re.DOTALL)
+            self.text = re.sub(
+                expr,
+                r'\1<span class="attribute">\2</span>\3',
+            self.text)
+            
+            self._done.append(disc)
+
+        for child in node.childNodes:
+            self._colorAttributeNames(child)
+
+
+    def _linkDirectives(self, node):
+        if node.nodeType in (node.TEXT_NODE, node.COMMENT_NODE):
+            return
+
+        if (node.tagName,) in self._done:
+            return
+
+        if node.namespaceURI in self.directives.keys() and \
+               node.localName in self.directives[node.namespaceURI].keys():
+            namespace = quoteNS(node.namespaceURI)
+        else:
+            namespace = 'ALL'
+
+        self.text = self.text.replace(
+            '&lt;'+node.tagName,
+            '&lt;<a class="tagname" href="%s/ZCML/%s/%s/index.html">%s</a>' %(
+            self.getBaseURL(), namespace, node.localName, node.tagName))
+
+        self.text = self.text.replace(
+            '&lt;/'+node.tagName+'&gt;',
+            '&lt;/<a class="tagname" '
+            'href="%s/ZCML/%s/%s/index.html">%s</a>&gt;' %(
+            self.getBaseURL(), namespace, node.localName, node.tagName))
+
+        self._done.append((node.tagName,))
+        
+        for child in node.childNodes:
+            self._linkDirectives(child)
+
+
+    def _linkObjectReferences(self, node):
+        if node.nodeType in (node.TEXT_NODE, node.COMMENT_NODE):
+            return
+
+        if node.localName == 'configure' and node.hasAttribute('package'):
+            self._package_stack.push(
+                self.resolve(node.getAttribute('package')))
+
+        for child in node.childNodes:
+            self._linkObjectReferences(child)
+
+        namespace = self.directives.get(node.namespaceURI, self.directives[''])
+        directive = namespace.get(node.localName)
+        if directive is None:
+            # Try global namespace
+            directive = self.directives[''].get(node.localName)
+
+        for name, field in getFieldsInOrder(directive[0]):
+            if node.hasAttribute(name.strip('_')):
+                self._evalField(field, node)
+
+        if node.localName == 'configure' and node.hasAttribute('package'):
+            self._package_stack.pop()
+
+
+    def _evalField(self, field, node, attrName=None, dottedName=None):
+        bound = field.bind(self)
+        if attrName is None:
+            attrName = field.getName().strip('_')
+        if dottedName is None:
+            dottedName = node.getAttribute(attrName)
+
+        if isinstance(field, Tokens) and \
+               isinstance(field.value_type, GlobalObject):
+                       
+            tokens = [token.strip()
+                      for token in node.getAttribute(attrName).split(' \n\t')
+                      if token.strip() != '']
+
+            for token in tokens:
+                self._evalField(field.value_type, node, attrName, dottedName)
+
+        if isinstance(field, GlobalObject):
+            obj = bound.fromUnicode(dottedName)
+            disc = (node.tagName, attrName, dottedName)
+
+            if disc in self._done:
+                return
+
+            if isinstance(obj, InterfaceClass):
+                expr = re.compile(_obj_attr_re %(
+                    node.tagName, attrName, dottedName.replace('.', r'\.')),
+                                  re.DOTALL)                
+                path = obj.__module__ + '.' + obj.__name__
+                self.text = re.sub(
+                    expr,
+                    r'\1<a class="objectref" '
+                    r'href="%s/Interface/%s/apiindex.html">\2</a>\3' %(
+                    self.getBaseURL(), path),
+                    self.text)
+
+            elif isinstance(obj, (TypeType, ClassType, FunctionType)):
+                expr = re.compile(_obj_attr_re %(
+                    node.tagName, attrName, dottedName.replace('.', r'\.')),
+                                  re.DOTALL)
+                path = (obj.__module__ + '.' + obj.__name__).replace('.', '/')
+                self.text = re.sub(
+                    expr,
+                    r'\1<a class="objectref" '
+                    r'href="%s/Class/%s/index.html">\2</a>\3' %(
+                    self.getBaseURL(), path),
+                    self.text)
+
+            elif isinstance(obj, ModuleType):
+                expr = re.compile(_obj_attr_re %(
+                    node.tagName, attrName, dottedName.replace('.', r'\.')),
+                                  re.DOTALL)
+                path = obj.__name__.replace('.', '/')
+                self.text = re.sub(
+                    expr,
+                    r'\1<a class="objectref" '
+                    r'href="%s/Class/%s/index.html">\2</a>\3' %(
+                    self.getBaseURL(), path),
+                    self.text)
+
+            self._done.append(disc)
+                        
+    def _makeDocStructure(self):
+        # Some trivial caching
+        global directives
+        context = xmlconfig.file(
+            zope.app.appsetup.appsetup.getConfigSource(),
+            execute=False)
+        namespaces, subdirs = docutils.makeDocStructures(context)
+
+        for ns_name, dirs in namespaces.items():
+            for dir_name, dir in dirs.items():
+                parent = directives.setdefault(None, {})
+                namespace = parent.setdefault(ns_name, {})
+                namespace[dir_name] = dir
+
+        for parent_info, dirs in subdirs.items():
+            for dir in dirs:
+                parent = directives.setdefault(parent_info, {})
+                namespace = parent.setdefault(dir[0], {})
+                namespace[dir[1]] = dir[2:]
 
 
 class FunctionDetails(object):
@@ -365,15 +614,17 @@ class ModuleDetails(object):
 
           >>> entries = view.getEntries(False)
           >>> entries.sort()
-          >>> pprint(entries[:2])
+          >>> pprint(entries[1:3])
           [[('isclass', False),
             ('isfunction', False),
             ('ismodule', True),
+            ('iszcmlfile', False),
             ('name', 'browser'),
             ('url', 'http://127.0.0.1/zope/app/apidoc/classmodule/browser')],
            [('isclass', False),
             ('isfunction', True),
             ('ismodule', False),
+            ('iszcmlfile', False),
             ('name', 'cleanUp'),
             ('url', 'http://127.0.0.1/zope/app/apidoc/classmodule/cleanUp')]]
         """
@@ -381,7 +632,8 @@ class ModuleDetails(object):
                     'url': zapi.getView(obj, 'absolute_url', self.request)(),
                     'ismodule': type(removeAllProxies(obj)) is Module,
                     'isclass': type(removeAllProxies(obj)) is Class,
-                    'isfunction': type(removeAllProxies(obj)) is Function,}
+                    'isfunction': type(removeAllProxies(obj)) is Function,
+                    'iszcmlfile': type(removeAllProxies(obj)) is ZCMLFile,}
                    for name, obj in self.context.items()]
         entries.sort(lambda x, y: cmp(x['name'], y['name']))
         if columns:

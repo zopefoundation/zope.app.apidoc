@@ -1,0 +1,67 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:browser="http://namespaces.zope.org/browser">
+
+  <class class=".Module">
+    <allow interface=".IModuleDocumentation" />
+  </class>
+
+  <class class=".Class">
+    <allow interface=".IClassDocumentation" />
+  </class>
+
+  <class class=".Function">
+    <allow interface=".IFunctionDocumentation" />
+  </class>
+
+  <class class=".ZCMLFile">
+    <allow interface=".IZCMLFileDocumentation" />
+  </class>
+
+  <class class=".ClassModule">
+    <allow interface="zope.app.apidoc.interfaces.IDocumentationModule" />
+    <allow interface=".IModuleDocumentation" />
+    <allow attributes="rootModules" />
+  </class>
+
+  <utility
+    provides="zope.app.apidoc.interfaces.IDocumentationModule"
+    factory=".ClassModule"
+    name="Class" />
+
+  <browser:page
+    for=".ClassModule"
+    permission="zope.View"
+    class=".browser.Menu"
+    name="menu.html"
+    template="menu.pt" />
+
+  <browser:page
+    for=".IModuleDocumentation"
+    permission="zope.View"
+    class=".browser.ModuleDetails"
+    name="index.html"
+    template="module_index.pt" />
+
+  <browser:page
+    for=".IClassDocumentation"
+    permission="zope.View"
+    class=".browser.ClassDetails"
+    name="index.html"
+    template="class_index.pt" />
+
+  <browser:page
+    for=".IFunctionDocumentation"
+    permission="zope.View"
+    class=".browser.FunctionDetails"
+    name="index.html"
+    template="function_index.pt" />
+
+  <browser:page
+    for=".IZCMLFileDocumentation"
+    permission="zope.View"
+    class=".browser.ZCMLFileDetails"
+    name="index.html"
+    template="zcmlfile_index.pt" />
+
+</configure>
