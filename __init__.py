@@ -53,7 +53,8 @@ class APIDocumentation(ReadContainerBase):
     
     def get(self, key, default=None):
         """See zope.app.container.interfaces.IReadContainer"""
-        utility = zapi.queryUtility(self, IDocumentationModule, default, key)
+        utility = zapi.queryUtility(IDocumentationModule, default, key,
+                                    context=self)
         if utility != default:
             locate(utility, self, key)
         return utility

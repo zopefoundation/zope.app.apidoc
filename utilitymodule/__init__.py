@@ -18,7 +18,7 @@ $Id$
 from zope.interface import implements
 
 from zope.app import zapi
-from zope.app.component.nextservice import queryNextService
+from zope.app.component.localservice import queryNextService
 from zope.app.location.interfaces import ILocation
 from zope.app.servicenames import Utilities
 from zope.app.apidoc.interfaces import IDocumentationModule
@@ -80,7 +80,7 @@ class UtilityInterface(ReadContainerBase):
 
     def get(self, key, default=None):
         """See zope.app.container.interfaces.IReadContainer"""
-        service = zapi.getService(self, Utilities)        
+        service = zapi.getService(Utilities)
         if key == NONAME:
             key = ''
         utils = [Utility(self, reg)
@@ -91,7 +91,7 @@ class UtilityInterface(ReadContainerBase):
 
     def items(self):
         """See zope.app.container.interfaces.IReadContainer"""
-        service = zapi.getService(self, Utilities)
+        service = zapi.getService(Utilities)
         items = []
 
         while service is not None:
@@ -152,7 +152,7 @@ class UtilityModule(ReadContainerBase):
             return UtilityInterface(self, key, getattr(mod, parts[-1], default))
 
     def items(self):
-        service = zapi.getService(self, Utilities)
+        service = zapi.getService(Utilities)
         ifaces = {}
         while service is not None:
             for reg in service.registrations():

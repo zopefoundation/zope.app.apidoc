@@ -92,7 +92,7 @@ class ServiceModule(ReadContainerBase):
 
     def get(self, key, default=None):
         """See zope.app.container.interfaces.IReadContainer"""
-        service = zapi.getService(self, Services)
+        service = zapi.getService(Services)
         items = service.getServiceDefinitions()
 
         for name, iface in items:
@@ -107,7 +107,7 @@ class ServiceModule(ReadContainerBase):
 
     def items(self):
         """See zope.app.container.interfaces.IReadContainer"""
-        service = zapi.getService(self, Services)
+        service = zapi.getService(Services)
         items = service.getServiceDefinitions()
         items.sort()
         return [(name, self.get(name)) for name, iface in items]

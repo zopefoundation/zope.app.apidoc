@@ -44,7 +44,7 @@ class Menu(object):
 
           >>> from zope.app.apidoc.tests import pprint
           >>> from zope.app.apidoc.classmodule import Class
-          >>> cm = zapi.getUtility(None, IDocumentationModule, 'Class')
+          >>> cm = zapi.getUtility(IDocumentationModule, 'Class')
           >>> mod = cm['zope']['app']['apidoc']['classmodule']['browser']
 
           Setup a couple of classes and register them.
@@ -94,7 +94,7 @@ class Menu(object):
         path = self.request.get('path', None)
         if path is None:
             return []
-        classModule = zapi.getUtility(None, IDocumentationModule, "Class")
+        classModule = zapi.getUtility(IDocumentationModule, "Class")
         results = []
         for p in classRegistry.keys():
             if p.find(path) >= 0:
@@ -168,7 +168,7 @@ class ClassDetails(object):
             'url': 'http://127.0.0.1/zope/app/apidoc/classmodule/Module'}]
         """
         info = []
-        classModule = zapi.getUtility(None, IDocumentationModule, "Class")
+        classModule = zapi.getUtility(IDocumentationModule, "Class")
         for base in self.context.getBases():
             path = getPythonPath(base)
             klass = zapi.traverse(classModule, path.replace('.', '/'))
@@ -189,11 +189,11 @@ class ClassDetails(object):
 
           Note that the following output is a bit different than usual, since
           we have not setup all path elements.
-          
+
           >>> view.getBaseURL()
           'http://127.0.0.1'
         """
-        m = zapi.getUtility(None, IDocumentationModule, "Class")
+        m = zapi.getUtility(IDocumentationModule, "Class")
         return zapi.getView(zapi.getParent(m), 'absolute_url', self.request)()
 
 

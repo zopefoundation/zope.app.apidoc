@@ -22,7 +22,7 @@ class APIDocTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
 
     def testMenu(self):
-        response = self.publish('/++apidoc++/menu.html', 
+        response = self.publish('/++apidoc++/menu.html',
                                 basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
@@ -32,7 +32,7 @@ class APIDocTests(BrowserTestCase):
 
 
     def testIndexView(self):
-        response = self.publish('/++apidoc++/index.html', 
+        response = self.publish('/++apidoc++/index.html',
                                 basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
@@ -41,7 +41,7 @@ class APIDocTests(BrowserTestCase):
                                  basic='mgr:mgrpw')
 
     def testContentsView(self):
-        response = self.publish('/++apidoc++/contents.html', 
+        response = self.publish('/++apidoc++/contents.html',
                                 basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
@@ -58,7 +58,7 @@ class APIDocTests(BrowserTestCase):
             '<a href="contents.html" target="main">Zope 3 API Docs</a>') > 0)
         self.checkForBrokenLinks(body, '/++apidoc++/modulelist.html',
                                  basic='mgr:mgrpw')
-        
+
 
 def test_suite():
     return unittest.TestSuite((

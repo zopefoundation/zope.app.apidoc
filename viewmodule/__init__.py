@@ -158,7 +158,7 @@ class SkinDocumentation(object):
 
     def isDefault(self):
         """Return whether this skin is the default skin."""
-        service = zapi.getService(self.context, 'Presentation')
+        service = zapi.getService('Presentation')
         for registration in service.registrations():
             if isinstance(registration, DefaultSkinRegistration) and \
                    registration.skin == self.context.skin:
@@ -173,7 +173,7 @@ class SkinDocumentation(object):
 
         Each element of the list is a LayerDocumentation component.
         """
-        service = zapi.getService(self.context, 'Presentation')
+        service = zapi.getService('Presentation')
         layers = [zapi.getAdapter(reg, ILayerDocumentation)
                   for reg in service.registrations()
                   if (isinstance(reg, LayerRegistration) and

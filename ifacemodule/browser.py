@@ -342,7 +342,7 @@ class InterfaceDetails(object):
              'zope.app.traversing.interfaces.IPhysicallyLocatable'),
             ('required', [])]]
         """
-        service = zapi.getService(self.context, 'Adapters')
+        service = zapi.getService('Adapters')
         iface = removeAllProxies(self.context)
         adapters = []
         for reg in service.registrations():
@@ -382,7 +382,7 @@ class InterfaceDetails(object):
             ('name', ''),
             ('required', ['zope.app.apidoc.ifacemodule.tests.IBar'])]]
         """
-        service = zapi.getService(self.context, 'Adapters')
+        service = zapi.getService('Adapters')
         iface = removeAllProxies(self.context)
         adapters = []
         for reg in service.registrations():
@@ -443,7 +443,7 @@ class InterfaceDetails(object):
         """
         iface = removeAllProxies(self.context)
         factories = [(n, f) for n, f in
-                    zapi.getFactoriesFor(self.context, iface)
+                    zapi.getFactoriesFor(iface)
                     if iface in tuple(f.getInterfaces())]
         info = []
         for name, factory in factories:
@@ -473,7 +473,7 @@ class InterfaceDetails(object):
             ('url', 'zope/app/apidoc/ifacemodule/tests/Foo'),
             ('url_name', u'The Foo')]]
         """
-        service = zapi.getService(self.context, 'Utilities')
+        service = zapi.getService('Utilities')
         utils = service.getUtilitiesFor(removeAllProxies(self.context))
         info = []
         for name, util in utils:
@@ -499,6 +499,6 @@ class InterfaceDetails(object):
           ['Foo']
         """
         iface = removeAllProxies(self.context)
-        service = zapi.getService(self.context, 'Services')
+        service = zapi.getService('Services')
         services = service.getServiceDefinitions()
         return [ser[0] for ser in services if ser[1] is iface]
