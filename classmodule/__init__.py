@@ -14,9 +14,9 @@
 """Class Documentation Module
 
 This module is able to take a dotted name of any class and display
-documentation for it. 
+documentation for it.
 
-$Id: __init__.py,v 1.6 2004/04/02 00:50:18 srichter Exp $
+$Id: __init__.py,v 1.7 2004/04/02 01:45:07 tim_one Exp $
 """
 import os
 import sys
@@ -136,12 +136,14 @@ class Module(ReadContainerBase):
       >>> module.getDocString()[:24]
       'Zope 3 API Documentation'
 
-      >>> module.getFileName().find('src/zope/app/apidoc/__init__.py') > 0
+      >>> fname = module.getFileName()
+      >>> fname = fname.replace('\\\\', '/') # normalize pathname separator
+      >>> 'src/zope/app/apidoc/__init__.py' in fname
       True
 
       >>> module.getPath()
       'zope.app.apidoc'
-      
+
     The setup for creating the sub module and class tree is automatically
     called during initialization, so that the sub-objects are available as
     soon as you have the object::
@@ -220,7 +222,7 @@ class Module(ReadContainerBase):
 
                 elif type(attr) is FunctionType and not name.startswith('_'):
                     self.__children[attr.__name__] = Function(self, name, attr)
-                
+
 
     def getDocString(self):
         """See IModule."""
@@ -292,7 +294,7 @@ class Class(object):
 
       >>> klass.getMethods()[0]
       ('get', <unbound method APIDocumentation.get>, None)
-    
+
     """
     implements(ILocation, IClassDocumentation)
 
@@ -301,7 +303,7 @@ class Class(object):
         self.__name__ = name
         self.__klass = klass
 
-        # Setup interfaces that are implemented by this class. 
+        # Setup interfaces that are implemented by this class.
         self.__interfaces = list(implementedBy(klass))
         all_ifaces = {}
         for iface in self.__interfaces:
@@ -357,9 +359,9 @@ class Class(object):
            ('foo', 'f', <InterfaceClass zope.app.apidoc.classmodule.IBlah>)]
         """
         return [
-            (name, getattr(self.__klass, name), 
+            (name, getattr(self.__klass, name),
              getInterfaceForAttribute(name, self.__all_ifaces, asPath=False))
-            
+
             for name in getPublicAttributes(self.__klass)
             if not inspect.ismethod(getattr(self.__klass, name))]
 
@@ -392,7 +394,7 @@ class Class(object):
             <InterfaceClass zope.app.apidoc.classmodule.IBlah>)]
         """
         return [
-            (name, getattr(self.__klass, name), 
+            (name, getattr(self.__klass, name),
              getInterfaceForAttribute(name, self.__all_ifaces, asPath=False))
 
             for name in getPublicAttributes(self.__klass)
@@ -525,7 +527,7 @@ class ClassModule(Module):
     amount of information. Not only does it tell you about its base classes,
     implemented interfaces, attributes and methods, but it also lists the
     interface that requires a method or attribute to be implemented and the
-    permissions required to access it. 
+    permissions required to access it.
     """
 
     rootModules = ['ZConfig', 'ZODB', 'persistence', 'transaction', 'zdaemon',
@@ -535,7 +537,7 @@ class ClassModule(Module):
         """Initialize object."""
         super(ClassModule, self).__init__(None, '', None, False)
         self.__setup()
-        
+
     def __setup(self):
         """Setup module and class tree."""
         for name in self.rootModules:
