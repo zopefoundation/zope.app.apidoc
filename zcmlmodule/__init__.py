@@ -18,7 +18,7 @@ execute them) and uses the collected data to generate the tree. The result of
 the evaluation is stored in thread-global variables, so that we have to parse
 the files only once. 
 
-$Id: __init__.py,v 1.2 2004/02/25 22:26:47 faassen Exp $
+$Id: __init__.py,v 1.3 2004/03/02 15:48:36 srichter Exp $
 """
 import os
 
@@ -175,8 +175,8 @@ class ZCMLModule(ReadContainerBase):
 
       >>> print '\n'.join([ns.getShortName() for n, ns in module.items()][1:4])
       browser
-      code
       dav
+      event
     """
 
     implements(IDocumentationModule)
