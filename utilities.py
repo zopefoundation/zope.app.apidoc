@@ -126,12 +126,18 @@ def getPythonPath(obj):
       >>> class ISample(Interface):
       ...     pass
       >>> class Sample(object):
-      ...     pass
+      ...     def sample(self):
+      ...         pass
 
       >>> getPythonPath(ISample)
       'zope.app.apidoc.utilities.ISample'
 
       >>> getPythonPath(Sample)
+      'zope.app.apidoc.utilities.Sample'
+
+      For methods getPythonPath returns the class path:
+
+      >>> getPythonPath(Sample.sample)
       'zope.app.apidoc.utilities.Sample'
 
       >>> try:
@@ -142,6 +148,8 @@ def getPythonPath(obj):
     """
     if obj is None:
         return None
+    if hasattr(obj, "im_class"):
+        obj = obj.im_class
     module = obj.__module__
     return '%s.%s' %(module, obj.__name__)
 
@@ -223,9 +231,9 @@ def getPermissionIds(name, checker=_marker, klass=_marker):
 
       >>> entries = getPermissionIds('attr2', klass=Sample)
       >>> print entries['read_perm']
-      N/A
+      n/a
       >>> print entries['write_perm']
-      N/A
+      n/a
 
       Sample2 does not have a checker.
 
