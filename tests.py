@@ -101,7 +101,7 @@ def test_suite():
         #             setUp=setUp, tearDown=tearDown),
         #DocTestSuite('zope.app.apidoc.browser.apidoc',
         #             setUp=setUp, tearDown=tearDown),
-        #DocTestSuite('zope.app.apidoc.utilities'),
+        DocTestSuite('zope.app.apidoc.utilities'),
         DocTestSuite('zope.app.apidoc.tests'),
         ))
 
