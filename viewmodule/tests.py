@@ -13,14 +13,13 @@
 ##############################################################################
 """Tests for the Class Documentation Module
 
-$Id: tests.py,v 1.1 2004/03/28 23:41:55 srichter Exp $
+$Id: tests.py,v 1.2 2004/03/30 02:01:24 srichter Exp $
 """
 import unittest
 from zope.interface import Interface
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.testing.doctestunit import DocTestSuite
 from zope.app import zapi
-from zope.app.apidoc.tests import pprintDict
 from zope.app.tests import placelesssetup, ztapi
 from zope.app.component.interface import provideInterface
 
