@@ -684,7 +684,8 @@ def safe_import(path, default=None):
 
       Cleanup
 
-      >>> del sys.modules['shelve']
+      >>> if 'shelve' in sys.modules.keys():
+      ...     del sys.modules['shelve']
     """
     module = sys.modules.get(path, default)
     if module is default:
