@@ -120,7 +120,7 @@ class UtilityModule(ReadContainerBase):
 
       >>> print '\n'.join([id for id, iface in module.items()])
       zope.app.apidoc.interfaces.IDocumentationModule
-      zope.app.security.interfaces.IPermission
+      zope.security.interfaces.IPermission
     """
 
     implements(IDocumentationModule)
