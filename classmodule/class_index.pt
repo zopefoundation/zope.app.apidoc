@@ -2,7 +2,7 @@
 <body metal:fill-slot="contents">
 
   <h1 class="details-header"
-      tal:content="view/path">
+      tal:content="context/getPath">
     zope.app.Klass
   </h1>
 
@@ -21,8 +21,8 @@
     <ul class="attr-list" tal:condition="bases">
       <li tal:repeat="base bases">
         <a href=""
-           tal:attributes="href string:./index.html?path=$base"
-           tal:content="base" />
+           tal:attributes="href string:${base/url}/index.html"
+           tal:content="base/path" />
       </li>
     </ul>
     
@@ -40,7 +40,8 @@
     <ul class="attr-list" tal:condition="ifaces">
       <li tal:repeat="iface ifaces">
         <a href=""
-           tal:attributes="href string:../Interface/$iface/apiindex.html"
+           tal:attributes="href 
+               string:${view/getBaseURL}/Interface/$iface/apiindex.html"
            tal:content="iface" />
       </li>
     </ul>
