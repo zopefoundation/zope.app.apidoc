@@ -223,7 +223,8 @@ class Module(ReadContainerBase):
             if hasattr(attr, '__module__') and \
                    attr.__module__ == self.__module.__name__:
 
-                if type(attr) in (ClassType, TypeType):
+                if type(attr) in (ClassType, TypeType) and \
+                       attr.__name__ == name:
                     self.__children[attr.__name__] = Class(self, name, attr)
 
                 elif type(attr) is FunctionType and not name.startswith('_'):
