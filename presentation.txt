@@ -26,7 +26,7 @@ Before we can check the result, we have to make sure that all Windows paths
 are converted to Unix-like paths. We also clip off instance-specific parts of
 the template path:
 
-  >>> info['template'] = info['template'].replace('\\\\', '/')[-32:]
+  >>> info['template'] = info['template'].replace('\\', '/')[-32:]
   >>> pprint(info)
   {'path': 'zope.app.pagetemplate.simpleviewclass.simple',
    'referencable': True,
