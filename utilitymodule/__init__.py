@@ -17,6 +17,7 @@ $Id$
 """
 __docformat__ = 'restructuredtext'
 
+from zope.component.site import UtilityRegistration
 from zope.interface import implements
 
 from zope.app import zapi
@@ -87,7 +88,8 @@ class UtilityInterface(ReadContainerBase):
             key = ''
         utils = [Utility(self, reg)
                  for reg in sm.registrations()
-                 if reg.name == key and reg.provided == self.interface]
+                 if isinstance(reg, UtilityRegistration) and \
+                     reg.name == key and reg.provided == self.interface]
 
         return utils and utils[0] or default
 
@@ -153,8 +155,9 @@ class UtilityModule(ReadContainerBase):
         ifaces = {}
         while sm is not None:
             for reg in sm.registrations():
-                path = getPythonPath(reg.provided)
-                ifaces[path] = UtilityInterface(self, path, reg.provided)
+                if isinstance(reg, UtilityRegistration):
+                    path = getPythonPath(reg.provided)
+                    ifaces[path] = UtilityInterface(self, path, reg.provided)
             sm = queryNextSiteManager(sm)
 
         items = ifaces.items()

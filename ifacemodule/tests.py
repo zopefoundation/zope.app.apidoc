@@ -117,9 +117,6 @@ def setUp(test):
     ztapi.provideUtility(IFactory, Factory(Foo, title='Foo Factory'),
                          'FooFactory')
     ztapi.provideUtility(IFoo, Foo(), 'The Foo')
-    sm = zapi.getGlobalServices()
-    sm.defineService('Foo', IFoo)
-    sm.provideService('Foo', Foo())
 
     
 def test_suite():

@@ -19,6 +19,7 @@ __docformat__ = 'restructuredtext'
 
 from types import FunctionType, MethodType, ClassType, TypeType
 from zope.component import ComponentLookupError
+from zope.component.site import AdapterRegistration
 from zope.interface.declarations import providedBy
 from zope.interface.interfaces import IMethod, IInterface 
 from zope.proxy import removeAllProxies
@@ -432,13 +433,8 @@ class InterfaceDetails(object):
 
           >>> adapters = details.getRequiredAdapters()
           >>> adapters.sort()
-          >>> pprint(adapters[:2])
-          [[('factory', 'None.append'),
-            ('factory_url', 'None/append'),
-            ('name', None),
-            ('provided', None),
-            ('required', [])],
-           [('factory',
+          >>> pprint(adapters)
+          [[('factory',
              'zope.app.location.traversing.LocationPhysicallyLocatable'),
             ('factory_url',
              'zope/app/location/traversing/LocationPhysicallyLocatable'),
@@ -453,6 +449,9 @@ class InterfaceDetails(object):
         iface = removeSecurityProxy(self.context)
         adapters = []
         for reg in sm.registrations():
+            # Only grab adapters
+            if not isinstance(reg, AdapterRegistration):
+                continue
             # Only grab the adapters for which this interface is required
             if reg.required and reg.required[0] is not None and \
                    iface not in reg.required:
@@ -501,6 +500,9 @@ class InterfaceDetails(object):
         iface = removeAllProxies(self.context)
         adapters = []
         for reg in sm.registrations():
+            # Only grab adapters
+            if not isinstance(reg, AdapterRegistration):
+                continue
             # Only grab adapters for which this interface is provided
             if iface is not reg.provided:
                 continue
