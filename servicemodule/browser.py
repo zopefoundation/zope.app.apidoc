@@ -13,7 +13,7 @@
 ##############################################################################
 """Service Details View
 
-$Id: browser.py,v 1.2 2004/02/25 22:26:46 faassen Exp $
+$Id: browser.py,v 1.3 2004/03/28 23:41:00 srichter Exp $
 """
 from zope.proxy import removeAllProxies
 
@@ -22,10 +22,33 @@ from zope.app.location import LocationProxy
 from zope.app.apidoc.ifacemodule.browser import InterfaceDetails
 from zope.app.apidoc.utilities import getPythonPath
 
-__metaclass__ = type
+class Menu(object):
+    """Menu View Helper Class
 
-class Menu:
-    """Menu View Helper Class"""
+    'node' is a 'zope.app.tree.node.Node' instance.
+
+    Examples::
+
+      >>> from zope.component.interfaces import IUtilityService
+      >>> from zope.component.utility import GlobalUtilityService
+      >>> from zope.app.tree.node import Node 
+      >>> from zope.app.apidoc.servicemodule import ServiceModule, Service
+      >>> from zope.app.apidoc.tests import Root
+
+      >>> servicemod = ServiceModule()
+      >>> servicemod.__name__ = 'Services'
+      >>> servicemod.__parent__ = Root()
+      >>> service = Service(servicemod, 'Utilities', IUtilityService,
+      ...                   [GlobalUtilityService])
+      >>> menu = Menu()
+
+      >>> node = Node(service)
+      >>> menu.getMenuTitle(node)
+      'Utilities'
+
+      >>> menu.getMenuLink(node)
+      './Utilities/index.html'
+    """
 
     def getMenuTitle(self, node):
         """Return the title of the node that is displayed in the menu."""
@@ -36,18 +59,56 @@ class Menu:
         return './'+ zapi.name(node.context) + '/index.html'
 
 
-class ServiceDetails:
-    """View for a Service in the API Documentation"""
+class ServiceDetails(object):
+    """View for a Service in the API Documentation
+
+    Example::
+    
+      >>> import pprint
+      >>> pprint = pprint.PrettyPrinter(width=69).pprint
+      >>> from zope.component.interfaces import IUtilityService
+      >>> from zope.component.utility import GlobalUtilityService
+      >>> from zope.publisher.browser import TestRequest
+      >>> from zope.app.tree.node import Node 
+      >>> from zope.app.apidoc.servicemodule import ServiceModule, Service
+      >>> from zope.app.apidoc.tests import Root
+    
+      >>> servicemod = ServiceModule()
+      >>> servicemod.__name__ = 'Services'
+      >>> servicemod.__parent__ = Root()
+      >>> service = Service(servicemod, 'Utilities', IUtilityService,
+      ...                   [GlobalUtilityService()])
+      >>> details = ServiceDetails()
+      >>> details.context = service
+      >>> details.request = TestRequest()
+
+      >>> iface = details.interface()
+      >>> iface.getId()
+      'zope.component.interfaces.IUtilityService'
+
+      >>> impl = details.implementations()
+      >>> impl = [i.items() for i in impl]
+      >>> impl = [i for i in impl if i.sort() is None]
+      >>> impl.sort()
+      >>> pprint(impl)
+      [[('path', 'zope.component.utility.GlobalUtilityService'),
+        ('url', 'zope/component/utility/GlobalUtilityService')]]
+    """
 
     def interface(self):
         """Get the details view of the interface the service provides."""
         iface = LocationProxy(self.context.interface,
                                self.context,
                                getPythonPath(self.context.interface))
-        return InterfaceDetails(iface, self.request)
+        details = InterfaceDetails()
+        details.context = iface
+        details.request = self.request
+        return details
     
     def implementations(self):
         """Retrieve a list of implementations of this service."""
         impl = map(removeAllProxies, self.context.implementations)
         impl = map(lambda x: x.__class__, self.context.implementations)
-        return map(getPythonPath, impl)
+        return [{'path': getPythonPath(klass),
+                 'url': getPythonPath(klass).replace('.', '/')}
+                for klass in impl]
