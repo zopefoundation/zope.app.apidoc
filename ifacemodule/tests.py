@@ -13,10 +13,10 @@
 ##############################################################################
 """Tests for the Interface Documentation Module
 
-$Id: tests.py,v 1.2 2004/03/05 15:45:52 eddala Exp $
+$Id: tests.py,v 1.3 2004/03/13 21:03:01 srichter Exp $
 """
 import unittest
-from zope.app.interfaces.traversing import IContainmentRoot
+from zope.app.traversing.interfaces import IContainmentRoot
 from zope.app.location import LocationProxy
 from zope.app.tests import placelesssetup
 from zope.interface import implements

@@ -13,7 +13,7 @@
 ##############################################################################
 """Tests for the Utility Documentation Module
 
-$Id: tests.py,v 1.1 2004/02/19 20:46:42 philikon Exp $
+$Id: tests.py,v 1.2 2004/03/13 21:03:02 srichter Exp $
 """
 import unittest
 
@@ -21,7 +21,7 @@ from zope.interface import implements
 from zope.testing.doctestunit import DocTestSuite
 
 from zope.app import zapi
-from zope.app.interfaces.traversing import IContainmentRoot
+from zope.app.traversing.interfaces import IContainmentRoot
 from zope.app.location import LocationProxy
 from zope.app.tests import placelesssetup
 
