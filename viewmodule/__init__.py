@@ -108,7 +108,7 @@ class ViewModule(object):
         """ 
         # Only the global presentation service defines skins 
         service = zapi.getGlobalService('Presentation')
-        skins = [zapi.getAdapter(reg, ISkinDocumentation)
+        skins = [ISkinDocumentation(reg)
                  for reg in service.registrations()
                  if isinstance(reg, SkinRegistration)]
         skins.sort(lambda x, y: cmp(x.name, y.name))
@@ -174,7 +174,7 @@ class SkinDocumentation(object):
         Each element of the list is a LayerDocumentation component.
         """
         service = zapi.getService('Presentation')
-        layers = [zapi.getAdapter(reg, ILayerDocumentation)
+        layers = [ILayerDocumentation(reg)
                   for reg in service.registrations()
                   if (isinstance(reg, LayerRegistration) and
                       reg.layer in self.context.layers)]
@@ -183,7 +183,7 @@ class SkinDocumentation(object):
         if 'default' in self.context.layers:
             default = LayerRegistration('default',
                                         'This is a predefined skin.')
-            layers.append(zapi.getAdapter(default, ILayerDocumentation))
+            layers.append(ILayerDocumentation(default))
         return layers
         
     # See ISkinDocumentation
