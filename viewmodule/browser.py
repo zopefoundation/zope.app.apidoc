@@ -13,8 +13,9 @@
 ##############################################################################
 """Views/Presentation Module Views
 
-$Id: browser.py,v 1.4 2004/03/28 23:41:43 srichter Exp $
+$Id: browser.py,v 1.5 2004/03/29 05:12:26 srichter Exp $
 """
+from os.path import dirname
 from types import ClassType
 
 from zope.interface import Interface
@@ -25,6 +26,9 @@ from zope.app.apidoc.utilities import getPythonPath, getPermissionIds
 from zope.app.apidoc.utilities import columnize
 from zope.app.component.interface import searchInterfaceIds
 from zope.app.component.interface import getInterface
+
+import zope
+BASEDIR = dirname(dirname(dirname(zope.__file__)))
 
 class Menu(object):
     """Views module Menu"""
@@ -121,12 +125,11 @@ def _getFactoryData(factory):
       >>> view = SimpleViewClass('index.pt')
       >>> info = _getFactoryData(view)
       >>> pprintDict(info)
-      [('path', 'zope.app.pagetemplate.simpleviewclass.SimpleViewClass'),
-       ('referencable', False),
+      [('path', 'zope.app.pagetemplate.simpleviewclass.simple'),
+       ('referencable', True),
        ('resource', None),
-       ('template',
-        '/opt/zope/Zope3/Zope3-Fresh/src/zope/app/apidoc/viewmodule/index.pt'),
-       ('url', None)]
+       ('template', 'Zope3/src/zope/app/apidoc/viewmodule/index.pt'),
+       ('url', 'zope/app/pagetemplate/simpleviewclass/simple')]
  
       The factory is a simple type:
       
@@ -163,34 +166,35 @@ def _getFactoryData(factory):
       
     """
     info = {'path': None, 'url': None, 'template': None, 'resource': None,
-            'referencable': False}
+            'referencable': True}
 
     if hasattr(factory, '__name__') and \
        factory.__name__.startswith('SimpleViewClass'):
-        info['path'] = factory.__module__ + '.SimpleViewClass'
-        info['template'] = factory.index.filename 
+        # In the case of a SimpleView, the base is really what we are
+        # interested in. Usually the first listed class is the interesting one.
+        base = factory.__bases__[0]
+        info['path'] = base.__module__ + '.' + base.__name__
+        info['template'] = factory.index.filename.replace(BASEDIR, 'Zope3')
 
     elif isinstance(factory, (str, unicode, float, int, list, tuple)):
-        pass
+        info['referencable'] = False
 
     elif factory.__module__.startswith('zope.app.publisher.browser.viewmeta'):
         info['path'] = getPythonPath(factory.__bases__[0])
-        info['referencable'] = True
 
     elif hasattr(factory, '__name__') and factory.__name__ == 'proxyView':
-        info['path'] = factory.__module__ + '.proxyView'
+        if hasattr(factory, 'factory'):
+            factory = factory.factory
+        info['path'] = factory.__module__ + '.' + factory.__name__
 
     elif not hasattr(factory, '__name__'):
         info['path'] = getPythonPath(factory.__class__)
-        info['referencable'] = True
 
     elif type(factory) in (type, ClassType):
         info['path'] = getPythonPath(factory)
-        info['referencable'] = True
 
     else:
         info['path'] = getPythonPath(factory)
-        info['referencable'] = True
 
     if info['referencable']:
         info['url'] = info['path'].replace('.', '/')
@@ -250,6 +254,7 @@ class ViewsDetails(object):
              ('template', None),
              ('url', 'zope/app/apidoc/viewmodule/tests/FooView')]),
            ('name', u'index.html'),
+           ('provided', 'zope.interface.Interface'),
            ('read_perm', None),
            ('required', 'zope.app.apidoc.viewmodule.tests.IFoo'),
            ('type', 'zope.publisher.interfaces.browser.IBrowserRequest'),
@@ -261,10 +266,11 @@ class ViewsDetails(object):
             for required, provided, more_req, name, factory in views:
                 if self.show_all or \
                        not (required is None or required is Interface):
-                    entry = {'name' : name,
+                    entry = {'name' : name or '<i>no name</i>',
                              'required' : getPythonPath(required),
                              'type' : getPythonPath(more_req[0]),
-                             'factory' : _getFactoryData(factory)
+                             'factory' : _getFactoryData(factory),
+                             'provided' : getPythonPath(provided)
                              }
                     # Educated choice of the attribute name
                     entry.update(getPermissionIds('publishTraverse',
