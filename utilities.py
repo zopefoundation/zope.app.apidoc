@@ -295,11 +295,12 @@ def getFunctionSignature(func):
       
       >>> try:
       ...     getFunctionSignature('func')
-      ... except AssertionError:
+      ... except TypeError:
       ...     print 'Argument not a function or method.'
       Argument not a function or method.
     """
-    assert type(func) in (types.FunctionType, types.MethodType)
+    if not isinstance(func, (types.FunctionType, types.MethodType)):
+        raise TypeError("func must be a function or method")
     
     args, varargs, varkw, default = inspect.getargspec(func)
     placeholder = object()
@@ -390,9 +391,9 @@ def getInterfaceForAttribute(name, interfaces=_marker, klass=_marker,
     This function is nice, if you have an attribute name which you retrieved
     from a class and want to know which interface requires it to be there.
 
-    Either `interfaces` or `klass` must be specified. If `interfaces` is not
-    specified, the `klass` is used to retrieve a list of
-    interfaces. `interfaces` must be iteratable.
+    Either 'interfaces' or 'klass' must be specified. If 'interfaces' is not
+    specified, the 'klass' is used to retrieve a list of
+    interfaces. 'interfaces' must be iterable.
 
     `asPath` specifies whether the dotted name of the interface or the
     interface object is returned.
@@ -428,14 +429,18 @@ def getInterfaceForAttribute(name, interfaces=_marker, klass=_marker,
       >>> getInterfaceForAttribute('attr2', klass=Sample) is None
       True
 
-      >>> try:
-      ...     getInterfaceForAttribute('getAttr')
-      ... except AssertionError:
-      ...     print 'need to specify the interfaces or a klass'
-      need to specify the interfaces or a klass
+      >>> getInterfaceForAttribute('getAttr')
+      Traceback (most recent call last):
+      ValueError: need to specify interfaces or klass
+      >>> getInterfaceForAttribute('getAttr', interfaces=(I1,I2), klass=Sample)
+      Traceback (most recent call last):
+      ValueError: must specify only one of interfaces and klass
 
     """
-    assert (interfaces is _marker) != (klass is _marker)
+    if (interfaces is _marker) and (klass is _marker):
+        raise ValueError("need to specify interfaces or klass")
+    if (interfaces is not _marker) and (klass is not _marker):
+        raise ValueError("must specify only one of interfaces and klass")
 
     if interfaces is _marker:
         direct_interfaces = list(implementedBy(klass))
