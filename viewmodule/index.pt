@@ -17,6 +17,12 @@
     <ul>
       <li tal:repeat="View layer/views">
         <b tal:content="structure View/name" /><br />
+        <tal:omit-tag condition="View/info">
+          <span class="small">
+            <i tal:content="View/info" />
+          </span>
+          <br />
+        </tal:omit-tag>
         <div class="indent"><span class="small">
           <i>required:</i>
           <a href=""
@@ -65,13 +71,14 @@
                tal:content="View/factory/resource" />
             <br />
           </tal:omit-tag>
-          <span class="small" 
+          <span 
               tal:condition="python: View['read_perm'] and View['write_perm']">
             <i>Permissions:</i>
             <span tal:replace="View/read_perm">zope.View</span> (read), 
             <span tal:replace="View/write_perm">zope.View</span> (write)
           </span>
         </span></div>
+        <br />
       </li>
     </ul>
     </div>
