@@ -13,7 +13,7 @@
 ##############################################################################
 """Generic API Documentation Interfaces
 
-$Id: interfaces.py,v 1.1 2004/02/19 20:46:39 philikon Exp $
+$Id$
 """
 from zope.interface import Interface
 from zope.schema import TextLine, Text

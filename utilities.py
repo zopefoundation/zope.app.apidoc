@@ -13,7 +13,7 @@
 ##############################################################################
 """Utilties to make the life of Documentation Modules easier.
 
-$Id: utilities.py,v 1.6 2004/03/29 15:08:26 srichter Exp $
+$Id$
 """
 import re
 import types

@@ -13,7 +13,7 @@
 ##############################################################################
 """Service Documentation Module
 
-$Id: __init__.py,v 1.6 2004/03/28 23:40:56 srichter Exp $
+$Id$
 """
 from zope.interface import implements
 from zope.component import ComponentLookupError

@@ -13,7 +13,7 @@
 ##############################################################################
 """Functional Tests for API Documentation.
 
-$Id: ftests.py,v 1.3 2004/04/06 20:57:59 jim Exp $
+$Id$
 """
 import unittest
 from zope.app.tests.functional import BrowserTestCase

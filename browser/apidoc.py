@@ -13,7 +13,7 @@
 ##############################################################################
 """Main API Documentation View
 
-$Id: apidoc.py,v 1.3 2004/03/28 23:39:32 srichter Exp $
+$Id$
 """
 from zope.app.apidoc.utilities import stx2html
 

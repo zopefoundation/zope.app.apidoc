@@ -13,7 +13,7 @@
 ##############################################################################
 """Zope 3 API Documentation
 
-$Id: __init__.py,v 1.8 2004/04/18 16:00:30 jim Exp $
+$Id$
 """
 from zope.interface import implements
 

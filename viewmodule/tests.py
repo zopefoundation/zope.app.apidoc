@@ -13,7 +13,7 @@
 ##############################################################################
 """Tests for the Class Documentation Module
 
-$Id: tests.py,v 1.3 2004/04/15 13:24:58 srichter Exp $
+$Id$
 """
 import unittest
 from zope.interface import Interface

@@ -13,7 +13,7 @@
 ##############################################################################
 """Class Documentation Module Views
 
-$Id: browser.py,v 1.6 2004/04/02 08:28:41 philikon Exp $
+$Id$
 """
 import os
 import inspect

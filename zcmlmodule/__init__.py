@@ -18,7 +18,7 @@ execute them) and uses the collected data to generate the tree. The result of
 the evaluation is stored in thread-global variables, so that we have to parse
 the files only once. 
 
-$Id: __init__.py,v 1.7 2004/03/29 15:08:38 srichter Exp $
+$Id$
 """
 import os
 

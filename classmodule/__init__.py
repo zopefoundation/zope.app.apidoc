@@ -16,7 +16,7 @@
 This module is able to take a dotted name of any class and display
 documentation for it.
 
-$Id: __init__.py,v 1.11 2004/04/18 16:00:31 jim Exp $
+$Id$
 """
 import os
 import sys

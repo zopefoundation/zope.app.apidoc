@@ -13,7 +13,7 @@
 ##############################################################################
 """Browser Views for ZCML Reference
 
-$Id: browser.py,v 1.5 2004/03/30 02:01:38 srichter Exp $
+$Id$
 """
 from zope.proxy import removeAllProxies
 from zope.configuration.xmlconfig import ParserInfo

@@ -13,7 +13,7 @@
 ##############################################################################
 """Tests for the Interface Documentation Module
 
-$Id: tests.py,v 1.5 2004/03/29 00:39:56 srichter Exp $
+$Id$
 """
 import unittest
 from zope.component.interfaces import IFactory

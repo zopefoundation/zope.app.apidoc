@@ -13,7 +13,7 @@
 ##############################################################################
 """View Documentation Module
 
-$Id: __init__.py,v 1.5 2004/05/03 18:52:57 spascoe Exp $
+$Id$
 """
 from zope.app import zapi
 from zope.interface import implements, classImplements, Interface, Attribute

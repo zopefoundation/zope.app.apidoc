@@ -13,7 +13,7 @@
 ##############################################################################
 """Utility Documentation Module
 
-$Id: __init__.py,v 1.6 2004/04/17 14:33:21 srichter Exp $
+$Id$
 """
 from zope.interface import implements
 

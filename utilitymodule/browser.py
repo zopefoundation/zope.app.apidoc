@@ -13,7 +13,7 @@
 ##############################################################################
 """Utility Module Views
 
-$Id: browser.py,v 1.4 2004/04/17 14:33:21 srichter Exp $
+$Id$
 """
 from types import InstanceType
 from zope.app import zapi

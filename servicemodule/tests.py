@@ -13,7 +13,7 @@
 ##############################################################################
 """Tests for the Service Documentation Module
 
-$Id: tests.py,v 1.2 2004/03/28 23:41:12 srichter Exp $
+$Id$
 """
 import unittest
 from zope.testing.doctestunit import DocTestSuite

@@ -13,7 +13,7 @@
 ##############################################################################
 """Tests for the Utility Documentation Module
 
-$Id: tests.py,v 1.4 2004/04/17 14:33:21 srichter Exp $
+$Id$
 """
 import unittest
 

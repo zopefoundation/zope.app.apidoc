@@ -13,7 +13,7 @@
 ##############################################################################
 """Views/Presentation Module Views
 
-$Id: browser.py,v 1.11 2004/04/24 23:19:27 srichter Exp $
+$Id$
 """
 from types import ClassType
 

@@ -17,7 +17,7 @@ A list of interfaces from the Interface Service is pretty much unmanagable and
 is very confusing. Therefore it is nice to split the path of the interface, so
 that we get a deeper tree with nodes having shorter, manageable names.
 
-$Id: menu.py,v 1.4 2004/04/11 18:16:21 jim Exp $
+$Id$
 """
 from zope.interface import implements
 from zope.proxy import removeAllProxies

@@ -13,7 +13,7 @@
 ##############################################################################
 """Service Details View
 
-$Id: browser.py,v 1.4 2004/03/30 02:01:14 srichter Exp $
+$Id$
 """
 from zope.proxy import removeAllProxies
 

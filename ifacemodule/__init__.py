@@ -18,7 +18,7 @@ interface service. Therefore, currently there are no unregsitered interfaces
 listed in the documentation. This might be good, since unregistered interfaces
 are usually private and not of interest to a general developer.
 
-$Id: __init__.py,v 1.5 2004/03/28 23:40:32 srichter Exp $
+$Id$
 """
 from zope.app import zapi
 from zope.interface import implements

@@ -13,7 +13,7 @@
 ##############################################################################
 """Functional Tests for ZCML Documentation Module.
 
-$Id: ftests.py,v 1.2 2004/04/06 20:58:03 jim Exp $
+$Id$
 """
 import unittest
 from zope.app.tests.functional import BrowserTestCase

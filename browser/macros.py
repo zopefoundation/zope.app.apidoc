@@ -13,7 +13,7 @@
 ##############################################################################
 """API Documentation macros
 
-$Id: macros.py,v 1.2 2004/03/02 17:11:10 philikon Exp $
+$Id$
 """
 from zope.app.basicskin.standardmacros import StandardMacros
 

@@ -13,7 +13,7 @@
 ##############################################################################
 """Functional Tests for Class Documentation Module.
 
-$Id: ftests.py,v 1.4 2004/04/18 16:00:31 jim Exp $
+$Id$
 """
 import unittest
 from zope.app.tests.functional import BrowserTestCase

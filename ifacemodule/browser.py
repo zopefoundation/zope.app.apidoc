@@ -13,7 +13,7 @@
 ##############################################################################
 """Interface Details View
 
-$Id: browser.py,v 1.9 2004/04/11 18:16:18 jim Exp $
+$Id$
 """
 from types import FunctionType, MethodType, ClassType, TypeType
 from zope.component import ComponentLookupError

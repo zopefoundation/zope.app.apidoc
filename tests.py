@@ -13,7 +13,7 @@
 ##############################################################################
 """Tests for the Interface Documentation Module
 
-$Id: tests.py,v 1.4 2004/03/30 01:59:54 srichter Exp $
+$Id$
 """
 from pprint import PrettyPrinter
 import unittest
