@@ -324,6 +324,38 @@ If you do not pass a function or method to the function, it will fail:
   ...
   TypeError: func must be a function or method
 
+A very uncommon, but perfectly valid, case is that tuple arguments are
+unpacked inside the argument list of the function. Here is an example:
+
+  >>> def func((arg1, arg2)):
+  ...     pass
+  >>> utilities.getFunctionSignature(func)
+  '((arg1, arg2))'
+
+Even default assignment is allowed:
+
+  >>> def func((arg1, arg2)=(1, 2)):
+  ...     pass
+  >>> utilities.getFunctionSignature(func)
+  '((arg1, arg2)=(1, 2))'
+
+However, lists of this type are not allowed inside the argument list:
+
+  >>> def func([arg1, arg2]):
+  ...     pass
+  Traceback (most recent call last):
+  ...
+  SyntaxError: invalid syntax
+
+Internal assignment is also not legal:
+
+  >>> def func((arg1, arg2=1)):
+  ...     pass
+  Traceback (most recent call last):
+  ...
+  SyntaxError: invalid syntax
+
+
 `getPublicAttributes(obj)`
 --------------------------
 

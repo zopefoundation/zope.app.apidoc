@@ -128,27 +128,34 @@ def getFunctionSignature(func):
     if not isinstance(func, (types.FunctionType, types.MethodType)):
         raise TypeError("func must be a function or method")
     
-    args, varargs, varkw, default = inspect.getargspec(func)
+    args, varargs, varkw, defaults = inspect.getargspec(func)
     placeholder = object()
     sig = '('
     # By filling up the default tuple, we now have equal indeces for args and
     # default.
-    if default is not None:
-        default = (placeholder,)*(len(args)-len(default)) + default
+    if defaults is not None:
+        defaults = (placeholder,)*(len(args)-len(defaults)) + defaults
     else:
-        default = (placeholder,)*len(args)
+        defaults = (placeholder,)*len(args)
 
     str_args = []
 
-    for i in range(len(args)):
+    for name, default in zip(args, defaults):
         # Neglect self, since it is always there and not part of the signature.
         # This way the implementation and interface signatures should match.
-        if args[i] == 'self' and type(func) == types.MethodType:
+        if name == 'self' and type(func) == types.MethodType:
             continue
-        if default[i] is placeholder:
-            str_args.append(args[i])
+
+        # Make sure the name is a string
+        if isinstance(name, (tuple, list)):
+            name = '(' + ', '.join(name) + ')'
+        elif not isinstance(name, str):
+            name = repr(name)
+
+        if default is placeholder:
+            str_args.append(name)
         else:
-            str_args.append(args[i] + '=' + repr(default[i]))
+            str_args.append(name + '=' + repr(default))
 
     if varargs:
         str_args.append('*'+varargs)
