@@ -642,7 +642,7 @@ addCleanUp(cleanUp)
 
 
 def safe_import(path, default=None):
-    """Import a given path as efficiently as possible and without failure.
+    r"""Import a given path as efficiently as possible and without failure.
 
     First we try to find the path in 'sys.modules', since this lookup is much
     more efficient than importing it. If it was not found, we go back and try
@@ -655,13 +655,32 @@ def safe_import(path, default=None):
       >>> safe_import('zope.app') is sys.modules['zope.app']
       True
 
-      >>> 'shelve' in sys.modules
-      False
-      >>> safe_import('shelve').__name__
-      'shelve'
-
       >>> safe_import('weirdname') is None
       True
+
+    For this example, we'll create a dummy module:
+
+      >>> here = os.path.dirname(__file__)
+      >>> filename = os.path.join(here, 'testmodule.py')
+      >>> f = open(filename, 'w')
+      >>> f.write('# dummy module\n')
+      >>> f.close()
+
+    The temporary module is not already imported, but will be once
+    we've called safe_import():
+
+      >>> module_name = __name__ + '.testmodule'
+      >>> module_name in sys.modules
+      False
+      >>> safe_import(module_name).__name__ == module_name
+      True
+      >>> module_name in sys.modules
+      True
+      >>> del sys.modules[module_name]
+
+    Now clean up the temporary module, just to play nice:
+
+      >>> os.unlink(filename)
     """
     module = sys.modules.get(path, default)
     if module is default:
