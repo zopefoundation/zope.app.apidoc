@@ -142,7 +142,7 @@ def getRealFactory(factory):
 def getParserInfoInfoDictionary(info):
     """Return a PT-friendly info dictionary for a parser info object."""
     return {'file': relativizePath(info.file),
-            'url': relativizePath(info.file)[10:].replace('\\\\', '/'),
+            'url': relativizePath(info.file)[10:].replace('\\', '/'),
             'line': info.line,
             'eline': info.eline,
             'column': info.column,

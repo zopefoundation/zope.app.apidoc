@@ -45,7 +45,7 @@ We can now get some of the common module attributes via accessor methods:
   True
 
   >>> fname = module.getFileName()
-  >>> fname = fname.replace('\\\\', '/') # Fix for Windows users
+  >>> fname = fname.replace('\\', '/') # Fix for Windows users
   >>> 'zope/app/apidoc/__init__.py' in fname
   True
 
@@ -305,7 +305,7 @@ the parser info object,
   >>> info = `root.info`
   
   # Windows fix
-  >>> info = info.replace('\\\\', '/')
+  >>> info = info.replace('\\', '/')
 
   >>> print info
   File
