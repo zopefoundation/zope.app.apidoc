@@ -15,6 +15,7 @@
 
 $Id$
 """
+__docformat__ = 'restructuredtext'
 from zope.app import zapi
 from zope.interface import implements, classImplements, Interface, Attribute
 from zope.component.presentation import SkinRegistration
@@ -71,8 +72,8 @@ class ViewModule(object):
     interface and a presentation type for which views should be found.
 
     By default, the resulting views exclude views that have no required
-    interface ('None') or are registered to require
-    'zope.interface.Interface'. To see these additional views, click on
+    interface (``None``) or are registered to require
+    ``zope.interface.Interface``. To see these additional views, click on
     "Show all views".
 
     Once you click on "Show" you will be presented with a list of all
@@ -120,7 +121,7 @@ class SkinDocumentation(object):
 
     This is used as a wrapper to output end-user friendlier information. We
     also always want the documentation of a layer registration to be a string,
-    which the 'LayerRegistration.doc' attribute does not guarantee. 
+    which the `LayerRegistration.doc` attribute does not guarantee. 
 
     Examples::
 
@@ -217,7 +218,7 @@ class LayerDocumentation(object):
 
     This is used as a wrapper to output end-user friendlier information. We
     also always want the documentation of a layer registration to be a string,
-    which the 'LayerRegistration.doc' attribute does not guarantee. 
+    which the `LayerRegistration.doc` attribute does not guarantee. 
 
     Examples::
 
