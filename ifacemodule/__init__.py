@@ -18,9 +18,8 @@ interface service. Therefore, currently there are no unregsitered interfaces
 listed in the documentation. This might be good, since unregistered interfaces
 are usually private and not of interest to a general developer.
 
-$Id: __init__.py,v 1.4 2004/03/05 15:45:52 eddala Exp $
+$Id: __init__.py,v 1.5 2004/03/28 23:40:32 srichter Exp $
 """
-
 from zope.app import zapi
 from zope.interface import implements
 from zope.app.apidoc.interfaces import IDocumentationModule
@@ -45,10 +44,10 @@ class InterfaceModule(ReadContainerBase):
 
     Demonstration::
 
-      >>> from zope.app.apidoc.ifacemodule import tests
-      >>> tests.setUp()
-
       >>> module = InterfaceModule()
+
+      Lookup an interface that is registered.
+      
       >>> module.get('IInterfaceModule').getName()
       'IInterfaceModule'
 
@@ -65,8 +64,6 @@ class InterfaceModule(ReadContainerBase):
       >>> print '\n'.join([id for id, iface in module.items()])
       IInterfaceModule
       zope.app.apidoc.interfaces.IDocumentationModule
-      
-      >>> tests.tearDown()
     """
 
     implements(IInterfaceModule)
