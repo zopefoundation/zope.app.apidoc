@@ -13,7 +13,7 @@
 ##############################################################################
 """Functional Tests for Class Documentation Module.
 
-$Id: ftests.py,v 1.3 2004/04/06 20:57:59 jim Exp $
+$Id: ftests.py,v 1.4 2004/04/18 16:00:31 jim Exp $
 """
 import unittest
 from zope.app.tests.functional import BrowserTestCase
@@ -66,7 +66,7 @@ class ClassModuleTests(BrowserTestCase):
             basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find('handleNamespace(name, parameters, pname,') > 0)
+        self.assert_(body.find('handleNamespace(ob, name)') > 0)
         self.checkForBrokenLinks(
             body, '/++apidoc++/Class/zope/app/apidoc/handleNamesapce',
             basic='mgr:mgrpw')

@@ -16,7 +16,7 @@
 This module is able to take a dotted name of any class and display
 documentation for it.
 
-$Id: __init__.py,v 1.10 2004/04/17 17:15:31 jim Exp $
+$Id: __init__.py,v 1.11 2004/04/18 16:00:31 jim Exp $
 """
 import os
 import sys
@@ -152,8 +152,9 @@ class Module(ReadContainerBase):
 
       >>> keys = module.keys()
       >>> keys.sort()
-      >>> keys[:4]
-      ['APIDocumentation', 'browser', 'classmodule', 'handleNamespace']
+      >>> keys[:5]
+      ['APIDocumentation', 'apidocNamespace', 'browser', 'classmodule', """ \
+          """'handleNamespace']
 
       >>> print module['browser'].getPath()
       zope.app.apidoc.browser
@@ -426,7 +427,7 @@ class Function(object):
       'zope.app.apidoc.handleNamespace'
 
       >>> func.getSignature()
-      '(name, ob, request)'
+      '(ob, name)'
 
       >>> func.getDocString()
       'Used to traverse to an API Documentation.'

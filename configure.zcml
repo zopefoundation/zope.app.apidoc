@@ -9,9 +9,17 @@
         />
   </class>
 
-  <traversalNamespace
+  <view
       name="apidoc"
-      handler=".handleNamespace" />
+      type="zope.interface.Interface"
+      provides="zope.app.traversing.interfaces.ITraversable" for="*"
+      factory=".apidocNamespace"
+      />
+  <adapter
+      name="apidoc"
+      provides="zope.app.traversing.interfaces.ITraversable" for="*"
+      factory=".apidocNamespace"
+      />
 
   <include package=".browser" />
 

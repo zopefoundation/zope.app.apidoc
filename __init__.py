@@ -13,7 +13,7 @@
 ##############################################################################
 """Zope 3 API Documentation
 
-$Id: __init__.py,v 1.7 2004/04/17 17:15:31 jim Exp $
+$Id: __init__.py,v 1.8 2004/04/18 16:00:30 jim Exp $
 """
 from zope.interface import implements
 
@@ -68,7 +68,15 @@ class APIDocumentation(ReadContainerBase):
             utils.append((key, value))
         return utils
         
+class apidocNamespace:
+    """Used to traverse to an API Documentation."""
+    def __init__(self, ob, request=None):
+        self.context = ob
+        
+    def traverse(self, name, ignore):
+        return handleNamespace(self.context, name)
 
-def handleNamespace(name, ob, request):
+def handleNamespace(ob, name):
     """Used to traverse to an API Documentation."""
     return APIDocumentation(ob, '++apidoc++'+name)
+    
