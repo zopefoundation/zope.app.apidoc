@@ -671,7 +671,8 @@ class ModuleDetails(object):
         names = self.context.getPath().split('.') 
         crumbs = []
         module = self.context
-        while zapi.isinstance(module, Module):
+        # I really need the class here, so remove the proxy.
+        while zapi.removeSecurityProxy(module).__class__ is Module:
             crumbs.append(
                 {'name': zapi.name(module),
                  'url': zapi.getView(module, 'absolute_url', self.request)()}

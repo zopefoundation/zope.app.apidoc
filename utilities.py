@@ -122,6 +122,9 @@ def getPythonPath(obj):
     This method makes only sense for classes and interfaces. Instances do not
     have a `__name__` attribute, so we would expect them to fail.
 
+    If a method is passed in, its class path is returned, since this is the
+    only path we have a page for.
+
     Example::
 
       >>> from zope.interface import Interface
@@ -158,7 +161,7 @@ def getPythonPath(obj):
     if hasattr(naked, "im_class"):
         naked = naked.im_class
     module = naked.__module__
-    return '%s.%s' %(module, obj.__name__)
+    return '%s.%s' %(module, naked.__name__)
 
 
 def _evalId(id):
