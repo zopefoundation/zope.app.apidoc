@@ -10,22 +10,23 @@
   <div class="indent" 
        tal:define="info view/getFileInfo"
        tal:condition="info">
-    <i i18n:translate="">File:</i> 
-    <tal:block content="info/file"/>, <span i18n:translate="">from</span>
-    (<span i18n:translate="">line</span> <tal:block content="info/line"/>,
-    <span i18n:translate="">column</span> <tal:block content="info/column"/>)
-    <span i18n:translate="">to</span>
-    (<span i18n:translate="">line</span> <tal:block content="info/eline"/>,
-    <span i18n:translate="">column</span> <tal:block content="info/ecolumn"/>)
+    <i i18n:translate="">File:</i>
+    <tal:var replace="info/file" />
+    <tal:block i18n:translate="">
+      (line <tal:var replace="info/line" i18n:name="beginline" />,
+      column <tal:var replace="info/column" i18n:name="begincolumn" /> to
+      line <tal:var replace="info/eline" i18n:name="endline" />,
+      column <tal:var replace="info/ecolumn" i18n:name="endcolumn" />)
+    </tal:block>
   </div>
 
-  <div class="indent" 
+  <div class="indent"
        tal:condition="view/getInfo">
     <i i18n:translate="">Info:</i>
     <tal:block replace="view/getInfo" />
   </div>
 
-  <div class="indent" 
+  <div class="indent"
        tal:define="handler view/getHandler"
        tal:condition="handler">
     <i i18n:translate="">Handler:</i>
@@ -39,8 +40,7 @@
   <h2 class="details-section" i18n:translate="">Schema</h2>
 
   <div class="indent">
-    <a href=""
-       tal:attributes="href 
+    <a href="" tal:attributes="href 
            string:../../../Interface/${schema/getId}/apiindex.html">
       <h3 tal:content="schema/getId">zope.fields.Schema</h3>
     </a>
