@@ -82,17 +82,19 @@ class ClassDetails(object):
     def getAttributes(self):
         """Get all attributes of this class."""
         attrs = []
-        for name, attr, iface in self.context.getAttributes():
+        # remove the security proxy, so that `attr` is not proxied. We could
+        # unproxy `attr` for each turn, but that would be less efficient.
+        #
+        # `getPermissionIds()` also expects the class's security checker not
+        # to be proxied.
+        klass = removeSecurityProxy(self.context)
+        for name, attr, iface in klass.getAttributes():
             entry = {'name': name,
                      'value': `attr`,
                      'type': type(attr).__name__,
                      'type_link': getTypeLink(type(attr)),
                      'interface': getPythonPath(iface)}
-            # Since checkers do not have security declarations on their API,
-            # we have to remove the security wrapper to get to the API calls. 
-            checker = self.context.getSecurityChecker()
-            entry.update(
-                getPermissionIds(name, removeSecurityProxy(checker)))
+            entry.update(getPermissionIds(name, klass.getSecurityChecker()))
             attrs.append(entry)
         return attrs
 
