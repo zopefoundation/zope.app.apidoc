@@ -543,7 +543,7 @@ def renderText(text, module=None, format=None):
     assert format in _format_dict.values()
 
     if text:
-        source = zapi.createObject(None, format, text)
+        source = zapi.createObject(format, text)
         renderer = zapi.getMultiAdapter((source, TestRequest()))
         return renderer.render()
     else:
