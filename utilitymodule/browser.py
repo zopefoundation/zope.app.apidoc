@@ -13,7 +13,7 @@
 ##############################################################################
 """Utility Module Views
 
-$Id: browser.py,v 1.2 2004/03/28 23:41:23 srichter Exp $
+$Id: browser.py,v 1.3 2004/03/30 02:01:17 srichter Exp $
 """
 from types import InstanceType
 from zope.app import zapi
@@ -74,7 +74,7 @@ class UtilityDetails(object):
         Examples::
 
           >>> from zope.app.apidoc.utilitymodule import Utility
-          >>> from zope.app.apidoc.tests import pprintDict
+          >>> from zope.app.apidoc.tests import pprint
 
           >>> class Foo(object):
           ...     pass
@@ -84,12 +84,12 @@ class UtilityDetails(object):
 
           >>> details = UtilityDetails()
           >>> details.context = Utility(None, '', None, Foo())
-          >>> pprintDict(details.getComponent())
+          >>> pprint(details.getComponent())
           [('path', 'zope.app.apidoc.utilitymodule.browser.Foo'),
            ('url', 'zope/app/apidoc/utilitymodule/browser/Foo')]
 
           >>> details.context = Utility(None, '', None, Bar())
-          >>> pprintDict(details.getComponent())
+          >>> pprint(details.getComponent())
           [('path', 'zope.app.apidoc.utilitymodule.browser.Bar'),
            ('url', 'zope/app/apidoc/utilitymodule/browser/Bar')]
         """

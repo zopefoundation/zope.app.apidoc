@@ -13,7 +13,7 @@
 ##############################################################################
 """View Documentation Module
 
-$Id: __init__.py,v 1.2 2004/03/28 23:41:39 srichter Exp $
+$Id: __init__.py,v 1.3 2004/03/30 02:01:18 srichter Exp $
 """
 from zope.app import zapi
 from zope.interface import implements
@@ -105,11 +105,9 @@ class ViewModule(object):
 
         Example::
 
-          >>> import pprint
-          >>> pprint = pprint.PrettyPrinter(width=69).pprint
+          >>> from zope.app.apidoc.tests import pprint
           >>> module = ViewModule()        
           >>> map = module.getSkinLayerMapping().items()
-          >>> map.sort()
           >>> pprint(map)
           [('default', ('default',)),
            ('skinA', ('default',)),

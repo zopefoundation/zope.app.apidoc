@@ -13,7 +13,7 @@
 ##############################################################################
 """Service Details View
 
-$Id: browser.py,v 1.3 2004/03/28 23:41:00 srichter Exp $
+$Id: browser.py,v 1.4 2004/03/30 02:01:14 srichter Exp $
 """
 from zope.proxy import removeAllProxies
 
@@ -64,8 +64,7 @@ class ServiceDetails(object):
 
     Example::
     
-      >>> import pprint
-      >>> pprint = pprint.PrettyPrinter(width=69).pprint
+      >>> from zope.app.apidoc.tests import pprint
       >>> from zope.component.interfaces import IUtilityService
       >>> from zope.component.utility import GlobalUtilityService
       >>> from zope.publisher.browser import TestRequest
@@ -87,9 +86,6 @@ class ServiceDetails(object):
       'zope.component.interfaces.IUtilityService'
 
       >>> impl = details.implementations()
-      >>> impl = [i.items() for i in impl]
-      >>> impl = [i for i in impl if i.sort() is None]
-      >>> impl.sort()
       >>> pprint(impl)
       [[('path', 'zope.component.utility.GlobalUtilityService'),
         ('url', 'zope/component/utility/GlobalUtilityService')]]
