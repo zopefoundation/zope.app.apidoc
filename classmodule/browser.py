@@ -13,7 +13,7 @@
 ##############################################################################
 """Class Documentation Module Views
 
-$Id: browser.py,v 1.4 2004/03/29 05:27:49 srichter Exp $
+$Id: browser.py,v 1.5 2004/03/30 02:00:20 srichter Exp $
 """
 import os
 import inspect
@@ -27,7 +27,7 @@ from zope.app.apidoc.utilities import getPythonPath, stx2html, columnize
 from zope.app.apidoc.utilities import getPermissionIds, getFunctionSignature
 from zope.app.apidoc.utilities import getPublicAttributes
 from zope.app.apidoc.utilities import getInterfaceForAttribute
-from zope.app.apidoc.classmodule import Module, classRegistry
+from zope.app.apidoc.classmodule import Module, Class, Function, classRegistry
 from zope.app.apidoc.interfaces import IDocumentationModule
 
 class Menu(object):
@@ -42,7 +42,7 @@ class Menu(object):
 
         Examples::
 
-          >>> import pprint
+          >>> from zope.app.apidoc.tests import pprint
           >>> from zope.app.apidoc.classmodule import Class
           >>> cm = zapi.getUtility(None, IDocumentationModule, 'Class')
           >>> mod = cm['zope']['app']['apidoc']['classmodule']['browser']
@@ -69,26 +69,27 @@ class Menu(object):
           
           >>> menu.request = TestRequest(form={'path': 'Foo'})
           >>> info = menu.findClasses()
-          >>> info.sort()
-          >>> pprint.pprint(info)
-          [{'path': 'zope.app.apidoc.classmodule.browser.Foo',
-            'url': 'http://127.0.0.1/zope/app/apidoc/classmodule/browser/Foo'},
-           {'path': 'zope.app.apidoc.classmodule.browser.Foo2',
-            'url': 'http://127.0.0.1/zope/app/apidoc/classmodule/browser/Foo2'}]
+          >>> pprint(info)
+          [[('path', 'zope.app.apidoc.classmodule.browser.Foo'),
+            ('url',
+             'http://127.0.0.1/zope/app/apidoc/classmodule/browser/Foo')],
+           [('path', 'zope.app.apidoc.classmodule.browser.Foo2'),
+            ('url',
+             'http://127.0.0.1/zope/app/apidoc/classmodule/browser/Foo2')]]
 
           >>> menu.request = TestRequest(form={'path': 'o2'})
           >>> info = menu.findClasses()
-          >>> info.sort()
-          >>> pprint.pprint(info)
-          [{'path': 'zope.app.apidoc.classmodule.browser.Foo2',
-            'url': 'http://127.0.0.1/zope/app/apidoc/classmodule/browser/Foo2'}]
+          >>> pprint(info)
+          [[('path', 'zope.app.apidoc.classmodule.browser.Foo2'),
+            ('url',
+             'http://127.0.0.1/zope/app/apidoc/classmodule/browser/Foo2')]]
 
           >>> menu.request = TestRequest(form={'path': 'Blah'})
           >>> info = menu.findClasses()
-          >>> info.sort()
-          >>> pprint.pprint(info)
-          [{'path': 'zope.app.apidoc.classmodule.browser.Blah',
-            'url': 'http://127.0.0.1/zope/app/apidoc/classmodule/browser/Blah'}]
+          >>> pprint(info)
+          [[('path', 'zope.app.apidoc.classmodule.browser.Blah'),
+            ('url',
+             'http://127.0.0.1/zope/app/apidoc/classmodule/browser/Blah')]]
         """
         path = self.request.get('path', None)
         if path is None:
@@ -103,7 +104,50 @@ class Menu(object):
                      'url': zapi.getView(klass, 'absolute_url', self.request)()
                      })
         return results
-    
+
+class FunctionDetails(object):
+    """Represents the details of the function."""
+
+    def getDocString(self):
+        r"""Get the doc string of the class STX formatted.
+
+        Example::
+
+          >>> from tests import getFunctionDetailsView
+          >>> view = getFunctionDetailsView()
+
+          >>> view.getDocString()
+          '<p>This is the foo function.</p>\n'
+        """
+        return stx2html(self.context.getDocString() or '', 3)
+
+
+    def getAttributes(self):
+        """Get all attributes of this class.
+
+        Example::
+
+          >>> from zope.app.apidoc.tests import pprint
+          >>> from tests import getFunctionDetailsView
+          >>> view = getFunctionDetailsView()
+
+          >>> attr = view.getAttributes()[0]
+          >>> pprint(attr)
+          [('name', 'deprecated'),
+           ('type', 'bool'),
+           ('type_link', '__builtin__/bool'),
+           ('value', 'True')]
+        """
+        attrs = []
+        func = removeAllProxies(self.context)
+        return [{'name': name,
+                 'value': `attr`,
+                 'type': type(attr).__name__,
+                 'type_link': _getTypePath(type(attr)).replace('.', '/')}
+                
+                for name, attr in func.getAttributes()]
+
+
 class ClassDetails(object):
     """Represents the details of the class."""
 
@@ -161,11 +205,11 @@ class ClassDetails(object):
           The class we are using for this view is
           zope.app.apidoc.classmodule.ClassModule.
 
-          >>> import pprint
+          >>> from zope.app.apidoc.tests import pprint
           >>> from tests import getClassDetailsView
           >>> view = getClassDetailsView()
 
-          >>> pprint.pprint(view.getInterfaces())
+          >>> pprint(view.getInterfaces())
           ['zope.app.apidoc.interfaces.IDocumentationModule',
            'zope.app.location.interfaces.ILocation',
            'zope.app.apidoc.classmodule.IModuleDocumentation',
@@ -182,14 +226,12 @@ class ClassDetails(object):
           The class we are using for this view is
           zope.app.apidoc.classmodule.ClassModule.
 
-          >>> import pprint
+          >>> from zope.app.apidoc.tests import pprint
           >>> from tests import getClassDetailsView
           >>> view = getClassDetailsView()
 
           >>> attr = view.getAttributes()[2]
-          >>> items = attr.items()
-          >>> items.sort()
-          >>> pprint.pprint(items)
+          >>> pprint(attr)
           [('interface', 'zope.app.apidoc.interfaces.IDocumentationModule'),
            ('name', 'title'),
            ('read_perm', None),
@@ -220,34 +262,33 @@ class ClassDetails(object):
           The class we are using for this view is
           zope.app.apidoc.classmodule.ClassModule.
 
-          >>> import pprint
+          >>> from zope.app.apidoc.tests import pprint
           >>> from tests import getClassDetailsView
           >>> view = getClassDetailsView()
 
           >>> methods = view.getMethods()
-          >>> methods.sort()
-          >>> items = [m.items() for m in methods[:2]]
-          >>> items.sort()
-          >>> pprint.pprint(items)
-          [[('write_perm', None),
-            ('read_perm', None),
+          >>> pprint(methods[-2:])
+          [[('doc', ''),
+            ('interface',
+             'zope.interface.common.mapping.IEnumerableMapping'),
             ('name', 'keys'),
-            ('signature', '()'),
-            ('interface', 'zope.interface.common.mapping.IEnumerableMapping'),
-            ('doc', '')],
-           [('write_perm', None),
             ('read_perm', None),
-            ('name', 'values'),
             ('signature', '()'),
-            ('interface', 'zope.interface.common.mapping.IEnumerableMapping'),
-            ('doc', '')]]
+            ('write_perm', None)],
+           [('doc', ''),
+            ('interface',
+             'zope.interface.common.mapping.IEnumerableMapping'),
+            ('name', 'values'),
+            ('read_perm', None),
+            ('signature', '()'),
+            ('write_perm', None)]]
         """
         methods = []
         klass = removeAllProxies(self.context)
         for name, attr, iface in klass.getMethods():
             entry = {'name': name,
                      'signature': getFunctionSignature(attr),
-                     'doc': stx2html(attr.__doc__ or ''),
+                     'doc': stx2html(attr.__doc__ or '', 3),
                      'interface': getPythonPath(iface)}
             entry.update(getPermissionIds(name, klass.getSecurityChecker()))
             methods.append(entry)
@@ -262,14 +303,13 @@ class ClassDetails(object):
           The class we are using for this view is
           zope.app.apidoc.classmodule.ClassModule.
 
-          >>> import pprint
           >>> from tests import getClassDetailsView
           >>> view = getClassDetailsView()
 
           >>> print view.getDoc()[:59]
-          <h1>Represent the Documentation of any possible class.</h1>
+          <h3>Represent the Documentation of any possible class.</h3>
         """
-        return stx2html(self.context.getDocString() or '')
+        return stx2html(self.context.getDocString() or '', 3)
 
 
 class ModuleDetails(object):
@@ -296,7 +336,7 @@ class ModuleDetails(object):
         lines = text.strip().split('\n')
         # Get rid of possible CVS id.
         lines = [line for line in lines if not line.startswith('$Id')]
-        return stx2html('\n'.join(lines))
+        return stx2html('\n'.join(lines), 3)
 
     def getEntries(self, columns=True):
         """Return info objects for all modules and classes in this module.
@@ -305,23 +345,29 @@ class ModuleDetails(object):
 
           The class we are using for this view is zope.app.apidoc.classmodule.
 
-          >>> import pprint
+          >>> from zope.app.apidoc.tests import pprint
           >>> from tests import getModuleDetailsView
           >>> view = getModuleDetailsView()
 
-          >>> entries = [e.items() for e in view.getEntries(False)]
+          >>> entries = view.getEntries(False)
           >>> entries.sort()
-          >>> pprint.pprint(entries[:2])
-          [[('url', 'http://127.0.0.1/zope/app/apidoc/classmodule/Class'),
-            ('name', 'Class'),
-            ('module', False)],
-           [('url', 'http://127.0.0.1/zope/app/apidoc/classmodule/ClassModule'),
-            ('name', 'ClassModule'),
-            ('module', False)]]
+          >>> pprint(entries[:2])
+          [[('isclass', False),
+            ('isfunction', False),
+            ('ismodule', True),
+            ('name', 'browser'),
+            ('url', 'http://127.0.0.1/zope/app/apidoc/classmodule/browser')],
+           [('isclass', False),
+            ('isfunction', True),
+            ('ismodule', False),
+            ('name', 'cleanUp'),
+            ('url', 'http://127.0.0.1/zope/app/apidoc/classmodule/cleanUp')]]
         """
         entries = [{'name': name,
                     'url': zapi.getView(obj, 'absolute_url', self.request)(),
-                    'module': type(removeAllProxies(obj)) is Module}
+                    'ismodule': type(removeAllProxies(obj)) is Module,
+                    'isclass': type(removeAllProxies(obj)) is Class,
+                    'isfunction': type(removeAllProxies(obj)) is Function,}
                    for name, obj in self.context.items()]
         entries.sort(lambda x, y: cmp(x['name'], y['name']))
         if columns:
@@ -336,13 +382,12 @@ class ModuleDetails(object):
 
         Example::
 
-          >>> import pprint
+          >>> from zope.app.apidoc.tests import pprint
           >>> from tests import getModuleDetailsView
           >>> view = getModuleDetailsView()
 
           >>> crumbs = [crumb.items() for crumb in view.getBreadCrumbs()]
-          >>> crumbs.sort()
-          >>> pprint.pprint(crumbs)
+          >>> pprint(crumbs)
           [[('url', 'http://127.0.0.1'), ('name', '[top]')],
            [('url', 'http://127.0.0.1/zope'), ('name', 'zope')],
            [('url', 'http://127.0.0.1/zope/app'), ('name', 'app')],
