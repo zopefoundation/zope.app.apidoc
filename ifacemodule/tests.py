@@ -92,7 +92,7 @@ def getInterfaceDetails():
     return view
     
 
-def setUp():
+def setUp(test):
     placelesssetup.setUp()
     provideInterface(None, IDocumentationModule)
     provideInterface('IInterfaceModule', IInterfaceModule)
@@ -121,17 +121,15 @@ def setUp():
     sm.defineService('Foo', IFoo)
     sm.provideService('Foo', Foo())
 
-def tearDown():
-    placelesssetup.tearDown()
     
 def test_suite():
     return unittest.TestSuite((
         DocTestSuite('zope.app.apidoc.ifacemodule',
-                     setUp=setUp, tearDown=tearDown),
+                     setUp=setUp, tearDown=placelesssetup.tearDown),
         DocTestSuite('zope.app.apidoc.ifacemodule.menu',
-                     setUp=setUp, tearDown=tearDown),
+                     setUp=setUp, tearDown=placelesssetup.tearDown),
         DocTestSuite('zope.app.apidoc.ifacemodule.browser',
-                     setUp=setUp, tearDown=tearDown),
+                     setUp=setUp, tearDown=placelesssetup.tearDown),
         ))
 
 if __name__ == '__main__':

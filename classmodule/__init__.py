@@ -184,7 +184,7 @@ class Module(ReadContainerBase):
       >>> names = module['tests'].keys()
       >>> names.sort()
       >>> names
-      ['Root', 'pprint', 'rootLocation', 'setUp', 'tearDown', 'test_suite']
+      ['Root', 'pprint', 'rootLocation', 'setUp', 'test_suite']
     """
     implements(ILocation, IModuleDocumentation)
 

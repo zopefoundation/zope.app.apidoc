@@ -44,7 +44,7 @@ from zope.app.apidoc.classmodule.browser import FunctionDetails
 from zope.app.apidoc.interfaces import IDocumentationModule
 
 
-def setUp():
+def setUp(test):
     placelesssetup.setUp()
     module = ClassModule()
     module.__name__ = ''
@@ -72,10 +72,6 @@ def setUp():
                       StructuredTextToHTMLRenderer)
     ztapi.browserView(IReStructuredTextSource, '', 
                       ReStructuredTextToHTMLRenderer)
-
-
-def tearDown():
-    placelesssetup.tearDown()
 
 
 def foo(cls, bar=1, *args):
@@ -110,7 +106,7 @@ def getModuleDetailsView():
 def test_suite():
     return unittest.TestSuite((
         DocTestSuite('zope.app.apidoc.classmodule.browser',
-                     setUp=setUp, tearDown=tearDown),
+                     setUp=setUp, tearDown=placelesssetup.tearDown),
         DocTestSuite('zope.app.apidoc.classmodule'),
         ))
 
