@@ -1,0 +1,43 @@
+========================
+Object Introspector View
+========================
+
+The "Introspector" view provides access to information about the class
+that implements an object and the interfaces that the object provides
+directly.
+
+::
+
+  >>> response = str(http("""
+  ... GET /@@introspector.html HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... """))
+
+  >>> print response
+  HTTP/1.1 200 Ok
+  ...
+
+The class information is provided as a link from the class name to the
+introspection page for the class::
+
+  >>> ("http://localhost/++apidoc++/Code/"
+  ...  "zope/app/folder/folder/Folder/index.html") in response
+  True
+  >>> "zope.app.folder.folder.Folder" in response
+  True
+
+Information about the directly provided information is provided by
+links from the provided interface names to the introspection pages for
+the interfaces::
+
+  >>> ("http://localhost/++apidoc++/Interface/"
+  ...  "zope.app.component.interfaces.ISite/apiindex.html") in response
+  True
+  >>> ">zope.app.component.interfaces.ISite</" in response
+  True
+
+  >>> ("http://localhost/++apidoc++/Interface/"
+  ...  "zope.app.folder.interfaces.IRootFolder/apiindex.html") in response
+  True
+  >>> ">zope.app.folder.interfaces.IRootFolder</" in response
+  True

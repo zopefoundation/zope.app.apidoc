@@ -390,13 +390,27 @@ So for a given content type:
   >>> class Content(object):
   ...    pass
 
+  >>> Content.__module__ = 'module.name.here'
+
 we can generate the introspector redirector like this:
 
   >>> from zope.app.apidoc.codemodule.browser import introspector
   >>> request = TestRequest()
   >>> view = introspector.Introspector(Content(), request)
-  >>> view()
-  >>> request.response.getHeader('Location')
-  'http://127.0.0.1/++apidoc++/Code/__builtin__/Content/index.html'
+  >>> view.class_name()
+  'module.name.here.Content'
+  >>> view.class_url()
+  'http://127.0.0.1/++apidoc++/Code/module/name/here/Content/index.html'
+  >>> view.direct_interfaces()
+  []
 
+If the instance directly provides any interfaces, these are reported
+as well:
 
+  >>> import zope.interface
+  >>> zope.interface.directlyProvides(view.context,
+  ...                                 IDocumentationModule)
+  >>> pprint(view.direct_interfaces())
+  [{'module': 'zope.app.apidoc.interfaces',
+    'name': 'IDocumentationModule',
+    'url': 'http://127.0.0.1/++apidoc++/Interface/zope.app.apidoc.interfaces.IDocumentationModule/apiindex.html'}]

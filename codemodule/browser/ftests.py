@@ -16,7 +16,9 @@
 $Id$
 """
 import unittest
+
 from zope.app.testing.functional import BrowserTestCase
+from zope.app.testing.functional import FunctionalDocFileSuite
 
 class CodeModuleTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
@@ -96,6 +98,7 @@ class CodeModuleTests(BrowserTestCase):
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(CodeModuleTests),
+        FunctionalDocFileSuite("introspector.txt"),
         ))
 
 if __name__ == '__main__':

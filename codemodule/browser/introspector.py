@@ -16,15 +16,36 @@
 $Id: browser.py 29143 2005-02-14 22:43:16Z srichter $
 """
 __docformat__ = 'restructuredtext'
+
+import zope.interface
+
 from zope.security.proxy import removeSecurityProxy
 from zope.app.publisher.browser import BrowserView
 
 
 class Introspector(BrowserView):
 
-    def __call__(self):
+    def class_name(self):
+        klass = type(removeSecurityProxy(self.context))
+        return "%s.%s" % (klass.__module__, klass.__name__)
+
+    def class_url(self):
         klass = type(removeSecurityProxy(self.context))
         url = self.request.getApplicationURL() + '/++apidoc++/Code/'
         url += klass.__module__.replace('.', '/') + '/'
-        url += klass.__name__ + '/index.html'
-        self.request.response.redirect(url)
+        return url + klass.__name__ + '/index.html'
+
+    def direct_interfaces(self):
+        ob = removeSecurityProxy(self.context)
+        ifaces = zope.interface.directlyProvidedBy(ob)
+        result = []
+        urlbase = self.request.getApplicationURL() + '/++apidoc++/Interface/'
+        for iface in ifaces:
+            url = "%s%s.%s/apiindex.html" % (
+                urlbase, iface.__module__, iface.__name__)
+            result.append(("%s.%s" % (iface.__module__, iface.__name__),
+                           {"name": iface.__name__,
+                            "module": iface.__module__,
+                            "url": url}))
+        result.sort()
+        return [dict for name, dict in result]

@@ -59,6 +59,7 @@
       class=".introspector.Introspector"
       permission="zope.ManageContent"
       menu="zmi_views" title="Introspector"
+      template="introspector.pt"
       />
 
 </configure>
