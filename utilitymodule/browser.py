@@ -13,8 +13,9 @@
 ##############################################################################
 """Utility Module Views
 
-$Id: browser.py,v 1.1 2004/02/19 20:46:42 philikon Exp $
+$Id: browser.py,v 1.2 2004/03/28 23:41:23 srichter Exp $
 """
+from types import InstanceType
 from zope.app import zapi
 from zope.app.location import LocationProxy
 from zope.app.apidoc.ifacemodule.browser import InterfaceDetails
@@ -22,15 +23,24 @@ from zope.app.apidoc.utilities import getPythonPath
 from zope.app.apidoc.utilitymodule import NONAME, Utility, UtilityInterface
 from zope.proxy import removeAllProxies
 
-__metaclass__ = type
-
-class UtilityDetails:
+class UtilityDetails(object):
     """Utility Details View."""
 
     def getName(self):
         """Get the name of the utility.
 
         Return the string "no name", if the utility has no name.
+
+        Examples::
+
+          >>> details = UtilityDetails()
+          >>> details.context = Utility(None, 'myname', None, None)
+          >>> details.getName()
+          'myname'
+
+          >>> details.context = Utility(None, NONAME, None, None)
+          >>> details.getName()
+          'no name'
         """
         name = zapi.name(self.context)
         if name == NONAME:
@@ -38,24 +48,101 @@ class UtilityDetails:
         return name
 
     def getInterface(self):
-        """Return the interface the utility provides.""" 
+        """Return the interface the utility provides.
+
+        Example::
+
+          >>> from tests import getDetailsView
+          >>> details = getDetailsView()
+
+          >>> iface = details.getInterface()
+          >>> iface.getId()
+          'zope.app.apidoc.interfaces.IDocumentationModule'
+        """ 
         schema = LocationProxy(self.context.interface,
                                self.context,
                                getPythonPath(self.context.interface))
-        return InterfaceDetails(schema, self.request)
+        details = InterfaceDetails()
+        details.context = schema
+        details.request = self.request
+        
+        return details
 
     def getComponent(self):
-        """Return the python path of the implementation class."""
-        if isinstance(self.context.component, (unicode, str)):
-            return None #self.context.component
-        return getPythonPath(self.context.component.__class__)
+        """Return the python path of the implementation class.
 
-class Menu:
+        Examples::
+
+          >>> from zope.app.apidoc.utilitymodule import Utility
+          >>> from zope.app.apidoc.tests import pprintDict
+
+          >>> class Foo(object):
+          ...     pass
+
+          >>> class Bar:
+          ...     pass
+
+          >>> details = UtilityDetails()
+          >>> details.context = Utility(None, '', None, Foo())
+          >>> pprintDict(details.getComponent())
+          [('path', 'zope.app.apidoc.utilitymodule.browser.Foo'),
+           ('url', 'zope/app/apidoc/utilitymodule/browser/Foo')]
+
+          >>> details.context = Utility(None, '', None, Bar())
+          >>> pprintDict(details.getComponent())
+          [('path', 'zope.app.apidoc.utilitymodule.browser.Bar'),
+           ('url', 'zope/app/apidoc/utilitymodule/browser/Bar')]
+        """
+        component = removeAllProxies(self.context.component)
+        klass = type(component)
+
+        # Support for old-style classes
+        if klass == InstanceType:
+            klass = component.__class__
+
+        return {'path': getPythonPath(klass),
+                'url':  getPythonPath(klass).replace('.', '/')}
+
+class Menu(object):
     """Menu View Helper Class
 
     A class that helps building the menu. The menu_macros expects the menu view
     class to have the getMenuTitle(node) and getMenuLink(node) methods
     implemented. 'node' is a 'zope.app.tree.node.Node' instance.
+
+    Examples::
+
+      >>> from zope.app.tree.node import Node 
+      >>> from zope.app.apidoc.utilitymodule import Utility, UtilityInterface
+      >>> from zope.app.apidoc.tests import Root
+      >>> menu = Menu()
+
+      Get menu title and link for a utility interface
+
+      >>> uiface = UtilityInterface(Root(), 'foo.bar.iface', None)
+      >>> node = Node(uiface)
+      >>> menu.getMenuTitle(node)
+      'iface'
+      >>> menu.getMenuLink(node)
+      '../Interface/foo.bar.iface/apiindex.html'
+
+      Get menu title and link for a utility with a name
+
+      >>> util = Utility(uiface, 'FooBar', None, None)
+      >>> node = Node(util)
+      >>> menu.getMenuTitle(node)
+      'FooBar'
+      >>> menu.getMenuLink(node)
+      './foo.bar.iface/FooBar/index.html'
+
+      Get menu title and link for a utility without a name
+
+      >>> util = Utility(uiface, None, None, None)
+      >>> node = Node(util)
+      >>> menu.getMenuTitle(node)
+      'no name'
+      >>> menu.getMenuLink(node)
+      './foo.bar.iface/__noname__/index.html'
     """
 
     def getMenuTitle(self, node):
