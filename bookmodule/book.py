@@ -61,4 +61,4 @@ class BookModule(OnlineHelp):
 # Global Book Instance
 path = os.path.join(os.path.dirname(zope.app.apidoc.bookmodule.__file__),
                     'intro.txt')
-book = BookModule('Book', path)
+book = BookModule(_('Book'), path)
