@@ -133,6 +133,9 @@ def getRealFactory(factory):
     """
     if isinstance(factory, types.FunctionType) and hasattr(factory, 'factory'):
         return factory.factory
+    elif not hasattr(factory, '__name__'):
+        # We have an instance
+        return factory.__class__
     return factory
 
 
@@ -157,6 +160,7 @@ def getAdapterInfoDictionary(reg):
     """Return a PT-friendly info dictionary for an adapter registration."""
     factory = getRealFactory(reg.value)
     path = getPythonPath(factory)
+
     if isinstance(factory, types.MethodType):
        url = None
     else:
@@ -183,16 +187,21 @@ def getAdapterInfoDictionary(reg):
 def getFactoryInfoDictionary(reg):
     """Return a PT-friendly info dictionary for a factory."""
     factory = reg.component
-    if type(factory) in (types.ClassType, types.TypeType):
-        klass = factory
-    else:
-        klass = factory.__class__
-    path = getPythonPath(klass)
+
+    callable = factory
+
+    if IFactory.providedBy(factory):
+        callable = factory._callable
+
+    elif hasattr(callable, '__class__'):
+        callable = callable.__class__
+
+    path = getPythonPath(callable)
 
     return {'name': reg.name or '<i>no name</i>',
             'title': getattr(factory, 'title', u''),
             'description': renderText(getattr(factory, 'description', u''),
-                                      module=klass.__module__),
+                                      module=callable.__module__),
             'url': path.replace('.', '/')}
 
 

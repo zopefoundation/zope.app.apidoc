@@ -281,7 +281,7 @@ registrations:
   {'description': u'<div class="document">\nMy Foo Bar</div>\n',
    'name': 'MyFooBar',
    'title': 'MyFooBar',
-   'url': 'zope/component/factory/Factory'}
+   'url': '__builtin__/MyFooBar'}
 
 
 `getUtilityInfoDictionary(name, factory)`

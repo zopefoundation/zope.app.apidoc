@@ -339,7 +339,7 @@ interface.
   [{'description': u'',
     'name': 'FooFactory',
     'title': 'Foo Factory',
-    'url': 'zope/component/factory/Factory'}]
+    'url': '__builtin__/Foo'}]
 
 `getUtilities()`
 ----------------
