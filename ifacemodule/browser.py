@@ -23,6 +23,7 @@ from zope.interface.declarations import providedBy
 from zope.interface.interfaces import IMethod, IInterface 
 from zope.proxy import removeAllProxies
 from zope.schema.interfaces import IField
+from zope.security.proxy import removeSecurityProxy
 
 from zope.app import zapi
 from zope.app.i18n import ZopeMessageIDFactory as _
@@ -233,20 +234,20 @@ class InterfaceDetails(object):
         return zapi.name(self.context)
 
     def getDoc(self):
-        """Return the main documentation string of the interface.
+        r"""Return the main documentation string of the interface.
 
         Example::
 
           >>> from tests import getInterfaceDetails
           >>> details = getInterfaceDetails()
-          >>> details.getDoc()[:34]
-          '<h1>This is the Foo interface</h1>'
+          >>> details.getDoc()[:55]
+          '<div class="document">\n<p>This is the Foo interface</p>'
         """
         # We must remove all proxies here, so that we get the context's
         # __module__ attribute. If we only remove security proxies, the
         # location proxy's module will be returned.
         return renderText(self.context.__doc__,
-                          removeAllProxies(self.context).__module__)
+                          removeSecurityProxy(self.context).__module__)
 
     def getBases(self):
         """Get all bases of this class
@@ -431,7 +432,7 @@ class InterfaceDetails(object):
         service = zapi.getService('Adapters')
         # Must remove security proxies, so that we have access to the API
         # methods. 
-        iface = zapi.removeSecurityProxy(self.context)
+        iface = removeSecurityProxy(self.context)
         adapters = []
         for reg in service.registrations():
             # Only grab the adapters for which this interface is required

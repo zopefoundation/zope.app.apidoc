@@ -28,6 +28,7 @@ from zope.interface import implements, implementedBy
 from zope.publisher.browser import TestRequest
 from zope.security.checker import getCheckerForInstancesOf, Global
 from zope.security.interfaces import INameBasedChecker
+from zope.security.proxy import removeSecurityProxy
 
 from zope.app import zapi
 from zope.app.i18n import ZopeMessageIDFactory as _
@@ -157,7 +158,7 @@ def getPythonPath(obj):
     # Even for methods `im_class` and `__module__` is not allowed to be
     # accessed (which is probably not a bad idea). So, we remove the security
     # proxies for this check.
-    naked = zapi.removeSecurityProxy(obj)
+    naked = removeSecurityProxy(obj)
     if hasattr(naked, "im_class"):
         naked = naked.im_class
     module = naked.__module__

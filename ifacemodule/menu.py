@@ -22,6 +22,7 @@ $Id$
 __docformat__ = 'restructuredtext'
 
 from zope.interface import implements
+from zope.security.proxy import removeSecurityProxy
 
 from zope.app import zapi
 from zope.app.location.interfaces import ILocation
@@ -113,7 +114,7 @@ class InterfaceModuleChildObjects(object):
     def getChildObjects(self):
         """See zope.app.tree.interfaces.IChildObject"""
         objects = {}
-        names = zapi.removeSecurityProxy(self.context.keys())
+        names = removeSecurityProxy(self.context.keys())
         names.sort()
         for name in names:
             # Split these long names and make part of the module path separate
