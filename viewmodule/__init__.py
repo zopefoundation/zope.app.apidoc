@@ -13,7 +13,7 @@
 ##############################################################################
 """View Documentation Module
 
-$Id: __init__.py,v 1.4 2004/04/15 13:24:35 srichter Exp $
+$Id: __init__.py,v 1.5 2004/05/03 18:52:57 spascoe Exp $
 """
 from zope.app import zapi
 from zope.interface import implements, classImplements, Interface, Attribute
@@ -67,7 +67,7 @@ class ViewModule(object):
     description = """
     The Presentations (or Views) module is somewhat crazy, since a view or
     resource cannot be identified by a single interface or name, but of four
-    to five pieces of information. Conclusively, the menu let's you select an
+    to five pieces of information. Conclusively, the menu lets you select an
     interface and a presentation type for which views should be found.
 
     By default, the resulting views exclude views that have no required
