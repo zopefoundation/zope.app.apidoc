@@ -25,6 +25,7 @@ from zope.interface import implements, implementedBy
 from zope.proxy import removeAllProxies
 from zope.security.checker import getCheckerForInstancesOf, Global
 from zope.security.interfaces import INameBasedChecker
+from zope.app.i18n import ZopeMessageIDFactory as _
 
 from zope.app.container.interfaces import IReadContainer
 
@@ -250,9 +251,9 @@ def getPermissionIds(name, checker=_marker, klass=_marker):
     
     if checker is not None and INameBasedChecker.providedBy(checker):
         entry['read_perm'] = _evalId(checker.permission_id(name)) \
-                             or 'N/A'
+                             or _('n/a')
         entry['write_perm'] = _evalId(checker.setattr_permission_id(name)) \
-                              or 'N/A'
+                              or _('n/a')
     else:
         entry['read_perm'] = entry['write_perm'] = None 
 

@@ -66,7 +66,8 @@
            tal:attributes="href string:../${field/iface/id}/apiindex.html">
           <code tal:content="field/iface/name">IField</code></a>
       (<span tal:content="string:${field/required}, ">optional, </span>
-        default = <code tal:content="field/default" />)<br>
+        <span i18n:translate="">default</span> =
+        <code tal:content="field/default" />)<br>
       <span tal:content="field/description">field desc</span>      
     </li>
 
@@ -153,7 +154,8 @@
       <li tal:repeat="adapter adapters">
         <b><code>
           <a href=""
-                tal:attributes="href adapter/factory_url" 
+                tal:attributes="href
+                    string:../../Class/${adapter/factory_url}/index.html" 
                 tal:content="adapter/factory" 
                 tal:condition="adapter/factory_url" />
           <span tal:content="adapter/factory" 
@@ -192,7 +194,7 @@
                    classes view/getClasses"
        tal:condition="python: factories or utilities or services or classes">
 
-    <h2 class="details-section">Other Information</h2>
+    <h2 class="details-section" i18n:translate="">Other Information</h2>
     
     <div class="indent">
     
