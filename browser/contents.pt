@@ -19,7 +19,11 @@
 
   <tal:omit-tag repeat="module view/getModuleList">
 
-    <h2 tal:content="module/title">Module Title</h2>
+    <h2>
+      <a target="menu" href=""
+         tal:attributes="href string:./${module/name}/menu.html"
+         tal:content="module/title">Module Title</a>
+    </h2>
 
     <p tal:replace="structure module/description">
       Module Description
