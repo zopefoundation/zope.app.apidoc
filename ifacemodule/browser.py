@@ -23,6 +23,7 @@ from zope.interface.declarations import providedBy
 from zope.interface.interfaces import IMethod, IInterface 
 from zope.proxy import removeAllProxies
 from zope.schema.interfaces import IField
+from zope.security.proxy import removeSecurityProxy
 
 from zope.app import zapi
 from zope.app.i18n import ZopeMessageIDFactory as _
@@ -246,7 +247,7 @@ class InterfaceDetails(object):
         # __module__ attribute. If we only remove security proxies, the
         # location proxy's module will be returned.
         return renderText(self.context.__doc__,
-                          zapi.removeSecurityProxy(self.context).__module__)
+                          removeSecurityProxy(self.context).__module__)
 
     def getBases(self):
         """Get all bases of this class
@@ -431,7 +432,7 @@ class InterfaceDetails(object):
         service = zapi.getService('Adapters')
         # Must remove security proxies, so that we have access to the API
         # methods. 
-        iface = zapi.removeSecurityProxy(self.context)
+        iface = removeSecurityProxy(self.context)
         adapters = []
         for reg in service.registrations():
             # Only grab the adapters for which this interface is required

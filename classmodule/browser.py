@@ -30,6 +30,7 @@ from zope.exceptions import NotFoundError
 from zope.interface import implementedBy
 from zope.interface.interface import InterfaceClass
 from zope.schema import getFieldsInOrder
+from zope.security.proxy import removeSecurityProxy
 
 import zope.app
 from zope.app import zapi
@@ -133,7 +134,7 @@ class ZCMLFileDetails(ConfigurationContext):
         self.request = request
         # TODO: This is not the best way to do this. We really need to revisit
         # the entire implementation and move more to the ZCMLFile object.
-        package = zapi.removeSecurityProxy(
+        package = removeSecurityProxy(
             zapi.getParent(context))._Module__module
         # Keep track of the package that is used for relative paths
         self._package_stack = [package]
@@ -510,7 +511,7 @@ class ClassDetails(object):
             # we have to remove the security wrapper to get to the API calls. 
             checker = self.context.getSecurityChecker()
             entry.update(
-                getPermissionIds(name, zapi.removeSecurityProxy(checker)))
+                getPermissionIds(name, removeSecurityProxy(checker)))
             attrs.append(entry)
         return attrs
 
@@ -550,7 +551,7 @@ class ClassDetails(object):
         #
         # `getPermissionIds()` also expects the class's security checker not
         # to be proxied.
-        klass = zapi.removeSecurityProxy(self.context)
+        klass = removeSecurityProxy(self.context)
         for name, attr, iface in klass.getMethods():
             entry = {'name': name,
                      'signature': getFunctionSignature(attr),
@@ -672,7 +673,7 @@ class ModuleDetails(object):
         crumbs = []
         module = self.context
         # I really need the class here, so remove the proxy.
-        while zapi.removeSecurityProxy(module).__class__ is Module:
+        while removeSecurityProxy(module).__class__ is Module:
             crumbs.append(
                 {'name': zapi.name(module),
                  'url': zapi.getView(module, 'absolute_url', self.request)()}

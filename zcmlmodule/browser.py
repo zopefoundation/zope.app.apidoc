@@ -18,6 +18,7 @@ $Id$
 __docformat__ = 'restructuredtext'
 
 from zope.configuration.xmlconfig import ParserInfo
+from zope.security.proxy import removeSecurityProxy
 
 from zope.app import zapi
 from zope.app.location import LocationProxy
@@ -167,7 +168,7 @@ class DirectiveDetails(object):
         # ZCML directive `info` objects do not have security declarations, so
         # everything is forbidden by default. We need to remove the security
         # proxies in order to get to the data.  
-        info = zapi.removeSecurityProxy(self.context.info)
+        info = removeSecurityProxy(self.context.info)
         if zapi.isinstance(info, ParserInfo):
             return {'file': relativizePath(info.file),
                     'line': info.line,
