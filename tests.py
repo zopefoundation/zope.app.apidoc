@@ -13,8 +13,9 @@
 ##############################################################################
 """Tests for the Interface Documentation Module
 
-$Id: tests.py,v 1.2 2004/03/13 21:03:00 srichter Exp $
+$Id: tests.py,v 1.3 2004/03/28 23:39:20 srichter Exp $
 """
+import pprint
 import unittest
 from zope.app import zapi
 from zope.app.traversing.interfaces import IContainmentRoot
@@ -37,6 +38,8 @@ def tearDown():
     placelesssetup.tearDown()
 
 
+# Generally useful classes and functions
+
 class Root:
     implements(IContainmentRoot)
 
@@ -45,10 +48,22 @@ class Root:
 
 def rootLocation(obj, name):
     return LocationProxy(obj, Root(), name)
+
+
+def pprintDict(info):
+    print_ = pprint.PrettyPrinter(width=69).pprint
+    info = info.items()
+    info.sort()
+    return print_(info)
+
+
     
 def test_suite():
     return unittest.TestSuite((
-        DocTestSuite('zope.app.apidoc'),
+        DocTestSuite('zope.app.apidoc',
+                     setUp=setUp, tearDown=tearDown),
+        DocTestSuite('zope.app.apidoc.browser.apidoc',
+                     setUp=setUp, tearDown=tearDown),
         DocTestSuite('zope.app.apidoc.utilities'),
         ))
 
