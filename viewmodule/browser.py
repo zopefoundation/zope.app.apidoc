@@ -13,7 +13,7 @@
 ##############################################################################
 """Views/Presentation Module Views
 
-$Id: browser.py,v 1.7 2004/03/30 02:01:18 srichter Exp $
+$Id: browser.py,v 1.8 2004/04/02 01:17:21 tim_one Exp $
 """
 from types import ClassType
 
@@ -112,15 +112,18 @@ def _getFactoryData(factory):
       >>> from zope.app.pagetemplate.simpleviewclass import SimpleViewClass
       >>> view = SimpleViewClass('index.pt')
       >>> info = _getFactoryData(view)
+
+      Normalize pathname separators.
+      >>> info['template'] = info['template'].replace('\\\\', '/')
       >>> pprint(info)
       [('path', 'zope.app.pagetemplate.simpleviewclass.simple'),
        ('referencable', True),
        ('resource', None),
        ('template', 'Zope3/src/zope/app/apidoc/viewmodule/index.pt'),
        ('url', 'zope/app/pagetemplate/simpleviewclass/simple')]
- 
+
       The factory is a simple type:
-      
+
       >>> info = _getFactoryData(3)
       >>> pprint(info)
       [('path', None),
@@ -151,7 +154,7 @@ def _getFactoryData(factory):
        ('resource', None),
        ('template', None),
        ('url', 'zope/app/apidoc/viewmodule/browser/Factory')]
-      
+
     """
     info = {'path': None, 'url': None, 'template': None, 'resource': None,
             'referencable': True}
@@ -191,7 +194,7 @@ def _getFactoryData(factory):
         info['resource'] = factory.rname
 
     return info
-    
+
 
 class ViewsDetails(object):
     """View for Views"""
@@ -205,7 +208,7 @@ class ViewsDetails(object):
         self.type = getInterface(self.context, request['type'])
 
         # XXX: The local presentation service does not have a
-        # getRegisteredMatching() method. Sigh. 
+        # getRegisteredMatching() method. Sigh.
         service = zapi.getService(None, 'Presentation')
         self.views = service.getRegisteredMatching(object=self.iface,
                                                    request=self.type)
@@ -221,7 +224,7 @@ class ViewsDetails(object):
 
           >>> from zope.app.apidoc.tests import pprint
           >>> from zope.publisher.browser import TestRequest
-        
+
           >>> form ={'iface': 'IFoo',
           ...        'type': 'IBrowserRequest'}
           >>> view = ViewsDetails(None, TestRequest(form=form))
