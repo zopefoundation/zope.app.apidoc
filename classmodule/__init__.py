@@ -16,12 +16,12 @@
 This module is able to take a dotted name of any class and display
 documentation for it. 
 
-$Id: __init__.py,v 1.3 2004/03/29 00:39:55 srichter Exp $
+$Id: __init__.py,v 1.4 2004/03/30 02:00:14 srichter Exp $
 """
 import os
 import sys
 import inspect
-from types import ClassType, TypeType
+from types import ClassType, TypeType, FunctionType
 
 import zope
 from zope.security.checker import getCheckerForInstancesOf
@@ -35,6 +35,7 @@ from zope.app.apidoc.utilities import ReadContainerBase
 from zope.app.apidoc.utilities import getPythonPath
 from zope.app.apidoc.utilities import getPublicAttributes
 from zope.app.apidoc.utilities import getInterfaceForAttribute
+from zope.app.apidoc.utilities import getFunctionSignature
 
 # Ignore these files, since they are not necessary or cannot be imported
 # correctly.
@@ -101,6 +102,24 @@ class IClassDocumentation(Interface):
         particular class attribute/method.
         """
 
+class IFunctionDocumentation(Interface):
+    """Representation of a function for documentation."""
+
+    def getDocString():
+        """Return the doc string of the function."""
+
+    def getPath():
+        """Return the Python path of the function."""
+
+    def getSignature():
+        """Return the signature of the function as a string."""
+
+    def getAttributes():
+        """Return a list of 2-tuple attribute information.
+
+        The first entry of the 2-tuple is the name of the attribute, the
+        second is the attribute object itself.
+        """
 
 class Module(ReadContainerBase):
     """This class represents a Python module.
@@ -117,8 +136,8 @@ class Module(ReadContainerBase):
       >>> module.getDocString()[:24]
       'Zope 3 API Documentation'
 
-      >>> module.getFileName()[-32:]
-      'src/zope/app/apidoc/__init__.pyc'
+      >>> module.getFileName().find('src/zope/app/apidoc/__init__.py') > 0
+      True
 
       >>> module.getPath()
       'zope.app.apidoc'
@@ -130,7 +149,7 @@ class Module(ReadContainerBase):
       >>> keys = module.keys()
       >>> keys.sort()
       >>> keys[:4]
-      ['APIDocumentation', 'browser', 'classmodule', 'ifacemodule']
+      ['APIDocumentation', 'browser', 'classmodule', 'handleNamespace']
 
       >>> print module['browser'].getPath()
       zope.app.apidoc.browser
@@ -147,8 +166,10 @@ class Module(ReadContainerBase):
       >>> print module['tests'].getPath()
       zope.app.apidoc.tests
 
-      >>> module['tests'].keys()
-      ['Root']
+      >>> names = module['tests'].keys()
+      >>> names.sort()
+      >>> names
+      ['Root', 'pprint', 'rootLocation', 'setUp', 'tearDown', 'test_suite']
     """
     implements(ILocation, IModuleDocumentation)
 
@@ -165,7 +186,8 @@ class Module(ReadContainerBase):
         """Setup the module sub-tree."""
         # Detect packages
         if hasattr(self.__module, '__file__') and \
-               self.__module.__file__.endswith('__init__.pyc'):
+               (self.__module.__file__.endswith('__init__.py') or
+                self.__module.__file__.endswith('__init__.pyc')):
             dir = os.path.split(self.__module.__file__)[0]
             for file in os.listdir(dir):
                 if file in IGNORE_FILES:
@@ -190,9 +212,14 @@ class Module(ReadContainerBase):
         for name in self.__module.__dict__.keys():
             attr = getattr(self.__module, name)
             # We do not want to register duplicates or non-"classes"
-            if type(attr) in (ClassType, TypeType) and \
+            if hasattr(attr, '__module__') and \
                    attr.__module__ == self.__module.__name__:
-                self.__children[attr.__name__] = Class(self, name, attr)
+
+                if type(attr) in (ClassType, TypeType):
+                    self.__children[attr.__name__] = Class(self, name, attr)
+
+                elif type(attr) is FunctionType and not name.startswith('_'):
+                    self.__children[attr.__name__] = Function(self, name, attr)
                 
 
     def getDocString(self):
@@ -308,7 +335,7 @@ class Class(object):
 
         Here a detailed example::
 
-          >>> import pprint
+          >>> from zope.app.apidoc.tests import pprint
 
           >>> class ModuleStub(object):
           ...      def getPath(self): return ''
@@ -325,8 +352,7 @@ class Class(object):
           >>> klass = Class(ModuleStub(), 'Blah', Blah)
 
           >>> attrs = klass.getAttributes()
-          >>> attrs.sort()
-          >>> pprint.pprint(attrs)
+          >>> pprint(attrs)
           [('bar', 'b', None),
            ('foo', 'f', <InterfaceClass zope.app.apidoc.classmodule.IBlah>)]
         """
@@ -342,7 +368,7 @@ class Class(object):
 
         Here a detailed example::
 
-          >>> import pprint
+          >>> from zope.app.apidoc.tests import pprint
 
           >>> class ModuleStub(object):
           ...      def getPath(self): return ''
@@ -359,8 +385,7 @@ class Class(object):
           >>> klass = Class(ModuleStub(), 'Blah', Blah)
 
           >>> methods = klass.getMethods()
-          >>> methods.sort()
-          >>> pprint.pprint(methods)
+          >>> pprint(methods)
           [('bar', <unbound method Blah.bar>, None),
            ('foo',
             <unbound method Blah.foo>,
@@ -376,6 +401,82 @@ class Class(object):
     def getSecurityChecker(self):
         """See IClassDocumentation."""
         return getCheckerForInstancesOf(self.__klass)
+
+
+class Function(object):
+    """This class represents a function declared in the module.
+
+    Setting up a function for documentation is easy. You only need to provide
+    an object providing 'IModule' as a parent, the name and the function
+    object itself::
+
+      >>> import zope.app.apidoc
+      >>> module = Module(None, 'apidoc', zope.app.apidoc)
+      >>> func = Function(module, 'handleNamespace',
+      ...                 zope.app.apidoc.handleNamespace)
+
+    This class provides data about the function in an accessible format. The
+    Python path, signature and doc string are easily retrieved using::
+
+      >>> func.getPath()
+      'zope.app.apidoc.handleNamespace'
+
+      >>> func.getSignature()
+      '(name, parameters, pname, ob, request)'
+
+      >>> func.getDocString()
+      'Used to traverse to an API Documentation.'
+
+    For a more detailed analysis, you can also retrieve the attributes of the
+    function::
+
+      >>> func.getAttributes()
+      []
+    """
+    implements(ILocation, IFunctionDocumentation)
+
+    def __init__(self, module, name, func):
+        self.__parent__ = module
+        self.__name__ = name
+        self.__func = func
+
+    def getPath(self):
+        """See IFunctionDocumentation."""
+        return self.__parent__.getPath() + '.' + self.__name__
+
+    def getDocString(self):
+        """See IFunctionDocumentation."""
+        return self.__func.__doc__
+
+    def getSignature(self):
+        """See IFunctionDocumentation."""
+        return getFunctionSignature(self.__func)
+
+    def getAttributes(self):
+        """See IClassDocumentation.
+
+        Here a detailed example::
+
+          >>> class ModuleStub(object):
+          ...      def getPath(self): return ''
+
+          >>> def foo(bar=1):
+          ...     pass
+
+          >>> func = Function(ModuleStub(), 'foo', foo)
+
+          >>> attrs = func.getAttributes()
+          >>> attrs.sort()
+          >>> print attrs
+          []
+
+          >>> foo.bar = 'blah'
+          >>> attrs = func.getAttributes()
+          >>> attrs.sort()
+          >>> print attrs
+          [('bar', 'blah')]
+        """
+        return self.__func.__dict__.items()
 
 
 class ClassModule(Module):
@@ -544,7 +645,7 @@ def safe_import(path, default=None):
       >>> safe_import('shelve').__name__
       'shelve'
 
-      >>> safe_import('foo') is None
+      >>> safe_import('weirdname') is None
       True
     """
     module = sys.modules.get(path, default)
