@@ -13,7 +13,7 @@
 ##############################################################################
 """Tests for the ZCML Documentation Module
 
-$Id: tests.py,v 1.2 2004/03/28 23:42:19 srichter Exp $
+$Id: tests.py,v 1.3 2004/03/29 15:08:54 srichter Exp $
 """
 import unittest
 from zope.testing.doctestunit import DocTestSuite
@@ -46,8 +46,10 @@ def getDirective():
     module.__parent__ = Root()
     module.__name__ = 'ZCML'
 
+    def foo(): pass
+
     ns = Namespace(module, 'http://namespaces.zope.org/browser')
-    return Directive(ns, 'page', None, None, ())
+    return Directive(ns, 'page', None, foo, None, ())
     
 
 def test_suite():

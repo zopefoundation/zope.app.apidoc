@@ -18,7 +18,7 @@ execute them) and uses the collected data to generate the tree. The result of
 the evaluation is stored in thread-global variables, so that we have to parse
 the files only once. 
 
-$Id: __init__.py,v 1.6 2004/03/28 23:42:11 srichter Exp $
+$Id: __init__.py,v 1.7 2004/03/29 15:08:38 srichter Exp $
 """
 import os
 
@@ -122,9 +122,9 @@ class Namespace(ReadContainerBase):
         ns = self.getFullName()
         if not namespaces[ns].has_key(key):
             return default
-        schema, info = namespaces[ns][key]
+        schema, handler, info = namespaces[ns][key]
         sd = subdirs.get((ns, key), [])
-        directive = Directive(self, key, schema, info, sd)
+        directive = Directive(self, key, schema, handler, info, sd)
         return directive
     
     def items(self):
@@ -141,10 +141,11 @@ class Directive(object):
 
     implements(ILocation)
 
-    def __init__(self, ns, name, schema, info, subdirs):
+    def __init__(self, ns, name, schema, handler, info, subdirs):
         self.__parent__ = ns
         self.__name__ = name
         self.schema = schema
+        self.handler = handler
         self.info = info
         self.subdirs = subdirs
     
