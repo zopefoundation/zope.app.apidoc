@@ -1,13 +1,13 @@
 <html>
   <head>
-    <title i18n:translate="">Zope 3 API Docs</title>
+    <title i18n:translate="">Zope 3 API Documentation</title>
   </head>
-  <frameset cols="20%, *" border="1">
+  <frameset cols="20%, *">
     <frameset rows="120, *"> 
-      <frame name="modules" src="modulelist.html" border="1">
-      <frame name="menu" src="menu.html" border="1">
+      <frame name="modules" src="modulelist.html">
+      <frame name="menu" src="menu.html">
     </frameset>
-    <frame name="main" src="contents.html" border="1">
+    <frame name="main" src="contents.html">
   </frameset>
 
 </html>
