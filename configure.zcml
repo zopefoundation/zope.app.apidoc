@@ -66,6 +66,15 @@
   <include package=".browser" />
   <include package=".preference" />
 
+  <apidoc:preferenceGroup
+      id="apidoc"
+      title="API Doc Tool" 
+      description="
+         These are all the preferences related to viewing the API
+         documtation."
+      category="True"
+      />
+
   <!-- API Documentation Modules -->
   <include package=".bookmodule" />
   <include package=".codemodule" />

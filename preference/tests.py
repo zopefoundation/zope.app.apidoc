@@ -17,7 +17,16 @@ $Id: tests.py 29143 2005-02-14 22:43:16Z srichter $
 """
 import unittest
 from zope.testing import doctest, doctestunit
-from zope.component.testing import setUp, tearDown
+from zope.component import testing
+from zope.app.testing import setup
+
+def setUp(test):
+    testing.setUp(test)
+    setup.setUpTestAsModule(test, 'zope.app.apidoc.preference.README')
+
+def tearDown(test):
+    testing.tearDown(test)
+    setup.tearDownTestAsModule(test)
 
 def test_suite():
     return unittest.TestSuite((

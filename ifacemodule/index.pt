@@ -69,7 +69,7 @@
     
       <div tal:define="
   elementId string:adapters.required.specific;
-  show context/++preferences++InterfaceDetails/showSpecificRequiredAdapters">
+  show context/++preferences++apidoc/InterfaceDetails/showSpecificRequiredAdapters">
 
         <h4 i18n:translate="">
           <metal:block use-macro="context/@@apidoc_macros/displaySwitch" />
@@ -93,7 +93,7 @@
     
       <div tal:define="
   elementId string:adapters.required.extended;
-  show context/++preferences++InterfaceDetails/showExtendedRequiredAdapters">
+  show context/++preferences++apidoc/InterfaceDetails/showExtendedRequiredAdapters">
 
         <h4>
           <metal:block use-macro="context/@@apidoc_macros/displaySwitch" />
@@ -117,7 +117,7 @@
 
       <div tal:define="
   elementId string:adapters.required.generic;
-  show context/++preferences++InterfaceDetails/showGenericRequiredAdapters">
+  show context/++preferences++apidoc/InterfaceDetails/showGenericRequiredAdapters">
 
         <h4>
           <metal:block use-macro="context/@@apidoc_macros/displaySwitch" />
@@ -169,17 +169,18 @@
     <div class="indent">
 
       <tal:block define="
-          type string:Browser;
-          specific_views view/specificBrowserViews;
-          extended_views view/extendedBrowserViews;
-          generic_views view/genericBrowserViews;
-          show context/++preferences++InterfaceDetails/showBrowserViews;
-          show_specific 
-            context/++preferences++InterfaceDetails/showSpecificBrowserViews;
-          show_extended
-            context/++preferences++InterfaceDetails/showExtendedBrowserViews;
-          show_generic
-            context/++preferences++InterfaceDetails/showGenericBrowserViews;
+        type string:Browser;
+        specific_views view/specificBrowserViews;
+        extended_views view/extendedBrowserViews;
+        generic_views view/genericBrowserViews;
+        show 
+        context/++preferences++apidoc/InterfaceDetails/showBrowserViews;
+        show_specific 
+        context/++preferences++apidoc/InterfaceDetails/showSpecificBrowserViews;
+        show_extended
+        context/++preferences++apidoc/InterfaceDetails/showExtendedBrowserViews;
+        show_generic
+        context/++preferences++apidoc/InterfaceDetails/showGenericBrowserViews;
           ">
 
         <metal:block use-macro="context/@@interface_macros/viewtype" />
@@ -187,18 +188,19 @@
       </tal:block>
 
       <tal:block define="
-          type string:XML-RPC;
-          specific_views view/specificXMLRPCViews;
-          extended_views view/extendedXMLRPCViews;
-          generic_views view/genericXMLRPCViews;
-          show context/++preferences++InterfaceDetails/showXMLRPCViews;
-          show_specific 
-            context/++preferences++InterfaceDetails/showSpecificXMLRPCViews;
-          show_extended
-            context/++preferences++InterfaceDetails/showExtendedXMLRPCViews;
-          show_generic
-            context/++preferences++InterfaceDetails/showGenericXMLRPCViews;
-          ">
+        type string:XML-RPC;
+        specific_views view/specificXMLRPCViews;
+        extended_views view/extendedXMLRPCViews;
+        generic_views view/genericXMLRPCViews;
+        show 
+        context/++preferences++apidoc/InterfaceDetails/showXMLRPCViews;
+        show_specific 
+        context/++preferences++apidoc/InterfaceDetails/showSpecificXMLRPCViews;
+        show_extended
+        context/++preferences++apidoc/InterfaceDetails/showExtendedXMLRPCViews;
+        show_generic
+        context/++preferences++apidoc/InterfaceDetails/showGenericXMLRPCViews;
+        ">
 
         <metal:block use-macro="context/@@interface_macros/viewtype" />
 
@@ -209,13 +211,14 @@
           specific_views view/specificHTTPViews;
           extended_views view/extendedHTTPViews;
           generic_views view/genericHTTPViews;
-          show context/++preferences++InterfaceDetails/showHTTPViews;
+          show 
+          context/++preferences++apidoc/InterfaceDetails/showHTTPViews;
           show_specific 
-            context/++preferences++InterfaceDetails/showSpecificHTTPViews;
+          context/++preferences++apidoc/InterfaceDetails/showSpecificHTTPViews;
           show_extended
-            context/++preferences++InterfaceDetails/showExtendedHTTPViews;
+          context/++preferences++apidoc/InterfaceDetails/showExtendedHTTPViews;
           show_generic
-            context/++preferences++InterfaceDetails/showGenericHTTPViews;
+          context/++preferences++apidoc/InterfaceDetails/showGenericHTTPViews;
           ">
 
         <metal:block use-macro="context/@@interface_macros/viewtype" />
@@ -227,13 +230,14 @@
           specific_views view/specificFTPViews;
           extended_views view/extendedFTPViews;
           generic_views view/genericFTPViews;
-          show context/++preferences++InterfaceDetails/showFTPViews;
+          show 
+          context/++preferences++apidoc/InterfaceDetails/showFTPViews;
           show_specific 
-            context/++preferences++InterfaceDetails/showSpecificFTPViews;
+          context/++preferences++apidoc/InterfaceDetails/showSpecificFTPViews;
           show_extended
-            context/++preferences++InterfaceDetails/showExtendedFTPViews;
+          context/++preferences++apidoc/InterfaceDetails/showExtendedFTPViews;
           show_generic
-            context/++preferences++InterfaceDetails/showGenericFTPViews;
+          context/++preferences++apidoc/InterfaceDetails/showGenericFTPViews;
           ">
 
         <metal:block use-macro="context/@@interface_macros/viewtype" />
@@ -245,13 +249,14 @@
           specific_views view/specificOtherViews;
           extended_views view/extendedOtherViews;
           generic_views view/genericOtherViews;
-          show context/++preferences++InterfaceDetails/showOtherViews;
+          show 
+          context/++preferences++apidoc/InterfaceDetails/showOtherViews;
           show_specific 
-            context/++preferences++InterfaceDetails/showSpecificOtherViews;
+          context/++preferences++apidoc/InterfaceDetails/showSpecificOtherViews;
           show_extended
-            context/++preferences++InterfaceDetails/showExtendedOtherViews;
+          context/++preferences++apidoc/InterfaceDetails/showExtendedOtherViews;
           show_generic
-            context/++preferences++InterfaceDetails/showGenericOtherViews;
+          context/++preferences++apidoc/InterfaceDetails/showGenericOtherViews;
           ">
 
         <metal:block use-macro="context/@@interface_macros/viewtype" />

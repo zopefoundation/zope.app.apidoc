@@ -210,7 +210,7 @@
   <configure package="zope.testing">
     <bookchapter
         id="formparser"
-        title="Form Parse"
+        title="Form Parser"
         doc_path="formparser.txt"
         parent="test"
         />

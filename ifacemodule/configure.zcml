@@ -67,8 +67,8 @@
       template="menu.pt"
       />
 
-  <apidoc:preferencesGroup
-      name="InterfaceDetails"
+  <apidoc:preferenceGroup
+      id="apidoc.InterfaceDetails"
       schema=".interfaces.IInterfaceDetailsPreferences"
       title="Interface Details" 
       />

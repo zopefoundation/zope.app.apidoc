@@ -6,9 +6,9 @@
   <meta:directives namespace="http://namespaces.zope.org/apidoc">
 
     <meta:directive
-        name="preferencesGroup"
-        schema=".metadirectives.IPreferencesGroupDirective"
-        handler=".metaconfigure.preferencesGroup"
+        name="preferenceGroup"
+        schema=".metadirectives.IPreferenceGroupDirective"
+        handler=".metaconfigure.preferenceGroup"
         />
 
   </meta:directives>

@@ -12,7 +12,7 @@ eases this pain by providing a generic user preferences framework that uses
 schemas to categorize and describe the preferences.
 
 
-Preferences Groups
+Preference Groups
 ------------------
 
 Preferences are grouped in preference groups and the preferences inside a
@@ -39,36 +39,38 @@ group a spcified via the preferences group schema:
   ...                     u"at the top of the screen.",
   ...         default=True)
 
-Now we can instantiate the preference group. Each preference group must have a
-name by which it can be accessed and has an optional title field for UI
-purposes:
+Now we can instantiate the preference group. Each preference group must have
+an id by which it can be accessed and has an optional title and description
+field for UI purposes:
 
-  >>> settings = preference.PreferencesGroup(
-  ...     name="ZMISettings",
+  >>> settings = preference.PreferenceGroup(
+  ...     "ZMISettings",
   ...     schema=IZMIUserSettings,
-  ...     title=u"ZMI User Settings")
+  ...     title=u"ZMI User Settings",
+  ...     description=u"")
 
 Note that the preferences group provides the interface it is representing:
 
   >>> IZMIUserSettings.providedBy(settings)
   True
 
-and the name, schema and title of the group are directly available:
+and the id, schema and title of the group are directly available:
 
-  >>> settings.name
+  >>> settings.id
   'ZMISettings'
   >>> settings.schema
-  <InterfaceClass __builtin__.IZMIUserSettings>
+  <InterfaceClass zope.app.apidoc.preference.README.IZMIUserSettings>
   >>> settings.title
   u'ZMI User Settings'
 
-So let's ask the group for the skin setting:
+So let's ask the preference group for the `skin` setting:
 
   >>> settings.skin #doctest:+ELLIPSIS
   Traceback (most recent call last):
   ...
   ComponentLookupError: 
   (<InterfaceClass ...interfaces.IPrincipalAnnotationUtility>, '')
+
 
 So why did the lookup fail? Because we have not specified a principal yet, for
 which we want to lookup the preferences. To do that, we have to create a new
@@ -125,38 +127,267 @@ assignment:
   ConstraintNotSatisfied: MySkin  
 
 
-User Preferences
-----------------
+Preference Group Trees
+----------------------
 
-The various preferences groups are collectively available via the user
-preferences object:
+The preferences would not be very powerful, if you could create a full
+preferences. So let's create a sub-group for our ZMI user settings, where we
+can adjust the look and feel of the folder contents view:
 
-  >>> prefs = preference.UserPreferences()
+  >>> import sets
+  >>> class IFolderSettings(zope.interface.Interface):
+  ...     """Basic User Preferences"""
+  ...
+  ...     shownFields = zope.schema.Set(
+  ...         title=u"Shown Fields",
+  ...         description=u"Fields shown in the table.",
+  ...         value_type=zope.schema.Choice(['name', 'size', 'creator']),
+  ...         default=sets.Set(['name', 'size']))
+  ...
+  ...     sortedBy = zope.schema.Choice(
+  ...         title=u"Sorted By",
+  ...         description=u"Data field to sort by.",
+  ...         values=['name', 'size', 'creator'],
+  ...         default='name')
 
-Using this objcet, you can access a list of all available groups
+  >>> folderSettings = preference.PreferenceGroup(
+  ...     "ZMISettings.Folder",
+  ...     schema=IFolderSettings,
+  ...     title=u"Folder Content View Settings")
 
-  >>> prefs.items()
-  []
+Note that the id was chosen so that the parent id is the prefix of the child's
+id. Our new preference sub-group should now be available as an attribute or an
+item on the parent group ...
 
-But why did our new ZMI user settings group not appear? This is because we
-have to register it first as a preferences group:
+  >>> settings.Folder
+  Traceback (most recent call last):
+  ...
+  AttributeError: 'Folder' is not a preference or sub-group.
 
-  >>> from zope.app.apidoc.preference.interfaces import IPreferencesGroup
-  >>> ztapi.provideUtility(IPreferencesGroup, settings, settings.name)
+... but not before we register the groups as utilities:
 
-Note that the name of the utility and the name saved in the group must be the
-same. Now let's try again:
+  >>> from zope.app.apidoc.preference import interfaces
+  >>> from zope.app.testing import ztapi
 
-  >>> prefs.items() #doctest:+ELLIPSIS
-  [(u'ZMISettings', 
-    <zope.app.apidoc.preference.preference.PreferencesGroup object at ...>)]
+  >>> ztapi.provideUtility(interfaces.IPreferenceGroup, settings,
+  ...                      name='ZMISettings')
+  >>> ztapi.provideUtility(interfaces.IPreferenceGroup, folderSettings,
+  ...                      name='ZMISettings.Folder')
 
-You can also just access one group at a time:
+If we now try to lookup the sub-group again, we should be successfull:
 
-  >>> prefs['ZMISettings'] #doctest:+ELLIPSIS
-  <zope.app.apidoc.preference.preference.PreferencesGroup object at ...>
+  >>> settings.Folder #doctest:+ELLIPSIS
+  <zope.app.apidoc.preference.preference.PreferenceGroup object at ...>
 
-The entire `IReadContainer` interface is available.
+  >>> settings['Folder'] #doctest:+ELLIPSIS
+  <zope.app.apidoc.preference.preference.PreferenceGroup object at ...>
+
+While the registry of the preference groups is flat, the careful naming of the
+ids allows us to have a tree of preferences. Note that this pattern is very
+similar to the way modules are handled in Python; they are stored in a flat
+dictionary in ``sys.modules``, but due to the naming they appear to be in a
+namespace tree.
+
+While we are at it, there are also preference categories that can be compared
+to Python packages. They basically are just a higher level grouping concept
+that is used by the UI to better organize the preferences. A preference group
+can be converted to a category by simply providing an additional interface:
+
+  >>> zope.interface.alsoProvides(settings, interfaces.IPreferenceCategory)
+
+  >>> interfaces.IPreferenceCategory.providedBy(settings)
+  True
+
+
+Default Preferences
+-------------------
+
+It sometimes desirable to define default settings on a site-by-site basis,
+instead of just using the default value from the schema. The preferences
+package provides a module
+ 
+  >>> from zope.app.apidoc.preference import default
+
+that implements a default preferences provider that can be added as a unnamed
+utility for each site. So the first step is to create a site:
+
+  >>> from zope.app.testing import setup
+
+  >>> import zope.app.component.hooks
+  >>> zope.app.component.hooks.setHooks()
+  >>> setup.setUpTraversal()
+  >>> setup.setUpSiteManagerLookup()
+  
+  >>> root = setup.buildSampleFolderTree()
+  >>> rsm = setup.createSiteManager(root, True)
+
+Now we can register the default preference provider with the root site:
+
+  >>> provider = setup.addUtility(rsm, '', 
+  ...                             interfaces.IDefaultPreferenceProvider, 
+  ...                             default.DefaultPreferenceProvider())
+
+So before we set an explicit default value for a preference, the schema field
+default is used:
+
+  >>> settings.Folder.sortedBy
+  'name'
+
+But if we now set a new default value with the provider,
+
+  >>> defaultFolder = provider.getDefaultPreferenceGroup('ZMISettings.Folder')
+  >>> defaultFolder.sortedBy = 'size'
+
+then the default of the setting changes:
+
+  >>> settings.Folder.sortedBy
+  'size'
+
+The default preference providers also implictly acquire default values from
+parent sites. So if we make `folder1` a site and set it as the active site
+
+  >>> folder1 = root['folder1']
+  >>> sm1 = setup.createSiteManager(folder1, True)
+
+and add a default provider there,
+
+  >>> provider1 = setup.addUtility(sm1, '', 
+  ...                              interfaces.IDefaultPreferenceProvider, 
+  ...                              default.DefaultPreferenceProvider())
+
+then we still get the root's default values, because we have not defined any
+in the higher default provider:
+
+  >>> settings.Folder.sortedBy
+  'size'
+
+But if we provide the new provider with a default value for `sortedBy`,
+
+  >>> defaultFolder1 = provider1.getDefaultPreferenceGroup('ZMISettings.Folder')
+  >>> defaultFolder1.sortedBy = 'creator'
+
+then it is used instead:
+
+  >>> settings.Folder.sortedBy
+  'creator'
+
+Of course, once the root site becomes our active site again
+
+  >>> zope.app.component.hooks.setSite(root)
+
+the default value of the root provider is used:
+
+  >>> settings.Folder.sortedBy
+  'size'
+
+Of course, all the defaults in the world are not relevant anymore as soon as
+the user actually provides a value:
+
+  >>> settings.Folder.sortedBy = 'name'
+  >>> settings.Folder.sortedBy
+  'name'
+
+Oh, and have I mentioned that entered values are always validated? So you
+cannot just assign any old value:
+
+  >>> settings.Folder.sortedBy = 'foo'
+  Traceback (most recent call last):
+  ...
+  ConstraintNotSatisfied: foo
+
+Finally, if the user deletes his/her explicit setting, we are back to the
+default value:
+
+  >>> del settings.Folder.sortedBy
+  >>> settings.Folder.sortedBy
+  'size'
+
+
+Creating Preference Groups Using ZCML
+-------------------------------------
+
+If you are using the user preference system in Zope 3, you will not have to
+manually setup the preference groups as we did above (of course). We will use
+ZCML instead. First, we need to register the directives:
+
+  >>> from zope.configuration import xmlconfig
+  >>> import zope.app.apidoc.preference
+  >>> context = xmlconfig.file('meta.zcml', zope.app.apidoc.preference)
+
+Then the system sets up a root preference group:
+
+  >>> context = xmlconfig.string('''
+  ...     <configure
+  ...         xmlns="http://namespaces.zope.org/apidoc"
+  ...         i18n_domain="test">
+  ...
+  ...       <preferenceGroup
+  ...           id=""
+  ...           title="User Preferences" 
+  ...           />
+  ...
+  ...     </configure>''', context)
+
+Now we can use the preference system in its intended way. We access the folder
+settings as follows:
+
+  >>> from zope.app import zapi
+  >>> prefs = zapi.getUtility(interfaces.IPreferenceGroup)
+  >>> prefs.ZMISettings.Folder.sortedBy
+  'size'
+
+Let's register the ZMI settings again under a new name via ZCML:
+
+  >>> context = xmlconfig.string('''
+  ...     <configure
+  ...         xmlns="http://namespaces.zope.org/apidoc"
+  ...         i18n_domain="test">
+  ...
+  ...       <preferenceGroup
+  ...           id="ZMISettings2"
+  ...           title="ZMI Settings NG"
+  ...           schema="zope.app.apidoc.preference.README.IZMIUserSettings"
+  ...           category="true"
+  ...           />
+  ...
+  ...     </configure>''', context)
+
+  >>> prefs.ZMISettings2 #doctest:+ELLIPSIS
+  <zope.app.apidoc.preference.preference.PreferenceGroup object at ...>
+
+  >>> prefs.ZMISettings2.title
+  u'ZMI Settings NG'
+
+  >>> IZMIUserSettings.providedBy(prefs.ZMISettings2)
+  True
+  >>> interfaces.IPreferenceCategory.providedBy(prefs.ZMISettings2)
+  True
+
+And the tree can built again by carefully cosntructing the id:
+
+  >>> context = xmlconfig.string('''
+  ...     <configure
+  ...         xmlns="http://namespaces.zope.org/apidoc"
+  ...         i18n_domain="test">
+  ...
+  ...       <preferenceGroup
+  ...           id="ZMISettings2.Folder"
+  ...           title="Folder Settings"
+  ...           schema="zope.app.apidoc.preference.README.IFolderSettings"
+  ...           />
+  ...
+  ...     </configure>''', context)
+
+  >>> prefs.ZMISettings2 #doctest:+ELLIPSIS
+  <zope.app.apidoc.preference.preference.PreferenceGroup object at ...>
+
+  >>> prefs.ZMISettings2.Folder.title
+  u'Folder Settings'
+
+  >>> IFolderSettings.providedBy(prefs.ZMISettings2.Folder)
+  True
+  >>> interfaces.IPreferenceCategory.providedBy(prefs.ZMISettings2.Folder)
+  False
 
 
 Traversal
@@ -169,9 +400,6 @@ traversal path. But before we can use the path expressions, we have to
 register all necessary traversal components and the special `preferences`
 namespace:
 
-  >>> from zope.app.testing import setup
-  >>> setup.setUpTraversal()
-
   >>> import zope.app.traversing.interfaces
   >>> ztapi.provideAdapter(None,
   ...                      zope.app.traversing.interfaces.ITraversable,
@@ -179,8 +407,6 @@ namespace:
   ...                      'preferences')
 
 We can now access the preferences as follows:
-
-  >>> from zope.app import zapi
 
   >>> zapi.traverse(None, '++preferences++ZMISettings/skin')
   'Basic'
@@ -200,18 +426,18 @@ preferences?
 Let's create a checker using the function that the security machinery is
 actually using:
 
-  >>> checker = preference.PreferencesGroupChecker(settings)
+  >>> checker = preference.PreferenceGroupChecker(settings)
   >>> checker.permission_id('skin')
   Global(CheckerPublic,zope.security.checker)
   >>> checker.setattr_permission_id('skin')
   Global(CheckerPublic,zope.security.checker)
 
-The name, title and schema are publically available for access, but are not
-available for mutation at all:
+The id, title, description, and schema are publically available for access,
+but are not available for mutation at all:
 
-  >>> checker.permission_id('name')
+  >>> checker.permission_id('id')
   Global(CheckerPublic,zope.security.checker)
-  >>> checker.setattr_permission_id('name') is None
+  >>> checker.setattr_permission_id('id') is None
   True
 
 
