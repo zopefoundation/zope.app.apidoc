@@ -25,8 +25,12 @@
     <allow attributes="rootModules" />
   </class>
 
+  <apidoc:rootModule module="BTrees" />
+  <apidoc:rootModule module="RestrictedPython" />
+  <apidoc:rootModule module="ThreadedAsync" />
   <apidoc:rootModule module="ZConfig" />
   <apidoc:rootModule module="ZODB" />
+  <apidoc:rootModule module="persistent" />
   <apidoc:rootModule module="transaction" />
   <apidoc:rootModule module="zdaemon" />
   <apidoc:rootModule module="zope" />
