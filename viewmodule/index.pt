@@ -1,0 +1,76 @@
+<html metal:use-macro="views/apidoc_macros/details">
+<body metal:fill-slot="contents"
+      tal:define="layers view/getViewsByLayers">
+
+  <h1 class="details-header">
+    <span tal:replace="view/type/__name__" /> views for 
+    <span tal:replace="view/iface/__name__" />
+  </h1>
+
+  <span tal:repeat="layer layers">
+  
+    <h2 class="details-section">
+      "<span tal:replace="layer/name" />" Layer
+    </h2>
+
+    <div class="indent">
+    <ul>
+      <li tal:repeat="View layer/views">
+        <b tal:content="View/name" /><br />
+        <div class="indent"><span class="small">
+          <i>required:</i>
+          <a href=""
+             tal:condition="View/required"
+             tal:attributes="href View/required"
+             tal:content="View/required" />
+          <span tal:condition="not:View/required">None</span>
+          <br />
+          <i>presentation type:</i>
+          <a href=""
+             tal:attributes="href View/type"
+             tal:content="View/type" />
+          <br />
+          <tal:omit-tag condition="View/factory/path">
+            <i>factory path:</i>
+            <a href=""
+               tal:condition="View/factory/referencable"
+               tal:attributes="href 
+                   string: ../Class/index.html?path=${View/factory/path}"
+               tal:content="View/factory/path" />
+            <span
+               tal:condition="not:View/factory/referencable"
+               tal:content="View/factory/path" />
+            <br />
+          </tal:omit-tag>
+          <tal:omit-tag condition="View/factory/template">
+            <i>template:</i>
+            <span tal:replace="View/factory/template" />
+            <br />
+          </tal:omit-tag>
+          <tal:omit-tag condition="View/factory/resource">
+            <i>resource:</i>
+            <a href=""
+               tal:attributes="href 
+                   string: /@@/${View/factory/resource}"
+               tal:content="View/factory/resource" />
+            <br />
+          </tal:omit-tag>
+          <span class="small" 
+              tal:condition="python: View['read_perm'] and View['write_perm']">
+            <i>Permissions:</i>
+            <span tal:replace="View/read_perm">zope.View</span> (read), 
+            <span tal:replace="View/write_perm">zope.View</span> (write)
+          </span>
+        </span></div>
+      </li>
+    </ul>
+    </div>
+
+  </span>
+
+  <p tal:condition="not: layers">
+    <em>There are no views for this interface and presentation type.</em>
+  </p>
+
+</body>
+</html>

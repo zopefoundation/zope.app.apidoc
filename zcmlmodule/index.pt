@@ -1,0 +1,118 @@
+<html metal:use-macro="views/apidoc_macros/details">
+<body metal:fill-slot="contents"
+      tal:define="schema view/getSchema">
+
+  <h1 class="details-header">
+    <span tal:replace="context/zope:name" /> 
+    (<span tal:replace="structure view/getNamespaceName" />)
+  </h1>
+
+  <div class="indent" 
+       tal:condition="view/getFile">
+    <i>File:</i> <tal:block content="view/getFile"/>
+  </div>
+
+  <div class="indent" 
+       tal:condition="view/getInfo">
+    <i>Info:</i> <tal:block content="view/getInfo"/>
+  </div>
+
+  <h2 class="details-section">Schema</h2>
+
+  <div class="indent">
+    <a href=""
+       tal:attributes="href 
+           string:../../../Interface/${schema/getId}/apiindex.html">
+      <h3 tal:content="schema/getId">zope.fields.Schema</h3>
+    </a>
+  </div>
+
+  <div class="indent">
+    <div class="documentation" tal:content="structure schema/getDoc">
+      Here is the doc string
+    </div>
+  </div>
+
+  <div class="indent"
+      tal:define="fields schema/getFields">
+
+  <ul class="attr-list" 
+      tal:condition="fields">
+  
+    <li tal:repeat="field fields">
+      <b><code tal:content="field/name">field</code></b>
+      - <a href=""
+           tal:attributes="href 
+               string:../../../Interface/${field/iface/id}/apiindex.html">
+          <code tal:content="field/iface/name">IField</code></a>
+      (<span tal:content="string:${field/required}, ">optional, </span>
+        default = <code tal:content="field/default" />)<br>
+      <span tal:content="field/description">field desc</span>      
+    </li>
+
+  </ul>
+
+  <p tal:condition="not: fields">
+    <em>There are no fields specified.</em>
+  </p>
+
+  </div>
+
+  <tal:omit-tag 
+      define="dir view/getSubdirectives"
+      condition="dir">
+
+  <h2 class="details-section">Subdirectives</h2>
+
+  <div class="indent"
+       tal:repeat="dir view/getSubdirectives">
+
+  <h3 tal:content="dir/name"> 
+    directive
+  </h3>
+
+  <div class="indent">
+    <a href=""
+       tal:attributes="href 
+           string:../../../Interface/${dir/schema/getId}/apiindex.html">
+      <h4 tal:content="dir/schema/getId">zope.fields.Schema</h4>
+    </a>
+  </div>
+
+  <div class="indent">
+    <div class="documentation" tal:content="structure dir/schema/getDoc">
+      Here is the doc string
+    </div>
+  </div>
+
+  <div class="indent"
+      tal:define="fields dir/schema/getFields">
+
+  <ul class="attr-list" 
+      tal:condition="fields">
+  
+    <li tal:repeat="field fields">
+      <b><code tal:content="field/name">field</code></b>
+      - <a href=""
+           tal:attributes="href 
+               string:../../../Interface/${field/iface/id}/apiindex.html">
+          <code tal:content="field/iface/name">IField</code></a>
+      (<span tal:content="string:${field/required}, ">optional, </span>
+        default = <code tal:content="field/default" />)<br>
+      <span tal:content="field/description">field desc</span>      
+    </li>
+
+  </ul>
+
+  <p tal:condition="not: fields">
+    <em>There are no fields specified.</em>
+  </p>
+
+  </div>
+
+  </div>
+
+  </tal:omit-tag>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:browser="http://namespaces.zope.org/browser">
+
+  <class class=".ClassModule">
+    <allow interface="zope.app.apidoc.interfaces.IDocumentationModule" />
+    <allow attributes="rootModules" />
+  </class>
+
+  <utility
+    provides="zope.app.apidoc.interfaces.IDocumentationModule"
+    factory=".ClassModule"
+    name="Class" />
+
+  <browser:page
+    for=".ClassModule"
+    permission="zope.View"
+    name="menu.html"
+    template="menu.pt" />
+
+  <browser:page
+    for=".ClassModule"
+    permission="zope.View"
+    class=".browser.ClassDetails"
+    name="index.html"
+    template="index.pt" />
+
+  <browser:page
+    for=".ClassModule"
+    permission="zope.View"
+    class=".browser.ModuleDetails"
+    name="browser.html"
+    template="browser.pt" />
+
+</configure>

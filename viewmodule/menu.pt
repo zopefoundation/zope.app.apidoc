@@ -1,0 +1,41 @@
+<html metal:use-macro="views/apidoc_macros/menu">
+<body>
+
+  <div metal:fill-slot="menu" class="small">
+
+    <form action="./index.html" target="main">
+      <p>
+        Enter the interface name:
+        <select name="iface" 
+               style="font-size: 80%; width=95%" >
+          <option 
+              tal:repeat="id view/getInterfaceIds" 
+              tal:attributes="value id"
+              tal:content="id" />
+        </select>
+      </p>
+      <p>
+        Presentation Type:
+        <select name="type" 
+               style="font-size: 80%; width=95%" >
+          <option 
+              tal:repeat="type view/getPresentationTypes" 
+              tal:attributes="value type/path"
+              tal:content="type/name" />
+        </select>
+      </p>
+      <p>
+        Show all views:
+        <input type="checkbox" name="all" value="all"/>
+      </p>
+      <input type="submit" name="SUBMIT" value="Show" 
+             style="font-size: 80%; width=95%"/>
+    </form>
+
+    <a href="./skin_layer_usage.html" target="main">
+      Show Skins, Layers and Usages
+    </a>
+  </div>
+
+</body>
+</html>

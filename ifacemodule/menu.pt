@@ -1,0 +1,10 @@
+<html metal:use-macro="views/apidoc_macros/menu">
+<body>
+
+  <p metal:fill-slot="post_menu" class="small">
+    Note: These are only interfaces that are registered with the Interface
+    Service. 
+  </p>
+
+</body>
+</html>

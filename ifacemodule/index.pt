@@ -1,0 +1,237 @@
+<html metal:use-macro="views/apidoc_macros/details">
+<body metal:fill-slot="contents">
+
+  <h1 class="details-header" tal:content="view/getId">
+    zope.app.interfaces.IInterface
+  </h1>
+
+  <h3 tal:condition="view/getTypes">
+    Type: 
+    <tal:omit-tag tal:repeat="type view/getTypes" >
+      <a href=""
+          tal:attributes="href string:../${type/path}/apiindex.html"
+          tal:content="type/name"/><tal:block 
+          condition="not:repeat/type/end">, </tal:block>
+    </tal:omit-tag>
+  </h3>
+
+
+  <div class="indent">
+    <div class="documentation" tal:content="structure view/getDoc">
+      Here is the doc string
+    </div>
+  </div>
+
+
+  <h2 class="details-section">Bases</h2>
+
+  <div class="indent"
+         tal:define="bases view/getBases">
+    
+    <ul class="attr-list" tal:condition="bases">
+      <li tal:repeat="base bases">
+        <a href=""
+           tal:attributes="href string:../$base/apiindex.html"
+           tal:content="base" />
+      </li>
+    </ul>
+    
+    <p tal:condition="not: bases">
+      <em>There are no base classes.</em>
+    </p>
+    
+  </div>
+
+
+  <h2 class="details-section">Attributes/Fields</h2>
+
+  <div class="indent"
+      tal:define="attributes view/getAttributes;
+                  fields view/getFields">
+
+  <ul class="attr-list" 
+      tal:condition="python: attributes or fields">
+  
+    <li tal:repeat="attr attributes">
+      <b><code tal:content="attr/name">attr</code></b> (Attribute)<br>
+      <div class="inline-documentation" tal:content="structure attr/doc">
+        attr desc
+      </div>      
+    </li>
+
+    <li tal:repeat="field fields">
+      <b><code tal:content="field/name">field</code></b>
+      - <a href=""
+           tal:attributes="href string:../${field/iface/id}/apiindex.html">
+          <code tal:content="field/iface/name">IField</code></a>
+      (<span tal:content="string:${field/required}, ">optional, </span>
+        default = <code tal:content="field/default" />)<br>
+      <span tal:content="field/description">field desc</span>      
+    </li>
+
+  </ul>
+
+  <p tal:condition="python: not (attributes or fields)">
+    <em>There are no attributes or fields specified.</em>
+  </p>
+
+  </div>
+
+
+
+  <h2 class="details-section">Methods</h2>
+
+  <div class="indent">
+
+  <ul class="attr-list" tal:condition="view/getMethods">
+    <li tal:repeat="method view/getMethods">
+      <b><code 
+          tal:content="string:${method/name}${method/signature}" />
+      </b><br>
+      <div class="inline-documentation" tal:content="structure method/doc">
+        method desc
+      </div>      
+    </li>
+  </ul>
+
+  <p tal:condition="not: view/getMethods">
+    <em>There are no methods or fields specified.</em>
+  </p>
+
+  </div>
+
+
+
+  <h2 class="details-section">Adapters</h2>
+  
+  <div class="indent" 
+       tal:define="adapters view/getRequiredAdapters"
+       tal:condition="adapters">
+
+    <h3>Adapters where this interface is required:</h3>
+    <ul class="attr-list">
+      <li tal:repeat="adapter adapters">
+        <b><code tal:content="adapter/factory" /></b>
+        <span tal:condition="adapter/name">
+          (name: <tal:block content="adapter/name" />)
+        </span>
+        <br />
+        <i>provides:</i> 
+          <a href=""
+              tal:attributes="href string:../${adapter/provided}/apiindex.html"
+              tal:content="adapter/provided" /><br />
+        <tal:block condition="adapter/required">
+        <i>also required:</i>
+          <tal:block repeat="iface adapter/required">
+            <a href=""
+                tal:attributes="href string:../$iface/apiindex.html"
+                tal:content="iface" /><tal:block 
+                condition="not:repeat/iface/end">, </tal:block>
+          </tal:block>
+        </tal:block>
+      </li>
+    </ul>
+
+  </div>
+
+  <div class="indent" 
+       tal:define="adapters view/getProvidedAdapters"
+       tal:condition="adapters">
+
+    <h3>Adapters that provide this interface:</h3>
+    <ul>
+      <li tal:repeat="adapter adapters">
+        <b><code tal:content="adapter/factory" /></b>
+        <span tal:condition="adapter/name">
+          (name: <tal:block content="adapter/name" />)
+        </span>
+        <br />
+        <i>requires:</i> 
+          <tal:block repeat="iface adapter/required">
+            <a href=""
+                tal:condition="iface"
+                tal:attributes="href string:../$iface/"
+                tal:content="iface" /><tal:block 
+                condition="not:repeat/iface/end">, </tal:block>
+            <span tal:condition="not: iface">
+              No interface required.
+            </span>
+          </tal:block>
+      </li>
+    </ul>
+
+  </div>
+
+  <p tal:condition="
+     python: not (view.getRequiredAdapters() or view.getProvidedAdapters())">
+    <em>There are no adapters registered for this interface.</em>
+  </p>
+
+  <div tal:define="factories view/getFactories;
+                   utilities view/getUtilities;
+                   services view/getServices"
+       tal:condition="python: factories or utilities or services">
+
+    <h2 class="details-section">Other Information</h2>
+    
+    <div class="indent">
+    
+      <tal:block condition="factories">
+        <h3 class="details-section">Factories</h3>
+        <div class="indent">
+          <div class="small">
+            A list of factories that create objects implement this interface.
+          </div>
+          <ul>
+            <li tal:repeat="factory factories">
+              <a href=""
+                 tal:attributes="href string:../../Factory/${factory/name}/"
+                 tal:content="factory/name" />
+              <tal:block replace="string:(${factory/title})" 
+                         condition="factory/title" />
+            </li>
+          </ul>
+        </div>
+      </tal:block>
+    
+      <tal:block condition="utilities">
+        <h3 class="details-section">Utilities</h3>
+        <div class="indent">
+          <div class="small">
+            A list of utilities that are are registered to provide this 
+            interface.
+          </div>
+          <ul>
+            <li tal:repeat="utility utilities">
+              <a href=""
+                 tal:attributes="href string:../../Utility/${utility/path}/"
+                 tal:content="utility/path" />
+              <tal:block replace="string: (name: ${utility/name})" 
+                         condition="utility/name" />
+            </li>
+          </ul>
+        </div>
+      </tal:block>
+    
+      <tal:block condition="services">
+        <h3 class="details-section">Service</h3>
+        <div class="indent">
+          <div class="small">
+            A list of services (usually just one) that are are registered to 
+            provide this interface.
+          </div>
+          <ul>
+            <li tal:repeat="service services">
+              <a href=""
+                 tal:attributes="href string:../../Service/$service/"
+                 tal:content="service" />
+            </li>
+          </ul>
+        </div>
+      </tal:block>
+    
+    </div>
+  </div>
+
+</body>
+</html>

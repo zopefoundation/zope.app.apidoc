@@ -1,0 +1,20 @@
+<html metal:use-macro="views/apidoc_macros/menu">
+<body>
+
+  <div metal:fill-slot="menu" class="small">
+
+    <div>Enter the dotted name (Python path) of the class:</div>
+    <form action="./index.html" target="main">
+      <input type="text" name="path" 
+             style="font-size: 80%; width=95%" />
+      <input type="submit" name="SUBMIT" value="Show" 
+             style="font-size: 80%; width=95%"/>
+    </form>
+
+    <p style="font-size: 120%">
+      <a href="./browser.html" target="main">Browse Zope Source</a>
+    </p>
+  </div>
+
+</body>
+</html>

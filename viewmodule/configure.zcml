@@ -1,0 +1,37 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:browser="http://namespaces.zope.org/browser">
+
+  <class class=".ViewModule">
+    <allow interface="zope.app.apidoc.interfaces.IDocumentationModule" />
+    <allow attributes="getSkins getLayersForSkin getSkinLayerMapping 
+                       getUsages"/>
+  </class>
+
+  <utility
+    provides="zope.app.apidoc.interfaces.IDocumentationModule"
+    factory=".ViewModule"
+    name="Views" />
+
+  <browser:page
+    for=".ViewModule"
+    permission="zope.View"
+    class=".browser.Menu"
+    name="menu.html"
+    template="menu.pt" />
+
+  <browser:page
+    for=".ViewModule"
+    permission="zope.View"
+    class=".browser.SkinLayerUsage"
+    name="skin_layer_usage.html"
+    template="skin_layer_usage.pt" />
+
+  <browser:page
+    for=".ViewModule"
+    permission="zope.View"
+    class=".browser.ViewsDetails"
+    name="index.html"
+    template="index.pt" />
+
+</configure>

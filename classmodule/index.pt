@@ -1,0 +1,141 @@
+<html metal:use-macro="views/apidoc_macros/details">
+<body metal:fill-slot="contents">
+
+  <h1 class="details-header"
+      tal:content="view/path">
+    zope.app.Klass
+  </h1>
+
+  <div class="indent">
+    <div class="documentation" tal:content="structure view/getDoc">
+      Here is the doc string
+    </div>
+  </div>
+
+
+  <h2 class="details-section">Bases</h2>
+
+    <div class="indent"
+         tal:define="bases view/getBases">
+    
+    <ul class="attr-list" tal:condition="bases">
+      <li tal:repeat="base bases">
+        <a href=""
+           tal:attributes="href string:./index.html?path=$base"
+           tal:content="base" />
+      </li>
+    </ul>
+    
+    <p tal:condition="not: bases">
+      <em>There are no base classes.</em>
+    </p>
+    
+    </div>
+
+  <h2 class="details-section">Implemented Interfaces</h2>
+
+    <div class="indent"
+         tal:define="ifaces view/getInterfaces">
+    
+    <ul class="attr-list" tal:condition="ifaces">
+      <li tal:repeat="iface ifaces">
+        <a href=""
+           tal:attributes="href string:../Interface/$iface/apiindex.html"
+           tal:content="iface" />
+      </li>
+    </ul>
+    
+    <p tal:condition="not: ifaces">
+      <em>There are no implemented interfaces.</em>
+    </p>
+    
+    </div>
+
+
+  <h2 class="details-section">Attributes/Properties</h2>
+
+  <div class="indent"
+      tal:define="attributes view/getAttributes">
+
+  <ul class="attr-list" tal:condition="attributes">
+  
+    <li tal:repeat="attr attributes">
+      <b><code tal:content="attr/name">attr</code></b>
+      <tal:omit-tag condition="not: attr/type_link">
+        (type: <code tal:content="attr/type" />)
+      </tal:omit-tag>
+      <tal:omit-tag condition="attr/type_link">
+        (type: 
+        <a href="" 
+           tal:attributes="href string:./index.html?path=${attr/type_link}">
+          <code tal:content="attr/type" /></a>)
+      </tal:omit-tag>
+      <br/>
+      <i>Value:</i>
+      <code tal:content="attr/value">u''</code><br />
+
+      <span class="small" tal:condition="attr/interface">
+        <i>Interface:</i>
+        <a href=""
+           tal:attributes="href attr/interface"
+           tal:content="attr/interface">Iface</a><br />
+      </span>
+      <span class="small" 
+          tal:condition="python: attr['read_perm'] and attr['write_perm']">
+        <i>Permissions:</i>
+        <span tal:replace="attr/read_perm">zope.View</span> (read), 
+        <span tal:replace="attr/write_perm">zope.View</span> (write)
+      </span>
+    </li>
+
+  </ul>
+
+  <p tal:condition="not: attributes">
+    <em>There are no attributes in this class.</em>
+  </p>
+
+  </div>
+
+
+  <h2 class="details-section">Methods</h2>
+
+  <div class="indent"
+      tal:define="methods view/getMethods">
+
+  <ul class="attr-list" tal:condition="methods">
+  
+    <li tal:repeat="method view/getMethods">
+      <b><code 
+          tal:content="string:${method/name}${method/signature}" />
+      </b><br>
+      <div class="inline-documentation" tal:content="structure method/doc">
+        method desc
+      </div>
+
+      <span class="small" tal:condition="method/interface">
+        <i>Interface:</i>
+        <a href=""
+           tal:attributes="href 
+               string:../Interface/${method/interface}/apiindex.html"
+           tal:content="method/interface">Iface</a><br/>
+      </span>
+      
+      <span class="small" 
+          tal:condition="python: method['read_perm'] and method['write_perm']">
+        <i>Permissions:</i>
+        <span tal:replace="method/read_perm">zope.View</span> (read), 
+        <span tal:replace="method/write_perm">zope.View</span> (write)
+      </span>
+    </li>
+
+  </ul>
+
+  <p tal:condition="not: methods">
+    <em>There are no methods in this class.</em>
+  </p>
+
+  </div>
+
+
+</body>
+</html>
