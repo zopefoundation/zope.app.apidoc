@@ -174,10 +174,13 @@ class ZCMLModule(ReadContainerBase):
       >>> module.get('foo') is None
       True
 
-      >>> print '\n'.join([ns.getShortName() for n, ns in module.items()][1:4])
-      browser
-      dav
-      event
+      >>> names = [ns.getShortName() for n, ns in module.items()]
+      >>> 'browser' in names
+      True
+      >>> 'meta' in names
+      True
+      >>> 'ALL' in names
+      True
     """
 
     implements(IDocumentationModule)
