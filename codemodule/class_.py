@@ -15,8 +15,10 @@
 
 $Id: __init__.py 29143 2005-02-14 22:43:16Z srichter $
 """
+
 __docformat__ = 'restructuredtext'
-import inspect
+
+from inspect import ismethod
 
 from zope.interface import implements, implementedBy
 from zope.security.checker import getCheckerForInstancesOf
@@ -28,8 +30,10 @@ from zope.app.apidoc.utilities import getPublicAttributes
 from zope.app.apidoc.utilities import getPythonPath
 from interfaces import IClassDocumentation
 
+
 class Class(object):
     """This class represents a class declared in the module."""
+
     implements(ILocation, IClassDocumentation)
 
     def __init__(self, module, name, klass):
@@ -42,12 +46,11 @@ class Class(object):
         all_ifaces = {}
         for iface in self.__interfaces:
             all_ifaces[getPythonPath(iface)] = iface
-            for base in [base for base in iface.__bases__]:
+            for base in iface.__bases__:
                 all_ifaces[getPythonPath(base)] = base
         self.__all_ifaces = all_ifaces.values()
 
         # Register the class with the global class registry.
-        global classRegistry
         classRegistry[self.getPath()] = klass
 
     def getPath(self):
@@ -64,30 +67,27 @@ class Class(object):
 
     def getKnownSubclasses(self):
         """See IClassDocumentation."""
-        global classRegistry
         return [k for n, k in classRegistry.getSubclassesOf(self.__klass)]
 
     def getInterfaces(self):
         """See IClassDocumentation."""
         return self.__interfaces
 
+    def _iterAllAttributes(self):
+        for name in getPublicAttributes(self.__klass):
+            iface = getInterfaceForAttribute(
+                    name, self.__all_ifaces, asPath=False)
+            yield name, getattr(self.__klass, name), iface
+
     def getAttributes(self):
         """See IClassDocumentation."""
-        return [
-            (name, getattr(self.__klass, name),
-             getInterfaceForAttribute(name, self.__all_ifaces, asPath=False))
-
-            for name in getPublicAttributes(self.__klass)
-            if not inspect.ismethod(getattr(self.__klass, name))]
+        return [(name, obj, iface) for name, obj, iface
+            in self._iterAllAttributes() if not ismethod(obj)]
 
     def getMethods(self):
         """See IClassDocumentation."""
-        return [
-            (name, getattr(self.__klass, name),
-             getInterfaceForAttribute(name, self.__all_ifaces, asPath=False))
-
-            for name in getPublicAttributes(self.__klass)
-            if inspect.ismethod(getattr(self.__klass, name))]
+        return [(name, obj, iface) for name, obj, iface
+            in self._iterAllAttributes() if ismethod(obj)]
 
     def getSecurityChecker(self):
         """See IClassDocumentation."""
