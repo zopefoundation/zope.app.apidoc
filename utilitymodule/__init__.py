@@ -13,7 +13,7 @@
 ##############################################################################
 """Utility Documentation Module
 
-$Id: __init__.py,v 1.3 2004/03/03 10:38:32 philikon Exp $
+$Id: __init__.py,v 1.4 2004/03/08 12:05:07 srichter Exp $
 """
 from zope.interface import implements
 
@@ -119,7 +119,8 @@ class UtilityModule(ReadContainerBase):
 
       >>> print '\n'.join([id for id, iface in module.items()])
       zope.app.apidoc.interfaces.IDocumentationModule
-      
+      zope.app.security.interfaces.IPermission
+
       >>> tests.tearDown()
     """
 
