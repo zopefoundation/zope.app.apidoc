@@ -13,7 +13,7 @@
 ##############################################################################
 """Service Documentation Module
 
-$Id: __init__.py,v 1.5 2004/03/09 12:39:03 srichter Exp $
+$Id: __init__.py,v 1.6 2004/03/28 23:40:56 srichter Exp $
 """
 from zope.interface import implements
 from zope.component import ComponentLookupError
@@ -22,6 +22,7 @@ from zope.app import zapi
 from zope.app.location.interfaces import ILocation
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase
+from zope.app.servicenames import Services
 
 class Service(object):
     """Object representing a service in the API documentation"""
@@ -29,6 +30,7 @@ class Service(object):
     implements(ILocation)
 
     def __init__(self, parent, name, iface, impl):
+        """Initialize Service object."""
         self.__parent__ = parent
         self.__name__ = name
         self.interface = iface
@@ -90,7 +92,7 @@ class ServiceModule(ReadContainerBase):
 
     def get(self, key, default=None):
         """See zope.app.container.interfaces.IReadContainer"""
-        service = zapi.getService(self, 'Services')        
+        service = zapi.getService(self, Services)
         items = service.getServiceDefinitions()
 
         for name, iface in items:
@@ -105,7 +107,7 @@ class ServiceModule(ReadContainerBase):
 
     def items(self):
         """See zope.app.container.interfaces.IReadContainer"""
-        service = zapi.getService(self, 'Services')
+        service = zapi.getService(self, Services)
         items = service.getServiceDefinitions()
         items.sort()
         return [(name, self.get(name)) for name, iface in items]
