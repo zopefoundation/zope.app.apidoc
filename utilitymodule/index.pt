@@ -4,18 +4,21 @@
 
   <h1 class="details-header">
     <a href=""
-       tal:attributes="href iface/getId"
+       tal:attributes="
+           href string:../../../Interface/${iface/getId}/apiindex.html"
        tal:content="iface/getId" /> <br />
     (Name: "<span tal:replace="view/getName" />")
   </h1>
 
-  <div class="indent" tal:condition="view/getComponent">
+  <div class="indent" 
+       tal:define="component view/getComponent"
+       tal:condition="component">
     <h3>
       Component: 
       <a href=""
          tal:attributes="href 
-             string:../../../Class/index.html?path=${view/getComponent}"
-         tal:content="view/getComponent" /></h3>
+             string:../../../Class/${component/url}/index.html"
+         tal:content="component/path" /></h3>
   </div>
 
   <div class="indent">
@@ -43,7 +46,8 @@
     <li tal:repeat="field fields">
       <b><code tal:content="field/name">field</code></b>
       - <a href=""
-           tal:attributes="href string:../${field/iface/id}/apiindex.html">
+           tal:attributes="
+               href string:../../../Interface/${field/iface/id}/apiindex.html">
           <code tal:content="field/iface/name">IField</code></a>
       (<span tal:content="string:${field/required}, ">optional, </span>
         default = <code tal:content="field/default" />)<br>
