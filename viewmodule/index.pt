@@ -16,7 +16,7 @@
     <div class="indent">
     <ul>
       <li tal:repeat="View layer/views">
-        <b tal:content="View/name" /><br />
+        <b tal:content="structure View/name" /><br />
         <div class="indent"><span class="small">
           <i>required:</i>
           <a href=""
@@ -42,6 +42,14 @@
             <span
                tal:condition="not:View/factory/referencable"
                tal:content="View/factory/path" />
+            <br />
+          </tal:omit-tag>
+          <tal:omit-tag condition="View/provided">
+            <i>provided:</i>
+            <a href=""
+               tal:attributes="href 
+                   string: ../Interface/${View/provided}/apiindex.html"
+               tal:content="View/provided" />
             <br />
           </tal:omit-tag>
           <tal:omit-tag condition="View/factory/template">
