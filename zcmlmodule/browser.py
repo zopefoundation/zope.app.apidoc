@@ -13,8 +13,9 @@
 ##############################################################################
 """Browser Views for ZCML Reference
 
-$Id: browser.py,v 1.3 2004/03/28 23:42:19 srichter Exp $
+$Id: browser.py,v 1.4 2004/03/29 15:08:42 srichter Exp $
 """
+from types import FunctionType, MethodType
 from zope.proxy import removeAllProxies
 from zope.configuration.xmlconfig import ParserInfo
 
@@ -22,7 +23,7 @@ from zope.app import zapi
 from zope.app.location import LocationProxy
 from zope.app.apidoc.zcmlmodule import Directive, Namespace
 from zope.app.apidoc.ifacemodule.browser import InterfaceDetails
-from zope.app.apidoc.utilities import getPythonPath
+from zope.app.apidoc.utilities import getPythonPath, relativizePath
 
 class Menu(object):
     """Menu View Helper Class
@@ -59,7 +60,7 @@ class Menu(object):
 
       The namespace has a page directive.
 
-      >>> dir = Directive(ns, 'page', None, None, None)
+      >>> dir = Directive(ns, 'page', None, None, None, None)
       >>> node = Node(dir)
       >>> menu.getMenuTitle(node)
       'page'
@@ -140,31 +141,40 @@ class DirectiveDetails(object):
             return '<i>all namespaces</i>'
         return name
 
-    def getFile(self):
+    def getFileInfo(self):
         """Get the file where the directive was declared.
 
         Examples::
         
+          >>> from zope.app.apidoc.tests import pprintDict
           >>> from zope.configuration.xmlconfig import ParserInfo
           >>> from tests import getDirective
           >>> details = DirectiveDetails()
           >>> details.context = getDirective()
 
-          >>> details.getFile() is None
+          >>> details.getFileInfo() is None
           True
 
           >>> details.context.info = ParserInfo('foo.zcml', 2, 3)
-          >>> details.getFile()
-          'foo.zcml'
-
+          >>> info = details.getFileInfo()
+          >>> pprintDict(info)
+          [('column', 3),
+           ('ecolumn', 3),
+           ('eline', 2),
+           ('file', 'foo.zcml'),
+           ('line', 2)]
         """
         info = removeAllProxies(self.context.info)
         if isinstance(info, ParserInfo):
-            return info.file
+            return {'file': relativizePath(info.file),
+                    'line': info.line,
+                    'column': info.column,
+                    'eline': info.eline,
+                    'ecolumn': info.ecolumn}
         return None
 
     def getInfo(self):
-        """Get info, if available.
+        """Get the file where the directive was declared.
 
         Examples::
         
@@ -176,15 +186,43 @@ class DirectiveDetails(object):
           >>> details.getInfo() is None
           True
 
-          >>> details.context.info = ParserInfo('foo.zcml', 2, 3)
+          >>> details.context.info = 'info here'
           >>> details.getInfo()
-          File "foo.zcml", line 2.3
+          'info here'
+
+          >>> details.context.info = ParserInfo('foo.zcml', 2, 3)
+          >>> details.getInfo() is None
+          True
         """
-        info = removeAllProxies(self.context.info)
-        if not isinstance(info, ParserInfo):
-            return None
-        return info
-    
+        if isinstance(self.context.info, (str, unicode)):
+            return self.context.info
+        return None
+
+    def getHandler(self):
+        """Return information about the handler.
+
+        Examples::
+        
+          >>> from zope.app.apidoc.tests import pprintDict
+          >>> from zope.configuration.xmlconfig import ParserInfo
+          >>> from tests import getDirective
+          >>> details = DirectiveDetails()
+          >>> details.context = getDirective()
+
+          >>> pprintDict(details.getHandler())
+          [('path', 'zope.app.apidoc.zcmlmodule.tests.foo'),
+           ('url', 'zope/app/apidoc/zcmlmodule/tests')]
+        """
+        if self.context.handler is not None:
+            handler = removeAllProxies(self.context.handler)
+            path = getPythonPath(handler)
+            if isinstance(handler, (FunctionType, MethodType)):
+                url = handler.__module__.replace('.', '/')
+            else:
+                url = path.replace('.', '/')
+            return {'path': path, 'url': url}
+        return None
+
     def getSubdirectives(self):
         """Create a list of subdirectives.
 
@@ -203,28 +241,46 @@ class DirectiveDetails(object):
           >>> class IFoo(Interface):
           ...     pass
 
+          >>> def handler():
+          ...     pass
+
           >>> details.getSubdirectives()
           []
 
-          >>> details.context.subdirs = (('browser', 'foo', IFoo, 'info'),)
+          >>> details.context.subdirs = (
+          ...     ('browser', 'foo', IFoo, handler, 'info'),)
           >>> info = details.getSubdirectives()[0]
           >>> info['schema'] = info['schema'].__module__ + '.InterfaceDetails'
+          >>> info['handler'] = info['handler'].items()
+          >>> info['handler'].sort()
           >>> info = info.items()
           >>> info.sort()
           >>> pprint(info)
-          [('info', 'info'),
+          [('handler',
+            [('path', 'zope.app.apidoc.zcmlmodule.browser.handler'),
+             ('url', 'zope/app/apidoc/zcmlmodule/browser')]),
+           ('info', 'info'),
            ('name', 'foo'),
            ('namespace', 'browser'),
            ('schema', 'zope.app.apidoc.ifacemodule.browser.InterfaceDetails')]
         """
         dirs = []
-        for ns, name, schema, info in self.context.subdirs:
+        for ns, name, schema, handler, info in self.context.subdirs:
             schema = LocationProxy(schema, self.context, getPythonPath(schema))
-            schema = InterfaceDetails()
-            schema.context = schema
-            schema.request = self.request
+            details = InterfaceDetails()
+            details.context = schema
+            details.request = self.request
+
+            handler = removeAllProxies(handler)
+            path = getPythonPath(handler)
+            if isinstance(handler, (FunctionType, MethodType)):
+                url = handler.__module__.replace('.', '/')
+            else:
+                url = path.replace('.', '/')
+
             dirs.append({'namespace': ns,
                          'name': name,
-                         'schema': schema,
+                         'schema': details,
+                         'handler': {'path': path, 'url': url},
                          'info': info})
         return dirs
