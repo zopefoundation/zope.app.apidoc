@@ -28,9 +28,10 @@ from types import ClassType, TypeType, FunctionType
 import zope
 from zope.security.checker import getCheckerForInstancesOf
 from zope.interface import Interface, Attribute, implements, implementedBy
+
+from zope.app import zapi
 from zope.app.container.interfaces import IReadContainer
 from zope.app.i18n import ZopeMessageIDFactory as _
-
 from zope.app.location.interfaces import ILocation
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase
@@ -45,6 +46,14 @@ from zope.app.apidoc.utilities import getFunctionSignature
 # not ignore all files/dirs with a certain name.
 IGNORE_FILES = ('tests', 'tests.py', 'ftests', 'ftests.py', 'CVS', 'gadfly',
                 'setup.py', 'introspection.py', 'Mount.py')
+
+class IAPIDocRootModule(Interface):
+    """Marker interface for utilities that represent class browser root
+    modules.
+
+    The utilities will be simple strings, representing the modules Python
+    dotted name.
+    """ 
 
 class IModuleDocumentation(IReadContainer):
     """Representation of a Python module for documentation.
@@ -558,7 +567,7 @@ class ClassModule(Module):
 
       >>> names = cm.keys()
       >>> names.sort()
-      >>> names == cm.rootModules
+      >>> names == [u'zope']
       True
     """
     implements(IDocumentationModule)
@@ -588,8 +597,6 @@ class ClassModule(Module):
     interface that requires a method or attribute to be implemented and the
     permissions required to access it.
     """)
-    rootModules = ['ZConfig', 'ZODB', 'transaction', 'zdaemon', 'zope']
-
     def __init__(self):
         """Initialize object."""
         super(ClassModule, self).__init__(None, '', None, False)
@@ -597,8 +604,8 @@ class ClassModule(Module):
 
     def __setup(self):
         """Setup module and class tree."""
-        for name in self.rootModules:
-            self._Module__children[name] = Module(self, name, safe_import(name))
+        for name, mod in zapi.getUtilitiesFor(IAPIDocRootModule):
+            self._Module__children[name] = Module(self, name, safe_import(mod))
 
     def getDocString(self):
         """See Module class."""

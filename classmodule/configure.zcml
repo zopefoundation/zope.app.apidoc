@@ -1,6 +1,7 @@
 <configure
-  xmlns="http://namespaces.zope.org/zope"
-  xmlns:browser="http://namespaces.zope.org/browser">
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:apidoc="http://namespaces.zope.org/apidoc"
+    xmlns:browser="http://namespaces.zope.org/browser">
 
   <class class=".Module">
     <allow interface=".IModuleDocumentation" />
@@ -23,6 +24,12 @@
     <allow interface=".IModuleDocumentation" />
     <allow attributes="rootModules" />
   </class>
+
+  <apidoc:rootModule module="ZConfig" />
+  <apidoc:rootModule module="ZODB" />
+  <apidoc:rootModule module="transaction" />
+  <apidoc:rootModule module="zdaemon" />
+  <apidoc:rootModule module="zope" />
 
   <utility
     provides="zope.app.apidoc.interfaces.IDocumentationModule"

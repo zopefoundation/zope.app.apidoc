@@ -17,7 +17,8 @@ $Id$
 """
 import unittest
 from zope.component.interfaces import IFactory
-from zope.interface import Interface, directlyProvides
+from zope.configuration import xmlconfig
+from zope.interface import Interface, directlyProvides, implements
 from zope.publisher.browser import TestRequest
 from zope.testing.doctestunit import DocTestSuite
 
@@ -38,7 +39,7 @@ from zope.app.traversing.adapters import DefaultTraversable
 from zope.app.traversing.adapters import RootPhysicallyLocatable
 from zope.app.traversing.adapters import Traverser
 
-from zope.app.apidoc.classmodule import ClassModule
+from zope.app.apidoc.classmodule import ClassModule, IAPIDocRootModule
 from zope.app.apidoc.classmodule.browser import ClassDetails, ModuleDetails
 from zope.app.apidoc.classmodule.browser import FunctionDetails
 from zope.app.apidoc.interfaces import IDocumentationModule
@@ -46,6 +47,11 @@ from zope.app.apidoc.interfaces import IDocumentationModule
 
 def setUp(test):
     placelesssetup.setUp()
+
+    class RootModule(str):
+        implements(IAPIDocRootModule)
+    ztapi.provideUtility(IAPIDocRootModule, RootModule('zope'), "zope")
+
     module = ClassModule()
     module.__name__ = ''
     directlyProvides(module, IContainmentRoot)
@@ -103,11 +109,35 @@ def getModuleDetailsView():
     return view
 
 
+class DirectivesTest(placelesssetup.PlacelessSetup, unittest.TestCase):
+
+    template = """
+        <configure
+            xmlns='http://namespaces.zope.org/apidoc'>
+          %s
+        </configure>"""
+    
+    def setUp(self):
+        super(DirectivesTest, self).setUp()
+        import zope.app.apidoc.classmodule
+        self.context = xmlconfig.file('meta.zcml', zope.app.apidoc.classmodule)
+
+    def testRootModule(self):
+        self.assertEqual(len(list(zapi.getUtilitiesFor(IAPIDocRootModule))), 0)
+        xmlconfig.string(
+            self.template %'<rootModule module="zope" />', self.context)
+
+        self.assertEqual(zapi.getUtilitiesFor(IAPIDocRootModule).next()[0],
+                         'zope')
+
+
 def test_suite():
     return unittest.TestSuite((
         DocTestSuite('zope.app.apidoc.classmodule.browser',
                      setUp=setUp, tearDown=placelesssetup.tearDown),
-        DocTestSuite('zope.app.apidoc.classmodule'),
+        DocTestSuite('zope.app.apidoc.classmodule',
+                     setUp=setUp, tearDown=placelesssetup.tearDown),
+        unittest.makeSuite(DirectivesTest),
         ))
 
 if __name__ == '__main__':

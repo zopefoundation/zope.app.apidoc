@@ -92,7 +92,7 @@ class Menu(object):
            [('path', 'zope.app.apidoc.classmodule.browser.Foo2'),
             ('url',
              'http://127.0.0.1/zope/app/apidoc/classmodule/browser/Foo2')]]
-
+          
           >>> menu.request = TestRequest(form={'path': 'o2'})
           >>> info = menu.findClasses()
           >>> pprint(info)
@@ -537,7 +537,7 @@ class ClassDetails(object):
           >>> from tests import getClassDetailsView
           >>> view = getClassDetailsView()
 
-          >>> attr = view.getAttributes()[2]
+          >>> attr = view.getAttributes()[1]
           >>> pprint(attr)
           [('interface', 'zope.app.apidoc.interfaces.IDocumentationModule'),
            ('name', 'title'),
@@ -668,8 +668,8 @@ class ModuleDetails(object):
           >>> view = getModuleDetailsView()
 
           >>> entries = view.getEntries(False)
-          >>> entries.sort()
-          >>> pprint(entries[1:3])
+          >>> entries.sort(lambda x, y: cmp(x['name'], y['name']))
+          >>> pprint(entries[6:8])
           [[('isclass', False),
             ('isfunction', False),
             ('ismodule', True),
@@ -710,7 +710,7 @@ class ModuleDetails(object):
           >>> crumbs = [crumb.items() for crumb in view.getBreadCrumbs()]
           >>> pprint(crumbs)
           [[('url', 'http://127.0.0.1'), ('name', u'[top]')],
-           [('url', 'http://127.0.0.1/zope'), ('name', 'zope')],
+           [('url', 'http://127.0.0.1/zope'), ('name', u'zope')],
            [('url', 'http://127.0.0.1/zope/app'), ('name', 'app')],
            [('url', 'http://127.0.0.1/zope/app/apidoc'), ('name', 'apidoc')],
            [('url', 'http://127.0.0.1/zope/app/apidoc/classmodule'),
