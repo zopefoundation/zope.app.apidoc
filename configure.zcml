@@ -64,9 +64,8 @@
       />
 
   <include package=".browser" />
-  <include package=".preference" />
 
-  <apidoc:preferenceGroup
+  <preferenceGroup
       id="apidoc"
       title="API Doc Tool" 
       description="

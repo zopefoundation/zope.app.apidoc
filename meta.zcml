@@ -1,6 +1,5 @@
 <configure xmlns:meta="http://namespaces.zope.org/meta">
   <include package=".codemodule" file="meta.zcml"/>
   <include package=".bookmodule" file="meta.zcml"/>
-  <include package=".preference" file="meta.zcml"/>
   <meta:provides feature="apidoc" />
 </configure>

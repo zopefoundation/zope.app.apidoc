@@ -1,7 +1,6 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:browser="http://namespaces.zope.org/browser"
-    xmlns:apidoc="http://namespaces.zope.org/apidoc">
+    xmlns:browser="http://namespaces.zope.org/browser">
 
   <class class=".ifacemodule.InterfaceModule">
     <allow interface=".ifacemodule.IInterfaceModule" />
@@ -67,7 +66,7 @@
       template="menu.pt"
       />
 
-  <apidoc:preferenceGroup
+  <preferenceGroup
       id="apidoc.InterfaceDetails"
       schema=".interfaces.IInterfaceDetailsPreferences"
       title="Interface Details" 
