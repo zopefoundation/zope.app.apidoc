@@ -23,9 +23,9 @@
   <browser:page
     for=".ViewModule"
     permission="zope.View"
-    class=".browser.SkinLayerUsage"
-    name="skin_layer_usage.html"
-    template="skin_layer_usage.pt" />
+    class=".browser.SkinLayer"
+    name="skin_layer.html"
+    template="skin_layer.pt" />
 
   <browser:page
     for=".ViewModule"
