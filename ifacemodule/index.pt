@@ -111,7 +111,15 @@
     <h3>Adapters where this interface is required:</h3>
     <ul class="attr-list">
       <li tal:repeat="adapter adapters">
-        <b><code tal:content="adapter/factory" /></b>
+        <b><code>
+          <a href=""
+                tal:attributes="href 
+                    string:../../Class/${adapter/factory_url}/index.html" 
+                tal:content="adapter/factory" 
+                tal:condition="adapter/factory_url" />
+          <span tal:content="adapter/factory" 
+                tal:condition="not: adapter/factory_url" />
+        </code></b>
         <span tal:condition="adapter/name">
           (name: <tal:block content="adapter/name" />)
         </span>
@@ -141,7 +149,14 @@
     <h3>Adapters that provide this interface:</h3>
     <ul>
       <li tal:repeat="adapter adapters">
-        <b><code tal:content="adapter/factory" /></b>
+        <b><code>
+          <a href=""
+                tal:attributes="href adapter/factory_url" 
+                tal:content="adapter/factory" 
+                tal:condition="adapter/factory_url" />
+          <span tal:content="adapter/factory" 
+                tal:condition="not: adapter/factory_url" />
+        </code></b>
         <span tal:condition="adapter/name">
           (name: <tal:block content="adapter/name" />)
         </span>
@@ -169,8 +184,9 @@
 
   <div tal:define="factories view/getFactories;
                    utilities view/getUtilities;
-                   services view/getServices"
-       tal:condition="python: factories or utilities or services">
+                   services view/getServices;
+                   classes view/getClasses"
+       tal:condition="python: factories or utilities or services or classes">
 
     <h2 class="details-section">Other Information</h2>
     
@@ -204,10 +220,16 @@
           <ul>
             <li tal:repeat="utility utilities">
               <a href=""
-                 tal:attributes="href string:../../Utility/${utility/path}/"
-                 tal:content="utility/path" />
-              <tal:block replace="string: (name: ${utility/name})" 
-                         condition="utility/name" />
+                 tal:attributes="href 
+                  string:../../Utility/${view/getId}/${utility/name}/index.html"
+                 tal:content="utility/name" />
+              <br />
+              <div>Class: <code>
+                <a href=""
+                   tal:attributes="href 
+                       string:../../Class/${utility/url}/index.html"
+                   tal:content="utility/path" />
+              </code></div>              
             </li>
           </ul>
         </div>
@@ -225,6 +247,26 @@
               <a href=""
                  tal:attributes="href string:../../Service/$service/"
                  tal:content="service" />
+            </li>
+          </ul>
+        </div>
+      </tal:block>
+
+      <tal:block condition="classes">
+        <h3 class="details-section">Classes</h3>
+        <div class="indent">
+          <div class="small">
+            A list of classes that implement this interface. This might
+            duplicate the entries in Utilities and Services. 
+          </div>
+          <ul>
+            <li tal:repeat="klass classes">
+              <b><code>
+                <a href=""
+                   tal:attributes="href 
+                       string:../../Class/${klass/url}/index.html"
+                   tal:content="klass/path" />
+              </code></b>
             </li>
           </ul>
         </div>
