@@ -23,7 +23,7 @@ from zope.app.tree.interfaces import IUniqueId
 from zope.app.tree.adapters import LocationUniqueId 
 
 from zope.app.traversing.interfaces import IPhysicallyLocatable
-from zope.app.location import LocationPhysicallyLocatable
+from zope.app.location.traversing import LocationPhysicallyLocatable
 
 def setUp():
     placelesssetup.setUp()

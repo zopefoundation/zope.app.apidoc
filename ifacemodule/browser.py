@@ -333,8 +333,10 @@ class InterfaceDetails(object):
 
           >>> adapters = details.getRequiredAdapters()
           >>> pprint(adapters)
-          [[('factory', 'zope.app.location.LocationPhysicallyLocatable'),
-            ('factory_url', 'zope/app/location/LocationPhysicallyLocatable'),
+          [[('factory',
+             'zope.app.location.traversing.LocationPhysicallyLocatable'),
+            ('factory_url',
+             'zope/app/location/traversing/LocationPhysicallyLocatable'),
             ('name', ''),
             ('provided',
              'zope.app.traversing.interfaces.IPhysicallyLocatable'),
