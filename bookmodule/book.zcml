@@ -231,32 +231,6 @@
         />
   </configure>
 
-  <!-- Widgets and Forms -->
-  <bookchapter
-      id="form"
-      title="Widgets and Forms"
-      />
-  <configure package="zope.app.form.browser">
-    <bookchapter
-        id="bwidget"
-        title="Basic Widgets"
-        doc_path="README.txt"
-        parent="form"
-        />
-    <bookchapter
-        id="swidget"
-        title="Source Widgets"
-        doc_path="source.txt"
-        parent="form"
-        />
-    <bookchapter
-        id="awidget"
-        title="Advanced Widgets"
-        doc_path="widgets.txt"
-        parent="form"
-        />
-  </configure>
-
   <!-- Workflow -->
   <configure package="zope.wfmc">
     <bookchapter
