@@ -14,6 +14,10 @@
     <allow interface=".IFunctionDocumentation" />
   </class>
 
+  <class class=".ZCMLFile">
+    <allow interface=".IZCMLFileDocumentation" />
+  </class>
+
   <class class=".ClassModule">
     <allow interface="zope.app.apidoc.interfaces.IDocumentationModule" />
     <allow interface=".IModuleDocumentation" />
@@ -52,5 +56,12 @@
     class=".browser.FunctionDetails"
     name="index.html"
     template="function_index.pt" />
+
+  <browser:page
+    for=".IZCMLFileDocumentation"
+    permission="zope.View"
+    class=".browser.ZCMLFileDetails"
+    name="index.html"
+    template="zcmlfile_index.pt" />
 
 </configure>

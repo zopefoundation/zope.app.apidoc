@@ -36,6 +36,10 @@
          tal:condition="entry/isfunction"
          tal:attributes="href string:./${entry/name}/index.html"
          tal:content="structure string:<i>${entry/name}</i>" />
+      <a href=""
+         tal:condition="entry/iszcmlfile"
+         tal:attributes="href string:./${entry/name}/index.html"
+         tal:content="structure string:<i>${entry/name}</i>" />
     </li>
   </ul></td>
 

@@ -70,6 +70,16 @@ class ClassModuleTests(BrowserTestCase):
         self.checkForBrokenLinks(
             body, '/++apidoc++/Class/zope/app/apidoc/handleNamesapce',
             basic='mgr:mgrpw')
+
+    def testZCMLFileDetailsView(self):
+        response = self.publish(
+            '/++apidoc++/Class/zope/app/configure.zcml',
+            basic='mgr:mgrpw')
+        self.assertEqual(response.getStatus(), 200)
+        body = response.getBody()
+        self.checkForBrokenLinks(
+            body, '/++apidoc++/Class/zope/app/configure.zcml',
+            basic='mgr:mgrpw')
         
 
 def test_suite():

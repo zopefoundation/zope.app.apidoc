@@ -6,7 +6,7 @@ body {
     padding: 0pt;
 }
 
-code, pre {
+code, pre, span.pre {
   font-size: 120%;
 }
 
@@ -146,4 +146,24 @@ div.inline-documentation h3 {
 div.inline-documentation p {
   padding: 0;
   margin: 0 0.5em 0 0;
+}
+
+/* Styles for ZCML markup */
+
+code.zcml a {
+  color: inherit;
+  font-style: italic;
+}
+
+code.zcml .attribute {
+  color: MediumVioletRed;
+}
+
+code.zcml .tagname {
+  color: blue;
+  font-weight: bold;
+}
+
+code.zcml .objectref {
+  color: DarkSalmon;
 }

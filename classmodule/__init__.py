@@ -28,7 +28,6 @@ from types import ClassType, TypeType, FunctionType
 import zope
 from zope.security.checker import getCheckerForInstancesOf
 from zope.interface import Interface, Attribute, implements, implementedBy
-from zope.app import zapi
 from zope.app.container.interfaces import IReadContainer
 from zope.app.i18n import ZopeMessageIDFactory as _
 
@@ -126,6 +125,12 @@ class IFunctionDocumentation(Interface):
         second is the attribute object itself.
         """
 
+class IZCMLFileDocumentation(Interface):
+    """Representation of a function for documentation."""
+
+    path = Attribute('Full path of the ZCML file.')
+
+
 class Module(ReadContainerBase):
     """This class represents a Python module.
 
@@ -155,9 +160,8 @@ class Module(ReadContainerBase):
 
       >>> keys = module.keys()
       >>> keys.sort()
-      >>> keys[:5]
-      ['APIDocumentation', 'apidocNamespace', 'browser', 'classmodule', """ \
-          """'handleNamespace']
+      >>> keys[:3]
+      ['APIDocumentation', 'apidoc-configure.zcml', 'apidocNamespace']
 
       >>> print module['browser'].getPath()
       zope.app.apidoc.browser
@@ -215,6 +219,9 @@ class Module(ReadContainerBase):
                     module = safe_import(fullname)
                     if module is not None:
                         self.__children[name] = Module(self, name, module)
+
+                elif os.path.isfile(path) and file.endswith('.zcml'):
+                    self.__children[file] = ZCMLFile(self, file, path)
 
         # Setup classes in module, if any are available.
         for name in self.__module.__dict__.keys():
@@ -486,6 +493,30 @@ class Function(object):
           [('bar', 'blah')]
         """
         return self.__func.__dict__.items()
+
+
+class ZCMLFile(object):
+    """Represent the documentation of any ZCML file.
+
+    This object in itself is rather simple, since it only stores the full path
+    of the ZCML file and its location in the documentation tree.
+
+    >>> zcml = ZCMLFile(None, 'foo.zcml', '/Zope3/src/zope/app/foo.zcml')
+    >>> zcml.__parent__ is None
+    True
+    >>> zcml.__name__
+    'foo.zcml'
+    >>> zcml.path
+    '/Zope3/src/zope/app/foo.zcml'
+    """
+    
+    implements(ILocation, IZCMLFileDocumentation)
+
+    def __init__(self, module, name, path):
+        """Initialize the object."""
+        self.__parent__ = module
+        self.__name__ = name
+        self.path = path
 
 
 class ClassModule(Module):
