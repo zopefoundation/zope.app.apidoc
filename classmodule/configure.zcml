@@ -10,6 +10,10 @@
     <allow interface=".IClassDocumentation" />
   </class>
 
+  <class class=".Function">
+    <allow interface=".IFunctionDocumentation" />
+  </class>
+
   <class class=".ClassModule">
     <allow interface="zope.app.apidoc.interfaces.IDocumentationModule" />
     <allow interface=".IModuleDocumentation" />
@@ -29,17 +33,24 @@
     template="menu.pt" />
 
   <browser:page
-    for=".Class"
+    for=".IModuleDocumentation"
+    permission="zope.View"
+    class=".browser.ModuleDetails"
+    name="index.html"
+    template="module_index.pt" />
+
+  <browser:page
+    for=".IClassDocumentation"
     permission="zope.View"
     class=".browser.ClassDetails"
     name="index.html"
     template="class_index.pt" />
 
   <browser:page
-    for=".Module"
+    for=".IFunctionDocumentation"
     permission="zope.View"
-    class=".browser.ModuleDetails"
+    class=".browser.FunctionDetails"
     name="index.html"
-    template="module_index.pt" />
+    template="function_index.pt" />
 
 </configure>
