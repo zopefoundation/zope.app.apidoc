@@ -2,7 +2,9 @@
 <body metal:fill-slot="contents" 
       style="padding: 0; margin: 0">
 
-  <div class="apihead">Zope 3 API Docs</div>
+  <div class="apihead">
+      <a href="contents.html" target="main">Zope 3 API Docs</a>
+  </div>
   
   <div style="margin-left: 0.5em">
     <ul class="modules">
