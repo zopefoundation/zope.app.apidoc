@@ -25,13 +25,17 @@
   <td tal:repeat="column view/getEntries"><ul>
     <li tal:repeat="entry column">
       <a href=""
-         tal:condition="entry/module"
+         tal:condition="entry/ismodule"
          tal:attributes="href string:./${entry/name}/index.html"
          tal:content="entry/name" />
       <a href=""
-         tal:condition="not:entry/module"
+         tal:condition="entry/isclass"
          tal:attributes="href string:./${entry/name}/index.html"
          tal:content="structure string:<b>${entry/name}</b>" />
+      <a href=""
+         tal:condition="entry/isfunction"
+         tal:attributes="href string:./${entry/name}/index.html"
+         tal:content="structure string:<i>${entry/name}</i>" />
     </li>
   </ul></td>
 
