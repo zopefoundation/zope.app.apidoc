@@ -13,9 +13,8 @@
 ##############################################################################
 """Views/Presentation Module Views
 
-$Id: browser.py,v 1.5 2004/03/29 05:12:26 srichter Exp $
+$Id: browser.py,v 1.6 2004/03/29 15:08:34 srichter Exp $
 """
-from os.path import dirname
 from types import ClassType
 
 from zope.interface import Interface
@@ -23,12 +22,10 @@ from zope.interface import Interface
 from zope.app import zapi
 from zope.app.publisher.browser.icon import IconViewFactory
 from zope.app.apidoc.utilities import getPythonPath, getPermissionIds
-from zope.app.apidoc.utilities import columnize
+from zope.app.apidoc.utilities import columnize, relativizePath
 from zope.app.component.interface import searchInterfaceIds
 from zope.app.component.interface import getInterface
 
-import zope
-BASEDIR = dirname(dirname(dirname(zope.__file__)))
 
 class Menu(object):
     """Views module Menu"""
@@ -174,7 +171,7 @@ def _getFactoryData(factory):
         # interested in. Usually the first listed class is the interesting one.
         base = factory.__bases__[0]
         info['path'] = base.__module__ + '.' + base.__name__
-        info['template'] = factory.index.filename.replace(BASEDIR, 'Zope3')
+        info['template'] = relativizePath(factory.index.filename)
 
     elif isinstance(factory, (str, unicode, float, int, list, tuple)):
         info['referencable'] = False
