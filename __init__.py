@@ -13,12 +13,11 @@
 ##############################################################################
 """Zope 3 API Documentation
 
-$Id: __init__.py,v 1.1 2004/02/19 20:46:39 philikon Exp $
+$Id: __init__.py,v 1.2 2004/02/25 22:26:45 faassen Exp $
 """
 from zope.interface import implements
 
 from zope.app import zapi
-from zope.app.interfaces.container import IReadContainer
 from zope.app.location import locate
 from zope.app.interfaces.location import ILocation
 

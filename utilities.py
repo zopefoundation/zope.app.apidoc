@@ -13,19 +13,17 @@
 ##############################################################################
 """Utilties to make the life of Documentation Modules easier.
 
-$Id: utilities.py,v 1.1 2004/02/19 20:46:39 philikon Exp $
+$Id: utilities.py,v 1.2 2004/02/25 22:26:45 faassen Exp $
 """
 import re
 import types
 import inspect
-import docutils
 
 from zope.interface import implements, implementedBy
 from zope.security.checker import getCheckerForInstancesOf
 from zope.security.interfaces import INameBasedChecker
 
 from zope.app.interfaces.container import IReadContainer
-from zope.app.renderer.rest import Writer
 
 __metaclass__ = type
 

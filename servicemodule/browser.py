@@ -13,11 +13,9 @@
 ##############################################################################
 """Service Details View
 
-$Id: browser.py,v 1.1 2004/02/19 20:46:41 philikon Exp $
+$Id: browser.py,v 1.2 2004/02/25 22:26:46 faassen Exp $
 """
-from zope.interface.declarations import providedBy
 from zope.proxy import removeAllProxies
-from zope.schema.interfaces import IField
 
 from zope.app import zapi
 from zope.app.location import LocationProxy

@@ -13,15 +13,13 @@
 ##############################################################################
 """Views/Presentation Module Views
 
-$Id: browser.py,v 1.1 2004/02/19 20:46:43 philikon Exp $
+$Id: browser.py,v 1.2 2004/02/25 22:26:47 faassen Exp $
 """
 from types import ClassType
 
-from zope.proxy import removeAllProxies
 from zope.interface import Interface
 
 from zope.app import zapi
-from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from zope.app.publisher.browser.icon import IconViewFactory
 from zope.app.apidoc.utilities import getPythonPath, getPermissionIds
 

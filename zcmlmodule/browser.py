@@ -13,12 +13,9 @@
 ##############################################################################
 """Browser Views for ZCML Reference
 
-$Id: browser.py,v 1.1 2004/02/19 20:46:43 philikon Exp $
+$Id: browser.py,v 1.2 2004/02/25 22:26:47 faassen Exp $
 """
-import urllib
-
 from zope.proxy import removeAllProxies
-from zope.schema import getFieldsInOrder 
 from zope.configuration.xmlconfig import ParserInfo
 
 from zope.app import zapi
