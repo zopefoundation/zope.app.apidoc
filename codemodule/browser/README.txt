@@ -376,3 +376,27 @@ Returns a list of all sub-directives:
   >>> details.getElements()
   [<Directive (u'http://namespaces.zope.org/zope', u'allow')>]
  
+
+The Introspector View
+---------------------
+
+In order to allow the quick lookup of documentation from the content
+components themselves, a special "Introspector" tab is added for all content
+types. When clicked, it will forward you to the appropriate code browser
+documentation screen. 
+
+So for a given content type:
+
+  >>> class Content(object):
+  ...    pass
+
+we can generate the introspector redirector like this:
+
+  >>> from zope.app.apidoc.codemodule.browser import introspector
+  >>> request = TestRequest()
+  >>> view = introspector.Introspector(Content(), request)
+  >>> view()
+  >>> request.response.getHeader('Location')
+  'http://127.0.0.1/++apidoc++/Code/__builtin__/Content/index.html'
+
+

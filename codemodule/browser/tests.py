@@ -22,6 +22,7 @@ from zope.configuration import xmlconfig
 from zope.interface import directlyProvides, implements
 from zope.testing import doctest, doctestunit
 
+import zope.app
 import zope.app.appsetup.appsetup
 from zope.app.renderer.rest import ReStructuredTextSourceFactory
 from zope.app.renderer.rest import IReStructuredTextSource
@@ -44,6 +45,14 @@ import zope.app.apidoc.codemodule.browser.zcml
 def foo(cls, bar=1, *args):
     """This is the foo function."""
 foo.deprecated = True
+
+meta = '''
+<configure i18n_domain="zope">
+  <include package="zope.app" file="meta.zcml" />
+  <include package="zope.app.apidoc" file="meta.zcml" />
+  <include package="zope.app" file="menus.zcml" />
+</configure>
+'''
 
 def setUp(test):
     placelesssetup.setUp()
@@ -72,10 +81,7 @@ def setUp(test):
     ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
                          'zope.source.stx')
 
-    meta = os.path.join(os.path.dirname(zope.app.__file__), 'meta.zcml')
-    context = xmlconfig.file(meta, zope.app)
-    meta = os.path.join(os.path.dirname(zope.app.apidoc.__file__), 'meta.zcml')
-    context = xmlconfig.file(meta, zope.app.apidoc, context)
+    context = xmlconfig.string(meta)
 
     # Fix up path for tests.
     global old_context
