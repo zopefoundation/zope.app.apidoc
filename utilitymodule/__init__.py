@@ -13,26 +13,27 @@
 ##############################################################################
 """Utility Documentation Module
 
-$Id: __init__.py,v 1.4 2004/03/08 12:05:07 srichter Exp $
+$Id: __init__.py,v 1.5 2004/03/28 23:41:16 srichter Exp $
 """
 from zope.interface import implements
 
 from zope.app import zapi
+from zope.app.component.nextservice import queryNextService
 from zope.app.location.interfaces import ILocation
+from zope.app.servicenames import Utilities
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase, getPythonPath
-
-__metaclass__ = type
 
 # Constant used when the utility has no name
 NONAME = '__noname__'
 
-class Utility:
+class Utility(object):
     """Representation of a utility for the API Documentation"""
 
     implements(ILocation)
     
     def __init__(self, parent, name, interface, component):
+        """Initialize Utility object."""
         self.__parent__ = parent
         self.__name__ = name or NONAME
         self.interface = interface
@@ -44,9 +45,7 @@ class UtilityInterface(ReadContainerBase):
 
     Demonstration::
 
-      >>> from zope.app.apidoc.utilitymodule import tests
       >>> from zope.app.apidoc.interfaces import IDocumentationModule
-      >>> tests.setUp()
 
       >>> id = 'zope.app.apidoc.interfaces.IDocumentationModule'
       >>> ut_iface = UtilityInterface(UtilityModule(), id,
@@ -67,8 +66,6 @@ class UtilityInterface(ReadContainerBase):
       >>> print '\n'.join([id for id, iface in ut_iface.items()])
       Classes
       __noname__
-      
-      >>> tests.tearDown()
     """
 
     implements(ILocation)
@@ -92,7 +89,12 @@ class UtilityInterface(ReadContainerBase):
     def items(self):
         """See zope.app.container.interfaces.IReadContainer"""
         service = zapi.getService(self, 'Utilities')
-        items = service.getRegisteredMatching(self.interface)
+        items = []
+
+        while service is not None:
+            items += service.getRegisteredMatching(self.interface)
+            service = queryNextService(service, Utilities)
+
         items = [(name or NONAME, self.get(name)) for iface, name, c in items]
         items.sort()
         return items
@@ -107,9 +109,6 @@ class UtilityModule(ReadContainerBase):
 
     Demonstration::
 
-      >>> from zope.app.apidoc.utilitymodule import tests
-      >>> tests.setUp()
-
       >>> module = UtilityModule()
       >>> ut_iface = module.get(
       ...     'zope.app.apidoc.interfaces.IDocumentationModule')
@@ -120,8 +119,6 @@ class UtilityModule(ReadContainerBase):
       >>> print '\n'.join([id for id, iface in module.items()])
       zope.app.apidoc.interfaces.IDocumentationModule
       zope.app.security.interfaces.IPermission
-
-      >>> tests.tearDown()
     """
 
     implements(IDocumentationModule)
@@ -151,12 +148,15 @@ class UtilityModule(ReadContainerBase):
             return UtilityInterface(self, key, getattr(mod, parts[-1], default))
 
     def items(self):
-        service = zapi.getService(self, 'Utilities')
-        matches = service.getRegisteredMatching()
+        service = zapi.getService(self, Utilities)
         ifaces = {}
-        for iface, name, c in matches:
-            path = getPythonPath(iface)
-            ifaces[path] = self.get(path)
+        while service is not None:
+            matches = service.getRegisteredMatching()
+            for iface, name, c in matches:
+                path = getPythonPath(iface)
+                ifaces[path] = self.get(path)
+            service = queryNextService(service, Utilities)
+
         items = ifaces.items()
         items.sort()
         return items
