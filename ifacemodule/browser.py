@@ -13,7 +13,7 @@
 ##############################################################################
 """Interface Details View
 
-$Id: browser.py,v 1.7 2004/04/05 19:44:05 jim Exp $
+$Id: browser.py,v 1.8 2004/04/08 02:12:25 srichter Exp $
 """
 from types import FunctionType, MethodType, ClassType, TypeType
 from zope.component import ComponentLookupError
@@ -336,25 +336,30 @@ class InterfaceDetails(object):
           >>> pprint(adapters)
           [[('factory', 'zope.app.location.LocationPhysicallyLocatable'),
             ('factory_url', 'zope/app/location/LocationPhysicallyLocatable'),
-            ('name', u''),
+            ('name', ''),
             ('provided',
              'zope.app.traversing.interfaces.IPhysicallyLocatable'),
             ('required', [])]]
         """
         service = zapi.getService(self.context, 'Adapters')
-        context = removeAllProxies(self.context)
+        iface = removeAllProxies(self.context)
         adapters = []
-        for adapter in service.getRegisteredMatching(required=context):
-            factory = _getRealFactory(adapter[4])
+        for reg in service.registrations():
+            # Only grab the adapters for which this interface is required
+            if reg.required[0] is not None and iface not in reg.required:
+                continue
+            factory = _getRealFactory(reg.value)
             path = getPythonPath(factory)
             if type(factory) in (FunctionType, MethodType):
                url = None
             else:
                 url = path.replace('.', '/')
             adapters.append({
-                'provided': getPythonPath(adapter[1]),
-                'required': [getPythonPath(iface) for iface in adapter[2]],
-                'name': adapter[3],
+                'provided': getPythonPath(reg.provided),
+                'required': [getPythonPath(iface)
+                             for iface in reg.required
+                             if iface is not None],
+                'name': reg.name,
                 'factory': path,
                 'factory_url': url
                 })
@@ -373,23 +378,25 @@ class InterfaceDetails(object):
           >>> pprint(adapters)
           [[('factory', '__builtin__.object'),
             ('factory_url', '__builtin__/object'),
-            ('name', u''),
+            ('name', ''),
             ('required', ['zope.app.apidoc.ifacemodule.tests.IBar'])]]
         """
         service = zapi.getService(self.context, 'Adapters')
-        context = removeAllProxies(self.context)
+        iface = removeAllProxies(self.context)
         adapters = []
-        for adapter in service.getRegisteredMatching(provided=context):
-            factory = _getRealFactory(adapter[4])
+        for reg in service.registrations():
+            # Only grab adapters for which this interface is provided
+            if iface is not reg.provided:
+                continue
+            factory = _getRealFactory(reg.value)
             path = getPythonPath(factory)
             if type(factory) in (FunctionType, MethodType):
                url = None
             else:
                 url = path.replace('.', '/')
             adapters.append({
-                'required': [getPythonPath(iface)
-                             for iface in adapter[2]+(adapter[0],)],
-                'name': adapter[3],
+                'required': [getPythonPath(iface) for iface in reg.required],
+                'name': reg.name,
                 'factory': path,
                 'factory_url': url
                 })
