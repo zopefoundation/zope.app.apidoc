@@ -14,7 +14,7 @@
 """Interface Documentation Module
 
 The interface documentation module retrieves its information from the
-interface service. Therefore, currently there are no unregsitered interfaces
+site manager. Therefore, currently there are no unregsitered interfaces
 listed in the documentation. This might be good, since unregistered interfaces
 are usually private and not of interest to a general developer.
 
@@ -43,7 +43,7 @@ class InterfaceModule(ReadContainerBase):
 
     This documentation is implemented using a simple `IReadContainer`. The
     items of the container are all the interfaces listed in the closest
-    interface service and above.
+    site manager and above.
 
     Demonstration::
 
@@ -58,8 +58,7 @@ class InterfaceModule(ReadContainerBase):
       >>> module.get(id).getName()
       'IDocumentationModule'
 
-      Here we find an interface that is not in the interface service, but
-      exists.
+      Here we find an interface that is not in the site manager, but exists.
 
       >>> module.get('zope.app.content.interfaces.IContentType').getName()
       'IContentType'
@@ -76,14 +75,14 @@ class InterfaceModule(ReadContainerBase):
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
     description = _("""
-    All used and important interfaces are registered through the interface
-    service. While it would be possible to just list all attributes, it is
+    All used and important interfaces are registered through the site
+    manager. While it would be possible to just list all attributes, it is
     hard on the user to read such an overfull list. Therefore, interfaces that
     have partial common module paths are bound together.
 
     The documentation of an interface also provides a wide variety of
     information, including of course the declared attributes/fields and
-    methods, but also available adapters, services and utilities that provide
+    methods, but also available adapters, and utilities that provide
     this interface.
     """)
 

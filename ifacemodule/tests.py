@@ -25,7 +25,6 @@ from zope.publisher.browser import TestRequest
 from zope.schema import TextLine, Text
 from zope.testing.doctestunit import DocTestSuite
 
-from zope.app import zapi
 from zope.app.component.interface import provideInterface
 from zope.app.location import LocationProxy
 from zope.app.location.traversing import LocationPhysicallyLocatable
@@ -35,7 +34,7 @@ from zope.app.renderer.rest import ReStructuredTextToHTMLRenderer
 from zope.app.renderer.stx import StructuredTextSourceFactory
 from zope.app.renderer.stx import IStructuredTextSource
 from zope.app.renderer.stx import StructuredTextToHTMLRenderer
-from zope.app.tests import placelesssetup, ztapi
+from zope.app.testing import placelesssetup, ztapi
 from zope.app.traversing.interfaces import IContainmentRoot
 from zope.app.traversing.interfaces import IPhysicallyLocatable
 from zope.app.tree.interfaces import IUniqueId
@@ -43,7 +42,6 @@ from zope.app.tree.adapters import LocationUniqueId
 
 from zope.app.apidoc.classmodule import classRegistry
 from zope.app.apidoc.ifacemodule import IInterfaceModule, InterfaceModule
-from zope.app.apidoc.ifacemodule.menu import IModule
 from zope.app.apidoc.ifacemodule.browser import InterfaceDetails
 from zope.app.apidoc.interfaces import IDocumentationModule
 
@@ -117,9 +115,6 @@ def setUp(test):
     ztapi.provideUtility(IFactory, Factory(Foo, title='Foo Factory'),
                          'FooFactory')
     ztapi.provideUtility(IFoo, Foo(), 'The Foo')
-    sm = zapi.getGlobalServices()
-    sm.defineService('Foo', IFoo)
-    sm.provideService('Foo', Foo())
 
     
 def test_suite():

@@ -18,7 +18,7 @@ $Id$
 import os
 import unittest
 from zope.testing.doctestunit import DocTestSuite
-from zope.app.tests import placelesssetup, ztapi
+from zope.app.testing import placelesssetup, ztapi
 from zope.app.apidoc.tests import Root
 
 import zope.app.appsetup.appsetup

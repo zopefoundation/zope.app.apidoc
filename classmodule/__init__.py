@@ -26,6 +26,7 @@ import inspect
 from types import ClassType, TypeType, FunctionType
 
 import zope
+import zope.deprecation
 from zope.security.checker import getCheckerForInstancesOf
 from zope.interface import Interface, Attribute, implements, implementedBy
 
@@ -240,6 +241,7 @@ class Module(ReadContainerBase):
                     self.__children[file] = ZCMLFile(self, file, path)
 
         # Setup classes in module, if any are available.
+        zope.deprecation.__show__.off()
         for name in self.__module.__dict__.keys():
             attr = getattr(self.__module, name)
             # We do not want to register duplicates or non-"classes"
@@ -252,6 +254,7 @@ class Module(ReadContainerBase):
 
                 elif type(attr) is FunctionType and not name.startswith('_'):
                     self.__children[attr.__name__] = Function(self, name, attr)
+        zope.deprecation.__show__.on()
 
 
     def getDocString(self):

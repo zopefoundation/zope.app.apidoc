@@ -13,7 +13,7 @@
 ##############################################################################
 """Interface Module Browser Menu (Tree)
 
-A list of interfaces from the Interface Service is pretty much unmanagable and
+A list of interfaces from the global site manager is pretty much unmanagable and
 is very confusing. Therefore it is nice to split the path of the interface, so
 that we get a deeper tree with nodes having shorter, manageable names.
 

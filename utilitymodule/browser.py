@@ -17,7 +17,6 @@ $Id$
 """
 __docformat__ = 'restructuredtext'
 
-from types import InstanceType
 from zope.app import zapi
 from zope.app.location import LocationProxy
 from zope.app.apidoc.ifacemodule.browser import InterfaceDetails

@@ -30,7 +30,6 @@
   <!-- API Documentation Modules -->
   <include package=".classmodule" />
   <include package=".ifacemodule" />
-  <include package=".servicemodule" />
   <include package=".utilitymodule" />
   <include package=".viewmodule" />
   <include package=".zcmlmodule" />

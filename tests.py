@@ -21,7 +21,7 @@ import unittest
 from zope.component.interfaces import IFactory
 from zope.app.traversing.interfaces import IContainmentRoot
 from zope.app.location import LocationProxy
-from zope.app.tests import placelesssetup, ztapi
+from zope.app.testing import placelesssetup, ztapi
 from zope.interface import implements
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.ifacemodule import InterfaceModule

@@ -544,7 +544,7 @@ def renderText(text, module=None, format=None):
 
     if text:
         source = zapi.createObject(None, format, text)
-        renderer = zapi.getView(source, '', TestRequest())
+        renderer = zapi.getMultiAdapter((source, TestRequest()))
         return renderer.render()
     else:
         return u''

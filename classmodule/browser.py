@@ -16,8 +16,6 @@
 $Id$
 """
 __docformat__ = 'restructuredtext'
-import inspect
-import os
 import re
 from types import TypeType, ClassType, FunctionType, ModuleType
 import xml.dom.minidom
@@ -27,7 +25,6 @@ from zope.configuration import docutils, xmlconfig
 from zope.configuration.config import ConfigurationContext
 from zope.configuration.fields import GlobalObject, Tokens
 from zope.app.traversing.interfaces import TraversalError
-from zope.interface import implementedBy
 from zope.interface.interface import InterfaceClass
 from zope.proxy import removeAllProxies
 from zope.schema import getFieldsInOrder
@@ -85,6 +82,7 @@ class Menu(object):
           
           >>> menu.request = TestRequest(form={'path': 'Foo'})
           >>> info = menu.findClasses()
+
           >>> pprint(info)
           [[('path', 'zope.app.apidoc.classmodule.browser.Foo'),
             ('url',
@@ -99,7 +97,7 @@ class Menu(object):
           [[('path', 'zope.app.apidoc.classmodule.browser.Foo2'),
             ('url',
              'http://127.0.0.1/zope/app/apidoc/classmodule/browser/Foo2')]]
-
+          
           >>> menu.request = TestRequest(form={'path': 'Blah'})
           >>> info = menu.findClasses()
           >>> pprint(info)
@@ -117,7 +115,7 @@ class Menu(object):
                 klass = zapi.traverse(classModule, p.replace('.', '/'))
                 results.append(
                     {'path': p,
-                     'url': zapi.getView(klass, 'absolute_url', self.request)()
+                     'url': zapi.absoluteURL(klass, self.request)
                      })
         results.sort(lambda x, y: cmp(x['path'], y['path']))
         return results
@@ -168,7 +166,7 @@ class ZCMLFileDetails(ConfigurationContext):
           'http://127.0.0.1'
         """
         m = zapi.getUtility(IDocumentationModule, "Class")
-        return zapi.getView(zapi.getParent(m), 'absolute_url', self.request)()
+        return zapi.absoluteURL(zapi.getParent(m), self.request)
 
     def getHTMLContents(self):
         """Return an HTML markup version of the ZCML file with links to other
@@ -477,7 +475,7 @@ class ClassDetails(object):
             path = getPythonPath(unwrapped_cls)
             try:
                 klass = zapi.traverse(classModule, path.replace('.', '/'))
-                url = zapi.getView(klass, 'absolute_url', self.request)()
+                url = zapi.absoluteURL(klass, self.request)
             except TraversalError:
                 # If one of the classes is implemented in C, we will not
                 # be able to find it.
@@ -501,7 +499,7 @@ class ClassDetails(object):
           'http://127.0.0.1'
         """
         m = zapi.getUtility(IDocumentationModule, "Class")
-        return zapi.getView(zapi.getParent(m), 'absolute_url', self.request)()
+        return zapi.absoluteURL(zapi.getParent(m), self.request)
 
 
     def getInterfaces(self):
@@ -684,7 +682,7 @@ class ModuleDetails(object):
             ('url', 'http://127.0.0.1/zope/app/apidoc/classmodule/cleanUp')]]
         """
         entries = [{'name': name,
-                    'url': zapi.getView(obj, 'absolute_url', self.request)(),
+                    'url': zapi.absoluteURL(obj, self.request),
                     'ismodule': zapi.isinstance(obj, Module),
                     'isclass': zapi.isinstance(obj, Class),
                     'isfunction': zapi.isinstance(obj, Function),
@@ -723,13 +721,14 @@ class ModuleDetails(object):
         while removeSecurityProxy(module).__class__ is Module:
             crumbs.append(
                 {'name': zapi.name(module),
-                 'url': zapi.getView(module, 'absolute_url', self.request)()}
+                 'url': zapi.absoluteURL(module, self.request)}
                 )
             module = zapi.getParent(module)
 
         crumbs.append(
             {'name': _('[top]'),
-             'url': zapi.getView(module, 'absolute_url', self.request)()} )
+             'url': zapi.getMultiAdapter(
+                      (module, self.request), name='absolute_url')()} )
 
         crumbs.reverse()
         return crumbs

@@ -30,7 +30,7 @@ from zope.app.renderer.rest import ReStructuredTextToHTMLRenderer
 from zope.app.renderer.stx import StructuredTextSourceFactory
 from zope.app.renderer.stx import IStructuredTextSource
 from zope.app.renderer.stx import StructuredTextToHTMLRenderer
-from zope.app.tests import placelesssetup, ztapi
+from zope.app.testing import placelesssetup, ztapi
 from zope.app.traversing.browser import AbsoluteURL, SiteAbsoluteURL
 from zope.app.traversing.interfaces import ITraversable, ITraverser
 from zope.app.traversing.interfaces import IPhysicallyLocatable

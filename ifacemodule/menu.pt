@@ -2,8 +2,7 @@
 <body>
 
   <p metal:fill-slot="post_menu" class="small" i18n:translate="">
-    Note: These are only interfaces that are registered with the Interface
-    Service. 
+    Note: These are only interfaces that are registered with the site manager. 
   </p>
 
 </body>

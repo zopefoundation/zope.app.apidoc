@@ -196,9 +196,8 @@
 
   <div tal:define="factories view/getFactories;
                    utilities view/getUtilitiesFor;
-                   services view/getServices;
                    classes view/getClasses"
-       tal:condition="python: factories or utilities or services or classes">
+       tal:condition="python: factories or utilities or classes">
 
     <h2 class="details-section" i18n:translate="">Other Information</h2>
     
@@ -248,29 +247,12 @@
         </div>
       </tal:block>
     
-      <tal:block condition="services">
-        <h3 class="details-section" i18n:translate="">Service</h3>
-        <div class="indent">
-          <div class="small" i18n:translate="">
-            A list of services (usually just one) that are are registered to 
-            provide this interface.
-          </div>
-          <ul>
-            <li tal:repeat="service services">
-              <a href=""
-                 tal:attributes="href string:../../Service/$service/"
-                 tal:content="service" />
-            </li>
-          </ul>
-        </div>
-      </tal:block>
-
       <tal:block condition="classes">
         <h3 class="details-section" i18n:translate="">Classes</h3>
         <div class="indent">
           <div class="small" i18n:translate="">
             A list of classes that implement this interface. This might
-            duplicate the entries in Utilities and Services. 
+            duplicate the entries in Utilities. 
           </div>
           <ul>
             <li tal:repeat="klass classes">

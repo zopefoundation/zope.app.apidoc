@@ -22,8 +22,6 @@ $Id$
 """
 __docformat__ = 'restructuredtext'
 
-import os
-
 from zope.configuration import docutils, xmlconfig
 from zope.interface import implements
 
@@ -158,7 +156,7 @@ class ZCMLModule(ReadContainerBase):
 
     This documentation is implemented using a simple `IReadContainer`. The
     items of the container are all the interfaces listed in the closest
-    interface service and above.
+    site manager and above.
 
     Demonstration::
 

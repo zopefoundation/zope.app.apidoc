@@ -67,7 +67,7 @@ class Menu(object):
 
     def getInterfaceIds(self):
         """Get a list of the ids of all interfaces registered with the
-        interface service.
+        site manager.
 
         Example::
 
@@ -243,14 +243,14 @@ class ViewsDetails(object):
 
         self.show_all = request.has_key('all')
 
-        service = zapi.getService(zapi.servicenames.Adapters)
-        # This is okay here, since we only read from the service. Once
+        sm = zapi.getSiteManager()
+        # This is okay here, since we only read from the site manager. Once
         # registration objects have sensible security declarations, we can
         # remove that call. 
         from zope.proxy import removeAllProxies
-        service = removeAllProxies(service)
+        sm = removeAllProxies(sm)
         self.regs = [reg
-                     for reg in service.registrations()
+                     for reg in sm.registrations()
                      if (isinstance(reg, AdapterRegistration) and
                          reg.required[-1] is not None and
                          # TODO: Handle multiple required ifaces at some point.

@@ -96,11 +96,11 @@ class ViewModule(object):
           >>> skins
           [u'skinA', u'skinB', u'skinC']
         """ 
-        # Only the global presentation service defines skins
-        utils = zapi.getService(zapi.servicenames.Utilities)
+        # Only the global site manager defines skins
+        sm = zapi.getGlobalSiteManager()
         skins = [SkinDocumentation(reg)
-                 for reg in utils.registrations()
-                 if reg.name != '' and reg.provided is ISkin]
+                 for reg in sm.registrations()
+                 if reg.provided is ISkin and reg.name != '']
         skins.sort(lambda x, y: cmp(x.name, y.name))
         # Make sure skins have a location
         [locate(skin, self, skin.name) for skin in skins]
@@ -118,8 +118,8 @@ class SkinDocumentation(object):
 
       >>> from zope.app.apidoc.tests import pprint
 
-      >>> utils = zapi.getGlobalService(zapi.servicenames.Utilities)
-      >>> reg = utils._registrations[(ISkin, 'skinA')]
+      >>> sm = zapi.getGlobalSiteManager()
+      >>> reg = sm._registrations[(ISkin, 'skinA')]
       >>> doc = SkinDocumentation(reg)
       >>> doc.name
       u'skinA'
@@ -130,7 +130,7 @@ class SkinDocumentation(object):
       >>> doc.interface
       'zope.app.apidoc.viewmodule.tests.SkinA'
 
-      >>> reg = utils._registrations[(ISkin, 'skinC')]
+      >>> reg = sm._registrations[(ISkin, 'skinC')]
       >>> doc = SkinDocumentation(reg)
       >>> doc.name
       u'skinC'
@@ -155,8 +155,8 @@ class SkinDocumentation(object):
 
     def isDefault(self):
         """Return whether this skin is the default skin."""
-        adapters = zapi.getService(zapi.servicenames.Adapters)
-        skin = adapters.lookup((self.context.component,), IDefaultSkin, '')
+        sm = zapi.getSiteManager()
+        skin = sm.adapters.lookup((self.context.component,), IDefaultSkin, '')
         if skin is self.context.component:
             return True
         return False
@@ -169,10 +169,10 @@ class SkinDocumentation(object):
 
         Each element of the list is a LayerDocumentation component.
         """
-        utils = zapi.getService(zapi.servicenames.Utilities)
+        sm = zapi.getSiteManager()
         layers = [LayerDocumentation(reg)
-                  for reg in utils.registrations()
-                  if reg.name != '' and reg.provided is ILayer and \
+                  for reg in sm.registrations()
+                  if reg.provided is ILayer and reg.name != '' and \
                      self.context.component.isOrExtends(reg.component)]
         
         # Make sure skins have a location
@@ -220,8 +220,8 @@ class LayerDocumentation(object):
       ...                   {'file': u'Zope3/src/zope/app/configure.zcml',
       ...                    'line': 5})
 
-      >>> utils = zapi.getGlobalService(zapi.servicenames.Utilities)
-      >>> reg = utils._registrations[(ILayer, 'layer1')]
+      >>> sm = zapi.getGlobalSiteManager()
+      >>> reg = sm._registrations[(ILayer, 'layer1')]
 
       >>> layerdoc = LayerDocumentation(reg)
       >>> layerdoc.name

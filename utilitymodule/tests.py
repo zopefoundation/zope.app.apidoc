@@ -17,12 +17,11 @@ $Id$
 """
 import unittest
 
-from zope.interface import implements
 from zope.publisher.browser import TestRequest
 from zope.testing.doctestunit import DocTestSuite
 
 from zope.app import zapi
-from zope.app.tests import placelesssetup, ztapi
+from zope.app.testing import placelesssetup, ztapi
 
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.tests import Root
@@ -40,9 +39,9 @@ from zope.app.location.traversing import LocationPhysicallyLocatable
 
 def setUp(test):
     placelesssetup.setUp()
-    service = zapi.getGlobalService('Utilities')
-    service.provideUtility(IDocumentationModule, InterfaceModule(), '')
-    service.provideUtility(IDocumentationModule, ClassModule(), 'Classes')
+    gsm = zapi.getGlobalSiteManager()
+    gsm.provideUtility(IDocumentationModule, InterfaceModule(), '')
+    gsm.provideUtility(IDocumentationModule, ClassModule(), 'Classes')
 
     ztapi.provideAdapter(None, IUniqueId, LocationUniqueId)
     ztapi.provideAdapter(None, IPhysicallyLocatable,

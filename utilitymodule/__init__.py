@@ -17,13 +17,13 @@ $Id$
 """
 __docformat__ = 'restructuredtext'
 
+from zope.component.site import UtilityRegistration
 from zope.interface import implements
 
 from zope.app import zapi
 from zope.app.i18n import ZopeMessageIDFactory as _
-from zope.app.component.localservice import queryNextService
+from zope.app.component import queryNextSiteManager
 from zope.app.location.interfaces import ILocation
-from zope.app.servicenames import Utilities
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase, getPythonPath
 
@@ -83,20 +83,20 @@ class UtilityInterface(ReadContainerBase):
 
     def get(self, key, default=None):
         """See zope.app.container.interfaces.IReadContainer"""
-        service = zapi.getService(Utilities)
+        sm = zapi.getGlobalSiteManager()
         if key == NONAME:
             key = ''
         utils = [Utility(self, reg)
-                 for reg in service.registrations()
-                 if reg.name == key and reg.provided == self.interface]
-
+                 for reg in sm.registrations()
+                 if zapi.isinstance(reg, UtilityRegistration) and \
+                     reg.name == key and reg.provided == self.interface]
         return utils and utils[0] or default
 
     def items(self):
         """See zope.app.container.interfaces.IReadContainer"""
-        service = zapi.getService(Utilities)
+        sm = zapi.getSiteManager()
         items = [(reg.name or NONAME, Utility(self, reg))
-                 for reg in service.registrations()
+                 for reg in sm.registrations()
                  if self.interface == reg.provided]
         items.sort()
         return items
@@ -107,7 +107,7 @@ class UtilityModule(ReadContainerBase):
 
     This documentation is implemented using a simple `IReadContainer`. The
     items of the container are all factories listed in the closest
-    factory service and above.
+    site manager and above.
 
     Demonstration::
 
@@ -130,14 +130,14 @@ class UtilityModule(ReadContainerBase):
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
     description = _("""
-    Utilities are also nicely registered in a service, so that it is easy to
-    create a listing of available utilities. A utility is identified by the
+    Utilities are also nicely registered in a site manager, so that it is easy
+    to create a listing of available utilities. A utility is identified by the
     providing interface and a name, which can be empty. The menu provides you
     with a list of interfaces that utilities provide and as sub-items the
     names of the various implementations.
 
     Again, the documentation of a utility lists all the attributes/fields and
-    methods the utility provides and provides a link to the implementation. 
+    methods the utility provides and provides a link to the implementation.
     """)
 
     def get(self, key, default=None):
@@ -150,13 +150,14 @@ class UtilityModule(ReadContainerBase):
             return UtilityInterface(self, key, getattr(mod, parts[-1], default))
 
     def items(self):
-        service = zapi.getService(Utilities)
+        sm = zapi.getSiteManager()
         ifaces = {}
-        while service is not None:
-            for reg in service.registrations():
-                path = getPythonPath(reg.provided)
-                ifaces[path] = UtilityInterface(self, path, reg.provided)
-            service = queryNextService(service, Utilities)
+        while sm is not None:
+            for reg in sm.registrations():
+                if isinstance(reg, UtilityRegistration):
+                    path = getPythonPath(reg.provided)
+                    ifaces[path] = UtilityInterface(self, path, reg.provided)
+            sm = queryNextSiteManager(sm)
 
         items = ifaces.items()
         items.sort(lambda x, y: cmp(x[0].split('.')[-1], y[0].split('.')[-1]))
