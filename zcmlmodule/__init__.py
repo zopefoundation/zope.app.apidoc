@@ -112,10 +112,7 @@ class Namespace(ReadContainerBase):
 
     def getFullName(self):
         """Get the full name of the namespace."""
-        name = self.__realname__
-        if name != 'ALL' and not name.startswith('http://namespaces.zope.org/'):
-            name = 'http://namespaces.zope.org/' + name
-        return name
+        return self.__realname__
 
     def getQuotedName(self):
         """Get the full name, but quoted for a URL."""
@@ -232,11 +229,14 @@ class ZCMLModule(ReadContainerBase):
             self._makeDocStructure()
 
         key = unquoteNS(key)
-        if not (key == 'ALL' or key.startswith('http://namespaces.zope.org/')):
-            key = 'http://namespaces.zope.org/' + key
-        if not namespaces.has_key(key):
-            return default
-        return Namespace(self, key)
+        if namespaces.has_key(key):
+            return Namespace(self, key)
+
+        full_key = 'http://namespaces.zope.org/' + key
+        if namespaces.has_key(full_key):
+            return Namespace(self, full_key)        
+        
+        return default
 
 
     def items(self):
