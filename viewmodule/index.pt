@@ -21,13 +21,15 @@
           <i>required:</i>
           <a href=""
              tal:condition="View/required"
-             tal:attributes="href View/required"
+             tal:attributes="
+                 href string:../Interface/${View/required}/apiindex.html"
              tal:content="View/required" />
           <span tal:condition="not:View/required">None</span>
           <br />
           <i>presentation type:</i>
           <a href=""
-             tal:attributes="href View/type"
+             tal:attributes="
+                 href string:../Interface/${View/type}/apiindex.html"
              tal:content="View/type" />
           <br />
           <tal:omit-tag condition="View/factory/path">
@@ -35,7 +37,7 @@
             <a href=""
                tal:condition="View/factory/referencable"
                tal:attributes="href 
-                   string: ../Class/index.html?path=${View/factory/path}"
+                   string: ../Class/${View/factory/url}/index.html"
                tal:content="View/factory/path" />
             <span
                tal:condition="not:View/factory/referencable"
