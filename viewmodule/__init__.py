@@ -13,11 +13,47 @@
 ##############################################################################
 """View Documentation Module
 
-$Id: __init__.py,v 1.3 2004/03/30 02:01:18 srichter Exp $
+$Id: __init__.py,v 1.4 2004/04/15 13:24:35 srichter Exp $
 """
 from zope.app import zapi
-from zope.interface import implements
+from zope.interface import implements, classImplements, Interface, Attribute
+from zope.component.presentation import SkinRegistration
+from zope.component.presentation import DefaultSkinRegistration
+from zope.component.presentation import LayerRegistration
 from zope.app.apidoc.interfaces import IDocumentationModule
+from zope.app.apidoc.utilities import relativizePath
+from zope.proxy import removeAllProxies
+from zope.app.i18n import ZopeMessageIDFactory as _
+
+# XXX: Temporary hack, since registering an adapter for a particular class is
+# broken.
+class ISkinRegistration(Interface): pass
+classImplements(SkinRegistration, ISkinRegistration)
+
+class ILayerRegistration(Interface): pass
+classImplements(LayerRegistration, ILayerRegistration)
+
+
+class ISkinDocumentation(Interface):
+    """Provides useful information of skins for documentation."""
+
+    name = Attribute("""Name of the skin.""")
+
+    layers = Attribute("A list of ILayerDocumentation objects that represent "
+                       "the layers of this skin.")
+
+    doc = Attribute("A string that describes the skin and/or its origin.")
+
+    default = Attribute("Set to true, if the skin is the default skin.")
+
+
+class ILayerDocumentation(Interface):
+    """Provides useful information of layers for documentation."""
+
+    name = Attribute("""Name of the layer.""")
+
+    doc = Attribute("A string that describes the skin and/or its origin.")
+
 
 class ViewModule(object):
     """Represent the Documentation of all Views."""
@@ -58,63 +94,179 @@ class ViewModule(object):
         Examples::
 
           >>> module = ViewModule()
-          >>> skins = module.getSkins()
+          >>> skins = [skin.name for skin in module.getSkins()]
           >>> skins.sort()
           >>> skins
-          ['default', 'skinA', 'skinB', 'skinC']
+          ['skinA', 'skinB', 'skinC']
 
           >>> pres = zapi.getService(None, 'Presentation')
           >>> pres.defineSkin('skinD', ['layer3'])
-          >>> skins = module.getSkins()
+          >>> skins = [skin.name for skin in module.getSkins()]
           >>> skins.sort()
           >>> skins
-          ['default', 'skinA', 'skinB', 'skinC', 'skinD']
+          ['skinA', 'skinB', 'skinC', 'skinD']
         """ 
         # Only the global presentation service defines skins 
         service = zapi.getService(None, 'Presentation')
-        return service.skins.keys()
+        skins = [zapi.getAdapter(reg, ISkinDocumentation)
+                 for reg in service.registrations()
+                 if isinstance(reg, SkinRegistration)]
+        skins.sort(lambda x, y: cmp(x.name, y.name))
+        return skins
 
-    def getLayersForSkin(self, skin):
-        """Get the names of all available layers of a particular skin.
 
-        Returns a 'KeyError', if the skin does not exist.
+class SkinDocumentation(object):
+    """Adapter for global skin registration objects.
 
-        Examples::
+    This is used as a wrapper to output end-user friendlier information. We
+    also always want the documentation of a layer registration to be a string,
+    which the 'LayerRegistration.doc' attribute does not guarantee. 
 
-          >>> module = ViewModule()        
-          >>> module.getLayersForSkin('default')
-          ('default',)
-          >>> module.getLayersForSkin('skinA')
-          ('default',)
-          >>> module.getLayersForSkin('skinB')
-          ('layer5', 'layer4', 'default')
-          >>> module.getLayersForSkin('skinC')
-          ('layer4', 'layer2', 'layer1', 'default')
-          >>> module.getLayersForSkin('skinD')
-          Traceback (most recent call last):
-          ...
-          KeyError: 'skinD'
-        """ 
-        # Only the global presentation service defines skins 
-        service = zapi.getService(None, 'Presentation')
-        return service.skins[skin]
+    Examples::
+
+      >>> from zope.app.apidoc.tests import pprint
+
+      >>> pres = zapi.getService(None, 'Presentation')
+      >>> reg = pres._registrations[('skin', 'skinA')]
+      >>> doc = SkinDocumentation(reg)
+      >>> doc.name
+      'skinA'
+      >>> doc.default
+      True
+      >>> pprint(doc.layers)
+      [LayerDocumentation('default')]
+
+      >>> reg = pres._registrations[('skin', 'skinC')]
+      >>> doc = SkinDocumentation(reg)
+      >>> doc.name
+      'skinC'
+      >>> doc.default
+      False
+      >>> pprint(doc.layers)
+      [LayerDocumentation('layer4'),
+       LayerDocumentation('layer2'),
+       LayerDocumentation('layer1'),
+       LayerDocumentation('default')]
+    """
+    implements(ISkinDocumentation)
+
+    def __init__(self, context):
+        self.context = context
+
+    # See ISkinDocumentation
+    name = property(lambda self: self.context.skin)
+
+    def isDefault(self):
+        """Return whether this skin is the default skin."""
+        service = zapi.getService(self.context, 'Presentation')
+        for registration in service.registrations():
+            if isinstance(registration, DefaultSkinRegistration) and \
+                   registration.skin == self.context.skin:
+                return True
+        return False
+
+    # See ISkinDocumentation
+    default = property(isDefault)
+
+    def getLayers(self):
+        """Get a list of all layers in this skin.
+
+        Each element of the list is a LayerDocumentation component.
+        """
+        service = zapi.getService(self.context, 'Presentation')
+        layers = [zapi.getAdapter(reg, ILayerDocumentation)
+                  for reg in service.registrations()
+                  if (isinstance(reg, LayerRegistration) and
+                      reg.layer in self.context.layers)]
+
         
-    def getSkinLayerMapping(self):
-        """Return a dictionary with keys being skin names and the value are
-        tuples of layer names.
-
-        Example::
-
-          >>> from zope.app.apidoc.tests import pprint
-          >>> module = ViewModule()        
-          >>> map = module.getSkinLayerMapping().items()
-          >>> pprint(map)
-          [('default', ('default',)),
-           ('skinA', ('default',)),
-           ('skinB', ('layer5', 'layer4', 'default')),
-           ('skinC', ('layer4', 'layer2', 'layer1', 'default'))]
-        """ 
-        # Only the global presentation service defines skins 
-        service = zapi.getService(None, 'Presentation')
-        return service.skins
+        if 'default' in self.context.layers:
+            default = LayerRegistration('default',
+                                        'This is a predefined skin.')
+            layers.append(zapi.getAdapter(default, ILayerDocumentation))
+        return layers
         
+    # See ISkinDocumentation
+    layers = property(getLayers)
+
+    def getDoc(self):
+        """Generate documentation."""
+        if isinstance(self.context.doc, (str, unicode)):
+            return self.context.doc
+
+        # We can safely assume that for global skin registrations we have an
+        # configuration info object.
+        info = removeAllProxies(self.context.doc)
+        doc = _('$file (line $line)')
+        doc.mapping = {'file': relativizePath(info.file),
+                       'line': info.line}
+        return doc
+
+    # See ISkinDocumentation
+    doc = property(getDoc)
+
+    def __repr__(self):
+        """Representation of the object in a doctest-friendly format."""
+        return '%s(%r, %r)' % (
+            self.__class__.__name__,
+            self.name, self.context.layers)        
+
+
+class LayerDocumentation(object):
+    """Adapter for global layer registration objects.
+
+    This is used as a wrapper to output end-user friendlier information. We
+    also always want the documentation of a layer registration to be a string,
+    which the 'LayerRegistration.doc' attribute does not guarantee. 
+
+    Examples::
+
+      >>> from zope.app.apidoc.tests import pprint
+
+      >>> LayerRegistration = type('LayerRegistration', (object,),
+      ...                          {'layer': u'help', 'doc': u'documentation'})
+
+      >>> ParserInfo = type('ParserInfo', (object,),
+      ...                   {'file': u'Zope3/src/zope/app/configure.zcml',
+      ...                    'line': 5})
+
+      >>> reg = LayerRegistration()
+      >>> layerdoc = LayerDocumentation(reg)
+      >>> layerdoc.name
+      u'help'
+      >>> layerdoc.doc
+      u'documentation'
+
+      >>> reg.doc = ParserInfo()
+      >>> layerdoc.doc
+      u'$file (line $line)'
+      >>> pprint(layerdoc.doc.mapping)
+      [('file', u'Zope3/src/zope/app/configure.zcml'), ('line', 5)]
+    """
+    implements(ILayerDocumentation)
+
+    def __init__(self, context):
+        self.context = context
+
+    # See ILayerDocumentation
+    name = property(lambda self: self.context.layer)
+
+    def getDoc(self):
+        """Generate documentation."""
+        if isinstance(self.context.doc, (str, unicode)):
+            return self.context.doc
+
+        # We can safely assume that for global layer registrations we have an
+        # configuration info object.
+        info = removeAllProxies(self.context.doc)
+        doc = _('$file (line $line)')
+        doc.mapping = {'file': relativizePath(info.file),
+                       'line': info.line}
+        return doc
+
+    # See ILayerDocumentation
+    doc = property(getDoc)
+
+    def __repr__(self):
+        """Representation of the object in a doctest-friendly format."""
+        return '%s(%r)' % (self.__class__.__name__, self.name)        
