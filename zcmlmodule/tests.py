@@ -48,6 +48,9 @@ def setUp(test):
 def tearDown(test):
     placelesssetup.tearDown()
     zope.app.appsetup.appsetup.__config_source = old_source_file    
+    from zope.app.apidoc import zcmlmodule
+    zcmlmodule.namespaces = None
+    zcmlmodule.subdirs = None
 
 def getDirective():
     module = ZCMLModule()
