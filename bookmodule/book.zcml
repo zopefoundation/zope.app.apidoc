@@ -156,12 +156,6 @@
         parent="security"
         />
     <bookchapter
-        id="idpicker"
-        title="Id Picker"
-        doc_path="idpicker.txt"
-        parent="security/authentication"
-        />
-    <bookchapter
         id="principalfolder"
         title="Principal Folder"
         doc_path="principalfolder.txt"
