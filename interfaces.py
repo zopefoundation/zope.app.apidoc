@@ -26,7 +26,7 @@ class IDocumentationModule(Interface):
     A documentation module contains the documentation for one specific aspect
     of the framework, such as ZCML directives or interfaces.
 
-    The interface is used to register module as utilitites.
+    The interface is used to register module as utilities.
     """
 
     title = TextLine(
