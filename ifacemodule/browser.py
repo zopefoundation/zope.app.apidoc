@@ -311,8 +311,8 @@ class InterfaceDetails(object):
 
           >>> attrs = details.getAttributes()
           >>> pprint(attrs)
-          [[('doc', '<p>This is bar.</p>\n'), ('name', 'bar')],
-           [('doc', '<p>This is foo.</p>\n'), ('name', 'foo')]]
+          [[('doc', u'<p>This is bar.</p>\n'), ('name', 'bar')],
+           [('doc', u'<p>This is foo.</p>\n'), ('name', 'foo')]]
         """
         # The `Interface` and `Attribute` class have no security declarations,
         # so that we are not able to access any API methods on proxied
@@ -339,10 +339,10 @@ class InterfaceDetails(object):
 
           >>> methods = details.getMethods()
           >>> pprint(methods)
-          [[('doc', '<p>This is blah.</p>\n'),
+          [[('doc', u'<p>This is blah.</p>\n'),
             ('name', 'blah'),
             ('signature', '()')],
-           [('doc', '<p>This is get.</p>\n'),
+           [('doc', u'<p>This is get.</p>\n'),
             ('name', 'get'),
             ('signature', '(key, default=None)')]]
         """        
@@ -372,7 +372,7 @@ class InterfaceDetails(object):
              [('name', 'TextLine'),
               ('path', 'zope/schema/_bootstrapfields/TextLine')]),
             ('default', "u'Foo'"),
-            ('description', '<p>Title</p>\n'),
+            ('description', u'<p>Title</p>\n'),
             ('iface',
              [('id', 'zope.schema.interfaces.ITextLine'),
               ('name', 'ITextLine')]),
@@ -382,7 +382,7 @@ class InterfaceDetails(object):
              [('name', 'Text'),
               ('path', 'zope/schema/_bootstrapfields/Text')]),
             ('default', "u'Foo.'"),
-            ('description', '<p>Desc</p>\n'),
+            ('description', u'<p>Desc</p>\n'),
             ('iface',
              [('id', 'zope.schema.interfaces.IText'), ('name', 'IText')]),
             ('name', 'description'),
