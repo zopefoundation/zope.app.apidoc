@@ -1,6 +1,6 @@
 TO DO
 =====
   
-  - better README.txt
+- better README.txt
 
-  - Refactor some of the views, so that templates can be reused
+- Refactor some of the views, so that templates can be reused
