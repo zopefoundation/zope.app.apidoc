@@ -203,7 +203,7 @@ class Module(ReadContainerBase):
         if hasattr(self.__module, '__file__') and \
                (self.__module.__file__.endswith('__init__.py') or
                 self.__module.__file__.endswith('__init__.pyc')):
-            dir = os.path.split(self.__module.__file__)[0]
+            dir = os.path.dirname(self.__module.__file__)
             for file in os.listdir(dir):
                 if file in IGNORE_FILES:
                     continue
