@@ -27,9 +27,7 @@
 
 <head>
 
-<body style="margin: 1em;">
-
-  <metal:block define-slot="contents" />
+<body metal:define-slot="contents">
 
 </body>
 </html>
