@@ -4,7 +4,7 @@
 
   <class class=".APIDocumentation">
     <require
-        interface="zope.app.interfaces.container.IReadContainer"
+        interface="zope.app.container.interfaces.IReadContainer"
         permission="zope.ManageApplication"
         />
   </class>

@@ -13,7 +13,7 @@
 ##############################################################################
 """Utilties to make the life of Documentation Modules easier.
 
-$Id: utilities.py,v 1.2 2004/02/25 22:26:45 faassen Exp $
+$Id: utilities.py,v 1.3 2004/03/03 10:38:30 philikon Exp $
 """
 import re
 import types
@@ -23,7 +23,7 @@ from zope.interface import implements, implementedBy
 from zope.security.checker import getCheckerForInstancesOf
 from zope.security.interfaces import INameBasedChecker
 
-from zope.app.interfaces.container import IReadContainer
+from zope.app.container.interfaces import IReadContainer
 
 __metaclass__ = type
 

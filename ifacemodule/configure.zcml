@@ -4,7 +4,7 @@
 
   <class class=".InterfaceModule">
     <allow interface=".IInterfaceModule" />
-    <allow interface="zope.app.interfaces.container.IReadContainer" />
+    <allow interface="zope.app.container.interfaces.IReadContainer" />
   </class>
 
   <!-- Register the module with the API Documentation System -->
@@ -18,24 +18,27 @@
        introspector uses this name already. -->
 
   <browser:page
-    for="zope.interface.interfaces.IInterface"
-    permission="zope.View"
-    class=".browser.InterfaceDetails"
-    name="apiindex.html"
-    template="index.pt" />
+      for="zope.interface.interfaces.IInterface"
+      permission="zope.View"
+      class=".browser.InterfaceDetails"
+      name="apiindex.html"
+      template="index.pt"
+      />
 
   <!-- Interface Documentation Module Menu -->
 
   <adapter
       provides="zope.app.tree.interfaces.IChildObjects"
       for=".IInterfaceModule"
-      factory=".menu.InterfaceModuleChildObjects" />
+      factory=".menu.InterfaceModuleChildObjects"
+      />
 
   <browser:page
       for=".InterfaceModule"
       permission="zope.View"
       class=".menu.Menu"
       name="menu.html"
-      template="menu.pt" />
+      template="menu.pt"
+      />
 
 </configure>

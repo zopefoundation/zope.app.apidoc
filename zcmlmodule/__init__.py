@@ -18,7 +18,7 @@ execute them) and uses the collected data to generate the tree. The result of
 the evaluation is stored in thread-global variables, so that we have to parse
 the files only once. 
 
-$Id: __init__.py,v 1.4 2004/03/02 17:51:49 philikon Exp $
+$Id: __init__.py,v 1.5 2004/03/03 10:38:32 philikon Exp $
 """
 import os
 
@@ -118,7 +118,7 @@ class Namespace(ReadContainerBase):
         return name
 
     def get(self, key, default=None):
-        """See zope.app.interfaces.container.IReadContainer"""
+        """See zope.app.container.interfaces.IReadContainer"""
         ns = self.getFullName()
         if not namespaces[ns].has_key(key):
             return default
@@ -128,7 +128,7 @@ class Namespace(ReadContainerBase):
         return directive
     
     def items(self):
-        """See zope.app.interfaces.container.IReadContainer"""
+        """See zope.app.container.interfaces.IReadContainer"""
         list = []
         for key in namespaces[self.getFullName()].keys():
             list.append((key, self.get(key)))
@@ -215,7 +215,7 @@ class ZCMLModule(ReadContainerBase):
 
 
     def get(self, key, default=None):
-        """See zope.app.interfaces.container.IReadContainer
+        """See zope.app.container.interfaces.IReadContainer
 
         Get the namespace by name; long and abbreviated names work.
         """
@@ -228,7 +228,7 @@ class ZCMLModule(ReadContainerBase):
 
 
     def items(self):
-        """See zope.app.interfaces.container.IReadContainer"""
+        """See zope.app.container.interfaces.IReadContainer"""
         list = []
         for key in namespaces.keys():
             namespace = Namespace(self, key)

@@ -13,7 +13,7 @@
 ##############################################################################
 """Zope 3 API Documentation
 
-$Id: __init__.py,v 1.3 2004/03/02 17:51:47 philikon Exp $
+$Id: __init__.py,v 1.4 2004/03/03 10:38:30 philikon Exp $
 """
 from zope.interface import implements
 
@@ -57,14 +57,14 @@ class APIDocumentation(ReadContainerBase):
         self.__name__ = name
     
     def get(self, key, default=None):
-        """See zope.app.interfaces.container.IReadContainer"""
+        """See zope.app.container.interfaces.IReadContainer"""
         utility = zapi.queryUtility(self, IDocumentationModule, default, key)
         if utility != default:
             locate(utility, self, key)
         return utility
 
     def items(self):
-        """See zope.app.interfaces.container.IReadContainer"""
+        """See zope.app.container.interfaces.IReadContainer"""
         items = zapi.getUtilitiesFor(self, IDocumentationModule)
         items.sort()
         utils = []

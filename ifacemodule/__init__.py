@@ -18,7 +18,7 @@ interface service. Therefore, currently there are no unregsitered interfaces
 listed in the documentation. This might be good, since unregistered interfaces
 are usually private and not of interest to a general developer.
 
-$Id: __init__.py,v 1.2 2004/03/02 18:16:10 philikon Exp $
+$Id: __init__.py,v 1.3 2004/03/03 10:38:31 philikon Exp $
 """
 
 from zope.app import zapi
@@ -86,7 +86,7 @@ class InterfaceModule(ReadContainerBase):
     """
 
     def get(self, key, default=None):
-        """See zope.app.interfaces.container.IReadContainer"""
+        """See zope.app.container.interfaces.IReadContainer"""
         service = zapi.getService(self, 'Interfaces')
         iface = service.queryInterface(key, default)
         if iface is default: 
@@ -106,7 +106,7 @@ class InterfaceModule(ReadContainerBase):
         return iface
 
     def items(self):
-        """See zope.app.interfaces.container.IReadContainer"""
+        """See zope.app.container.interfaces.IReadContainer"""
         service = zapi.getService(self, 'Interfaces')
         items = list(service.items())
         items.sort()

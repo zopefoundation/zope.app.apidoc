@@ -13,7 +13,7 @@
 ##############################################################################
 """Service Documentation Module
 
-$Id: __init__.py,v 1.2 2004/03/02 17:51:48 philikon Exp $
+$Id: __init__.py,v 1.3 2004/03/03 10:38:31 philikon Exp $
 """
 from zope.interface import implements
 from zope.component import ComponentLookupError
@@ -89,7 +89,7 @@ class ServiceModule(ReadContainerBase):
     """
 
     def get(self, key, default=None):
-        """See zope.app.interfaces.container.IReadContainer"""
+        """See zope.app.container.interfaces.IReadContainer"""
         service = zapi.getService(self, 'Services')        
         items = service.getServiceDefinitions()
         for name, iface in items:
@@ -103,7 +103,7 @@ class ServiceModule(ReadContainerBase):
         return default
 
     def items(self):
-        """See zope.app.interfaces.container.IReadContainer"""
+        """See zope.app.container.interfaces.IReadContainer"""
         service = zapi.getService(self, 'Services')
         items = service.getServiceDefinitions()
         items.sort()

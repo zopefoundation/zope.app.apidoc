@@ -13,7 +13,7 @@
 ##############################################################################
 """Utility Documentation Module
 
-$Id: __init__.py,v 1.2 2004/03/02 17:51:48 philikon Exp $
+$Id: __init__.py,v 1.3 2004/03/03 10:38:32 philikon Exp $
 """
 from zope.interface import implements
 
@@ -79,7 +79,7 @@ class UtilityInterface(ReadContainerBase):
         self.interface = interface
 
     def get(self, key, default=None):
-        """See zope.app.interfaces.container.IReadContainer"""
+        """See zope.app.container.interfaces.IReadContainer"""
         service = zapi.getService(self, 'Utilities')        
         if key == NONAME:
             key = ''
@@ -90,7 +90,7 @@ class UtilityInterface(ReadContainerBase):
         return util
 
     def items(self):
-        """See zope.app.interfaces.container.IReadContainer"""
+        """See zope.app.container.interfaces.IReadContainer"""
         service = zapi.getService(self, 'Utilities')
         items = service.getRegisteredMatching(self.interface)
         items = [(name or NONAME, self.get(name)) for iface, name, c in items]

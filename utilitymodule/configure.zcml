@@ -4,7 +4,7 @@
 
   <class class=".UtilityModule">
     <allow interface="zope.app.apidoc.interfaces.IDocumentationModule" />
-    <allow interface="zope.app.interfaces.container.IReadContainer" />
+    <allow interface="zope.app.container.interfaces.IReadContainer" />
   </class>
 
   <class class=".Utility">
@@ -12,7 +12,7 @@
   </class>
 
   <class class=".UtilityInterface">
-    <allow interface="zope.app.interfaces.container.IReadContainer" />
+    <allow interface="zope.app.container.interfaces.IReadContainer" />
     <allow attributes="interface" />
   </class>
 
