@@ -140,7 +140,7 @@ class Module(ReadContainerBase):
 
       >>> fname = module.getFileName()
       >>> fname = fname.replace('\\\\', '/') # normalize pathname separator
-      >>> 'src/zope/app/apidoc/__init__.py' in fname
+      >>> 'zope/app/apidoc/__init__.py' in fname
       True
 
       >>> module.getPath()

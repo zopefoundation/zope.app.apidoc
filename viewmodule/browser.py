@@ -111,12 +111,12 @@ def _getFactoryData(factory):
       >>> info = _getFactoryData(view)
 
       Normalize pathname separators.
-      >>> info['template'] = info['template'].replace('\\\\', '/')
+      >>> info['template'] = info['template'].replace('\\\\', '/')[-35:]
       >>> pprint(info)
       [('path', 'zope.app.pagetemplate.simpleviewclass.simple'),
        ('referencable', True),
        ('resource', None),
-       ('template', 'Zope3/src/zope/app/apidoc/viewmodule/index.pt'),
+       ('template', 'zope/app/apidoc/viewmodule/index.pt'),
        ('url', 'zope/app/pagetemplate/simpleviewclass/simple')]
 
       The factory is a simple type:
