@@ -18,7 +18,7 @@ interface service. Therefore, currently there are no unregsitered interfaces
 listed in the documentation. This might be good, since unregistered interfaces
 are usually private and not of interest to a general developer.
 
-$Id: __init__.py,v 1.3 2004/03/03 10:38:31 philikon Exp $
+$Id: __init__.py,v 1.4 2004/03/05 15:45:52 eddala Exp $
 """
 
 from zope.app import zapi
@@ -26,6 +26,8 @@ from zope.interface import implements
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase
 from zope.app.location import LocationProxy
+from zope.app.component.interface \
+     import queryInterface, searchInterfaceUtilities
 
 class IInterfaceModule(IDocumentationModule):
     """Interface API Documentation Module
@@ -86,9 +88,8 @@ class InterfaceModule(ReadContainerBase):
     """
 
     def get(self, key, default=None):
-        """See zope.app.container.interfaces.IReadContainer"""
-        service = zapi.getService(self, 'Interfaces')
-        iface = service.queryInterface(key, default)
+        """See zope.app.interfaces.container.IReadContainer"""
+        iface = queryInterface(key, default)
         if iface is default: 
             # Yeah, we find more items than we claim to have! This way we can
             # handle all interfaces using this module. :-)
@@ -106,9 +107,8 @@ class InterfaceModule(ReadContainerBase):
         return iface
 
     def items(self):
-        """See zope.app.container.interfaces.IReadContainer"""
-        service = zapi.getService(self, 'Interfaces')
-        items = list(service.items())
+        """See zope.app.interfaces.container.IReadContainer"""
+        items = list(searchInterfaceUtilities(self))
         items.sort()
         items = [(i[0], LocationProxy(i[1], self, i[0])) for i in items]
         return items

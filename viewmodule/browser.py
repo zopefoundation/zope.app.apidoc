@@ -13,7 +13,7 @@
 ##############################################################################
 """Views/Presentation Module Views
 
-$Id: browser.py,v 1.2 2004/02/25 22:26:47 faassen Exp $
+$Id: browser.py,v 1.3 2004/03/05 15:46:58 eddala Exp $
 """
 from types import ClassType
 
@@ -22,6 +22,8 @@ from zope.interface import Interface
 from zope.app import zapi
 from zope.app.publisher.browser.icon import IconViewFactory
 from zope.app.apidoc.utilities import getPythonPath, getPermissionIds
+from zope.app.component.interface import searchInterfaceIds
+from zope.app.component.interface import getInterface
 
 __metaclass__ = type
 
@@ -40,8 +42,7 @@ class Menu:
     def getInterfaceIds(self):
         """Get a list of the ids of all interfaces registered with the
         interface service."""
-        service = zapi.getService(self, 'Interfaces')
-        ids = service.searchInterfaceIds()
+        ids = searchInterfaceIds()
         ids.sort()
         return ids
 
@@ -95,9 +96,8 @@ class ViewsDetails:
         self.context = context
         self.request = request
 
-        service = zapi.getService(context, 'Interfaces')
-        self.iface = service.getInterface(request['iface'])
-        self.type = service.getInterface(request['type'])
+        self.iface = getInterface(request['iface'])
+        self.type = getInterface(request['type'])
 
         service = zapi.getService(context, 'Presentation')
         self.views = service.getRegisteredMatching(object=self.iface,

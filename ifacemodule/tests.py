@@ -13,10 +13,9 @@
 ##############################################################################
 """Tests for the Interface Documentation Module
 
-$Id: tests.py,v 1.1 2004/02/19 20:46:41 philikon Exp $
+$Id: tests.py,v 1.2 2004/03/05 15:45:52 eddala Exp $
 """
 import unittest
-from zope.app import zapi
 from zope.app.interfaces.traversing import IContainmentRoot
 from zope.app.location import LocationProxy
 from zope.app.tests import placelesssetup
@@ -24,13 +23,13 @@ from zope.interface import implements
 from zope.app.apidoc.ifacemodule import IInterfaceModule
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.testing.doctestunit import DocTestSuite
+from zope.app.component.interface import provideInterface
 
 
 def setUp():
     placelesssetup.setUp()
-    service = zapi.getService(None, 'Interfaces')
-    service.provideInterface(None, IDocumentationModule)
-    service.provideInterface('IInterfaceModule', IInterfaceModule)
+    provideInterface(None, IDocumentationModule)
+    provideInterface('IInterfaceModule', IInterfaceModule)
 
 def tearDown():
     placelesssetup.tearDown()
