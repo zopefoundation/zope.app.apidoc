@@ -23,6 +23,7 @@ from zope.proxy import removeAllProxies
 from zope.schema.interfaces import IField
 
 from zope.app import zapi
+from zope.app.i18n import ZopeMessageIDFactory as _
 from zope.app.apidoc.utilities import getPythonPath, stx2html
 from zope.app.apidoc.classmodule import classRegistry
 
@@ -147,16 +148,16 @@ def _getRequired(field):
 
       >>> field = Field()
       >>> _getRequired(field)
-      'optional'
+      u'optional'
       >>> field.required = True
       >>> _getRequired(field)
-      'required'
+      u'required'
 
     """
     if field.required:
-        return 'required'
+        return _('required')
     else:
-        return 'optional'
+        return _('optional')
 
 
 def _getRealFactory(factory):
@@ -305,13 +306,13 @@ class InterfaceDetails(object):
              [('id', 'zope.schema.interfaces.ITextLine'),
               ('name', 'ITextLine')]),
             ('name', 'title'),
-            ('required', 'required')],
+            ('required', u'required')],
            [('default', "u'Foo.'"),
             ('description', u'Desc'),
             ('iface',
              [('id', 'zope.schema.interfaces.IText'), ('name', 'IText')]),
             ('name', 'description'),
-            ('required', 'optional')]]
+            ('required', u'optional')]]
         """
         fields = map(lambda x: x[1], _getInOrder(self.context, IField))
         return [{'name': field.getName(),

@@ -12,10 +12,10 @@
        tal:condition="info">
     <i i18n:translate="">File:</i>
     <tal:var replace="info/file" />
-    <tal:block i18n:translate="">
+    <tal:block i18n:translate="">from
       (line <tal:var replace="info/line" i18n:name="beginline" />,
-      column <tal:var replace="info/column" i18n:name="begincolumn" /> to
-      line <tal:var replace="info/eline" i18n:name="endline" />,
+      column <tal:var replace="info/column" i18n:name="begincolumn" />) to
+      (line <tal:var replace="info/eline" i18n:name="endline" />,
       column <tal:var replace="info/ecolumn" i18n:name="endcolumn" />)
     </tal:block>
   </div>
@@ -65,7 +65,8 @@
                string:../../../Interface/${field/iface/id}/apiindex.html">
           <code tal:content="field/iface/name">IField</code></a>
       (<span tal:content="string:${field/required}, ">optional, </span>
-        default = <code tal:content="field/default" />)<br>
+        <span i18n:translate="">default</span> =
+            <code tal:content="field/default" />)<br>
       <span tal:content="field/description">field desc</span>      
     </li>
 
