@@ -16,7 +16,7 @@
 This module is able to take a dotted name of any class and display
 documentation for it. 
 
-$Id: __init__.py,v 1.4 2004/03/30 02:00:14 srichter Exp $
+$Id: __init__.py,v 1.5 2004/03/30 09:24:28 gotcha Exp $
 """
 import os
 import sys
@@ -512,7 +512,7 @@ class ClassModule(Module):
     two methods to navigate through the modules to find the classes you are
     interested in.
 
-    The first method is to type in aome part of the Python path of the class
+    The first method is to type in some part of the Python path of the class
     and the module will look in the class registry for matches. The menu will
     then return with a list of these matches.
 
