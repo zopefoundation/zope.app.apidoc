@@ -2,8 +2,17 @@
   xmlns="http://namespaces.zope.org/zope"
   xmlns:browser="http://namespaces.zope.org/browser">
 
+  <class class=".Module">
+    <allow interface=".IModuleDocumentation" />
+  </class>
+
+  <class class=".Class">
+    <allow interface=".IClassDocumentation" />
+  </class>
+
   <class class=".ClassModule">
     <allow interface="zope.app.apidoc.interfaces.IDocumentationModule" />
+    <allow interface=".IModuleDocumentation" />
     <allow attributes="rootModules" />
   </class>
 
@@ -15,21 +24,22 @@
   <browser:page
     for=".ClassModule"
     permission="zope.View"
+    class=".browser.Menu"
     name="menu.html"
     template="menu.pt" />
 
   <browser:page
-    for=".ClassModule"
+    for=".Class"
     permission="zope.View"
     class=".browser.ClassDetails"
     name="index.html"
-    template="index.pt" />
+    template="class_index.pt" />
 
   <browser:page
-    for=".ClassModule"
+    for=".Module"
     permission="zope.View"
     class=".browser.ModuleDetails"
-    name="browser.html"
-    template="browser.pt" />
+    name="index.html"
+    template="module_index.pt" />
 
 </configure>
