@@ -25,7 +25,6 @@ from zope.publisher.browser import TestRequest
 from zope.schema import TextLine, Text
 from zope.testing.doctestunit import DocTestSuite
 
-from zope.app import zapi
 from zope.app.component.interface import provideInterface
 from zope.app.location import LocationProxy
 from zope.app.location.traversing import LocationPhysicallyLocatable
@@ -43,7 +42,6 @@ from zope.app.tree.adapters import LocationUniqueId
 
 from zope.app.apidoc.classmodule import classRegistry
 from zope.app.apidoc.ifacemodule import IInterfaceModule, InterfaceModule
-from zope.app.apidoc.ifacemodule.menu import IModule
 from zope.app.apidoc.ifacemodule.browser import InterfaceDetails
 from zope.app.apidoc.interfaces import IDocumentationModule
 

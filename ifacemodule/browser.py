@@ -18,7 +18,6 @@ $Id$
 __docformat__ = 'restructuredtext'
 
 from types import FunctionType, MethodType, ClassType, TypeType
-from zope.component import ComponentLookupError
 from zope.component.site import AdapterRegistration
 from zope.interface.declarations import providedBy
 from zope.interface.interfaces import IMethod, IInterface 
@@ -29,7 +28,6 @@ from zope.schema.interfaces import IField
 from zope.security.proxy import removeSecurityProxy
 
 from zope.app import zapi
-from zope.app.i18n import ZopeMessageIDFactory as _
 from zope.app.apidoc.utilities import getPythonPath, renderText
 from zope.app.apidoc.classmodule import classRegistry
 

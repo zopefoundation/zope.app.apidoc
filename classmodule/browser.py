@@ -16,8 +16,6 @@
 $Id$
 """
 __docformat__ = 'restructuredtext'
-import inspect
-import os
 import re
 from types import TypeType, ClassType, FunctionType, ModuleType
 import xml.dom.minidom
@@ -27,7 +25,6 @@ from zope.configuration import docutils, xmlconfig
 from zope.configuration.config import ConfigurationContext
 from zope.configuration.fields import GlobalObject, Tokens
 from zope.app.traversing.interfaces import TraversalError
-from zope.interface import implementedBy
 from zope.interface.interface import InterfaceClass
 from zope.proxy import removeAllProxies
 from zope.schema import getFieldsInOrder

@@ -22,8 +22,6 @@ $Id$
 """
 __docformat__ = 'restructuredtext'
 
-import os
-
 from zope.configuration import docutils, xmlconfig
 from zope.interface import implements
 
