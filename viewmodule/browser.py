@@ -13,7 +13,7 @@
 ##############################################################################
 """Views/Presentation Module Views
 
-$Id: browser.py,v 1.8 2004/04/02 01:17:21 tim_one Exp $
+$Id: browser.py,v 1.9 2004/04/11 18:16:22 jim Exp $
 """
 from types import ClassType
 
@@ -66,7 +66,7 @@ class Menu(object):
 
           >>> menu = Menu()
           >>> menu.getInterfaceIds()
-          ['IBrowserRequest', 'IFoo']
+          [u'IBrowserRequest', u'IFoo']
         """
         ids = searchInterfaceIds(self)
         ids.sort()

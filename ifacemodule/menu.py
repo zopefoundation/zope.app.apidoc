@@ -17,7 +17,7 @@ A list of interfaces from the Interface Service is pretty much unmanagable and
 is very confusing. Therefore it is nice to split the path of the interface, so
 that we get a deeper tree with nodes having shorter, manageable names.
 
-$Id: menu.py,v 1.3 2004/03/28 23:40:44 srichter Exp $
+$Id: menu.py,v 1.4 2004/04/11 18:16:21 jim Exp $
 """
 from zope.interface import implements
 from zope.proxy import removeAllProxies
@@ -157,10 +157,10 @@ class Menu(object):
       >>> values.sort()
       >>> node = Node(values[0])
       >>> menu.getMenuTitle(node)
-      'IDocumentationModule'
+      u'IDocumentationModule'
 
       >>> menu.getMenuLink(node)
-      './zope.app.apidoc.interfaces.IDocumentationModule/apiindex.html'
+      u'./zope.app.apidoc.interfaces.IDocumentationModule/apiindex.html'
     """
 
     def getMenuTitle(self, node):
