@@ -48,7 +48,7 @@ from zope.app.apidoc.ifacemodule.browser import InterfaceDetails
 from zope.app.apidoc.interfaces import IDocumentationModule
 
 
-class Root:
+class Root(object):
     implements(IContainmentRoot)
 
     __parent__ = None
@@ -77,7 +77,7 @@ class IFoo(Interface):
 class IBar(Interface):
     pass
 
-class Foo:
+class Foo(object):
     implements(IFoo)
 
 

@@ -317,8 +317,8 @@ class ClassDetails(object):
           >>> from tests import getClassDetailsView
           >>> view = getClassDetailsView()
 
-          >>> print view.getDoc()[:59]
-          <h1>Represent the Documentation of any possible class.</h1>
+          >>> print view.getDoc()[23:80]
+          <p>Represent the Documentation of any possible class.</p>
         """
         return renderText(self.context.getDocString() or '',
                           zapi.getParent(self.context).getPath())
@@ -338,9 +338,11 @@ class ModuleDetails(object):
           >>> view = getModuleDetailsView()
 
           >>> print view.getDoc().strip()
+          <div class="document">
           <p>Class Documentation Module</p>
           <p>This module is able to take a dotted name of any class and display
           documentation for it.</p>
+          </div>
         """
         text = self.context.getDocString()
         if text is None:

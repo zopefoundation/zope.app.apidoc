@@ -31,7 +31,7 @@ from zope.app.apidoc.viewmodule import ILayerDocumentation, LayerDocumentation
 class IFoo(Interface):
     pass
 
-class FooView:
+class FooView(object):
     pass
 
 def setUp():

@@ -70,7 +70,7 @@ class APIDocumentation(ReadContainerBase):
             utils.append((key, value))
         return utils
         
-class apidocNamespace:
+class apidocNamespace(object):
     """Used to traverse to an API Documentation."""
     def __init__(self, ob, request=None):
         self.context = ob

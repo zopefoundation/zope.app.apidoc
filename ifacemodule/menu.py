@@ -80,7 +80,7 @@ class Module(ReadContainerBase):
         return items
 
 
-class InterfaceModuleChildObjects:
+class InterfaceModuleChildObjects(object):
     r"""Module Adapter for Static Tree
 
     This adapter is used when building a static tree for the browser.

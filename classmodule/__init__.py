@@ -594,16 +594,16 @@ class ClassRegistry(dict):
       >>> class ID(Interface):
       ...      pass
 
-      >>> class A:
+      >>> class A(object):
       ...    implements(IA)
       >>> reg['A'] = A
       >>> class B:
       ...    implements(IB)
       >>> reg['B'] = B
-      >>> class B2:
+      >>> class B2(object):
       ...    implements(IB)
       >>> reg['B2'] = B2
-      >>> class C:
+      >>> class C(object):
       ...    implements(IC)
       >>> reg['C'] = C
 

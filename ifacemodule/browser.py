@@ -105,9 +105,9 @@ def _getFieldInterface(field):
       ...     pass
       >>> class ISpecialField(IField):
       ...     pass
-      >>> class Field:
+      >>> class Field(object):
       ...     implements(IField)
-      >>> class SpecialField:
+      >>> class SpecialField(object):
       ...     implements(ISpecialField)
       >>> class ExtraField(SpecialField):
       ...     pass
@@ -145,7 +145,7 @@ def _getRequired(field):
 
     Examples::
 
-      >>> class Field:
+      >>> class Field(object):
       ...     required = False
 
       >>> field = Field()

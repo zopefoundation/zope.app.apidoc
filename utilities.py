@@ -34,8 +34,6 @@ from zope.app import zapi
 from zope.app.i18n import ZopeMessageIDFactory as _
 from zope.app.container.interfaces import IReadContainer
 
-__metaclass__ = type
-
 _remove_html_overhead = re.compile(
     r'(?sm)^<html.*<body.*?>\n(.*)</body>\n</html>\n')
 
@@ -47,12 +45,12 @@ def relativizePath(path):
     return path.replace(BASEDIR, 'Zope3')
 
 
-class ReadContainerBase:
+class ReadContainerBase(object):
     """Base for `IReadContainer` objects.
 
-    This is a base class that minimizes the implementation of an `IReadContainer`
-    to two methods, `get()` and `items()`, since the other methods can be
-    implemented using these two.
+    This is a base class that minimizes the implementation of an
+    `IReadContainer` to two methods, `get()` and `items()`, since the other
+    methods can be implemented using these two.
 
     Demonstration::
 
@@ -344,7 +342,7 @@ def getPublicAttributes(obj):
       ...     def _getAttr(self):
       ...         return self.attr
       ...     attr2 = property(_getAttr)
-      >>> class Sample2:
+      >>> class Sample2(object):
       ...     attr = None
       >>> class Sample3(Sample):
       ...     attr3 = None
