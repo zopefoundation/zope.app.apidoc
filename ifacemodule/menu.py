@@ -17,7 +17,7 @@ A list of interfaces from the Interface Service is pretty much unmanagable and
 is very confusing. Therefore it is nice to split the path of the interface, so
 that we get a deeper tree with nodes having shorter, manageable names.
 
-$Id: menu.py,v 1.2 2004/03/02 17:51:47 philikon Exp $
+$Id: menu.py,v 1.3 2004/03/28 23:40:44 srichter Exp $
 """
 from zope.interface import implements
 from zope.proxy import removeAllProxies
@@ -45,9 +45,7 @@ class Module(ReadContainerBase):
 
     Usage::
 
-      >>> from zope.app.apidoc.ifacemodule import tests
       >>> from zope.app.apidoc.ifacemodule import InterfaceModule
-      >>> tests.setUp()
 
       >>> module = Module(InterfaceModule(), 'zope.app')
       >>> module.get('apidoc.interfaces.IDocumentationModule').getName()
@@ -59,8 +57,6 @@ class Module(ReadContainerBase):
 
       >>> print '\n'.join([id for id, iface in module.items()])
       zope.app.apidoc.interfaces.IDocumentationModule
-
-      >>> tests.tearDown()
     """
     
     implements(IModule)
@@ -89,9 +85,8 @@ class InterfaceModuleChildObjects:
 
     Functionality::
 
-      >>> from zope.app.apidoc.ifacemodule import tests
       >>> from zope.app.apidoc.ifacemodule import InterfaceModule
-      >>> tests.setUp()
+      >>> from zope.app.apidoc.ifacemodule import tests
 
       >>> module = InterfaceModule()
       >>> module = tests.rootLocation(module, 'Interface')
@@ -102,8 +97,6 @@ class InterfaceModuleChildObjects:
       >>> print '\n'.join([c.__name__ for c in adapter.getChildObjects()])
       IInterfaceModule
       zope.app.apidoc.interfaces
-
-      >>> tests.tearDown()      
     """
 
     implements(IChildObjects)
@@ -143,6 +136,31 @@ class Menu(object):
     A class that helps building the menu. The menu_macros expects the menu view
     class to have the getMenuTitle(node) and getMenuLink(node) methods
     implemented. 'node' is a 'zope.app.tree.node.Node' instance.
+
+    Examples::
+
+      >>> from zope.app.apidoc.ifacemodule import InterfaceModule
+      >>> from zope.app.apidoc.ifacemodule.tests import Root
+      >>> from zope.app.tree.node import Node 
+
+      >>> ifacemod = InterfaceModule()
+      >>> ifacemod.__parent__ = Root()
+      >>> ifacemod.__name__ = 'Interfaces'
+      >>> mod = Module(ifacemod, 'zope.app.apidoc.interfaces')
+      >>> menu = Menu()
+
+      >>> node = Node(mod.get('IDocumentationModule'))
+      >>> menu.getMenuTitle(node)
+      'zope.app.apidoc.interfaces.IDocumentationModule'
+
+      >>> values = mod.values()
+      >>> values.sort()
+      >>> node = Node(values[0])
+      >>> menu.getMenuTitle(node)
+      'IDocumentationModule'
+
+      >>> menu.getMenuLink(node)
+      './zope.app.apidoc.interfaces.IDocumentationModule/apiindex.html'
     """
 
     def getMenuTitle(self, node):
@@ -156,5 +174,4 @@ class Menu(object):
         """Return the HTML link of the node that is displayed in the menu."""
         if isinstance(removeAllProxies(node.context), Module):
             return None
-
         return './' + zapi.name(node.context) + '/apiindex.html'
