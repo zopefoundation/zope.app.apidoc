@@ -307,9 +307,9 @@ the parser info object,
   # Windows fix
   >>> info = info.replace('\\', '/')
 
-  >>> print info
+  >>> print info #doctest:+ELLIPSIS
   File
-  "/opt/zope/Zope3/Zope3-Fresh/src/zope/app/apidoc/codemodule/configure.zcml",
+  ".../src/zope/app/apidoc/codemodule/configure.zcml",
   line 1.0-53.0
 
 the sub-directives,
