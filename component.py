@@ -19,7 +19,8 @@ __docformat__ = 'restructuredtext'
 import types
 
 from zope.component.interfaces import IFactory
-from zope.component.site import AdapterRegistration, UtilityRegistration
+from zope.component.site import AdapterRegistration, SubscriptionRegistration
+from zope.component.site import UtilityRegistration
 from zope.interface import Interface
 from zope.publisher.interfaces import IRequest
 
@@ -37,7 +38,7 @@ def getRequiredAdapters(iface, withViews=False):
     gsm = zapi.getGlobalSiteManager()
     for reg in gsm.registrations():
         # Only get adapters
-        if not isinstance(reg, AdapterRegistration):
+        if not isinstance(reg, (AdapterRegistration, SubscriptionRegistration)):
             continue
         # Ignore views
         if not withViews and reg.required[-1] and \
@@ -54,14 +55,14 @@ def getProvidedAdapters(iface, withViews=False):
     gsm = zapi.getGlobalSiteManager()
     for reg in gsm.registrations():
         # Only get adapters
-        if not isinstance(reg, AdapterRegistration):
+        if not isinstance(reg, (AdapterRegistration, SubscriptionRegistration)):
             continue
         # Ignore views
         if not withViews and reg.required[-1] and \
                reg.required[-1].isOrExtends(IRequest):
             continue
         # Only get adapters for which this interface is provided
-        if not reg.provided.isOrExtends(iface):
+        if reg.provided is None or not reg.provided.isOrExtends(iface):
             continue
         yield reg
 
@@ -147,6 +148,8 @@ def getParserInfoInfoDictionary(info):
 
 def getInterfaceInfoDictionary(iface):
     """Return a PT-friendly info dictionary for an interface."""
+    if iface is None:
+        return None
     return {'module': iface.__module__, 'name': iface.getName()}
     
 
@@ -170,7 +173,7 @@ def getAdapterInfoDictionary(reg):
         'required': [getInterfaceInfoDictionary(iface)
                      for iface in reg.required
                      if iface is not None],
-        'name': getattr(reg, 'name', None),
+        'name': getattr(reg, 'name', '<subscription>'),
         'factory': path,
         'factory_url': url,
         'doc': doc,

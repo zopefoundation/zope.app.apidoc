@@ -39,12 +39,14 @@ specified interface. So let's create some adapter registrations:
   >>> ztapi.provideAdapter((IFoo,), IResult, None)
   >>> ztapi.provideAdapter((IFoo, IBar), ISpecialResult, None)
   >>> ztapi.provideAdapter((IFoo, IRequest), ISpecialResult, None)
+  >>> ztapi.subscribe((IFoo,), None, 'stubFactory')
 
   >>> regs = list(component.getRequiredAdapters(IFoo))
   >>> regs.sort()
   >>> regs
   [AdapterRegistration(('IFoo', 'IBar'), 'ISpecialResult', '', None, ''), 
-   AdapterRegistration(('IFoo',), 'IResult', '', None, '')]
+   AdapterRegistration(('IFoo',), 'IResult', '', None, ''),
+   SubscriptionRegistration(('IFoo',), None, 'stubFactory', '')]
 
 Note how the adapter requiring an `IRequest` at the end of the required
 interfaces is neglected. This is because it is recognized as a view and views
@@ -55,7 +57,8 @@ are not returned by default. But you can simply turn this flag on:
   >>> regs
   [AdapterRegistration(('IFoo', 'IBar'), 'ISpecialResult', '', None, ''), 
    AdapterRegistration(('IFoo', 'IRequest'), 'ISpecialResult', '', None, ''), 
-   AdapterRegistration(('IFoo',), 'IResult', '', None, '')]
+   AdapterRegistration(('IFoo',), 'IResult', '', None, ''),
+   SubscriptionRegistration(('IFoo',), None, 'stubFactory', '')]
 
 The function will also pick up registrations that have required interfaces the
 specified interface extends:
@@ -64,7 +67,8 @@ specified interface extends:
   >>> regs.sort()
   >>> regs
   [AdapterRegistration(('IFoo', 'IBar'), 'ISpecialResult', '', None, ''), 
-   AdapterRegistration(('IFoo',), 'IResult', '', None, '')]
+   AdapterRegistration(('IFoo',), 'IResult', '', None, ''),
+   SubscriptionRegistration(('IFoo',), None, 'stubFactory', '')]
 
 And all of the required interfaces are considered, of course:
 
@@ -200,9 +204,26 @@ Now let's have a look what we have:
    UtilityRegistration('IFooBar', '', <MyFooBar object at ...>, '')]
 
 
+`getInterfaceInfoDictionary(iface)`
+-----------------------------------
+
+This function returns a small info dictionary for an interface. It only
+reports the module and the name. This is useful for cases when we only want to
+list interfaces in the context of other components, like adapters and
+utilities.
+
+  >>> pprint(component.getInterfaceInfoDictionary(IFoo))
+  {'module': '__builtin__', 'name': 'IFoo'}
+
+The functions using this function use it with little care and can also
+sometimes pass in `None`. In these cases we want to return `None`:
+
+  >>> component.getInterfaceInfoDictionary(None) is None
+  True
+
+
 `getAdapterInfoDictionary(reg)`
 -------------------------------
-
 
 This function returns a page-template-friendly dictionary representing the
 data of an adapter registration in an output-friendly format.
@@ -223,13 +244,28 @@ And now get the info dictionary:
    'factory': '__builtin__.MyResult',
    'factory_url': '__builtin__/MyResult',
    'name': 'FooToResult',
-   'provided': {'module': '__builtin__',
-                'name': 'IResult'},
-   'required': [{'module': '__builtin__',
-                 'name': 'IFoo'},
-                {'module': '__builtin__',
-                 'name': 'IBar'}],
+   'provided': {'module': '__builtin__', 'name': 'IResult'},
+   'required': [{'module': '__builtin__', 'name': 'IFoo'},
+                {'module': '__builtin__', 'name': 'IBar'}],
    'zcml': None}
+
+This function can also handle subscription registrations, which are pretty
+much like adapter registrations, except that they do not have name. So let's
+see how the function handles subscriptions:
+
+  >>> from zope.component.site import SubscriptionRegistration
+  >>> reg = SubscriptionRegistration((IFoo, IBar), None, MyResult, 'doc info')
+
+  >>> pprint(component.getAdapterInfoDictionary(reg))
+  {'doc': 'doc info',
+   'factory': '__builtin__.MyResult',
+   'factory_url': '__builtin__/MyResult',
+   'name': '<subscription>',
+   'provided': None,
+   'required': [{'module': '__builtin__', 'name': 'IFoo'},
+                {'module': '__builtin__', 'name': 'IBar'}],
+   'zcml': None}
+
 
 `getFactoryInfoDictionary(reg)`
 -------------------------------

@@ -59,6 +59,9 @@
               string:../${iface/module}.${iface/name}/apiindex.html">
       <metal:block use-macro="context/@@interface_macros/ifacename" />
     </a>  
+    <span tal:condition="not:iface" i18n:translate="">
+      No interface provided.
+    </span>
   </div>
 
   <div tal:condition="adapter/doc">
