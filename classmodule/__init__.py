@@ -18,6 +18,8 @@ documentation for it.
 
 $Id$
 """
+__docformat__ = 'restructuredtext'
+
 import os
 import sys
 import inspect
@@ -160,7 +162,7 @@ class Module(ReadContainerBase):
       >>> print module['browser'].getPath()
       zope.app.apidoc.browser
 
-    Now, the 'get(key, default=None)' is actually much smarter than you might
+    Now, the ``get(key, default=None)`` is actually much smarter than you might
     originally suspect, since it can actually get to more objects than it
     promises. If a key is not found in the module's children, it tries to
     import the key as a module relative to this module.
