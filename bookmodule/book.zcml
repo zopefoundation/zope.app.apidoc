@@ -1,0 +1,465 @@
+<configure
+    xmlns="http://namespaces.zope.org/apidoc">
+
+  <!-- Interfaces -->
+  <bookchapter 
+      id="ifaceschema"
+      title="Interfaces and Schemas"
+      />
+  <configure package="zope.interface">
+    <bookchapter 
+        id="interface"
+        title="Interfaces"
+        doc_path="README.txt"
+        parent="ifaceschema"
+        />
+    <bookchapter 
+        id="adapter"
+        title="Adapter Registry"
+        doc_path="adapter.txt"
+        parent="ifaceschema"
+        />
+    <bookchapter 
+        id="human"
+        title="Adapters (light version)"
+        doc_path="human.txt"
+        parent="ifaceschema"
+        />
+    <bookchapter 
+        id="foodforthought"
+        title="Food For Thought"
+        doc_path="tests/foodforthought.txt"
+        parent="ifaceschema"
+        />
+  </configure>
+  <configure package="zope.schema">
+    <bookchapter 
+        id="schemas"
+        title="Schemas"
+        doc_path="README.txt"
+        parent="ifaceschema"
+        />
+    <bookchapter 
+        id="fields"
+        title="Schema Fields"
+        doc_path="fields.txt"
+        parent="ifaceschema"
+        />
+  </configure>
+
+  <!-- Component Architecture -->
+  <bookchapter
+      id="ca"
+      title="Component Architecture"
+      />
+  <configure package="zope.component">
+    <bookchapter 
+        id="global"
+        title="Global Component Architecture"
+        parent="ca"
+        doc_path="README.txt"
+        />
+    <bookchapter 
+        id="socket"
+        title="Global CA (Socket Example)"
+        parent="ca"
+        doc_path="socketexample.txt"
+        />
+    <bookchapter 
+        id="factory"
+        title="Factories"
+        parent="ca"
+        doc_path="factory.txt"
+        />
+  </configure>
+
+  <configure package="zope.app.component">
+    <bookchapter
+        id="local"
+        title="Local Component Architecture"
+        parent="ca"
+        doc_path="README.txt"
+        />
+    <bookchapter
+        id="registration"
+        title="Registration Framework"
+        parent="ca/local"
+        doc_path="registration.txt"
+        />
+    <bookchapter
+        id="adapterregistry"
+        title="Local Adapter Registry"
+        parent="ca/local"
+        doc_path="adapterregistry.txt"
+        />
+    <bookchapter
+        id="site"
+        title="Local Sites &amp; Site Managers"
+        parent="ca/local"
+        doc_path="site.txt"
+        />
+  </configure>
+
+  <!-- Security -->
+  <configure package="zope.security">
+    <bookchapter
+        id="security"
+        title="Security"
+        doc_path="README.txt"
+        />
+    <bookchapter
+        id="untrusted"
+        title="Untrusted Interpreters"
+        doc_path="untrustedinterpreter.txt"
+        parent="security"
+        />
+    <bookchapter
+        id="interpreter"
+        title="Untrusted Python Interpreter"
+        doc_path="untrustedpython/interpreter.txt"
+        parent="security/untrusted"
+        />
+    <bookchapter
+        id="rcompile"
+        title="Restricted Python Code"
+        doc_path="untrustedpython/rcompile.txt"
+        parent="security/untrusted"
+        />
+    <bookchapter
+        id="builtins"
+        title="Safe Builtins"
+        doc_path="untrustedpython/builtins.txt"
+        parent="security/untrusted"
+        />
+  </configure>
+  <configure package="zope.app.securitypolicy">
+    <bookchapter
+        id="zopepolicy"
+        title="Default Security Policy"
+        doc_path="zopepolicy.txt"
+        parent="security"
+        />
+  </configure>
+  <configure package="zope.app.security">
+    <bookchapter
+        id="globalprincipals"
+        title="Global Principals"
+        doc_path="globalprincipals.txt"
+        parent="security"
+        />
+  </configure>
+  <configure package="zope.app.authentication">
+    <bookchapter
+        id="authentication"
+        title="Pluggable Authentication"
+        doc_path="README.txt"
+        parent="security"
+        />
+    <bookchapter
+        id="idpicker"
+        title="Id Picker"
+        doc_path="idpicker.txt"
+        parent="security/authentication"
+        />
+    <bookchapter
+        id="principalfolder"
+        title="Principal Folder"
+        doc_path="principalfolder.txt"
+        parent="security/authentication"
+        />
+    <bookchapter
+        id="groupfolder"
+        title="Group Folders"
+        doc_path="groupfolder.txt"
+        parent="security/authentication"
+        />
+  </configure>
+  <configure package="zope.app.homefolder">
+    <bookchapter
+        id="homefolder"
+        title="Principal Home Folder"
+        doc_path="README.txt"
+        parent="security"
+        />
+  </configure>
+
+  <!-- Events -->
+  <configure package="zope.event">
+    <bookchapter
+        id="event"
+        title="Events"
+        doc_path="README.txt"
+        />
+  </configure>
+
+  <!-- Testing -->
+  <bookchapter
+      id="test"
+      title="Testing"
+      />
+  <configure package="zope.app.ftests">
+    <bookchapter
+        id="fdoctest"
+        title="Functional DocTest"
+        doc_path="doctest.txt"
+        parent="test"
+        />
+  </configure>
+  <configure package="zope.app.testing">
+    <bookchapter
+        id="fdoctest-howto"
+        title="FDocTest (How to)"
+        doc_path="dochttp.txt"
+        parent="test"
+        />
+  </configure>
+  <configure package="zope.testing">
+    <bookchapter
+        id="formparser"
+        title="Form Parse"
+        doc_path="formparser.txt"
+        parent="test"
+        />
+  </configure>
+
+  <!-- ZAPI -->
+  <configure package="zope.app.zapi">
+    <bookchapter
+        id="zapi"
+        title="ZAPI"
+        doc_path="README.txt"
+        />
+  </configure>
+
+  <!-- Widgets and Forms -->
+  <bookchapter
+      id="form"
+      title="Widgets and Forms"
+      />
+  <configure package="zope.app.form.browser">
+    <bookchapter
+        id="bwidget"
+        title="Basic Widgets"
+        doc_path="README.txt"
+        parent="form"
+        />
+    <bookchapter
+        id="swidget"
+        title="Source Widgets"
+        doc_path="source.txt"
+        parent="form"
+        />
+    <bookchapter
+        id="awidget"
+        title="Advanced Widgets"
+        doc_path="widgets.txt"
+        parent="form"
+        />
+  </configure>
+
+  <!-- Workflow -->
+  <configure package="zope.wfmc">
+    <bookchapter
+        id="wfmc"
+        title="WfMC Workflows"
+        doc_path="README.txt"
+        />
+    <bookchapter
+        id="xpdl"
+        title="Workflows using XPDL"
+        doc_path="README.txt"
+        parent="wfmc"
+        />
+  </configure>
+  <configure package="zope.app.wfmc">
+    <bookchapter
+        id="zcml"
+        title="Registering XPDL using ZCML"
+        doc_path="zcml.txt"
+        parent="wfmc"
+        />
+  </configure>
+
+  <!-- Indexes and Catalogs -->
+  <bookchapter
+      id="indexcatalog"
+      title="Indexes and Catalogs"
+      />
+  <configure package="zope.index">
+    <bookchapter
+        id="fieldindex"
+        title="Field Indexes"
+        doc_path="field/README.txt"
+        parent="indexcatalog"
+        />
+    <bookchapter
+        id="testindex"
+        title="Text Indexes"
+        doc_path="text/textindex.txt"
+        parent="indexcatalog"
+        />
+  </configure>
+  <configure package="zope.app.catalog">
+    <bookchapter
+        id="catalog"
+        title="Catalog"
+        doc_path="README.txt"
+        parent="indexcatalog"
+        />
+  </configure>
+
+  <!-- Sessions -->
+  <configure package="zope.app.session">
+    <bookchapter
+        id="session"
+        title="Sessions"
+        doc_path="design.txt"
+        />
+    <bookchapter
+        id="api"
+        title="API"
+        doc_path="api.txt"
+        parent="session"
+        />
+  </configure>
+
+  <!-- Cached Properties -->
+  <bookchapter
+      id="i18nl10n"
+      title="I18n and L10n"
+      />
+  <configure package="zope.i18nmessageid">
+    <bookchapter
+        id="messageid"
+        title="Message Ids"
+        doc_path="messages.txt"
+        parent="i18nl10n"
+        />
+  </configure>
+
+  <!-- Cached Properties -->
+  <configure package="zope.cachedescriptors">
+    <bookchapter
+        id="cachedprops"
+        title="Cached Properties"
+        doc_path="property.txt"
+        />
+  </configure>
+
+  <!-- Generations -->
+  <configure package="zope.app.generations">
+    <bookchapter
+        id="generations"
+        title="Generations"
+        doc_path="README.txt"
+        />
+  </configure>
+
+  <!-- Locking -->
+  <configure package="zope.app.locking">
+    <bookchapter
+        id="locking"
+        title="Object Locking"
+        doc_path="README.txt"
+        />
+  </configure>
+
+  <!-- Version Control -->
+  <configure package="zope.app.versioncontrol">
+    <bookchapter
+        id="versioncontrol"
+        title="Version Control"
+        doc_path="README.txt"
+        />
+  </configure>
+
+  <!-- Persistent Modules -->
+  <configure package="zope.app.module">
+    <bookchapter
+        id="module"
+        title="Persistent Modules"
+        doc_path="README.txt"
+        />
+  </configure>
+
+  <!-- Zope Tree -->
+  <configure package="zope.app.generations">
+    <bookchapter
+        id="tree"
+        title="Zope Tree"
+        doc_path="README.txt"
+        />
+  </configure>
+
+  <!-- Persistent Key References -->
+  <configure package="zope.app.keyreference">
+    <bookchapter
+        id="keyref"
+        title="Persistent Key References"
+        doc_path="persistent.txt"
+        />
+  </configure>
+
+  <!-- BForest -->
+  <configure package="zope.bforest">
+    <bookchapter
+        id="bforest"
+        title="BForest API"
+        doc_path="bforest.txt"
+        />
+  </configure>
+
+  <!-- Deprecation API -->
+  <configure package="zope.deprecation">
+    <bookchapter
+        id="deprecation"
+        title="Deprecation API"
+        doc_path="README.txt"
+        />
+  </configure>
+
+  <!-- Persistence -->
+  <configure package="persistent.tests">
+    <bookchapter
+        id="persistent"
+        title="Persistent Framework"
+        doc_path="persistent.txt"
+        />
+  </configure>
+
+  <!-- Transactions -->
+  <configure package="transaction">
+    <bookchapter
+        id="transaction"
+        title="Transaction API"
+        doc_path="notes.txt"
+        />
+  </configure>
+
+  <!-- ZODB -->
+  <configure package="ZODB">
+    <bookchapter
+        id="zodb"
+        title="Zope Object Database (ZODB)"
+        />
+    <bookchapter
+        id="dbopen"
+        title="Connection Management"
+        parent="zodb"
+        doc_path="tests/dbopen.txt"
+        />
+    <bookchapter
+        id="subtransactions"
+        title="Sub-Transactions"
+        parent="zodb"
+        doc_path="subtransactions.txt"
+        />
+    <bookchapter
+        id="collaborations"
+        title="Collaborations"
+        parent="zodb"
+        doc_path="collaborations.txt"
+        />
+  </configure>
+
+</configure>

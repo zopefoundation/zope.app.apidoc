@@ -20,12 +20,13 @@
     <div tal:define="ifaces view/findInterfaces"
          tal:condition="ifaces">
     
-      <a href="" target="main"
-         tal:repeat="info ifaces"
-         tal:attributes="href info/url"
-         tal:content="info/name">
-        zope.app.component.interfaces.ILocalSiteManager
-      </a>
+      <div tal:repeat="info ifaces">
+        <a href="" target="main"
+           tal:attributes="href info/url"
+           tal:content="info/name">
+          zope.app.component.interfaces.ILocalSiteManager
+        </a>
+      </div>
     </div>
 
   </div>

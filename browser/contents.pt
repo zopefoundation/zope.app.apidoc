@@ -21,7 +21,7 @@
 
     <h2>
       <a target="menu" href=""
-         tal:attributes="href string:./${module/name}/menu.html"
+         tal:attributes="href string:./${module/name}/@@menu.html"
          tal:content="module/title">Module Title</a>
     </h2>
 

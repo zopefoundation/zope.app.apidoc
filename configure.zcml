@@ -28,11 +28,12 @@
   <include package=".browser" />
 
   <!-- API Documentation Modules -->
+  <include package=".bookmodule" />
   <include package=".classmodule" />
   <include package=".ifacemodule" />
+  <include package=".typemodule" />
   <include package=".utilitymodule" />
   <include package=".viewmodule" />
   <include package=".zcmlmodule" />
-  <!--include package=".cookbookmodule" /-->
 
 </configure>

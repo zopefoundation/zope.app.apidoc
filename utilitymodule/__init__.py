@@ -94,10 +94,11 @@ class UtilityInterface(ReadContainerBase):
 
     def items(self):
         """See zope.app.container.interfaces.IReadContainer"""
-        sm = zapi.getSiteManager()
+        sm = zapi.getGlobalSiteManager()
         items = [(reg.name or NONAME, Utility(self, reg))
                  for reg in sm.registrations()
-                 if self.interface == reg.provided]
+                 if zapi.isinstance(reg, UtilityRegistration) and \
+                     self.interface == reg.provided]
         items.sort()
         return items
 

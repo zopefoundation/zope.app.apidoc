@@ -431,15 +431,15 @@ class InterfaceDetails(object):
 
           >>> adapters = details.getRequiredAdapters()
           >>> adapters.sort()
-          >>> pprint(adapters)
-          [[('factory',
-             'zope.app.location.traversing.LocationPhysicallyLocatable'),
-            ('factory_url',
-             'zope/app/location/traversing/LocationPhysicallyLocatable'),
-            ('name', ''),
-            ('provided',
-             'zope.app.traversing.interfaces.IPhysicallyLocatable'),
-            ('required', [])]]
+          >>> pprint(adapters[0])
+          [('factory',
+            'zope.app.location.traversing.LocationPhysicallyLocatable'),
+           ('factory_url',
+            'zope/app/location/traversing/LocationPhysicallyLocatable'),
+           ('name', ''),
+           ('provided',
+            'zope.app.traversing.interfaces.IPhysicallyLocatable'),
+           ('required', [])]
         """
         sm = zapi.getSiteManager()
         # Must remove security proxies, so that we have access to the API
