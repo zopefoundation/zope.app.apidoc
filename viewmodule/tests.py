@@ -34,7 +34,7 @@ class IFoo(Interface):
 class FooView(object):
     pass
 
-def setUp():
+def setUp(test):
     placelesssetup.setUp()
 
     ztapi.provideAdapter(ISkinRegistration, ISkinDocumentation,
@@ -55,18 +55,13 @@ def setUp():
     provideInterface('IBrowserRequest', IBrowserRequest)
     ztapi.browserView(IFoo, 'index.html', FooView, layer='default')
 
-    
-
-def tearDown():
-    placelesssetup.tearDown()
-
 
 def test_suite():
     return unittest.TestSuite((
         DocTestSuite('zope.app.apidoc.viewmodule',
-                     setUp=setUp, tearDown=tearDown),
+                     setUp=setUp, tearDown=placelesssetup.tearDown),
         DocTestSuite('zope.app.apidoc.viewmodule.browser',
-                     setUp=setUp, tearDown=tearDown),
+                     setUp=setUp, tearDown=placelesssetup.tearDown),
         ))
 
 if __name__ == '__main__':

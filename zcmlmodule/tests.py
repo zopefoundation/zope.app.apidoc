@@ -32,7 +32,7 @@ from zope.app.apidoc.zcmlmodule import ZCMLModule
 from zope.app.apidoc.tests import Root
 
 
-def setUp():
+def setUp(test):
     placelesssetup.setUp()
 
     ztapi.provideAdapter(None, IUniqueId, LocationUniqueId)
@@ -45,7 +45,7 @@ def setUp():
     zope.app.appsetup.appsetup.__config_source = os.path.join(
         os.path.dirname(zope.app.__file__), 'meta.zcml')
 
-def tearDown():
+def tearDown(test):
     placelesssetup.tearDown()
     zope.app.appsetup.appsetup.__config_source = old_source_file    
 

@@ -33,7 +33,7 @@ from zope.app.renderer.rest import IReStructuredTextSource
 from zope.app.renderer.rest import ReStructuredTextToHTMLRenderer
 
 
-def setUp():
+def setUp(test):
     placelesssetup.setUp()
     ztapi.provideUtility(IDocumentationModule, InterfaceModule(),
                            'Interface')
@@ -44,9 +44,6 @@ def setUp():
                          'zope.source.rest')    
     ztapi.browserView(IReStructuredTextSource, '', 
                       ReStructuredTextToHTMLRenderer)
-
-def tearDown():
-    placelesssetup.tearDown()
 
 
 # Generally useful classes and functions
@@ -108,9 +105,9 @@ def pprint(info):
 def test_suite():
     return unittest.TestSuite((
         DocTestSuite('zope.app.apidoc',
-                     setUp=setUp, tearDown=tearDown),
+                     setUp=setUp, tearDown=placelesssetup.tearDown),
         DocTestSuite('zope.app.apidoc.browser.apidoc',
-                     setUp=setUp, tearDown=tearDown),
+                     setUp=setUp, tearDown=placelesssetup.tearDown),
         DocTestSuite('zope.app.apidoc.utilities'),
         DocTestSuite('zope.app.apidoc.tests'),
         ))

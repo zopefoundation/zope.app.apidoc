@@ -25,21 +25,17 @@ from zope.app.tree.adapters import LocationUniqueId
 from zope.app.traversing.interfaces import IPhysicallyLocatable
 from zope.app.location.traversing import LocationPhysicallyLocatable
 
-def setUp():
+def setUp(test):
     placelesssetup.setUp()
     ztapi.provideAdapter(None, IUniqueId, LocationUniqueId)
     ztapi.provideAdapter(None, IPhysicallyLocatable,
                          LocationPhysicallyLocatable)
 
-def tearDown():
-    placelesssetup.tearDown()
-
-
 def test_suite():
     return unittest.TestSuite((
         DocTestSuite('zope.app.apidoc.servicemodule'),
         DocTestSuite('zope.app.apidoc.servicemodule.browser',
-                     setUp=setUp, tearDown=tearDown),
+                     setUp=setUp, tearDown=placelesssetup.tearDown),
         ))
 
 if __name__ == '__main__':

@@ -38,7 +38,7 @@ from zope.app.traversing.interfaces import IPhysicallyLocatable
 from zope.app.location.traversing import LocationPhysicallyLocatable
 
 
-def setUp():
+def setUp(test):
     placelesssetup.setUp()
     service = zapi.getGlobalService('Utilities')
     service.provideUtility(IDocumentationModule, InterfaceModule(), '')
@@ -48,9 +48,6 @@ def setUp():
     ztapi.provideAdapter(None, IPhysicallyLocatable,
                          LocationPhysicallyLocatable)
 
-
-def tearDown():
-    placelesssetup.tearDown()
 
 def makeRegistration(name, interface, component):
     return type('RegistrationStub', (),
@@ -72,9 +69,9 @@ def getDetailsView():
 def test_suite():
     return unittest.TestSuite((
         DocTestSuite('zope.app.apidoc.utilitymodule',
-                     setUp=setUp, tearDown=tearDown),
+                     setUp=setUp, tearDown=placelesssetup.tearDown),
         DocTestSuite('zope.app.apidoc.utilitymodule.browser',
-                     setUp=setUp, tearDown=tearDown),
+                     setUp=setUp, tearDown=placelesssetup.tearDown),
         ))
 
 if __name__ == '__main__':
