@@ -624,9 +624,7 @@ class ClassRegistry(dict):
 classRegistry = ClassRegistry()
 
 def cleanUp():
-    global classRegistry
-    for key in classRegistry.keys():
-        classRegistry.__delitem__(key)
+    classRegistry.clear()
 
 from zope.testing.cleanup import addCleanUp
 addCleanUp(cleanUp)
