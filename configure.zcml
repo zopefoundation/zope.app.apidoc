@@ -10,8 +10,7 @@
   </class>
 
   <view
-      name="apidoc"
-      type="zope.interface.Interface"
+      name="apidoc" type="*"
       provides="zope.app.traversing.interfaces.ITraversable" for="*"
       factory=".apidocNamespace"
       />
