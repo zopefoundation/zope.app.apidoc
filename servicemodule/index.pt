@@ -88,8 +88,8 @@
     <ul>
       <li tal:repeat="impl view/implementations">
         <code><a href=""
-           tal:attributes="href string:../../Class/index.html?path=$impl"
-           tal:content="impl" /></code>
+           tal:attributes="href string:../../Class/${impl/url}/index.html"
+           tal:content="impl/path" /></code>
       </li>
     </ul>
   </div>
