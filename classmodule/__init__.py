@@ -16,7 +16,7 @@
 This module is able to take a dotted name of any class and display
 documentation for it.
 
-$Id: __init__.py,v 1.8 2004/04/02 08:21:32 hdima Exp $
+$Id: __init__.py,v 1.9 2004/04/02 15:28:34 srichter Exp $
 """
 import os
 import sys
@@ -39,8 +39,10 @@ from zope.app.apidoc.utilities import getFunctionSignature
 
 # Ignore these files, since they are not necessary or cannot be imported
 # correctly.
+# XXX: I want to be able to specify paths with wildcards later, so that we do
+# not ignore all files/dirs with a certain name.
 IGNORE_FILES = ('tests', 'tests.py', 'ftests', 'ftests.py', 'CVS', 'gadfly',
-                'setup.py', 'introspection.py')
+                'setup.py', 'introspection.py', 'Mount.py')
 
 class IModuleDocumentation(IReadContainer):
     """Representation of a Python module for documentation.
