@@ -9,7 +9,8 @@
        tal:attributes="
            href string:../../../Interface/${iface/getId}/apiindex.html"
        tal:content="iface/getId" /> <br />
-    (Name: "<span tal:replace="view/getName" />")
+    <tal:block i18n:translate="">(Name: "<span
+        tal:replace="view/getName" i18n:name="name" />")</tal:block>
   </h1>
 
   <div class="indent" 
