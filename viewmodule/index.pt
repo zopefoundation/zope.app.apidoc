@@ -1,0 +1,94 @@
+<html metal:use-macro="views/apidoc_macros/details">
+<body metal:fill-slot="contents"
+      tal:define="layers view/getViewsByLayers">
+
+  <h1 class="details-header">
+    <span tal:replace="view/type/__name__" />
+        <span i18n:translate="">views for</span>
+    <span tal:replace="view/iface/__name__" />
+  </h1>
+
+  <span tal:repeat="layer layers">
+  
+    <h2 class="details-section">
+      "<span tal:replace="layer/name" />" <span i18n:translate="">Layer</span>
+    </h2>
+
+    <div class="indent">
+    <ul>
+      <li tal:repeat="View layer/views">
+        <b tal:content="structure View/name" /><br />
+        <tal:omit-tag condition="View/info">
+          <span class="small">
+            <i tal:content="View/info" />
+          </span>
+          <br />
+        </tal:omit-tag>
+        <div class="indent"><span class="small">
+          <i i18n:translate="">required:</i>
+          <a href=""
+             tal:condition="View/required"
+             tal:attributes="
+                 href string:../Interface/${View/required}/apiindex.html"
+             tal:content="View/required" />
+          <span tal:condition="not:View/required">None</span>
+          <br />
+          <i i18n:translate="">presentation type:</i>
+          <a href=""
+             tal:attributes="
+                 href string:../Interface/${View/type}/apiindex.html"
+             tal:content="View/type" />
+          <br />
+          <tal:omit-tag condition="View/factory/path">
+            <i i18n:translate="">factory path:</i>
+            <a href=""
+               tal:condition="View/factory/referencable"
+               tal:attributes="href 
+                   string: ../Class/${View/factory/url}/index.html"
+               tal:content="View/factory/path" />
+            <span
+               tal:condition="not:View/factory/referencable"
+               tal:content="View/factory/path" />
+            <br />
+          </tal:omit-tag>
+          <tal:omit-tag condition="View/provided">
+            <i i18n:translate="">provided:</i>
+            <a href=""
+               tal:attributes="href 
+                   string: ../Interface/${View/provided}/apiindex.html"
+               tal:content="View/provided" />
+            <br />
+          </tal:omit-tag>
+          <tal:omit-tag condition="View/factory/template">
+            <i i18n:translate="">template:</i>
+            <span tal:replace="View/factory/template" />
+            <br />
+          </tal:omit-tag>
+          <tal:omit-tag condition="View/factory/resource">
+            <i i18n:translate="">resource:</i>
+            <a href=""
+               tal:attributes="href 
+                   string: /@@/${View/factory/resource}"
+               tal:content="View/factory/resource" />
+            <br />
+          </tal:omit-tag>
+          <span 
+              tal:condition="View/read_perm">
+            <i i18n:translate="">Permission:</i>
+            <span tal:replace="View/read_perm">zope.View</span>
+          </span>
+        </span></div>
+        <br />
+      </li>
+    </ul>
+    </div>
+
+  </span>
+
+  <p tal:condition="not: layers">
+    <em i18n:translate="">There are no views for this interface
+        and presentation type.</em>
+  </p>
+
+</body>
+</html>
