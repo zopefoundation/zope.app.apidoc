@@ -13,7 +13,7 @@
   </class>
 
   <class class=".Directive">
-    <allow attributes="name schema info subdirs" />
+    <allow attributes="name schema handler info subdirs" />
   </class>
 
   <utility
