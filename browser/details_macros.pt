@@ -1,0 +1,34 @@
+<metal:block define-macro="details"><metal:block define-slot="doctype"><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"></metal:block>
+
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xml:lang="en"
+  lang="en" 
+  i18n:domain="zope">
+
+  <head>
+    <title metal:define-slot="title" i18n:translate="">Z3 UI</title>
+
+    <style type="text/css" 
+           media="all"
+           tal:content=
+           "string: @import url(${context/++resource++apidoc.css});"
+           >
+      @import url(/++resource++apidoc.css);
+    </style>
+
+    <metal:block define-slot="headers" />
+    <metal:block define-slot="style_slot" />
+    <metal:block define-slot="ecmascript_slot" />
+
+    <link rel="icon" type="image/png"
+          tal:attributes="href context/++resource++favicon.png|default" />
+  </head>
+
+<head>
+
+<body metal:define-slot="contents">
+
+</body>
+</html>
+</metal:block>
