@@ -17,23 +17,33 @@ $Id$
 """
 from pprint import PrettyPrinter
 import unittest
-from zope.app import zapi
+
+from zope.component.interfaces import IFactory
 from zope.app.traversing.interfaces import IContainmentRoot
 from zope.app.location import LocationProxy
-from zope.app.tests import placelesssetup
+from zope.app.tests import placelesssetup, ztapi
 from zope.interface import implements
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.ifacemodule import InterfaceModule
 from zope.app.apidoc.zcmlmodule import ZCMLModule
 from zope.testing.doctestunit import DocTestSuite
 
+from zope.app.renderer.rest import ReStructuredTextSourceFactory
+from zope.app.renderer.rest import IReStructuredTextSource
+from zope.app.renderer.rest import ReStructuredTextToHTMLRenderer
+
 
 def setUp():
     placelesssetup.setUp()
-    service = zapi.getGlobalService('Utilities')
-    service.provideUtility(IDocumentationModule, InterfaceModule(),
+    ztapi.provideUtility(IDocumentationModule, InterfaceModule(),
                            'Interface')
-    service.provideUtility(IDocumentationModule, ZCMLModule(), 'ZCML')
+    ztapi.provideUtility(IDocumentationModule, ZCMLModule(), 'ZCML')
+
+    # Register Renderer Components
+    ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
+                         'zope.source.rest')    
+    ztapi.browserView(IReStructuredTextSource, '', 
+                      ReStructuredTextToHTMLRenderer)
 
 def tearDown():
     placelesssetup.tearDown()
@@ -97,10 +107,10 @@ def pprint(info):
     
 def test_suite():
     return unittest.TestSuite((
-        #DocTestSuite('zope.app.apidoc',
-        #             setUp=setUp, tearDown=tearDown),
-        #DocTestSuite('zope.app.apidoc.browser.apidoc',
-        #             setUp=setUp, tearDown=tearDown),
+        DocTestSuite('zope.app.apidoc',
+                     setUp=setUp, tearDown=tearDown),
+        DocTestSuite('zope.app.apidoc.browser.apidoc',
+                     setUp=setUp, tearDown=tearDown),
         DocTestSuite('zope.app.apidoc.utilities'),
         DocTestSuite('zope.app.apidoc.tests'),
         ))
