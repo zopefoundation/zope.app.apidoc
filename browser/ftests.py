@@ -13,10 +13,10 @@
 ##############################################################################
 """Functional Tests for API Documentation.
 
-$Id: ftests.py,v 1.2 2004/03/30 23:04:49 srichter Exp $
+$Id: ftests.py,v 1.3 2004/04/06 20:57:59 jim Exp $
 """
 import unittest
-from zope.testing.functional import BrowserTestCase
+from zope.app.tests.functional import BrowserTestCase
 
 class APIDocTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""

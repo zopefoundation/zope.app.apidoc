@@ -13,10 +13,10 @@
 ##############################################################################
 """Functional Tests for ZCML Documentation Module.
 
-$Id: ftests.py,v 1.1 2004/03/28 23:42:19 srichter Exp $
+$Id: ftests.py,v 1.2 2004/04/06 20:58:03 jim Exp $
 """
 import unittest
-from zope.testing.functional import BrowserTestCase
+from zope.app.tests.functional import BrowserTestCase
 
 class ZCMLModuleTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""

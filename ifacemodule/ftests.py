@@ -13,10 +13,10 @@
 ##############################################################################
 """Functional Tests for Interface Documentation Module.
 
-$Id: ftests.py,v 1.1 2004/03/28 23:40:52 srichter Exp $
+$Id: ftests.py,v 1.2 2004/04/06 20:58:00 jim Exp $
 """
 import unittest
-from zope.testing.functional import BrowserTestCase
+from zope.app.tests.functional import BrowserTestCase
 
 class InterfaceModuleTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""

@@ -13,10 +13,10 @@
 ##############################################################################
 """Functional Tests for Class Documentation Module.
 
-$Id: ftests.py,v 1.2 2004/03/30 02:00:29 srichter Exp $
+$Id: ftests.py,v 1.3 2004/04/06 20:57:59 jim Exp $
 """
 import unittest
-from zope.testing.functional import BrowserTestCase
+from zope.app.tests.functional import BrowserTestCase
 
 class ClassModuleTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
