@@ -183,7 +183,7 @@
   </p>
 
   <div tal:define="factories view/getFactories;
-                   utilities view/getUtilities;
+                   utilities view/getUtilitiesFor;
                    services view/getServices;
                    classes view/getClasses"
        tal:condition="python: factories or utilities or services or classes">
