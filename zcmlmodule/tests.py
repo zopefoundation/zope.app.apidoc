@@ -15,16 +15,17 @@
 
 $Id$
 """
+import os
 import unittest
 from zope.testing.doctestunit import DocTestSuite
 from zope.app.tests import placelesssetup, ztapi
 from zope.app.apidoc.tests import Root
 
+import zope.app.appsetup.appsetup
+from zope.app.location.traversing import LocationPhysicallyLocatable
+from zope.app.traversing.interfaces import IPhysicallyLocatable
 from zope.app.tree.interfaces import IUniqueId
 from zope.app.tree.adapters import LocationUniqueId 
-
-from zope.app.traversing.interfaces import IPhysicallyLocatable
-from zope.app.location.traversing import LocationPhysicallyLocatable
 
 from zope.app.apidoc.zcmlmodule import Namespace, Directive
 from zope.app.apidoc.zcmlmodule import ZCMLModule
@@ -38,8 +39,15 @@ def setUp():
     ztapi.provideAdapter(None, IPhysicallyLocatable,
                          LocationPhysicallyLocatable)
 
+    # Fix up path for tests.
+    global old_source_file
+    old_source_file = zope.app.appsetup.appsetup.__config_source
+    zope.app.appsetup.appsetup.__config_source = os.path.join(
+        os.path.dirname(zope.app.__file__), 'meta.zcml')
+
 def tearDown():
     placelesssetup.tearDown()
+    zope.app.appsetup.appsetup.__config_source = old_source_file    
 
 def getDirective():
     module = ZCMLModule()
@@ -54,7 +62,8 @@ def getDirective():
 
 def test_suite():
     return unittest.TestSuite((
-        DocTestSuite('zope.app.apidoc.zcmlmodule'),
+        DocTestSuite('zope.app.apidoc.zcmlmodule',
+                     setUp=setUp, tearDown=tearDown),
         DocTestSuite('zope.app.apidoc.zcmlmodule.browser',
                      setUp=setUp, tearDown=tearDown),
         ))

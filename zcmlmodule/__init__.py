@@ -68,6 +68,8 @@ class Namespace(ReadContainerBase):
 
     Demonstration::
 
+      >>> module = ZCMLModule()
+      >>> module._makeDocStructure()
       >>> ns = Namespace(ZCMLModule(), 'http://namespaces.zope.org/browser')
 
       >>> ns.getShortName()
