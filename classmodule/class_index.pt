@@ -21,8 +21,12 @@
     <ul class="attr-list" tal:condition="bases">
       <li tal:repeat="base bases">
         <a href=""
-           tal:attributes="href string:${base/url}/index.html"
-           tal:content="base/path" />
+            tal:attributes="href string:${base/url}/index.html"
+            tal:content="base/path"
+            tal:condition="base/url" />
+        <div tal:condition="not: base/url">
+          <span tal:replace="base/path" /> (C-based class)
+        </div>
       </li>
     </ul>
     

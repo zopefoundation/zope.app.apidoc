@@ -18,8 +18,9 @@ $Id$
 import os
 import inspect
 
-from zope.interface import implementedBy
 from zope.configuration.config import ConfigurationContext
+from zope.exceptions import NotFoundError
+from zope.interface import implementedBy
 from zope.proxy import removeAllProxies
 
 from zope.app import zapi
@@ -104,7 +105,9 @@ class Menu(object):
                     {'path': p,
                      'url': zapi.getView(klass, 'absolute_url', self.request)()
                      })
+        results.sort(lambda x, y: cmp(x['path'], y['path']))
         return results
+
 
 class FunctionDetails(object):
     """Represents the details of the function."""
@@ -172,11 +175,14 @@ class ClassDetails(object):
         classModule = zapi.getUtility(IDocumentationModule, "Class")
         for base in self.context.getBases():
             path = getPythonPath(base)
-            klass = zapi.traverse(classModule, path.replace('.', '/'))
-            info.append(
-                {'path': path,
-                 'url': zapi.getView(klass, 'absolute_url',
-                                     self.request)()})
+            try:
+                klass = zapi.traverse(classModule, path.replace('.', '/'))
+                url = zapi.getView(klass, 'absolute_url', self.request)()
+            except NotFoundError:
+                # If one of the base classes is implemented in C, we will not
+                # be able to find it.
+                url = None
+            info.append({'path': path, 'url': url})
         return info
 
 
