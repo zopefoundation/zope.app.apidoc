@@ -423,15 +423,59 @@ class ClassDetails(object):
           [{'path': 'zope.app.apidoc.classmodule.Module',
             'url': 'http://127.0.0.1/zope/app/apidoc/classmodule/Module'}]
         """
+        return self._listClasses(self.context.getBases())
+
+
+    def getKnownSubclasses(self):
+        """Get all known subclasses of this class.
+
+        Example::
+
+          The class we are using for this view is
+          zope.app.apidoc.classmodule.ClassModule.
+
+          >>> import pprint
+          >>> from tests import getClassDetailsView
+          >>> view = getClassDetailsView()
+
+          >>> pprint.pprint(view.getKnownSubclasses())
+          []
+        """
+        entries = self._listClasses(self.context.getKnownSubclasses())
+        entries.sort(lambda x, y: cmp(x['path'], y['path']))
+        return entries
+
+    def _listClasses(self, classes):
+        """Prepare a list of classes for presentation.
+
+        Example::
+
+          >>> import pprint
+          >>> from tests import getClassDetailsView
+          >>> view = getClassDetailsView()
+          >>> import zope.app.apidoc
+          >>> import zope.app.apidoc.classmodule
+
+          >>> pprint.pprint(view._listClasses([
+          ...       zope.app.apidoc.APIDocumentation,
+          ...       zope.app.apidoc.classmodule.Module]))
+          [{'path': 'zope.app.apidoc.APIDocumentation',
+            'url': 'http://127.0.0.1/zope/app/apidoc/APIDocumentation'},
+           {'path': 'zope.app.apidoc.classmodule.Module',
+            'url': 'http://127.0.0.1/zope/app/apidoc/classmodule/Module'}]
+        """
         info = []
         classModule = zapi.getUtility(IDocumentationModule, "Class")
-        for base in self.context.getBases():
-            path = getPythonPath(base)
+        for cls in classes:
+            # XXX Certain classes cause the following line to raise an
+            #     exception.  The easiest way to reproduce the problem is to
+            #     go to /++apidoc++/Class/__builtin__/object/index.html
+            path = getPythonPath(cls)
             try:
                 klass = zapi.traverse(classModule, path.replace('.', '/'))
                 url = zapi.getView(klass, 'absolute_url', self.request)()
             except NotFoundError:
-                # If one of the base classes is implemented in C, we will not
+                # If one of the classes is implemented in C, we will not
                 # be able to find it.
                 url = None
             info.append({'path': path, 'url': url})

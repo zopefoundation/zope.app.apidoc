@@ -73,6 +73,9 @@ class IClassDocumentation(Interface):
     def getBases():
         """Return the base classes of the class."""
 
+    def getKnownSubclasses():
+        """Return the known subclasses classes of the class."""
+
     def getInterfaces():
         """Return the interfaces the class implements."""
 
@@ -300,6 +303,16 @@ class Class(object):
       >>> klass.getBases()
       (<class 'zope.app.apidoc.utilities.ReadContainerBase'>,)
 
+    In the other direction, you can get a list of known subclasses.  The list
+    only includes those subclasses that are registered with the global
+    classRegistry in this module. In our example::
+
+      >>> class APIDocSubclass(zope.app.apidoc.APIDocumentation):
+      ...   pass
+      >>> klass2 = Class(module, 'APIDocSubclass', APIDocSubclass)
+      >>> klass.getKnownSubclasses()
+      [<class 'zope.app.apidoc.classmodule.APIDocSubclass'>]
+
     For a more detailed analysis, you can also retrieve the public attributes
     and methods of this class::
 
@@ -341,6 +354,11 @@ class Class(object):
     def getBases(self):
         """See IClassDocumentation."""
         return self.__klass.__bases__
+
+    def getKnownSubclasses(self):
+        """See IClassDocumentation."""
+        global classRegistry
+        return [k for n, k in classRegistry.getSubclassesOf(self.__klass)]
 
     def getInterfaces(self):
         """See IClassDocumentation."""
@@ -611,7 +629,8 @@ class ClassRegistry(dict):
     This little registry allows us to quickly query a complete list of classes
     that are defined and used by Zope 3. The prime feature of the class is the
     'getClassesThatImplement(iface)' method that returns all classes that
-    implement the passed interface.
+    implement the passed interface. Another method, 'getSubclassesOf(klass)'
+    returns all registered subclassess of the given class.
 
     Here is the registry in action::
 
@@ -638,32 +657,54 @@ class ClassRegistry(dict):
       >>> class C(object):
       ...    implements(IC)
       >>> reg['C'] = C
+      >>> class A2(A):
+      ...    pass
+      >>> reg['A2'] = A2
 
       >>> names = reg.keys()
       >>> names.sort()
       >>> names
-      ['A', 'B', 'B2', 'C']
+      ['A', 'A2', 'B', 'B2', 'C']
 
       >>> reg['A'] is A
       True
 
-      >>> [n for n, k in reg.getClassesThatImplement(IA)]
-      ['A', 'B', 'B2']
-      >>> [n for n, k in reg.getClassesThatImplement(IB)]
+      >>> def names(l):
+      ...   l = [n for n, k in l]
+      ...   l.sort()
+      ...   return l
+
+      >>> names(reg.getClassesThatImplement(IA))
+      ['A', 'A2', 'B', 'B2']
+      >>> names(reg.getClassesThatImplement(IB))
       ['B', 'B2']
-      >>> [n for n, k in reg.getClassesThatImplement(IC)]
+      >>> names(reg.getClassesThatImplement(IC))
       ['C']
-      >>> [n for n, k in reg.getClassesThatImplement(ID)]
+      >>> names(reg.getClassesThatImplement(ID))
       []
+
+      >>> names(reg.getSubclassesOf(A))
+      ['A2']
+      >>> names(reg.getSubclassesOf(B))
+      []
+
     """
 
     def getClassesThatImplement(self, iface):
-        """Return the all class items that implement iface.
+        """Return all class items that implement iface.
 
-        Methods returns a 2-tuple of the form (path, class).
+        Methods returns a list of 2-tuples of the form (path, class).
         """
         return [(path, klass) for path, klass in self.items()
                 if iface.implementedBy(klass)]
+
+    def getSubclassesOf(self, klass):
+        """Return all class items that are proper subclasses of klass.
+
+        Methods returns a list of 2-tuples of the form (path, class).
+        """
+        return [(path, klass2) for path, klass2 in self.items()
+                if issubclass(klass2, klass) and klass2 is not klass]
 
 
 classRegistry = ClassRegistry()
