@@ -13,7 +13,7 @@
 ##############################################################################
 """Functional Tests for API Documentation.
 
-$Id: ftests.py,v 1.1 2004/03/28 23:39:16 srichter Exp $
+$Id: ftests.py,v 1.2 2004/03/30 23:04:49 srichter Exp $
 """
 import unittest
 from zope.testing.functional import BrowserTestCase
@@ -55,7 +55,7 @@ class APIDocTests(BrowserTestCase):
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
         self.assert_(body.find(
-            '<div class="apihead">Zope 3 API Docs</div>') > 0)
+            '<a href="contents.html" target="main">Zope 3 API Docs</a>') > 0)
         self.checkForBrokenLinks(body, '/++apidoc++/modulelist.html',
                                  basic='mgr:mgrpw')
         
