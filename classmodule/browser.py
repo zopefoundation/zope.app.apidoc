@@ -26,7 +26,7 @@ import xml.sax.saxutils
 from zope.configuration import docutils, xmlconfig
 from zope.configuration.config import ConfigurationContext
 from zope.configuration.fields import GlobalObject, Tokens
-from zope.exceptions import NotFoundError
+from zope.app.traversing.interfaces import TraversalError
 from zope.interface import implementedBy
 from zope.interface.interface import InterfaceClass
 from zope.proxy import removeAllProxies
@@ -478,7 +478,7 @@ class ClassDetails(object):
             try:
                 klass = zapi.traverse(classModule, path.replace('.', '/'))
                 url = zapi.getView(klass, 'absolute_url', self.request)()
-            except NotFoundError:
+            except TraversalError:
                 # If one of the classes is implemented in C, we will not
                 # be able to find it.
                 url = None
