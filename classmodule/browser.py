@@ -376,7 +376,7 @@ class FunctionDetails(object):
           >>> view = getFunctionDetailsView()
 
           >>> view.getDocString()
-          '<p>This is the foo function.</p>\n'
+          u'<p>This is the foo function.</p>\n'
         """
         return renderText(self.context.getDocString() or '',
                           zapi.getParent(self.context).getPath())
