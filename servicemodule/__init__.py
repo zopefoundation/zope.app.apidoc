@@ -60,9 +60,9 @@ class ServiceModule(ReadContainerBase):
       
       >>> print '\n'.join([id for id, iface in module.items()][:4])
       Adapters
-      EventPublication
       Presentation
       Services
+      Utilities
       
       >>> setup.tearDown()
     """

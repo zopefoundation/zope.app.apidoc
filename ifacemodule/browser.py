@@ -332,8 +332,14 @@ class InterfaceDetails(object):
           >>> details = getInterfaceDetails()
 
           >>> adapters = details.getRequiredAdapters()
+          >>> adapters.sort()
           >>> pprint(adapters)
-          [[('factory',
+          [[('factory', 'None.append'),
+            ('factory_url', 'None/append'),
+            ('name', None),
+            ('provided', None),
+            ('required', [])],
+           [('factory',
              'zope.app.location.traversing.LocationPhysicallyLocatable'),
             ('factory_url',
              'zope/app/location/traversing/LocationPhysicallyLocatable'),
@@ -360,7 +366,7 @@ class InterfaceDetails(object):
                 'required': [getPythonPath(iface)
                              for iface in reg.required
                              if iface is not None],
-                'name': reg.name,
+                'name': getattr(reg, 'name', None),
                 'factory': path,
                 'factory_url': url
                 })
