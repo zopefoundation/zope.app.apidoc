@@ -13,7 +13,7 @@
 ##############################################################################
 """Views/Presentation Module Views
 
-$Id: browser.py,v 1.10 2004/04/15 13:24:39 srichter Exp $
+$Id: browser.py,v 1.11 2004/04/24 23:19:27 srichter Exp $
 """
 from types import ClassType
 
@@ -170,9 +170,9 @@ def _getFactoryData(factory):
     elif factory.__module__.startswith('zope.app.publisher.browser.viewmeta'):
         info['path'] = getPythonPath(factory.__bases__[0])
 
-    elif hasattr(factory, '__name__') and factory.__name__ == 'proxyView':
-        if hasattr(factory, 'factory'):
-            factory = factory.factory
+    elif hasattr(factory, '__class__') and \
+             factory.__class__.__name__ == 'ProxyView':
+        factory = factory.factory
         info['path'] = factory.__module__ + '.' + factory.__name__
 
     elif not hasattr(factory, '__name__'):
