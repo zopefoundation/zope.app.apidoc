@@ -15,6 +15,8 @@
 
 $Id$
 """
+__docformat__ = 'restructuredtext'
+
 from zope.interface import implements
 
 from zope.app import zapi
@@ -108,7 +110,7 @@ class UtilityInterface(ReadContainerBase):
 class UtilityModule(ReadContainerBase):
     r"""Represent the Documentation of all Interfaces.
 
-    This documentation is implemented using a simply 'IReadContainer'. The
+    This documentation is implemented using a simple `IReadContainer`. The
     items of the container are all factories listed in the closest
     factory service and above.
 

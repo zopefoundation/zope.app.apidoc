@@ -15,6 +15,8 @@
 
 $Id$
 """
+__docformat__ = 'restructuredtext'
+
 from types import InstanceType
 from zope.app import zapi
 from zope.app.location import LocationProxy
@@ -29,7 +31,7 @@ class UtilityDetails(object):
     def getName(self):
         """Get the name of the utility.
 
-        Return the string "no name", if the utility has no name.
+        Return the string ``no name``, if the utility has no name.
 
         Examples::
 
@@ -118,8 +120,8 @@ class Menu(object):
     """Menu View Helper Class
 
     A class that helps building the menu. The menu_macros expects the menu view
-    class to have the getMenuTitle(node) and getMenuLink(node) methods
-    implemented. 'node' is a 'zope.app.tree.node.Node' instance.
+    class to have the `getMenuTitle(node)` and `getMenuLink(node)` methods
+    implemented. `node` is a `zope.app.tree.node.Node` instance.
 
     Examples::
 
