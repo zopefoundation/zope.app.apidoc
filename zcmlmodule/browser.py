@@ -13,9 +13,8 @@
 ##############################################################################
 """Browser Views for ZCML Reference
 
-$Id: browser.py,v 1.4 2004/03/29 15:08:42 srichter Exp $
+$Id: browser.py,v 1.5 2004/03/30 02:01:38 srichter Exp $
 """
-from types import FunctionType, MethodType
 from zope.proxy import removeAllProxies
 from zope.configuration.xmlconfig import ParserInfo
 
@@ -146,7 +145,7 @@ class DirectiveDetails(object):
 
         Examples::
         
-          >>> from zope.app.apidoc.tests import pprintDict
+          >>> from zope.app.apidoc.tests import pprint
           >>> from zope.configuration.xmlconfig import ParserInfo
           >>> from tests import getDirective
           >>> details = DirectiveDetails()
@@ -157,7 +156,7 @@ class DirectiveDetails(object):
 
           >>> details.context.info = ParserInfo('foo.zcml', 2, 3)
           >>> info = details.getFileInfo()
-          >>> pprintDict(info)
+          >>> pprint(info)
           [('column', 3),
            ('ecolumn', 3),
            ('eline', 2),
@@ -203,24 +202,21 @@ class DirectiveDetails(object):
 
         Examples::
         
-          >>> from zope.app.apidoc.tests import pprintDict
+          >>> from zope.app.apidoc.tests import pprint
           >>> from zope.configuration.xmlconfig import ParserInfo
           >>> from tests import getDirective
           >>> details = DirectiveDetails()
           >>> details.context = getDirective()
 
-          >>> pprintDict(details.getHandler())
+          >>> pprint(details.getHandler())
           [('path', 'zope.app.apidoc.zcmlmodule.tests.foo'),
-           ('url', 'zope/app/apidoc/zcmlmodule/tests')]
+           ('url', 'zope/app/apidoc/zcmlmodule/tests/foo')]
         """
         if self.context.handler is not None:
             handler = removeAllProxies(self.context.handler)
             path = getPythonPath(handler)
-            if isinstance(handler, (FunctionType, MethodType)):
-                url = handler.__module__.replace('.', '/')
-            else:
-                url = path.replace('.', '/')
-            return {'path': path, 'url': url}
+            return {'path': path,
+                    'url': path.replace('.', '/')}
         return None
 
     def getSubdirectives(self):
@@ -228,8 +224,7 @@ class DirectiveDetails(object):
 
         Examples::
         
-          >>> import pprint
-          >>> pprint = pprint.PrettyPrinter(width=69).pprint
+          >>> from zope.app.apidoc.tests import pprint
           >>> from zope.configuration.xmlconfig import ParserInfo
           >>> from zope.interface import Interface
           >>> from zope.publisher.browser import TestRequest
@@ -251,14 +246,10 @@ class DirectiveDetails(object):
           ...     ('browser', 'foo', IFoo, handler, 'info'),)
           >>> info = details.getSubdirectives()[0]
           >>> info['schema'] = info['schema'].__module__ + '.InterfaceDetails'
-          >>> info['handler'] = info['handler'].items()
-          >>> info['handler'].sort()
-          >>> info = info.items()
-          >>> info.sort()
           >>> pprint(info)
           [('handler',
             [('path', 'zope.app.apidoc.zcmlmodule.browser.handler'),
-             ('url', 'zope/app/apidoc/zcmlmodule/browser')]),
+             ('url', 'zope/app/apidoc/zcmlmodule/browser/handler')]),
            ('info', 'info'),
            ('name', 'foo'),
            ('namespace', 'browser'),
@@ -273,14 +264,10 @@ class DirectiveDetails(object):
 
             handler = removeAllProxies(handler)
             path = getPythonPath(handler)
-            if isinstance(handler, (FunctionType, MethodType)):
-                url = handler.__module__.replace('.', '/')
-            else:
-                url = path.replace('.', '/')
-
             dirs.append({'namespace': ns,
                          'name': name,
                          'schema': details,
-                         'handler': {'path': path, 'url': url},
+                         'handler': {'path': path,
+                                     'url': path.replace('.', '/')},
                          'info': info})
         return dirs
