@@ -23,10 +23,10 @@ introspection page for the class::
   >>> ("http://localhost/++apidoc++/Code/"
   ...  "zope/app/folder/folder/Folder/index.html") in response
   True
-  >>> "zope.app.folder.folder.Folder" in response
+  >>> ">zope.app.folder.folder.Folder</" in response
   True
 
-Information about the directly provided information is provided by
+Information about the directly provided interfaces is provided by
 links from the provided interface names to the introspection pages for
 the interfaces::
 
@@ -40,4 +40,48 @@ the interfaces::
   ...  "zope.app.folder.interfaces.IRootFolder/apiindex.html") in response
   True
   >>> ">zope.app.folder.interfaces.IRootFolder</" in response
+  True
+
+All the proxies will be removed from the object before getting
+any information. For example let's add a file::
+
+  >>> print http(r"""
+  ... POST /+/zope.app.file.File%3D HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... Content-Type: multipart/form-data; boundary=---------------------------24464570528145
+  ... -----------------------------24464570528145
+  ... Content-Disposition: form-data; name="field.contentType"
+  ... 
+  ... -----------------------------24464570528145
+  ... Content-Disposition: form-data; name="field.data"; filename=""
+  ... Content-Type: application/octet-stream
+  ... 
+  ... -----------------------------24464570528145
+  ... Content-Disposition: form-data; name="UPDATE_SUBMIT"
+  ... 
+  ... Add
+  ... -----------------------------24464570528145
+  ... Content-Disposition: form-data; name="add_input_name"
+  ... 
+  ... file
+  ... -----------------------------24464570528145--
+  ... """)
+  HTTP/1.1 303 See Other
+  ...
+
+And now we can check the class that the file implements::
+
+  >>> response = str(http(r"""
+  ... GET /file/@@introspector.html HTTP/1.1
+  ... Authorization: Basic mgr:mgrpw
+  ... """))
+
+  >>> print response
+  HTTP/1.1 200 Ok
+  ...
+
+  >>> ("http://localhost/++apidoc++/Code/"
+  ...  "zope/app/file/file/File/index.html") in response
+  True
+  >>> ">zope.app.file.file.File</" in response
   True

@@ -20,24 +20,27 @@ __docformat__ = 'restructuredtext'
 import zope.interface
 
 from zope.security.proxy import removeSecurityProxy
+from zope.app.container.contained import getProxiedObject
 from zope.app.publisher.browser import BrowserView
 
 
 class Introspector(BrowserView):
 
+    def get_object(self):
+        return getProxiedObject(removeSecurityProxy(self.context))
+
     def class_name(self):
-        klass = type(removeSecurityProxy(self.context))
+        klass = type(self.get_object())
         return "%s.%s" % (klass.__module__, klass.__name__)
 
     def class_url(self):
-        klass = type(removeSecurityProxy(self.context))
+        klass = type(self.get_object())
         url = self.request.getApplicationURL() + '/++apidoc++/Code/'
         url += klass.__module__.replace('.', '/') + '/'
         return url + klass.__name__ + '/index.html'
 
     def direct_interfaces(self):
-        ob = removeSecurityProxy(self.context)
-        ifaces = zope.interface.directlyProvidedBy(ob)
+        ifaces = zope.interface.directlyProvidedBy(self.get_object())
         result = []
         urlbase = self.request.getApplicationURL() + '/++apidoc++/Interface/'
         for iface in ifaces:
