@@ -4,29 +4,33 @@
   <h1 class="details-header">Zope 3 Class Browser</h1>
 
   <p class="breadcrumbs">
-    <span>
-      <a href="./browser.html">[top]</a> /
-    </span>
     <span tal:repeat="entry view/getBreadCrumbs">
       <a href="" 
-         tal:attributes="href string:./browser.html?module=${entry/path}"
+         tal:attributes="href string:${entry/url}/index.html"
          tal:content="entry/name" />
       <tal:omit-tag condition="not: repeat/entry/end">/</tal:omit-tag>
     </span>
   </p>
 
+  <div class="highlight"
+       tal:define="doc view/getDoc"
+       tal:condition="doc"
+       tal:content="structure doc">
+    Module Documentation
+  </div>
+
 
   <table width="100%" valign="top"><tr>
    
-  <td tal:repeat="column view/getEntriesInColumns"><ul>
+  <td tal:repeat="column view/getEntries"><ul>
     <li tal:repeat="entry column">
       <a href=""
          tal:condition="entry/module"
-         tal:attributes="href string:./browser.html?module=${entry/path}"
+         tal:attributes="href string:./${entry/name}/index.html"
          tal:content="entry/name" />
       <a href=""
          tal:condition="not:entry/module"
-         tal:attributes="href string:./index.html?path=${entry/path}"
+         tal:attributes="href string:./${entry/name}/index.html"
          tal:content="structure string:<b>${entry/name}</b>" />
     </li>
   </ul></td>
