@@ -25,7 +25,6 @@ from os.path import dirname
 
 import zope
 from zope.interface import implements, implementedBy
-from zope.proxy import removeAllProxies
 from zope.publisher.browser import TestRequest
 from zope.security.checker import getCheckerForInstancesOf, Global
 from zope.security.interfaces import INameBasedChecker
@@ -151,15 +150,19 @@ def getPythonPath(obj):
     """
     if obj is None:
         return None
-    if hasattr(obj, "im_class"):
-        obj = obj.im_class
-    module = obj.__module__
+
+    # Even for methods `im_class` and `__module__` is not allowed to be
+    # accessed (which is probably not a bad idea). So, we remove the security
+    # proxies for this check.
+    naked = zapi.removeSecurityProxy(obj)
+    if hasattr(naked, "im_class"):
+        naked = naked.im_class
+    module = naked.__module__
     return '%s.%s' %(module, obj.__name__)
 
 
 def _evalId(id):
-    id = removeAllProxies(id)
-    if isinstance(id, Global):
+    if zapi.isinstance(id, Global):
         id = id.__name__
         if id == 'CheckerPublic':
             id = 'zope.Public'
@@ -322,7 +325,7 @@ def getFunctionSignature(func):
         if default[i] is placeholder:
             str_args.append(args[i])
         else:
-            str_args.append(args[i] + '=' + default[i].__repr__())
+            str_args.append(args[i] + '=' + repr(default[i]))
 
     if varargs:
         str_args.append('*'+varargs)
@@ -391,9 +394,9 @@ def getInterfaceForAttribute(name, interfaces=_marker, klass=_marker,
     This function is nice, if you have an attribute name which you retrieved
     from a class and want to know which interface requires it to be there.
 
-    Either `interfaces` or `klass` must be specified. If `interfaces` is not
-    specified, the `klass` is used to retrieve a list of
-    interfaces. `interfaces` must be iteratable.
+    Either 'interfaces' or 'klass' must be specified. If 'interfaces' is not
+    specified, the 'klass' is used to retrieve a list of
+    interfaces. 'interfaces' must be iterable.
 
     `asPath` specifies whether the dotted name of the interface or the
     interface object is returned.

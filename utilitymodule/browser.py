@@ -15,13 +15,14 @@
 
 $Id$
 """
+__docformat__ = 'restructuredtext'
+
 from types import InstanceType
 from zope.app import zapi
 from zope.app.location import LocationProxy
 from zope.app.apidoc.ifacemodule.browser import InterfaceDetails
 from zope.app.apidoc.utilities import getPythonPath
 from zope.app.apidoc.utilitymodule import NONAME, Utility, UtilityInterface
-from zope.proxy import removeAllProxies
 
 class UtilityDetails(object):
     """Utility Details View."""
@@ -29,7 +30,7 @@ class UtilityDetails(object):
     def getName(self):
         """Get the name of the utility.
 
-        Return the string "no name", if the utility has no name.
+        Return the string ``no name``, if the utility has no name.
 
         Examples::
 
@@ -104,12 +105,10 @@ class UtilityDetails(object):
           [('path', 'zope.app.apidoc.utilitymodule.browser.Bar'),
            ('url', 'zope/app/apidoc/utilitymodule/browser/Bar')]
         """
-        component = removeAllProxies(self.context.component)
-        klass = type(component)
-
-        # Support for old-style classes
-        if klass == InstanceType:
-            klass = component.__class__
+        # We could use `type()` here, but then we would need to remove the
+        # security proxy from the component. This is easier and also supports
+        # old-style classes 
+        klass = self.context.component.__class__
 
         return {'path': getPythonPath(klass),
                 'url':  getPythonPath(klass).replace('.', '/')}
@@ -118,8 +117,8 @@ class Menu(object):
     """Menu View Helper Class
 
     A class that helps building the menu. The menu_macros expects the menu view
-    class to have the getMenuTitle(node) and getMenuLink(node) methods
-    implemented. 'node' is a 'zope.app.tree.node.Node' instance.
+    class to have the `getMenuTitle(node)` and `getMenuLink(node)` methods
+    implemented. `node` is a `zope.app.tree.node.Node` instance.
 
     Examples::
 
@@ -163,19 +162,19 @@ class Menu(object):
 
     def getMenuTitle(self, node):
         """Return the title of the node that is displayed in the menu."""
-        obj = removeAllProxies(node.context)
+        obj = node.context
         if zapi.name(obj) == NONAME:
             return 'no name'
-        if isinstance(obj, UtilityInterface):
+        if zapi.isinstance(obj, UtilityInterface):
             return zapi.name(obj).split('.')[-1]
         return zapi.name(obj)
 
     def getMenuLink(self, node):
         """Return the HTML link of the node that is displayed in the menu."""
-        obj = removeAllProxies(node.context)
-        if isinstance(obj, Utility):
+        obj = node.context
+        if zapi.isinstance(obj, Utility):
             iface = zapi.getParent(obj)
             return './'+zapi.name(iface) + '/' + zapi.name(obj) + '/index.html'
-        if isinstance(obj, UtilityInterface):
+        if zapi.isinstance(obj, UtilityInterface):
             return '../Interface/'+zapi.name(obj) + '/apiindex.html'
         return None

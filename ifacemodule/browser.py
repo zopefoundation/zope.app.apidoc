@@ -53,7 +53,12 @@ def _get(iface, type):
       >>> names
       ['bar', 'foo']
     """
-    iface = removeAllProxies(iface)
+    # We really just want the attributes to be unproxied, since there are no
+    # security declarations for generic interface attributes, but we need to
+    # be able to get to the info.
+    # We remove the Proxy on the interface, so we save ourselves the work of
+    # removing it later individually from each attribute.
+    iface = zapi.removeSecurityProxy(iface)
     items = {}
     for name in iface:
         attr = iface[name]
@@ -127,7 +132,6 @@ def _getFieldInterface(field):
       [('id', 'zope.app.apidoc.ifacemodule.browser.ISpecialField'),
        ('name', 'ISpecialField')]
     """
-    field = removeAllProxies(field)
     # This is bad, but due to bootstrapping, directlyProvidedBy does
     # not work 
     name = field.__class__.__name__
@@ -174,7 +178,7 @@ def _getFieldClass(field):
       [('name', 'ExtraField'),
        ('path', 'zope/app/apidoc/ifacemodule/browser/ExtraField')]
     """
-    class_ = removeAllProxies(field).__class__
+    class_ = field.__class__
     return {'name': class_.__name__,
             'path': getPythonPath(class_).replace('.', '/')}
 
@@ -238,10 +242,10 @@ class InterfaceDetails(object):
           >>> details.getDoc()[:34]
           '<h1>This is the Foo interface</h1>'
         """
-        # We must remove all proxies here, so that we get the context's
-        # __module__ attribute and not the proxy's. 
+        # We must remove all security proxies here, so that we get the context's
+        # __module__ attribute.
         return renderText(self.context.__doc__,
-                          removeAllProxies(self.context).__module__)
+                          zapi.removeSecurityProxy(self.context).__module__)
 
     def getBases(self):
         """Get all bases of this class
@@ -264,7 +268,7 @@ class InterfaceDetails(object):
         Example::
 
           >>> from zope.app.apidoc.tests import pprint
-          >>> from tests import getInterfaceDetails
+          >>> from tests import getInterfaceDetails, IFoo
           >>> from zope.interface import Interface, directlyProvides
           >>> class IType(Interface):
           ...     pass
@@ -273,7 +277,7 @@ class InterfaceDetails(object):
           >>> details.getTypes()
           []
 
-          >>> directlyProvides(removeAllProxies(details.context), IType)
+          >>> directlyProvides(IFoo, IType)
           >>> type = details.getTypes()[0]
           >>> pprint(type)
           [('name', 'IType'),
@@ -281,8 +285,12 @@ class InterfaceDetails(object):
 
           Cleanup
 
-          >>> directlyProvides(removeAllProxies(details.context), [])
+          >>> directlyProvides(IFoo, [])
         """
+        # We have to really, really remove all proxies, since self.context (an
+        # interface) is usually security proxied and location proxied. To get
+        # the types, we need all proxies gone, otherwise the proxies'
+        # interfaces are picked up as well. 
         context = removeAllProxies(self.context)
         types = list(providedBy(context))
         types.remove(IInterface)
@@ -304,7 +312,10 @@ class InterfaceDetails(object):
           [[('doc', '<p>This is bar.</p>\n'), ('name', 'bar')],
            [('doc', '<p>This is foo.</p>\n'), ('name', 'foo')]]
         """
-        iface = removeAllProxies(self.context)
+        # The `Interface` and `Attribute` class have no security declarations,
+        # so that we are not able to access any API methods on proxied
+        # objects. 
+        iface = zapi.removeSecurityProxy(self.context)
         attrs = []
         for name in iface:
             attr = iface[name]
@@ -332,10 +343,13 @@ class InterfaceDetails(object):
             ('name', 'get'),
             ('signature', '(key, default=None)')]]
         """        
+        # The `Interface` class have no security declarations, so that we are
+        # not able to access any API methods on proxied objects.
         return [{'name': method.getName(),
                  'signature': method.getSignatureString(),
-                 'doc': renderText(method.getDoc() or '',
-                                   removeAllProxies(self.context).__module__)}
+                 'doc': renderText(
+                            method.getDoc() or '',
+                            zapi.removeSecurityProxy(self.context).__module__)}
                 for method in _get(self.context, IMethod).values()]
             
     def getFields(self):
@@ -369,6 +383,8 @@ class InterfaceDetails(object):
             ('name', 'description'),
             ('required', u'optional')]]
         """
+        # The `Interface` class have no security declarations, so that we are
+        # not able to access any API methods on proxied objects.
         fields = map(lambda x: x[1], _getInOrder(self.context, IField))
         return [{'name': field.getName(),
                  'iface': _getFieldInterface(field),
@@ -377,7 +393,7 @@ class InterfaceDetails(object):
                  'default': field.default.__repr__(),
                  'description': renderText(
                      field.description or '',
-                     removeAllProxies(self.context).__module__)}
+                     zapi.removeSecurityProxy(self.context).__module__)}
                 for field in fields]
 
     def getRequiredAdapters(self):
@@ -407,7 +423,9 @@ class InterfaceDetails(object):
             ('required', [])]]
         """
         service = zapi.getService('Adapters')
-        iface = removeAllProxies(self.context)
+        # Must remove security proxies, so that we have access to the API
+        # methods. 
+        iface = zapi.removeSecurityProxy(self.context)
         adapters = []
         for reg in service.registrations():
             # Only grab the adapters for which this interface is required
@@ -448,6 +466,8 @@ class InterfaceDetails(object):
             ('required', ['zope.app.apidoc.ifacemodule.tests.IBar'])]]
         """
         service = zapi.getService('Adapters')
+        # Must remove security and location proxies, so that we have access to
+        # the API methods and class representation.
         iface = removeAllProxies(self.context)
         adapters = []
         for reg in service.registrations():
@@ -482,6 +502,8 @@ class InterfaceDetails(object):
           [[('path', 'zope.app.apidoc.ifacemodule.tests.Foo'),
             ('url', 'zope/app/apidoc/ifacemodule/tests/Foo')]]
         """
+        # Must remove security and location proxies, so that we have access to
+        # the API methods and class representation.
         iface = removeAllProxies(self.context)
         classes = classRegistry.getClassesThatImplement(iface)
         return [{'path': path, 'url': path.replace('.', '/')}
@@ -506,6 +528,8 @@ class InterfaceDetails(object):
             ('title', 'Foo Factory'),
             ('url', 'zope/component/factory/Factory')]]
         """
+        # Must remove security and location proxies, so that we have access to
+        # the API methods and class representation.
         iface = removeAllProxies(self.context)
         factories = [(n, f) for n, f in
                     zapi.getFactoriesFor(iface)
@@ -539,6 +563,8 @@ class InterfaceDetails(object):
             ('url_name', u'The Foo')]]
         """
         service = zapi.getService('Utilities')
+        # Must remove security and location proxies, so that we have access to
+        # the API methods and class representation.
         utils = service.getUtilitiesFor(removeAllProxies(self.context))
         info = []
         for name, util in utils:
@@ -563,6 +589,8 @@ class InterfaceDetails(object):
           >>> details.getServices()
           ['Foo']
         """
+        # Must remove security and location proxies, so that we have access to
+        # the API methods and class representation.
         iface = removeAllProxies(self.context)
         service = zapi.getService('Services')
         services = service.getServiceDefinitions()

@@ -20,7 +20,9 @@
   <adapter
       for=".ISkinRegistration"
       provides=".ISkinDocumentation"
-      factory=".SkinDocumentation" />
+      factory=".SkinDocumentation"
+      permission="zope.app.apidoc.UseAPIDoc"
+      trusted="True" />
 
   <class class=".LayerDocumentation">
     <allow interface=".ILayerDocumentation" />
@@ -30,7 +32,9 @@
   <adapter
       for=".ILayerRegistration"
       provides=".ILayerDocumentation"
-      factory=".LayerDocumentation" />
+      factory=".LayerDocumentation"
+      permission="zope.app.apidoc.UseAPIDoc"
+      trusted="True" />
 
   <browser:page
       for=".ViewModule"

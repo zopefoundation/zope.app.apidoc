@@ -17,7 +17,6 @@ $Id$
 """
 __docformat__ = 'restructuredtext'
 
-from zope.proxy import removeAllProxies
 from zope.configuration.xmlconfig import ParserInfo
 
 from zope.app import zapi
@@ -71,8 +70,8 @@ class Menu(object):
 
     def getMenuTitle(self, node):
         """Return the title of the node that is displayed in the menu."""
-        obj = removeAllProxies(node.context)
-        if isinstance(obj, Namespace):
+        obj = node.context
+        if zapi.isinstance(obj, Namespace):
             name = obj.getShortName()
             if name == 'ALL':
                 return 'All Namespaces'
@@ -81,8 +80,8 @@ class Menu(object):
 
     def getMenuLink(self, node):
         """Return the HTML link of the node that is displayed in the menu."""
-        obj = removeAllProxies(node.context)
-        if isinstance(obj, Directive):
+        obj = node.context
+        if zapi.isinstance(obj, Directive):
             ns = zapi.getParent(obj)
             return './'+zapi.name(ns) + '/' + zapi.name(obj) + '/index.html'
         return None
@@ -165,8 +164,11 @@ class DirectiveDetails(object):
            ('file', 'foo.zcml'),
            ('line', 2)]
         """
-        info = removeAllProxies(self.context.info)
-        if isinstance(info, ParserInfo):
+        # ZCML directive `info` objects do not have security declarations, so
+        # everything is forbidden by default. We need to remove the security
+        # proxies in order to get to the data.  
+        info = zapi.removeSecurityProxy(self.context.info)
+        if zapi.isinstance(info, ParserInfo):
             return {'file': relativizePath(info.file),
                     'line': info.line,
                     'column': info.column,
@@ -215,8 +217,7 @@ class DirectiveDetails(object):
            ('url', 'zope/app/apidoc/zcmlmodule/tests/foo')]
         """
         if self.context.handler is not None:
-            handler = removeAllProxies(self.context.handler)
-            path = getPythonPath(handler)
+            path = getPythonPath(self.context.handler)
             return {'path': path,
                     'url': path.replace('.', '/')}
         return None
@@ -264,7 +265,6 @@ class DirectiveDetails(object):
             details.context = schema
             details.request = self.request
 
-            handler = removeAllProxies(handler)
             path = getPythonPath(handler)
             dirs.append({'namespace': ns,
                          'name': name,

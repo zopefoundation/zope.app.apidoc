@@ -129,7 +129,7 @@
           <code tal:content="field/iface/name">IField</code></a>
       (<span tal:content="string:${field/required}, ">optional, </span>
         default = <code tal:content="field/default" />)<br>
-      <span tal:content="field/description">field desc</span>      
+      <span tal:content="structure field/description">field desc</span>      
     </li>
 
   </ul>

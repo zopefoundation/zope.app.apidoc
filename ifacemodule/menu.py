@@ -22,7 +22,6 @@ $Id$
 __docformat__ = 'restructuredtext'
 
 from zope.interface import implements
-from zope.proxy import removeAllProxies
 
 from zope.app import zapi
 from zope.app.location.interfaces import ILocation
@@ -114,7 +113,7 @@ class InterfaceModuleChildObjects(object):
     def getChildObjects(self):
         """See zope.app.tree.interfaces.IChildObject"""
         objects = {}
-        names = removeAllProxies(self.context.keys())
+        names = zapi.removeSecurityProxy(self.context.keys())
         names.sort()
         for name in names:
             # Split these long names and make part of the module path separate
@@ -167,13 +166,13 @@ class Menu(object):
 
     def getMenuTitle(self, node):
         """Return the title of the node that is displayed in the menu."""
-        if isinstance(removeAllProxies(node.context.__parent__), Module):
+        if zapi.isinstance(node.context.__parent__, Module):
             parent = node.context.__parent__
             return zapi.name(node.context).replace(zapi.name(parent)+'.', '')
         return zapi.name(node.context)
 
     def getMenuLink(self, node):
         """Return the HTML link of the node that is displayed in the menu."""
-        if isinstance(removeAllProxies(node.context), Module):
+        if zapi.isinstance(node.context, Module):
             return None
         return './' + zapi.name(node.context) + '/apiindex.html'
