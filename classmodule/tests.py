@@ -67,7 +67,7 @@ foo.deprecated = True
 
 
 def getFunctionDetailsView():
-    cm = zapi.getUtility(None, IDocumentationModule, 'Class')
+    cm = zapi.getUtility(IDocumentationModule, 'Class')
     view = FunctionDetails()
     view.context = zapi.traverse(cm, 'zope/app/apidoc/classmodule/tests/foo')
     view.request = TestRequest()
@@ -75,7 +75,7 @@ def getFunctionDetailsView():
 
 
 def getClassDetailsView():
-    cm = zapi.getUtility(None, IDocumentationModule, 'Class')
+    cm = zapi.getUtility(IDocumentationModule, 'Class')
     view = ClassDetails()
     view.context = zapi.traverse(cm, 'zope/app/apidoc/classmodule/ClassModule')
     view.request = TestRequest()
@@ -83,7 +83,7 @@ def getClassDetailsView():
 
 
 def getModuleDetailsView():
-    cm = zapi.getUtility(None, IDocumentationModule, 'Class')
+    cm = zapi.getUtility(IDocumentationModule, 'Class')
     view = ModuleDetails()
     view.context = zapi.traverse(cm, 'zope/app/apidoc/classmodule')
     view.request = TestRequest()
