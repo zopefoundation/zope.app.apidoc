@@ -15,6 +15,8 @@
 
 $Id$
 """
+__docformat__ = 'restructuredtext'
+
 from zope.app.apidoc.utilities import renderText
 
 class APIDocumentationView(object):
