@@ -1,4 +1,4 @@
-<metal:block define-macro="View">
+<metal:block define-macro="View" i18n:domain="zope">
   <div>
     <b tal:content="structure View/name" />
   </div>

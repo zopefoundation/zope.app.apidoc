@@ -1,4 +1,4 @@
-<metal:block define-macro="attribute">
+<metal:block define-macro="attribute" i18n:domain="zope">
   <b><code tal:content="attribute/name">attr</code></b>
   <span i18n:translate="">(Attribute)</span>
   <br />
@@ -8,7 +8,7 @@
 </metal:block>
 
 
-<metal:block define-macro="field">
+<metal:block define-macro="field" i18n:domain="zope">
   <b tal:attributes="class field/required_string">
     <code tal:content="field/name">field</code>
     <span tal:condition="field/required">*</span>
@@ -37,7 +37,7 @@
 </metal:block>
 
 
-<metal:block define-macro="methods">
+<metal:block define-macro="methods" i18n:domain="zope">
   <div metal:define-slot="header">
     <h2 class="details-section" i18n:translate="">Methods</h2>
   </div>
@@ -57,7 +57,7 @@
 </metal:block>
 
 
-<metal:block define-macro="attributes_fields">
+<metal:block define-macro="attributes_fields" i18n:domain="zope">
   <div metal:define-slot="header">
     <h2 class="details-section" i18n:translate="">Attributes/Fields</h2>
   </div>
@@ -86,7 +86,7 @@
 </metal:block>
 
 
-<metal:block define-macro="views">
+<metal:block define-macro="views" i18n:domain="zope">
   <div class="indent">    
     <ul class="attr-list" tal:condition="Views">
       <li tal:repeat="View Views">
@@ -100,7 +100,7 @@
 </metal:block>
 
 
-<metal:block define-macro="viewcategory">
+<metal:block define-macro="viewcategory" i18n:domain="zope">
 <tal:block define="elementId string:views.${type}.${name}">
 
   <h4>
@@ -117,7 +117,7 @@
 </metal:block>
 
 
-<metal:block define-macro="viewtype">
+<metal:block define-macro="viewtype" i18n:domain="zope">
 <tal:block define="elementId string:views.${type}">
 
   <h3 class="details-section">

@@ -1,4 +1,4 @@
-<html>
+<html i18n:domain="zope">
   <head>
     <title i18n:translate="">Zope 3 API Documentation</title>
   </head>

@@ -2,18 +2,19 @@
   ><span tal:replace="iface/module" />.<u tal:content="iface/name" 
 /></metal:block>
 
-<metal:block define-macro="zcml">
+<metal:block define-macro="zcml" i18n:domain="zope">
   <a href=""
       tal:attributes="href 
         string:../../Code/${zcml/url}/index.html?line=${zcml/line}#${zcml/line}"
       tal:content="zcml/file">
     zope/app/configure.zcml
   </a>
-  <span class="small">(line <tal:block replace="zcml/line" />)</span>
+  <span class="small" i18n:translate="">
+    (line <tal:block replace="zcml/line" i18n:name="line"/>)</span>
 </metal:block>
 
 
-<metal:block define-macro="adapter">
+<metal:block define-macro="adapter" i18n:domain="zope">
   <div>
     <b><code>
       <a href=""
@@ -24,9 +25,8 @@
       <span tal:content="adapter/factory" 
             tal:condition="not: adapter/factory_url" />
     </code></b>
-    <span tal:condition="adapter/name">
-      (<span i18n:translate="">name:</span>
-        <tal:block content="adapter/name" />)
+    <span tal:condition="adapter/name" i18n:translate="">
+      (name: <tal:block content="adapter/name" i18n:name="name"/>)
     </span>
   </div>
 
@@ -80,7 +80,7 @@
 </metal:block>
 
 
-<metal:block define-macro="utility">
+<metal:block define-macro="utility" i18n:domain="zope">
   <a href=""
      tal:attributes="href 
          string:$rootURL/Utility/${view/getId}/${utility/url_name}/index.html"

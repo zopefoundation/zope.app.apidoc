@@ -1,4 +1,5 @@
-<html metal:use-macro="views/apidoc_macros/details">
+<html metal:use-macro="views/apidoc_macros/details"
+    i18n:domain="zope">
 <body metal:fill-slot="contents">
 
   <h1 class="details-header"
