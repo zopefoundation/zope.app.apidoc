@@ -234,14 +234,14 @@ class InterfaceDetails(object):
         return zapi.name(self.context)
 
     def getDoc(self):
-        """Return the main documentation string of the interface.
+        r"""Return the main documentation string of the interface.
 
         Example::
 
           >>> from tests import getInterfaceDetails
           >>> details = getInterfaceDetails()
-          >>> details.getDoc()[:34]
-          '<h1>This is the Foo interface</h1>'
+          >>> details.getDoc()[:55]
+          '<div class="document">\n<p>This is the Foo interface</p>'
         """
         # We must remove all proxies here, so that we get the context's
         # __module__ attribute. If we only remove security proxies, the
@@ -397,7 +397,7 @@ class InterfaceDetails(object):
                  'iface': _getFieldInterface(field),
                  'class': _getFieldClass(field),
                  'required': _getRequired(field),
-                 'default': field.default.__repr__(),
+                 'default': repr(field.default),
                  'description': renderText(
                      field.description or '',
                      removeAllProxies(self.context).__module__)}
