@@ -13,12 +13,14 @@
 ##############################################################################
 """Utilties to make the life of Documentation Modules easier.
 
-$Id: utilities.py,v 1.5 2004/03/28 23:39:24 srichter Exp $
+$Id: utilities.py,v 1.6 2004/03/29 15:08:26 srichter Exp $
 """
 import re
 import types
 import inspect
+from os.path import dirname
 
+import zope
 from zope.interface import implements, implementedBy
 from zope.proxy import removeAllProxies
 from zope.security.checker import getCheckerForInstancesOf, Global
@@ -32,6 +34,12 @@ _remove_html_overhead = re.compile(
     r'(?sm)^<html.*<body.*?>\n(.*)</body>\n</html>\n')
 
 _marker = object()
+
+BASEDIR = dirname(dirname(dirname(zope.__file__)))
+
+def relativizePath(path):
+    return path.replace(BASEDIR, 'Zope3')
+
 
 class ReadContainerBase:
     """Base for IReadContainer objects.
