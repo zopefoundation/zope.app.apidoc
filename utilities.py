@@ -13,14 +13,15 @@
 ##############################################################################
 """Utilties to make the life of Documentation Modules easier.
 
-$Id: utilities.py,v 1.4 2004/03/05 22:08:51 jim Exp $
+$Id: utilities.py,v 1.5 2004/03/28 23:39:24 srichter Exp $
 """
 import re
 import types
 import inspect
 
 from zope.interface import implements, implementedBy
-from zope.security.checker import getCheckerForInstancesOf
+from zope.proxy import removeAllProxies
+from zope.security.checker import getCheckerForInstancesOf, Global
 from zope.security.interfaces import INameBasedChecker
 
 from zope.app.container.interfaces import IReadContainer
@@ -160,6 +161,15 @@ def stx2html(text, level=1):
     return html
 
 
+def _evalId(id):
+    id = removeAllProxies(id)
+    if isinstance(id, Global):
+        id = id.__name__
+        if id == 'CheckerPublic':
+            id = 'zope.Public'
+    return id
+        
+
 def getPermissionIds(name, checker=_marker, klass=_marker):
     """Get the permissions of an attribute.
 
@@ -173,15 +183,17 @@ def getPermissionIds(name, checker=_marker, klass=_marker):
       We first define the class and then the checker for it
 
       >>> from zope.security.checker import Checker, defineChecker
-      
+      >>> from zope.security.checker import CheckerPublic
+
       >>> class Sample(object):
       ...     attr = 'value'
+      ...     attr3 = 'value3'
 
       >>> class Sample2(object):
       ...      pass
 
-      >>> checker = Checker({'attr': 'zope.Read'}.get,
-      ...                   {'attr': 'zope.Write'}.get) 
+      >>> checker = Checker({'attr': 'zope.Read', 'attr3': CheckerPublic}.get,
+      ...                   {'attr': 'zope.Write', 'attr3': CheckerPublic}.get) 
       >>> defineChecker(Sample, checker)
 
       Now let's see how this function works
@@ -198,17 +210,29 @@ def getPermissionIds(name, checker=_marker, klass=_marker):
       >>> entries['write_perm']
       'zope.Write'
 
+      Sample does not know about attr2.
+
       >>> entries = getPermissionIds('attr2', klass=Sample)
       >>> print entries['read_perm']
       N/A
       >>> print entries['write_perm']
       N/A
 
+      Sample2 does not have a checker.
+
       >>> entries = getPermissionIds('attr', klass=Sample2)
       >>> entries['read_perm'] is None
       True
       >>> print entries['write_perm'] is None
       True
+
+      Sample declares attr3 public.
+
+      >>> entries = getPermissionIds('attr3', klass=Sample)
+      >>> print entries['read_perm']
+      zope.Public
+      >>> print entries['write_perm']
+      zope.Public
     """
     assert (klass is _marker) != (checker is _marker)
     entry = {}
@@ -216,10 +240,11 @@ def getPermissionIds(name, checker=_marker, klass=_marker):
     if klass is not _marker:
         checker = getCheckerForInstancesOf(klass)
     
-    if checker is not None and \
-           INameBasedChecker.providedBy(checker):
-        entry['read_perm'] = checker.permission_id(name) or 'N/A'
-        entry['write_perm'] = checker.setattr_permission_id(name) or 'N/A'
+    if checker is not None and INameBasedChecker.providedBy(checker):
+        entry['read_perm'] = _evalId(checker.permission_id(name)) \
+                             or 'N/A'
+        entry['write_perm'] = _evalId(checker.setattr_permission_id(name)) \
+                              or 'N/A'
     else:
         entry['read_perm'] = entry['write_perm'] = None 
 
@@ -426,9 +451,60 @@ def getInterfaceForAttribute(name, interfaces=_marker, klass=_marker,
         interfaces = interfaces.keys()
         
     for interface in interfaces:
-        if name in interface.names():                
+        if name in interface.names():
             if asPath:
                 return getPythonPath(interface)
             return interface
 
     return None
+
+
+def columnize(entries, columns=3):
+    """Place a list of entries into columns.
+
+    Examples::
+
+      >>> print columnize([1], 3)
+      [[1]]
+
+      >>> print columnize([1, 2], 3)
+      [[1], [2]]
+
+      >>> print columnize([1, 2, 3], 3)
+      [[1], [2], [3]]
+      
+      >>> print columnize([1, 2, 3, 4], 3)
+      [[1, 2], [3], [4]]
+
+      >>> print columnize([1], 2)
+      [[1]]
+
+      >>> print columnize([1, 2], 2)
+      [[1], [2]]
+
+      >>> print columnize([1, 2, 3], 2)
+      [[1, 2], [3]]
+      
+      >>> print columnize([1, 2, 3, 4], 2)
+      [[1, 2], [3, 4]]
+    """
+    if len(entries)%columns == 0:
+        per_col = len(entries)/columns
+        last_full_col = columns
+    else: 
+        per_col = len(entries)/columns + 1
+        last_full_col = len(entries)%columns
+    columns = []
+    col = []
+    in_col = 0
+    for entry in entries:
+        if in_col < per_col - int(len(columns)+1 > last_full_col):
+            col.append(entry)
+            in_col += 1
+        else:
+            columns.append(col)
+            col = [entry]
+            in_col = 1
+    if col:
+        columns.append(col)
+    return columns
