@@ -11,10 +11,12 @@
        tal:define="info view/getFileInfo"
        tal:condition="info">
     <i i18n:translate="">File:</i> 
-    <tal:block content="info/file"/><span i18n:translate="">, from</span>
-    <tal:block content="string: (line ${info/line}, column ${info/column})"/>
+    <tal:block content="info/file"/>, <span i18n:translate="">from</span>
+    (<span i18n:translate="">line</span> <tal:block content="info/line"/>,
+    <span i18n:translate="">column</span> <tal:block content="info/column"/>)
     <span i18n:translate="">to</span>
-    <tal:block content="string: (line ${info/eline}, column ${info/ecolumn})"/>
+    (<span i18n:translate="">line</span> <tal:block content="info/eline"/>,
+    <span i18n:translate="">column</span> <tal:block content="info/ecolumn"/>)
   </div>
 
   <div class="indent" 

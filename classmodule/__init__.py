@@ -494,7 +494,7 @@ class ClassModule(Module):
       >>> cm = ClassModule()
 
       >>> cm.getDocString()
-      'Zope 3 root.'
+      u'Zope 3 root.'
       >>> cm.getFileName()
       ''
       >>> cm.getPath()
@@ -550,7 +550,7 @@ class ClassModule(Module):
 
     def getDocString(self):
         """See Module class."""
-        return 'Zope 3 root.'
+        return _('Zope 3 root.')
 
     def getFileName(self):
         """See Module class."""

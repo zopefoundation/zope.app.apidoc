@@ -23,6 +23,7 @@ from zope.configuration.config import ConfigurationContext
 from zope.proxy import removeAllProxies
 
 from zope.app import zapi
+from zope.app.i18n import ZopeMessageIDFactory as _
 from zope.app.apidoc.utilities import getPythonPath, stx2html, columnize
 from zope.app.apidoc.utilities import getPermissionIds, getFunctionSignature
 from zope.app.apidoc.utilities import getPublicAttributes
@@ -388,7 +389,7 @@ class ModuleDetails(object):
 
           >>> crumbs = [crumb.items() for crumb in view.getBreadCrumbs()]
           >>> pprint(crumbs)
-          [[('url', 'http://127.0.0.1'), ('name', '[top]')],
+          [[('url', 'http://127.0.0.1'), ('name', u'[top]')],
            [('url', 'http://127.0.0.1/zope'), ('name', 'zope')],
            [('url', 'http://127.0.0.1/zope/app'), ('name', 'app')],
            [('url', 'http://127.0.0.1/zope/app/apidoc'), ('name', 'apidoc')],
@@ -406,7 +407,7 @@ class ModuleDetails(object):
             module = zapi.getParent(module)
 
         crumbs.append(
-            {'name': '[top]',
+            {'name': _('[top]'),
              'url': zapi.getView(module, 'absolute_url', self.request)()} )
 
         crumbs.reverse()
