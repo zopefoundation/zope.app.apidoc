@@ -302,7 +302,12 @@ objects and/or generate absolute paths of files,
 
 the parser info object,
 
-  >>> root.info
+  >>> info = `root.info`
+  
+  # Windows fix
+  >>> info = info.replace('\\\\', '/')
+
+  >>> print info
   File
   "/opt/zope/Zope3/Zope3-Fresh/src/zope/app/apidoc/codemodule/configure.zcml",
   line 1.0-53.0
