@@ -61,7 +61,7 @@ class APIDocumentation(ReadContainerBase):
 
     def items(self):
         """See zope.app.container.interfaces.IReadContainer"""
-        items = list(zapi.getUtilitiesFor(self, IDocumentationModule))
+        items = list(zapi.getUtilitiesFor(IDocumentationModule))
         items.sort()
         utils = []
         for key, value in items:
