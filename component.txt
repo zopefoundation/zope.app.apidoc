@@ -260,7 +260,7 @@ see how the function handles subscriptions:
   {'doc': 'doc info',
    'factory': '__builtin__.MyResult',
    'factory_url': '__builtin__/MyResult',
-   'name': '<subscription>',
+   'name': u'<subscription>',
    'provided': None,
    'required': [{'module': '__builtin__', 'name': 'IFoo'},
                 {'module': '__builtin__', 'name': 'IBar'}],
@@ -295,7 +295,7 @@ registrations:
 
   >>> pprint(component.getUtilityInfoDictionary(
   ...     component.getUtilities(IFooBar).next()))
-  {'name': '<i>no name</i>',
+  {'name': u'<i>no name</i>',
    'path': '__builtin__.MyFooBar',
    'url': '__builtin__/MyFooBar',
    'url_name': '__noname__'}

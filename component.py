@@ -13,7 +13,7 @@
 ##############################################################################
 """Component Inspection Utilities
 
-$Id: browser.py 29199 2005-02-17 22:38:55Z srichter $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 import types
@@ -25,6 +25,7 @@ from zope.interface import Interface
 from zope.publisher.interfaces import IRequest
 
 from zope.app import zapi
+from zope.app.i18n import ZopeMessageIDFactory as _
 from zope.app.apidoc.utilities import getPythonPath, relativizePath
 from zope.app.apidoc.utilities import renderText
 from zope.app.apidoc.classregistry import classRegistry
@@ -177,7 +178,7 @@ def getAdapterInfoDictionary(reg):
         'required': [getInterfaceInfoDictionary(iface)
                      for iface in reg.required
                      if iface is not None],
-        'name': getattr(reg, 'name', '<subscription>'),
+        'name': getattr(reg, 'name', _('<subscription>')),
         'factory': path,
         'factory_url': url,
         'doc': doc,
@@ -198,7 +199,7 @@ def getFactoryInfoDictionary(reg):
 
     path = getPythonPath(callable)
 
-    return {'name': reg.name or '<i>no name</i>',
+    return {'name': reg.name or _('<i>no name</i>'),
             'title': getattr(factory, 'title', u''),
             'description': renderText(getattr(factory, 'description', u''),
                                       module=callable.__module__),
@@ -213,7 +214,7 @@ def getUtilityInfoDictionary(reg):
         klass = reg.component.__class__
 
     path = getPythonPath(klass)
-    return {'name': reg.name or '<i>no name</i>',
+    return {'name': reg.name or _('<i>no name</i>'),
             'url_name': reg.name or '__noname__',
             'path': path,
             'url': path.replace('.', '/')}
