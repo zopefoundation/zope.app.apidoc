@@ -132,7 +132,10 @@ class ZCMLFileDetails(ConfigurationContext):
     def __init__(self, context, request):
         self.context = context
         self.request = request
-        package = removeAllProxies(zapi.getParent(context))._Module__module
+        # TODO: This is not the best way to do this. We really need to revisit
+        # the entire implementation and move more to the ZCMLFile object.
+        package = zapi.removeSecurityProxy(
+            zapi.getParent(context))._Module__module
         # Keep track of the package that is used for relative paths
         self._package_stack = [package]
         # Keep track of completed actions, so none is executed twice
@@ -364,7 +367,7 @@ class FunctionDetails(object):
     """Represents the details of the function."""
 
     def getDocString(self):
-        r"""Get the doc string of the class in a rendered format.
+        r"""Get the doc string of the function in a rendered format.
 
         Example::
 
@@ -379,7 +382,7 @@ class FunctionDetails(object):
 
 
     def getAttributes(self):
-        """Get all attributes of this class.
+        """Get all attributes of this function.
 
         Example::
 
@@ -394,14 +397,12 @@ class FunctionDetails(object):
            ('type_link', '__builtin__/bool'),
            ('value', 'True')]
         """
-        attrs = []
-        func = removeAllProxies(self.context)
         return [{'name': name,
                  'value': `attr`,
                  'type': type(attr).__name__,
                  'type_link': _getTypePath(type(attr)).replace('.', '/')}
                 
-                for name, attr in func.getAttributes()]
+                for name, attr in self.context.getAttributes()]
 
 
 class ClassDetails(object):
@@ -546,15 +547,17 @@ class ClassDetails(object):
            ('write_perm', None)]
         """
         attrs = []
-        klass = removeAllProxies(self.context)
-        for name, attr, iface in klass.getAttributes():
+        for name, attr, iface in self.context.getAttributes():
             entry = {'name': name,
                      'value': `attr`,
                      'type': type(attr).__name__,
                      'type_link': _getTypePath(type(attr)),
                      'interface': getPythonPath(iface)}
-            checker = removeAllProxies(klass.getSecurityChecker())
-            entry.update(getPermissionIds(name, checker))
+            # Since checkers do not have security declarations on their API,
+            # we have to remove the security wrapper to get to the API calls. 
+            checker = self.context.getSecurityChecker()
+            entry.update(
+                getPermissionIds(name, zapi.removeSecurityProxy(checker)))
             attrs.append(entry)
         return attrs
 
@@ -589,7 +592,12 @@ class ClassDetails(object):
             ('write_perm', None)]]
         """
         methods = []
-        klass = removeAllProxies(self.context)
+        # remove the security proxy, so that `attr` is not proxied. We could
+        # unproxy `attr` for each turn, but that would be less efficient.
+        #
+        # `getPermissionIds()` also expects the class's security checker not
+        # to be proxied.
+        klass = zapi.removeSecurityProxy(self.context)
         for name, attr, iface in klass.getMethods():
             entry = {'name': name,
                      'signature': getFunctionSignature(attr),
@@ -676,10 +684,10 @@ class ModuleDetails(object):
         """
         entries = [{'name': name,
                     'url': zapi.getView(obj, 'absolute_url', self.request)(),
-                    'ismodule': type(removeAllProxies(obj)) is Module,
-                    'isclass': type(removeAllProxies(obj)) is Class,
-                    'isfunction': type(removeAllProxies(obj)) is Function,
-                    'iszcmlfile': type(removeAllProxies(obj)) is ZCMLFile,}
+                    'ismodule': zapi.isinstance(obj, Module),
+                    'isclass': zapi.isinstance(obj, Class),
+                    'isfunction': zapi.isinstance(obj, Function),
+                    'iszcmlfile': zapi.isinstance(obj, ZCMLFile)}
                    for name, obj in self.context.items()]
         entries.sort(lambda x, y: cmp(x['name'], y['name']))
         if columns:
@@ -710,7 +718,8 @@ class ModuleDetails(object):
         names = self.context.getPath().split('.') 
         crumbs = []
         module = self.context
-        while type(removeAllProxies(module)) is Module:
+        # I really need the class here, so remove the proxy.
+        while zapi.removeSecurityProxy(module).__class__ is Module:
             crumbs.append(
                 {'name': zapi.name(module),
                  'url': zapi.getView(module, 'absolute_url', self.request)()}

@@ -17,8 +17,6 @@ $Id$
 """
 __docformat__ = 'restructuredtext'
 
-from zope.proxy import removeAllProxies
-
 from zope.app import zapi
 from zope.app.location import LocationProxy
 from zope.app.apidoc.ifacemodule.browser import InterfaceDetails
@@ -105,8 +103,7 @@ class ServiceDetails(object):
     
     def implementations(self):
         """Retrieve a list of implementations of this service."""
-        impl = map(removeAllProxies, self.context.implementations)
-        impl = map(lambda x: x.__class__, self.context.implementations)
+        impl = [impl.__class__ for impl in self.context.implementations]
         return [{'path': getPythonPath(klass),
                  'url': getPythonPath(klass).replace('.', '/')}
                 for klass in impl]

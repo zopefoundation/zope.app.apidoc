@@ -23,7 +23,6 @@ from zope.component.presentation import DefaultSkinRegistration
 from zope.component.presentation import LayerRegistration
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import relativizePath
-from zope.proxy import removeAllProxies
 from zope.app.i18n import ZopeMessageIDFactory as _
 
 # TODO: Temporary hack, since registering an adapter for a particular class is
@@ -183,7 +182,7 @@ class SkinDocumentation(object):
         
         if 'default' in self.context.layers:
             default = LayerRegistration('default',
-                                        'This is a predefined skin.')
+                                        'This is a predefined layer.')
             layers.append(ILayerDocumentation(default))
         return layers
         
@@ -197,7 +196,7 @@ class SkinDocumentation(object):
 
         # We can safely assume that for global skin registrations we have an
         # configuration info object.
-        info = removeAllProxies(self.context.doc)
+        info = self.context.doc
         doc = _('$file (line $line)')
         doc.mapping = {'file': relativizePath(info.file),
                        'line': info.line}
@@ -259,7 +258,7 @@ class LayerDocumentation(object):
 
         # We can safely assume that for global layer registrations we have an
         # configuration info object.
-        info = removeAllProxies(self.context.doc)
+        info = self.context.doc
         doc = _('$file (line $line)')
         doc.mapping = {'file': relativizePath(info.file),
                        'line': info.line}

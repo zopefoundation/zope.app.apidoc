@@ -25,7 +25,6 @@ from os.path import dirname
 
 import zope
 from zope.interface import implements, implementedBy
-from zope.proxy import removeAllProxies
 from zope.publisher.browser import TestRequest
 from zope.security.checker import getCheckerForInstancesOf, Global
 from zope.security.interfaces import INameBasedChecker
@@ -123,6 +122,9 @@ def getPythonPath(obj):
     This method makes only sense for classes and interfaces. Instances do not
     have a `__name__` attribute, so we would expect them to fail.
 
+    If a method is passed in, its class path is returned, since this is the
+    only path we have a page for.
+
     Example::
 
       >>> from zope.interface import Interface
@@ -151,15 +153,19 @@ def getPythonPath(obj):
     """
     if obj is None:
         return None
-    if hasattr(obj, "im_class"):
-        obj = obj.im_class
-    module = obj.__module__
-    return '%s.%s' %(module, obj.__name__)
+
+    # Even for methods `im_class` and `__module__` is not allowed to be
+    # accessed (which is probably not a bad idea). So, we remove the security
+    # proxies for this check.
+    naked = zapi.removeSecurityProxy(obj)
+    if hasattr(naked, "im_class"):
+        naked = naked.im_class
+    module = naked.__module__
+    return '%s.%s' %(module, naked.__name__)
 
 
 def _evalId(id):
-    id = removeAllProxies(id)
-    if isinstance(id, Global):
+    if zapi.isinstance(id, Global):
         id = id.__name__
         if id == 'CheckerPublic':
             id = 'zope.Public'
