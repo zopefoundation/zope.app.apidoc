@@ -13,7 +13,7 @@
 ##############################################################################
 """Interface Details View
 
-$Id: browser.py,v 1.6 2004/03/30 02:00:59 srichter Exp $
+$Id: browser.py,v 1.7 2004/04/05 19:44:05 jim Exp $
 """
 from types import FunctionType, MethodType, ClassType, TypeType
 from zope.component import ComponentLookupError
@@ -196,7 +196,7 @@ class InterfaceDetails(object):
           >>> details.getDoc()[:34]
           '<h1>This is the Foo interface</h1>'
         """
-        return stx2html(self.context.getDoc())
+        return stx2html(self.context.__doc__)
 
     def getBases(self):
         """Get all bases of this class
