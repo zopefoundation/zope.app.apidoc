@@ -53,7 +53,8 @@
 
   <td style="width:16px">
     <a href=""
-       tal:attributes="href string:?tree-state=${nodeInfo/tree-state}"
+       tal:attributes="href 
+           string:${request/getURL}?tree-state=${nodeInfo/tree-state}"
        tal:condition="node/hasChildren">
       <tal:block condition="not:nodeInfo/last-level-node">
         <img tal:attributes="src context/++resource++tree_images/plus_vline.png"
