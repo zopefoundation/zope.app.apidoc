@@ -13,7 +13,7 @@
 ##############################################################################
 """Interface Details View
 
-$Id: browser.py,v 1.3 2004/03/05 22:08:51 jim Exp $
+$Id: browser.py,v 1.4 2004/03/09 12:39:02 srichter Exp $
 """
 
 from zope.component import ComponentLookupError
@@ -157,15 +157,10 @@ class InterfaceDetails(object):
     def getFactories(self):
         """Return the factories, who will provide objects implementing this
         interface."""
-        service = zapi.getService(self.context, 'Factories')
-        try:
-            factories = service.getFactoriesFor(removeAllProxies(self.context))
-        except ComponentLookupError:
-            return []
-        return [{'name': n,
-                 'factory': f,
-                 'title': service.getFactoryInfo(n).title
-                 } for n, f in factories]
+        iface = removeAllProxies(self.context)
+        return [{'name': n, 'factory': f, 'title': f.title} \
+                for n, f in zapi.queryUtilitiesFor(IFactory, ()) \
+                if ISource in tuple(f.getInterfaces)]
 
     def getUtilities(self):
         """Return all utilities that provide this interface."""

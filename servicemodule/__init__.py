@@ -13,7 +13,7 @@
 ##############################################################################
 """Service Documentation Module
 
-$Id: __init__.py,v 1.4 2004/03/05 15:46:25 eddala Exp $
+$Id: __init__.py,v 1.5 2004/03/09 12:39:03 srichter Exp $
 """
 from zope.interface import implements
 from zope.component import ComponentLookupError
@@ -58,8 +58,8 @@ class ServiceModule(ReadContainerBase):
       >>> print '\n'.join([id for id, iface in module.items()][:4])
       Adapters
       EventPublication
-      Factories
       Presentation
+      Services
       
       >>> setup.tearDown()
     """
