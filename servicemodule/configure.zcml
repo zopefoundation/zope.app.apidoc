@@ -1,0 +1,37 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    >
+
+  <class class=".ServiceModule">
+    <allow interface="zope.app.apidoc.interfaces.IDocumentationModule" />
+    <allow interface="zope.app.container.interfaces.IReadContainer" />
+  </class>
+
+  <class class=".Service">
+    <allow attributes="name interface implementations" />
+  </class>
+
+  <utility
+      provides="zope.app.apidoc.interfaces.IDocumentationModule"
+      factory=".ServiceModule"
+      name="Service"
+      />
+
+  <browser:page
+      for=".ServiceModule"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".browser.Menu"
+      name="menu.html"
+      template="menu.pt"
+      />
+
+  <browser:page
+      for=".Service"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".browser.ServiceDetails"
+      name="index.html"
+      template="index.pt"
+      />
+
+</configure>

@@ -1,0 +1,53 @@
+<configure
+  xmlns="http://namespaces.zope.org/browser"
+  i18n_domain="zope">
+
+  <resource name="apidoc.css" file="apidoc.css" />
+
+  <page
+      for="*"
+      name="apidoc_macros"
+      permission="zope.View"
+      class=".macros.APIDocumentationMacros"
+      allowed_interface="zope.interface.common.mapping.IItemMapping" 
+      />
+  
+  <page 
+      for="*"
+      name="menu_macros"
+      permission="zope.View"
+      template="menu_macros.pt"
+      />
+
+  <page 
+      for="*"
+      name="details_macros"
+      permission="zope.View"
+      template="details_macros.pt"
+      />
+
+  <pages
+    for="zope.app.apidoc.APIDocumentation"
+    class=".apidoc.APIDocumentationView"
+    permission="zope.app.apidoc.UseAPIDoc">
+
+    <page
+        name="index.html"
+        template="index.pt" />
+
+    <page
+      name="modulelist.html"
+      template="modules.pt" />
+
+    <page
+      name="menu.html"
+      template="menu.pt" />
+
+    <page
+      name="contents.html"
+      template="contents.pt" />
+
+  </pages>
+
+</configure>
+

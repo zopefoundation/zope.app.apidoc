@@ -1,0 +1,39 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  i18n_domain="zope">
+
+  <permission
+      id="zope.app.apidoc.UseAPIDoc"
+      title="[zope.app.apidoc.UseAPIDoc] Access Online API documentation"
+      />
+
+  <class class=".APIDocumentation">
+    <require
+        interface="zope.app.container.interfaces.IReadContainer"
+        permission="zope.ManageApplication"
+        />
+  </class>
+
+  <view
+      name="apidoc" type="*"
+      provides="zope.app.traversing.interfaces.ITraversable" for="*"
+      factory=".apidocNamespace"
+      />
+  <adapter
+      name="apidoc"
+      provides="zope.app.traversing.interfaces.ITraversable" for="*"
+      factory=".apidocNamespace"
+      />
+
+  <include package=".browser" />
+
+  <!-- API Documentation Modules -->
+  <include package=".classmodule" />
+  <include package=".ifacemodule" />
+  <include package=".servicemodule" />
+  <include package=".utilitymodule" />
+  <include package=".viewmodule" />
+  <include package=".zcmlmodule" />
+  <!--include package=".cookbookmodule" /-->
+
+</configure>

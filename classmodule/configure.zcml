@@ -31,28 +31,28 @@
 
   <browser:page
     for=".ClassModule"
-    permission="zope.View"
+    permission="zope.app.apidoc.UseAPIDoc"
     class=".browser.Menu"
     name="menu.html"
     template="menu.pt" />
 
   <browser:page
     for=".IModuleDocumentation"
-    permission="zope.View"
+    permission="zope.app.apidoc.UseAPIDoc"
     class=".browser.ModuleDetails"
     name="index.html"
     template="module_index.pt" />
 
   <browser:page
     for=".IClassDocumentation"
-    permission="zope.View"
+    permission="zope.app.apidoc.UseAPIDoc"
     class=".browser.ClassDetails"
     name="index.html"
     template="class_index.pt" />
 
   <browser:page
     for=".IFunctionDocumentation"
-    permission="zope.View"
+    permission="zope.app.apidoc.UseAPIDoc"
     class=".browser.FunctionDetails"
     name="index.html"
     template="function_index.pt" />

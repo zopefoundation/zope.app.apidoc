@@ -1,0 +1,44 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser">
+
+  <class class=".InterfaceModule">
+    <allow interface=".IInterfaceModule" />
+    <allow interface="zope.app.container.interfaces.IReadContainer" />
+  </class>
+
+  <!-- Register the module with the API Documentation System -->
+
+  <utility
+      provides="zope.app.apidoc.interfaces.IDocumentationModule"
+      factory=".InterfaceModule"
+      name="Interface" />
+
+  <!-- The name for the interface content cannot be 'index.html', since the 
+       introspector uses this name already. -->
+
+  <browser:page
+      for="zope.interface.interfaces.IInterface"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".browser.InterfaceDetails"
+      name="apiindex.html"
+      template="index.pt"
+      />
+
+  <!-- Interface Documentation Module Menu -->
+
+  <adapter
+      provides="zope.app.tree.interfaces.IChildObjects"
+      for=".IInterfaceModule"
+      factory=".menu.InterfaceModuleChildObjects"
+      />
+
+  <browser:page
+      for=".InterfaceModule"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".menu.Menu"
+      name="menu.html"
+      template="menu.pt"
+      />
+
+</configure>
