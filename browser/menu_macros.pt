@@ -24,7 +24,7 @@
     <metal:block define-slot="ecmascript_slot" />
 
     <link rel="icon" type="image/png"
-          tal:attributes="href context/++resource++favicon.png" />
+          tal:attributes="href context/++resource++favicon.png|default" />
   </head>
 
 <head>
