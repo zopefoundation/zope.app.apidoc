@@ -15,6 +15,8 @@
 
 $Id$
 """
+__docformat__ = 'restructuredtext'
+
 from zope.interface import implements
 from zope.component import ComponentLookupError
 
@@ -41,7 +43,7 @@ class Service(object):
 class ServiceModule(ReadContainerBase):
     r"""Represent the Documentation of all Interfaces.
 
-    This documentation is implemented using a simply 'IReadContainer'. The
+    This documentation is implemented using a simple `IReadContainer`. The
     items of the container are all the interfaces listed in the closest
     interface service and above.
 

@@ -15,6 +15,8 @@
 
 $Id$
 """
+__docformat__ = 'restructuredtext'
+
 from zope.proxy import removeAllProxies
 
 from zope.app import zapi
@@ -25,7 +27,7 @@ from zope.app.apidoc.utilities import getPythonPath
 class Menu(object):
     """Menu View Helper Class
 
-    'node' is a 'zope.app.tree.node.Node' instance.
+    `node` is a `zope.app.tree.node.Node` instance.
 
     Examples::
 

@@ -137,7 +137,7 @@ class Menu(object):
 
     A class that helps building the menu. The menu_macros expects the menu view
     class to have the `getMenuTitle(node)` and `getMenuLink(node)` methods
-    implemented. ``node`` is a ``zope.app.tree.node.Node`` instance.
+    implemented. `node` is a `zope.app.tree.node.Node` instance.
 
     Examples::
 
