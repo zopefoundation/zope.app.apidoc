@@ -15,17 +15,18 @@
     </div>
 
     <div>
-      Class Finder: <br/>
-      <i>(Enter partial Python path)</i></div>
+      <span i18n:translate="">Class Finder:</span> <br/>
+      <i i18n:translate="">(Enter partial Python path)</i></div>
     <form action="menu.html" method="POST">
       <input type="text" name="path" 
              style="font-size: 80%; width=95%" />
       <input type="submit" name="SUBMIT" value="Find" 
-             style="font-size: 80%"/>
+             i18n:attributes="value find-button" style="font-size: 80%"/>
     </form>
 
     <p style="font-size: 120%">
-      <a href="./index.html" target="main">Browse Zope Source</a>
+      <a href="./index.html" target="main" i18n:translate="">Browse
+        Zope Source</a>
     </p>
   </div>
 

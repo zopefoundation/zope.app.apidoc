@@ -26,7 +26,7 @@ class ClassModuleTests(BrowserTestCase):
                                 basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find('Browse Zope Source') > 0)
+        self.assert_(body.find('Zope Source') > 0)
         self.checkForBrokenLinks(body, '/++apidoc++/Class/menu.html',
                                  basic='mgr:mgrpw')
 

@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Zope 3 API Docs</title>
+    <title i18n:translate="">Zope 3 API Docs</title>
   </head>
   <frameset cols="20%, *" border="1">
     <frameset rows="120, *"> 

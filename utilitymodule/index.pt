@@ -14,7 +14,7 @@
        tal:define="component view/getComponent"
        tal:condition="component">
     <h3>
-      Component: 
+      <span i18n:translate="">Component:</span>
       <a href=""
          tal:attributes="href 
              string:../../../Class/${component/url}/index.html"
@@ -27,7 +27,7 @@
     </div>
   </div>
 
-  <h2 class="details-section">Attributes/Fields</h2>
+  <h2 class="details-section" i18n:translate="">Attributes/Fields</h2>
 
   <div class="indent"
       tal:define="attributes iface/getAttributes;
@@ -37,7 +37,8 @@
       tal:condition="python: attributes or fields">
   
     <li tal:repeat="attr attributes">
-      <b><code tal:content="attr/name">attr</code></b> (Attribute)<br>
+      <b><code tal:content="attr/name">attr</code></b>
+      	<span i18n:translate="">(Attribute)</span><br>
       <div class="inline-documentation" tal:content="structure attr/doc">
         attr desc
       </div>      
@@ -57,14 +58,14 @@
   </ul>
 
   <p tal:condition="python: not (attributes or fields)">
-    <em>There are no attributes or fields specified.</em>
+    <em i18n:translate="">There are no attributes or fields specified.</em>
   </p>
 
   </div>
 
 
 
-  <h2 class="details-section">Methods</h2>
+  <h2 class="details-section" i18n:translate="">Methods</h2>
 
   <div class="indent"
        tal:define="methods iface/getMethods">
@@ -81,7 +82,7 @@
   </ul>
 
   <p tal:condition="not: methods">
-    <em>There are no methods or fields specified.</em>
+    <em i18n:translate="">There are no methods or fields specified.</em>
   </p>
 
   </div>

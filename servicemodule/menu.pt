@@ -1,7 +1,7 @@
 <html metal:use-macro="views/apidoc_macros/menu">
 <body>
 
-  <p metal:fill-slot="pre_menu" class="small">
+  <p metal:fill-slot="pre_menu" class="small" i18n:translate="">
     This is a list of all available services by name.
   </p>
 

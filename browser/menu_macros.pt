@@ -4,7 +4,7 @@
   xmlns="http://www.w3.org/1999/xhtml"
   xml:lang="en"
   lang="en" 
-  i18n:domain="apidoc">
+  i18n:domain="zope">
 
   <head>
     <!-- Waaa -->
@@ -31,7 +31,7 @@
 
 <body>
 
-  <div class="menu">Menu</div>
+  <div class="menu" i18n:translate="">Menu</div>
  
   <metal:block define-slot="pre_menu" />
 

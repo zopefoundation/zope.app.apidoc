@@ -14,7 +14,7 @@
   </div>
 
   <div class="indent">
-    <h3>Interface: 
+    <h3><span i18n:translate="">Interface:</span>
       <a href=""
          tal:attributes="href 
              string:../../Interface/${iface/getId}/apiindex.html"
@@ -23,7 +23,7 @@
     </h3>
   </div>
 
-  <h2 class="details-section">Attributes/Fields</h2>
+  <h2 class="details-section" i18n:translate="">Attributes/Fields</h2>
 
   <div class="indent"
       tal:define="attributes iface/getAttributes;
@@ -52,14 +52,14 @@
   </ul>
 
   <p tal:condition="python: not (attributes or fields)">
-    <em>There are no attributes or fields specified.</em>
+    <em i18n:translate="">There are no attributes or fields specified.</em>
   </p>
 
   </div>
 
 
 
-  <h2 class="details-section">Methods</h2>
+  <h2 class="details-section" i18n:translate="">Methods</h2>
 
   <div class="indent"
        tal:define="methods iface/getMethods">
@@ -76,14 +76,14 @@
   </ul>
 
   <p tal:condition="not: methods">
-    <em>There are no methods or fields specified.</em>
+    <em i18n:translate="">There are no methods or fields specified.</em>
   </p>
 
   </div>
 
 
   
-  <h2 class="details-section">Implementations</h2>
+  <h2 class="details-section" i18n:translate="">Implementations</h2>
   <div class="indent">
     <ul>
       <li tal:repeat="impl view/implementations">

@@ -5,7 +5,7 @@
 
     <form action="./index.html" target="main">
       <p>
-        Enter the interface name:
+        <span i18n:translate="">Enter the interface name:</span>
         <select name="iface" 
                style="font-size: 80%; width=95%" >
           <option 
@@ -15,7 +15,7 @@
         </select>
       </p>
       <p>
-        Presentation Type:
+        <span i18n:translate="">Presentation Type:</span>
         <select name="type" 
                style="font-size: 80%; width=95%" >
           <option 
@@ -25,14 +25,15 @@
         </select>
       </p>
       <p>
-        Show all views:
+        <span i18n:translate="">Show all views:</span>
         <input type="checkbox" name="all" value="all"/>
       </p>
       <input type="submit" name="SUBMIT" value="Show" 
+             i18n:attributes="value show-button"
              style="font-size: 80%; width=95%"/>
     </form>
 
-    <a href="./skin_layer.html" target="main">
+    <a href="./skin_layer.html" target="main" i18n:translate="">
       Show Skins and Layers
     </a>
   </div>

@@ -26,7 +26,7 @@ class APIDocTests(BrowserTestCase):
                                 basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find('Click on one of the Documentation Modules') > 0)
+        self.assert_(body.find('Click on one of the Documentation') > 0)
         self.checkForBrokenLinks(body, '/++apidoc++/menu.html',
                                  basic='mgr:mgrpw')
 
@@ -55,7 +55,7 @@ class APIDocTests(BrowserTestCase):
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
         self.assert_(body.find(
-            '<a href="contents.html" target="main">Zope 3 API Docs</a>') > 0)
+            '<a href="contents.html" target="main">Zope') > 0)
         self.checkForBrokenLinks(body, '/++apidoc++/modulelist.html',
                                  basic='mgr:mgrpw')
 

@@ -13,7 +13,7 @@
   </div>
 
 
-  <h2 class="details-section">Bases</h2>
+  <h2 class="details-section" i18n:translate="">Bases</h2>
 
     <div class="indent"
          tal:define="bases view/getBases">
@@ -27,12 +27,12 @@
     </ul>
     
     <p tal:condition="not: bases">
-      <em>There are no base classes.</em>
+      <em i18n:translate="">There are no base classes.</em>
     </p>
     
     </div>
 
-  <h2 class="details-section">Implemented Interfaces</h2>
+  <h2 class="details-section" i18n:translate="">Implemented Interfaces</h2>
 
     <div class="indent"
          tal:define="ifaces view/getInterfaces">
@@ -47,13 +47,13 @@
     </ul>
     
     <p tal:condition="not: ifaces">
-      <em>There are no implemented interfaces.</em>
+      <em i18n:translate="">There are no implemented interfaces.</em>
     </p>
     
     </div>
 
 
-  <h2 class="details-section">Attributes/Properties</h2>
+  <h2 class="details-section" i18n:translate="">Attributes/Properties</h2>
 
   <div class="indent"
       tal:define="attributes view/getAttributes">
@@ -66,17 +66,17 @@
         (type: <code tal:content="attr/type" />)
       </tal:omit-tag>
       <tal:omit-tag condition="attr/type_link">
-        (type: 
+        (<span i18n:translate="">type:</span>
         <a href="" 
            tal:attributes="href string:./index.html?path=${attr/type_link}">
           <code tal:content="attr/type" /></a>)
       </tal:omit-tag>
       <br/>
-      <i>Value:</i>
+      <i i18n:translate="">Value:</i>
       <code tal:content="attr/value">u''</code><br />
 
       <span class="small" tal:condition="attr/interface">
-        <i>Interface:</i>
+        <i i18n:translate="">Interface:</i>
         <a href=""
            tal:attributes="href 
           string:${view/getBaseURL}/Interface/${attr/interface}/apiindex.html"
@@ -93,13 +93,13 @@
   </ul>
 
   <p tal:condition="not: attributes">
-    <em>There are no attributes in this class.</em>
+    <em i18n:translate="">There are no attributes in this class.</em>
   </p>
 
   </div>
 
 
-  <h2 class="details-section">Methods</h2>
+  <h2 class="details-section" i18n:translate="">Methods</h2>
 
   <div class="indent"
       tal:define="methods view/getMethods">
@@ -115,7 +115,7 @@
       </div>
 
       <span class="small" tal:condition="method/interface">
-        <i>Interface:</i>
+        <i i18n:translate="">Interface:</i>
         <a href=""
            tal:attributes="href 
           string:${view/getBaseURL}/Interface/${method/interface}/apiindex.html"
@@ -124,7 +124,7 @@
       
       <span class="small" 
           tal:condition="python: method['read_perm'] and method['write_perm']">
-        <i>Permissions:</i>
+        <i i18n:translate="">Permissions:</i>
         <span tal:replace="method/read_perm">zope.View</span> (read), 
         <span tal:replace="method/write_perm">zope.View</span> (write)
       </span>
@@ -133,7 +133,7 @@
   </ul>
 
   <p tal:condition="not: methods">
-    <em>There are no methods in this class.</em>
+    <em i18n:translate="">There are no methods in this class.</em>
   </p>
 
   </div>

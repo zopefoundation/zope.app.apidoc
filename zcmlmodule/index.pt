@@ -10,22 +10,23 @@
   <div class="indent" 
        tal:define="info view/getFileInfo"
        tal:condition="info">
-    <i>File:</i> 
-    <tal:block content="info/file"/>, from
-    <tal:block content="string: (line ${info/line}, column ${info/column})"/> to
+    <i i18n:translate="">File:</i> 
+    <tal:block content="info/file"/><span i18n:translate="">, from</span>
+    <tal:block content="string: (line ${info/line}, column ${info/column})"/>
+    <span i18n:translate="">to</span>
     <tal:block content="string: (line ${info/eline}, column ${info/ecolumn})"/>
   </div>
 
   <div class="indent" 
        tal:condition="view/getInfo">
-    <i>Info:</i>
+    <i i18n:translate="">Info:</i>
     <tal:block replace="view/getInfo" />
   </div>
 
   <div class="indent" 
        tal:define="handler view/getHandler"
        tal:condition="handler">
-    <i>Handler:</i>
+    <i i18n:translate="">Handler:</i>
     <a href=""
        tal:attributes="href 
            string:../../../Class/${handler/url}/index.html"
@@ -33,7 +34,7 @@
     </a>
   </div>
 
-  <h2 class="details-section">Schema</h2>
+  <h2 class="details-section" i18n:translate="">Schema</h2>
 
   <div class="indent">
     <a href=""
@@ -69,7 +70,7 @@
   </ul>
 
   <p tal:condition="not: fields">
-    <em>There are no fields specified.</em>
+    <em i18n:translate="">There are no fields specified.</em>
   </p>
 
   </div>
@@ -78,7 +79,7 @@
       define="dir view/getSubdirectives"
       condition="dir">
 
-  <h2 class="details-section">Subdirectives</h2>
+  <h2 class="details-section" i18n:translate="">Subdirectives</h2>
 
   <div class="indent"
        tal:repeat="dir view/getSubdirectives">
@@ -89,7 +90,7 @@
 
   <div class="indent" 
        tal:condition="dir/handler">
-    <i>Handler:</i>
+    <i i18n:translate="">Handler:</i>
     <a href=""
        tal:attributes="href 
            string:../../../Class/${dir/handler/url}/index.html"
@@ -131,7 +132,7 @@
   </ul>
 
   <p tal:condition="not: fields">
-    <em>There are no fields specified.</em>
+    <em i18n:translate="">There are no fields specified.</em>
   </p>
 
   </div>

@@ -23,6 +23,7 @@ from zope.app.location.interfaces import ILocation
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase
 from zope.app.servicenames import Services
+from zope.app.i18n import ZopeMessageIDFactory as _
 
 class Service(object):
     """Object representing a service in the API documentation"""
@@ -69,7 +70,7 @@ class ServiceModule(ReadContainerBase):
     implements(IDocumentationModule)
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
-    title = 'Services'
+    title = _('Services')
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
     description = """

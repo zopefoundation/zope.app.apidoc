@@ -235,9 +235,9 @@ class ClassDetails(object):
           [('interface', 'zope.app.apidoc.interfaces.IDocumentationModule'),
            ('name', 'title'),
            ('read_perm', None),
-           ('type', 'str'),
-           ('type_link', '__builtin__.str'),
-           ('value', "'Classes'"),
+           ('type', 'MessageID'),
+           ('type_link', 'zope.i18nmessageid.messageid.MessageID'),
+           ('value', "u'Classes'"),
            ('write_perm', None)]
         """
         attrs = []

@@ -4,7 +4,7 @@
   xmlns="http://www.w3.org/1999/xhtml"
   xml:lang="en"
   lang="en" 
-  i18n:domain="apidoc">
+  i18n:domain="zope">
 
   <head>
     <title metal:define-slot="title" i18n:translate="">Z3 UI</title>

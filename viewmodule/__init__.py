@@ -61,7 +61,7 @@ class ViewModule(object):
     implements(IDocumentationModule)
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
-    title = 'Presentations'
+    title = _('Presentations')
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
     description = """
@@ -87,7 +87,7 @@ class ViewModule(object):
     and Usages" that brings you to a simple screen that shows the mapping of
     the layers to skins and provides a list of available usages.
     """
-    
+
     def getSkins(self):
         """Get the names of all available skins.
 

@@ -38,5 +38,6 @@ class APIDocumentationView(object):
         items.sort()
         return [{'name': name,
                  'title': module.title,
+                 # FIXME: Seems like stx2html() doesn't like message ids
                  'description': stx2html(module.description)}
                 for name, module in items ]

@@ -23,7 +23,7 @@
   </div>
 
 
-  <h2 class="details-section">Bases</h2>
+  <h2 class="details-section" i18n:translate="">Bases</h2>
 
   <div class="indent"
          tal:define="bases view/getBases">
@@ -37,13 +37,13 @@
     </ul>
     
     <p tal:condition="not: bases">
-      <em>There are no base classes.</em>
+      <em i18n:translate="">There are no base classes.</em>
     </p>
     
   </div>
 
 
-  <h2 class="details-section">Attributes/Fields</h2>
+  <h2 class="details-section" i18n:translate="">Attributes/Fields</h2>
 
   <div class="indent"
       tal:define="attributes view/getAttributes;
@@ -53,7 +53,8 @@
       tal:condition="python: attributes or fields">
   
     <li tal:repeat="attr attributes">
-      <b><code tal:content="attr/name">attr</code></b> (Attribute)<br>
+      <b><code tal:content="attr/name">attr</code></b>
+        <span i18n:translate="">(Attribute)</span><br>
       <div class="inline-documentation" tal:content="structure attr/doc">
         attr desc
       </div>      
@@ -72,14 +73,14 @@
   </ul>
 
   <p tal:condition="python: not (attributes or fields)">
-    <em>There are no attributes or fields specified.</em>
+    <em i18n:translate="">There are no attributes or fields specified.</em>
   </p>
 
   </div>
 
 
 
-  <h2 class="details-section">Methods</h2>
+  <h2 class="details-section" i18n:translate="">Methods</h2>
 
   <div class="indent">
 
@@ -95,20 +96,20 @@
   </ul>
 
   <p tal:condition="not: view/getMethods">
-    <em>There are no methods specified.</em>
+    <em i18n:translate="">There are no methods specified.</em>
   </p>
 
   </div>
 
 
 
-  <h2 class="details-section">Adapters</h2>
+  <h2 class="details-section" i18n:translate="">Adapters</h2>
   
   <div class="indent" 
        tal:define="adapters view/getRequiredAdapters"
        tal:condition="adapters">
 
-    <h3>Adapters where this interface is required:</h3>
+    <h3 i18n:translate="">Adapters where this interface is required:</h3>
     <ul class="attr-list">
       <li tal:repeat="adapter adapters">
         <b><code>
@@ -121,15 +122,16 @@
                 tal:condition="not: adapter/factory_url" />
         </code></b>
         <span tal:condition="adapter/name">
-          (name: <tal:block content="adapter/name" />)
+          (<span i18n:translate="">name:</span>
+            <tal:block content="adapter/name" />)
         </span>
         <br />
-        <i>provides:</i> 
+        <i i18n:translate="">provides:</i> 
           <a href=""
               tal:attributes="href string:../${adapter/provided}/apiindex.html"
               tal:content="adapter/provided" /><br />
         <tal:block condition="adapter/required">
-        <i>also required:</i>
+        <i i18n:translate="">also required:</i>
           <tal:block repeat="iface adapter/required">
             <a href=""
                 tal:attributes="href string:../$iface/apiindex.html"
@@ -146,7 +148,7 @@
        tal:define="adapters view/getProvidedAdapters"
        tal:condition="adapters">
 
-    <h3>Adapters that provide this interface:</h3>
+    <h3 i18n:translate="">Adapters that provide this interface:</h3>
     <ul>
       <li tal:repeat="adapter adapters">
         <b><code>
@@ -158,17 +160,18 @@
                 tal:condition="not: adapter/factory_url" />
         </code></b>
         <span tal:condition="adapter/name">
-          (name: <tal:block content="adapter/name" />)
+          (<span i18n:translate="">name:</span>
+            <tal:block content="adapter/name" />)
         </span>
         <br />
-        <i>requires:</i> 
+        <i i18n:translate="">requires:</i> 
           <tal:block repeat="iface adapter/required">
             <a href=""
                 tal:condition="iface"
                 tal:attributes="href string:../$iface/"
                 tal:content="iface" /><tal:block 
                 condition="not:repeat/iface/end">, </tal:block>
-            <span tal:condition="not: iface">
+            <span tal:condition="not: iface" i18n:translate="">
               No interface required.
             </span>
           </tal:block>
@@ -179,7 +182,8 @@
 
   <p tal:condition="
      python: not (view.getRequiredAdapters() or view.getProvidedAdapters())">
-    <em>There are no adapters registered for this interface.</em>
+    <em i18n:translate="">There are no adapters registered for
+        this interface.</em>
   </p>
 
   <div tal:define="factories view/getFactories;
@@ -193,9 +197,9 @@
     <div class="indent">
     
       <tal:block condition="factories">
-        <h3 class="details-section">Factories</h3>
+        <h3 class="details-section" i18n:translate="">Factories</h3>
         <div class="indent">
-          <div class="small">
+          <div class="small" i18n:translate="">
             A list of factories that create objects implement this interface.
           </div>
           <ul>
@@ -211,9 +215,9 @@
       </tal:block>
     
       <tal:block condition="utilities">
-        <h3 class="details-section">Utilities</h3>
+        <h3 class="details-section" i18n:translate="">Utilities</h3>
         <div class="indent">
-          <div class="small">
+          <div class="small" i18n:translate="">
             A list of utilities that are are registered to provide this 
             interface.
           </div>
@@ -224,7 +228,7 @@
               string:../../Utility/${view/getId}/${utility/url_name}/index.html"
                  tal:content="structure utility/name" />
               <br />
-              <div>Class: <code>
+              <div><span i18n:translate="">Class:</span> <code>
                 <a href=""
                    tal:attributes="href 
                        string:../../Class/${utility/url}/index.html"
@@ -236,9 +240,9 @@
       </tal:block>
     
       <tal:block condition="services">
-        <h3 class="details-section">Service</h3>
+        <h3 class="details-section" i18n:translate="">Service</h3>
         <div class="indent">
-          <div class="small">
+          <div class="small" i18n:translate="">
             A list of services (usually just one) that are are registered to 
             provide this interface.
           </div>
@@ -253,9 +257,9 @@
       </tal:block>
 
       <tal:block condition="classes">
-        <h3 class="details-section">Classes</h3>
+        <h3 class="details-section" i18n:translate="">Classes</h3>
         <div class="indent">
-          <div class="small">
+          <div class="small" i18n:translate="">
             A list of classes that implement this interface. This might
             duplicate the entries in Utilities and Services. 
           </div>

@@ -48,7 +48,8 @@ class ViewModuleTests(BrowserTestCase):
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
         self.assert_(body.find(
-            'IBrowserRequest views for \n    IDocumentationModule') > 0)
+            'IBrowserRequest\n        <span>views for</span>\n'
+            '    IDocumentationModule') > 0)
         self.checkForBrokenLinks(
             body, '/++apidoc++/Views/index.html',
             basic='mgr:mgrpw')

@@ -27,6 +27,7 @@ from zope.app.apidoc.utilities import ReadContainerBase
 from zope.app.location import LocationProxy
 from zope.app.component.interface \
      import queryInterface, searchInterfaceUtilities
+from zope.app.i18n import ZopeMessageIDFactory as _
 
 class IInterfaceModule(IDocumentationModule):
     """Interface API Documentation Module
@@ -69,7 +70,7 @@ class InterfaceModule(ReadContainerBase):
     implements(IInterfaceModule)
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
-    title = 'Interfaces'
+    title = _('Interfaces')
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
     description = """

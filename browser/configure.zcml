@@ -1,6 +1,6 @@
 <configure
   xmlns="http://namespaces.zope.org/browser"
-  i18n_domain="api_doc">
+  i18n_domain="zope">
 
   <resource name="apidoc.css" file="apidoc.css" />
 
@@ -33,7 +33,7 @@
 
     <page
         name="index.html"
-        template="index.html" />
+        template="index.pt" />
 
     <page
       name="modulelist.html"
@@ -41,7 +41,7 @@
 
     <page
       name="menu.html"
-      template="menu.html" />
+      template="menu.pt" />
 
     <page
       name="contents.html"

@@ -18,6 +18,7 @@ $Id$
 from zope.interface import implements
 
 from zope.app import zapi
+from zope.app.i18n import ZopeMessageIDFactory as _
 from zope.app.component.localservice import queryNextService
 from zope.app.location.interfaces import ILocation
 from zope.app.servicenames import Utilities
@@ -128,8 +129,8 @@ class UtilityModule(ReadContainerBase):
     implements(IDocumentationModule)
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
-    title = 'Utilities'
-    
+    title = _('Utilities')
+
     # See zope.app.apidoc.interfaces.IDocumentationModule
     description = """
     Utilities are also nicely registered in a service, so that it is easy to
@@ -141,7 +142,7 @@ class UtilityModule(ReadContainerBase):
     Again, the documentation of a utility lists all the attributes/fields and
     methods the utility provides and provides a link to the implementation. 
     """
-    
+
     def get(self, key, default=None):
         parts = key.split('.')
         try:

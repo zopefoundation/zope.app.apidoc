@@ -1,17 +1,18 @@
 <html metal:use-macro="views/apidoc_macros/details">
 <body metal:fill-slot="contents">
 
-  <h1 class="details-header">
+  <h1 class="details-header" i18n:translate="">
     Skins &amp; Layers
   </h1>
 
-  <p>In the small tree below you see a listing of all the available Zope 3
-    skins (large bold font) and the layers (small bold font) for each
-    skin. Below each entry you see some documentation that was registered. In
-    the case of global skins and layers, the documentation shows the file and
-    the line number in which the skin or layer was declared.</p>
+  <p i18n:translate="">In the small tree below you see a listing of
+    all the available Zope 3 skins (large bold font) and the layers
+    (small bold font) for each skin. Below each entry you see some
+    documentation that was registered. In the case of global skins
+    and layers, the documentation shows the file and the line number
+    in which the skin or layer was declared.</p>
 
-  <h2 class="details-section">Skin-Layer Tree</h2>
+  <h2 class="details-section" i18n:translate="">Skin-Layer Tree</h2>
 
   <table width="100%" border="0">
     <tr>
@@ -25,7 +26,7 @@
           <h3 style="padding-bottom: 0; margin-bottom: 0;">
             <span tal:content="skin/name">Rotterdam</span>
             <i style="font-weight: normal"
-               tal:condition="skin/default">(default)</i>
+               tal:condition="skin/default" i18n:translate="">(default)</i>
           </h3>
           <div class="small">
             <i tal:content="skin/doc">Skin Doc</i>

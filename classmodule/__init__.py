@@ -28,6 +28,7 @@ from zope.security.checker import getCheckerForInstancesOf
 from zope.interface import Interface, Attribute, implements, implementedBy
 from zope.app import zapi
 from zope.app.container.interfaces import IReadContainer
+from zope.app.i18n import ZopeMessageIDFactory as _
 
 from zope.app.location.interfaces import ILocation
 from zope.app.apidoc.interfaces import IDocumentationModule
@@ -508,7 +509,7 @@ class ClassModule(Module):
     implements(IDocumentationModule)
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
-    title = 'Classes'
+    title = _('Classes')
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
     description = """

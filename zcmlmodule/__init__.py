@@ -25,6 +25,7 @@ import os
 from zope.configuration import docutils, xmlconfig
 from zope.interface import implements
 
+from zope.app.i18n import ZopeMessageIDFactory as _
 from zope.app.location.interfaces import ILocation
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase
@@ -186,7 +187,7 @@ class ZCMLModule(ReadContainerBase):
     implements(IDocumentationModule)
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
-    title = 'ZCML Reference'
+    title = _('ZCML Reference')
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
     description = """

@@ -6,7 +6,7 @@
     zope.app.function
   </h1>
 
-  <h2 class="details-section">Signature</h2>
+  <h2 class="details-section" i18n:translate="">Signature</h2>
 
   <div class="indent">
     <b><code
@@ -15,7 +15,7 @@
   </div>
 
   <div tal:condition="context/getDocString">
-    <h2 class="details-section">Documentation String</h2>
+    <h2 class="details-section" i18n:translate="">Documentation String</h2>
 
     <div class="indent">
       <div class="documentation" tal:content="structure context/getDocString">
@@ -28,7 +28,7 @@
       tal:define="attributes view/getAttributes"      
       tal:condition="attributes">
 
-  <h2 class="details-section">Attributes</h2>
+  <h2 class="details-section" i18n:translate="">Attributes</h2>
 
   <div class="indent">
 
@@ -37,17 +37,18 @@
       <li tal:repeat="attr attributes">
         <b><code tal:content="attr/name">attr</code></b>
         <tal:omit-tag condition="not: attr/type_link">
-          (type: <code tal:content="attr/type" />)
+          (<span i18n:translate="">type:</span>
+            <code tal:content="attr/type" />)
         </tal:omit-tag>
         <tal:omit-tag condition="attr/type_link">
-          (type: 
+          (<span i18n:translate="">type:</span>
           <a href="" 
              tal:attributes="href 
                  string:${view/getBaseURL}/Class/${attr/type_link}/index.html">
             <code tal:content="attr/type" /></a>)
         </tal:omit-tag>
         <br/>
-        <i>Value:</i>
+        <i i18n:translate="">Value:</i>
         <code tal:content="attr/value">u''</code><br />
       </li>
     
