@@ -533,8 +533,9 @@ class ClassModule(Module):
     permissions required to access it.
     """
 
-    rootModules = ['ZConfig', 'ZODB', 'persistence', 'transaction', 'zdaemon',
-                   'zope']
+    # XXX: had to remove 'persistence' from the list, since it made
+    #      distributions fail. :-(
+    rootModules = ['ZConfig', 'ZODB', 'transaction', 'zdaemon', 'zope']
 
     def __init__(self):
         """Initialize object."""
