@@ -25,6 +25,7 @@ import os
 from zope.configuration import docutils, xmlconfig
 from zope.interface import implements
 
+import zope.app.appsetup.appsetup
 from zope.app.i18n import ZopeMessageIDFactory as _
 from zope.app.location.interfaces import ILocation
 from zope.app.apidoc.interfaces import IDocumentationModule
@@ -203,16 +204,14 @@ class ZCMLModule(ReadContainerBase):
     available attributes.
     """
 
-    def __init__(self):
-        """Initialize ZCML Documentation Module."""
+    def _makeDocStructure(self):
         # Some trivial caching
         global namespaces
         global subdirs
-        if namespaces is None or subdirs is None:
-            from zope import app
-            file = os.path.join(os.path.split(app.__file__)[0], 'meta.zcml')
-            context = xmlconfig.file(file, execute=False)
-            namespaces, subdirs = docutils.makeDocStructures(context)
+        context = xmlconfig.file(
+            zope.app.appsetup.appsetup.getConfigSource(),
+            execute=False)
+        namespaces, subdirs = docutils.makeDocStructures(context)
 
         # Empty keys are not so good for a container
         if namespaces.has_key(''):
@@ -224,7 +223,10 @@ class ZCMLModule(ReadContainerBase):
         """See zope.app.container.interfaces.IReadContainer
 
         Get the namespace by name; long and abbreviated names work.
-        """
+        """        
+        if namespaces is None or subdirs is None:
+            self._makeDocStructure()
+
         key = unquoteNS(key)
         if not (key == 'ALL' or key.startswith('http://namespaces.zope.org/')):
             key = 'http://namespaces.zope.org/' + key
@@ -235,6 +237,8 @@ class ZCMLModule(ReadContainerBase):
 
     def items(self):
         """See zope.app.container.interfaces.IReadContainer"""
+        if namespaces is None or subdirs is None:
+            self._makeDocStructure()
         list = []
         for key in namespaces.keys():
             namespace = Namespace(self, key)
