@@ -8,13 +8,29 @@
   </h1>
 
   <div class="indent" 
-       tal:condition="view/getFile">
-    <i>File:</i> <tal:block content="view/getFile"/>
+       tal:define="info view/getFileInfo"
+       tal:condition="info">
+    <i>File:</i> 
+    <tal:block content="info/file"/>, from
+    <tal:block content="string: (line ${info/line}, column ${info/column})"/> to
+    <tal:block content="string: (line ${info/eline}, column ${info/ecolumn})"/>
   </div>
 
   <div class="indent" 
        tal:condition="view/getInfo">
-    <i>Info:</i> <tal:block content="view/getInfo"/>
+    <i>Info:</i>
+    <tal:block replace="view/getInfo" />
+  </div>
+
+  <div class="indent" 
+       tal:define="handler view/getHandler"
+       tal:condition="handler">
+    <i>Handler:</i>
+    <a href=""
+       tal:attributes="href 
+           string:../../../Class/${handler/url}/index.html"
+       tal:content="handler/path">
+    </a>
   </div>
 
   <h2 class="details-section">Schema</h2>
@@ -70,6 +86,16 @@
   <h3 tal:content="dir/name"> 
     directive
   </h3>
+
+  <div class="indent" 
+       tal:condition="dir/handler">
+    <i>Handler:</i>
+    <a href=""
+       tal:attributes="href 
+           string:../../../Class/${dir/handler/url}/index.html"
+       tal:content="dir/handler/path">
+    </a>
+  </div>
 
   <div class="indent">
     <a href=""
