@@ -216,7 +216,7 @@ class ViewsDetails(object):
         self.regs = [reg
                      for reg in service.registrations()
                      if (isinstance(reg, PresentationRegistration) and
-                         # XXX: Handle multiple required ifaces at some point.
+                         # TODO: Handle multiple required ifaces at some point.
                          self.iface.isOrExtends(reg.required[0]) and 
                          self.type is reg.required[-1])]
 
@@ -257,7 +257,7 @@ class ViewsDetails(object):
             if self.show_all or \
                    not (None in reg.required or Interface in reg.required):
                 entry = {'name' : reg.name or '<i>no name</i>',
-                         # XXX: Deal with tuple
+                         # TODO: Deal with tuple
                          'required' : getPythonPath(reg.required[0]),
                          'type' : getPythonPath(reg.required[-1]),
                          'factory' : _getFactoryData(reg.factory),
