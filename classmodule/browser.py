@@ -13,7 +13,7 @@
 ##############################################################################
 """Class Documentation Module Views
 
-$Id: browser.py,v 1.3 2004/03/28 23:39:52 srichter Exp $
+$Id: browser.py,v 1.4 2004/03/29 05:27:49 srichter Exp $
 """
 import os
 import inspect
@@ -199,13 +199,14 @@ class ClassDetails(object):
            ('write_perm', None)]
         """
         attrs = []
-        for name, attr, iface in self.context.getAttributes():
+        klass = removeAllProxies(self.context)
+        for name, attr, iface in klass.getAttributes():
             entry = {'name': name,
                      'value': `attr`,
                      'type': type(attr).__name__,
                      'type_link': _getTypePath(type(attr)),
                      'interface': getPythonPath(iface)}
-            checker = removeAllProxies(self.context.getSecurityChecker())
+            checker = removeAllProxies(klass.getSecurityChecker())
             entry.update(getPermissionIds(name, checker))
             attrs.append(entry)
         return attrs
@@ -242,15 +243,14 @@ class ClassDetails(object):
             ('doc', '')]]
         """
         methods = []
-        for name, attr, iface in self.context.getMethods():
-            if inspect.ismethod(attr):
-                entry = {'name': name,
-                         'signature': getFunctionSignature(attr),
-                         'doc': stx2html(attr.__doc__ or ''),
-                         'interface': getPythonPath(iface)}
-                entry.update(getPermissionIds(
-                    name, self.context.getSecurityChecker()))
-                methods.append(entry)
+        klass = removeAllProxies(self.context)
+        for name, attr, iface in klass.getMethods():
+            entry = {'name': name,
+                     'signature': getFunctionSignature(attr),
+                     'doc': stx2html(attr.__doc__ or ''),
+                     'interface': getPythonPath(iface)}
+            entry.update(getPermissionIds(name, klass.getSecurityChecker()))
+            methods.append(entry)
         return methods
 
 
