@@ -17,6 +17,8 @@ $Id$
 """
 __docformat__ = 'restructuredtext'
 
+import keyword
+
 from zope.configuration.xmlconfig import ParserInfo
 from zope.security.proxy import removeSecurityProxy
 
@@ -88,8 +90,25 @@ class Menu(object):
         return None
 
 
+def _getFieldName(field):
+    name = field.getName()
+    if name.endswith("_") and keyword.iskeyword(name[:-1]):
+        name = name[:-1]
+    return name
+
+
 class DirectiveDetails(object):
     """View class for a Directive."""
+
+    def _getInterfaceDetails(self, schema):
+        schema = LocationProxy(schema,
+                               self.context,
+                               getPythonPath(schema))
+        details = InterfaceDetails()
+        details._getFieldName = _getFieldName
+        details.context = schema
+        details.request = self.request
+        return details
 
     def getSchema(self):
         """Return the schema of the directive.
@@ -113,13 +132,7 @@ class DirectiveDetails(object):
           >>> iface.context
           <InterfaceClass zope.app.apidoc.zcmlmodule.browser.IFoo>
         """
-        schema = LocationProxy(self.context.schema,
-                               self.context,
-                               getPythonPath(self.context.schema))
-        details = InterfaceDetails()
-        details.context = schema
-        details.request = self.request
-        return details
+        return self._getInterfaceDetails(self.context.schema)
 
     def getNamespaceName(self):
         """Return the name of the namespace.
@@ -261,11 +274,7 @@ class DirectiveDetails(object):
         """
         dirs = []
         for ns, name, schema, handler, info in self.context.subdirs:
-            schema = LocationProxy(schema, self.context, getPythonPath(schema))
-            details = InterfaceDetails()
-            details.context = schema
-            details.request = self.request
-
+            details = self._getInterfaceDetails(schema)
             path = getPythonPath(handler)
             dirs.append({'namespace': ns,
                          'name': name,

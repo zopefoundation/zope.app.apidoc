@@ -394,7 +394,7 @@ class InterfaceDetails(object):
         # remove security proxies, the location proxy's module will be
         # returned.
         fields = map(lambda x: x[1], _getInOrder(self.context, IField))
-        return [{'name': field.getName(),
+        return [{'name': self._getFieldName(field),
                  'iface': _getFieldInterface(field),
                  'class': _getFieldClass(field),
                  'required': _getRequired(field),
@@ -403,6 +403,9 @@ class InterfaceDetails(object):
                      field.description or '',
                      removeAllProxies(self.context).__module__)}
                 for field in fields]
+
+    def _getFieldName(self, field):
+        return field.getName()
 
     def getRequiredAdapters(self):
         """Get adapters where this interface is required.
