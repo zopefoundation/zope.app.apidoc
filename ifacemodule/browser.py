@@ -383,7 +383,8 @@ class InterfaceDetails(object):
               ('name', 'ITextLine')]),
             ('name', 'title'),
             ('required', True),
-            ('required_css', 'required')],
+            ('required_css', 'required'),
+            ('title', u'')],
            [('class',
              [('name', 'Text'),
               ('path', 'zope/schema/_bootstrapfields/Text')]),
@@ -393,7 +394,8 @@ class InterfaceDetails(object):
              [('id', 'zope.schema.interfaces.IText'), ('name', 'IText')]),
             ('name', 'description'),
             ('required', False),
-            ('required_css', 'optional')]]
+            ('required_css', 'optional'),
+            ('title', u'')]]
         """
         # The `Interface` class have no security declarations, so that we are
         # not able to access any API methods on proxied objects.  If we only
@@ -410,6 +412,7 @@ class InterfaceDetails(object):
                  'required': field.required,
                  'required_css': _getRequiredCSS(field),
                  'default': repr(field.default),
+                 'title': field.title,
                  'description': renderText(
                      field.description or '',
                      removeAllProxies(self.context).__module__)}

@@ -55,6 +55,7 @@
           <code tal:content="field/iface/name">IField</code></a>
       (<span i18n:translate="">default</span> =
             <code tal:content="field/default" />)<br />
+      <div tal:content="structure field/title" class="field-title">title</div>
       <span tal:content="field/description">field desc</span>      
     </li>
 
