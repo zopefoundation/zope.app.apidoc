@@ -16,7 +16,7 @@
 This module is able to take a dotted name of any class and display
 documentation for it.
 
-$Id: __init__.py,v 1.7 2004/04/02 01:45:07 tim_one Exp $
+$Id: __init__.py,v 1.8 2004/04/02 08:21:32 hdima Exp $
 """
 import os
 import sys
@@ -531,7 +531,7 @@ class ClassModule(Module):
     """
 
     rootModules = ['ZConfig', 'ZODB', 'persistence', 'transaction', 'zdaemon',
-                   'zope', 'Mount.py']
+                   'zope']
 
     def __init__(self):
         """Initialize object."""
