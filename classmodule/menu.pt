@@ -3,16 +3,29 @@
 
   <div metal:fill-slot="menu" class="small">
 
-    <div>Enter the dotted name (Python path) of the class:</div>
-    <form action="./index.html" target="main">
+    <div tal:define="classes view/findClasses"
+        tal:condition="classes">
+
+        <a href="" target="main"
+           tal:repeat="info classes"
+           tal:attributes="href info/url"
+           tal:content="info/path">
+          /zope/app/Application
+        </a>
+    </div>
+
+    <div>
+      Class Finder: <br/>
+      <i>(Enter partial Python path)</i></div>
+    <form action="menu.html" method="POST">
       <input type="text" name="path" 
              style="font-size: 80%; width=95%" />
-      <input type="submit" name="SUBMIT" value="Show" 
-             style="font-size: 80%; width=95%"/>
+      <input type="submit" name="SUBMIT" value="Find" 
+             style="font-size: 80%"/>
     </form>
 
     <p style="font-size: 120%">
-      <a href="./browser.html" target="main">Browse Zope Source</a>
+      <a href="./index.html" target="main">Browse Zope Source</a>
     </p>
   </div>
 
