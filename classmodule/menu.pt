@@ -1,0 +1,34 @@
+<html metal:use-macro="views/apidoc_macros/menu">
+<body>
+
+  <div metal:fill-slot="menu" class="small">
+
+    <div tal:define="classes view/findClasses"
+        tal:condition="classes">
+
+        <a href="" target="main"
+           tal:repeat="info classes"
+           tal:attributes="href info/url"
+           tal:content="info/path">
+          /zope/app/Application
+        </a>
+    </div>
+
+    <div>
+      <span i18n:translate="">Class Finder:</span> <br/>
+      <i i18n:translate="">(Enter partial Python path)</i></div>
+    <form action="menu.html" method="post">
+      <input type="text" name="path" 
+             style="font-size: 80%; width=95%" />
+      <input type="submit" name="SUBMIT" value="Find" 
+             i18n:attributes="value find-button" style="font-size: 80%"/>
+    </form>
+
+    <p style="font-size: 120%">
+      <a href="./index.html" target="main" i18n:translate="">Browse
+        Zope Source</a>
+    </p>
+  </div>
+
+</body>
+</html>
