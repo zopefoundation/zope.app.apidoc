@@ -13,7 +13,7 @@
 ##############################################################################
 """Tests for the Class Documentation Module
 
-$Id: tests.py,v 1.2 2004/03/30 02:01:24 srichter Exp $
+$Id: tests.py,v 1.3 2004/04/15 13:24:58 srichter Exp $
 """
 import unittest
 from zope.interface import Interface
@@ -23,6 +23,11 @@ from zope.app import zapi
 from zope.app.tests import placelesssetup, ztapi
 from zope.app.component.interface import provideInterface
 
+from zope.app.apidoc.viewmodule import ISkinRegistration
+from zope.app.apidoc.viewmodule import ISkinDocumentation, SkinDocumentation
+from zope.app.apidoc.viewmodule import ILayerRegistration
+from zope.app.apidoc.viewmodule import ILayerDocumentation, LayerDocumentation
+
 class IFoo(Interface):
     pass
 
@@ -31,16 +36,25 @@ class FooView:
 
 def setUp():
     placelesssetup.setUp()
+
+    ztapi.provideAdapter(ISkinRegistration, ISkinDocumentation,
+                         SkinDocumentation)
+    ztapi.provideAdapter(ILayerRegistration, ILayerDocumentation,
+                         LayerDocumentation)
+
     pres = zapi.getService(None, 'Presentation')
     for index in range(1, 6):
         pres.defineLayer('layer'+str(index))
-    pres.defineSkin('skinA', ['default'])
-    pres.defineSkin('skinB', ['layer5', 'layer4', 'default'])
-    pres.defineSkin('skinC', ['layer4', 'layer2', 'layer1', 'default'])
+    pres.defineSkin('skinA', ['default'], 'doc skin A')
+    pres.defineSkin('skinB', ['layer5', 'layer4', 'default'], 'doc skin B')
+    pres.defineSkin('skinC', ['layer4', 'layer2', 'layer1', 'default'],
+                    'doc skin C')
+    pres.setDefaultSkin('skinA', 'default is A')
 
     provideInterface('IFoo', IFoo)
     provideInterface('IBrowserRequest', IBrowserRequest)
     ztapi.browserView(IFoo, 'index.html', FooView, layer='default')
+
     
 
 def tearDown():
