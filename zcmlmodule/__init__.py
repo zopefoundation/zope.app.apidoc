@@ -18,14 +18,14 @@ execute them) and uses the collected data to generate the tree. The result of
 the evaluation is stored in thread-global variables, so that we have to parse
 the files only once. 
 
-$Id: __init__.py,v 1.3 2004/03/02 15:48:36 srichter Exp $
+$Id: __init__.py,v 1.4 2004/03/02 17:51:49 philikon Exp $
 """
 import os
 
 from zope.configuration import docutils, xmlconfig
 from zope.interface import implements
 
-from zope.app.interfaces.location import ILocation
+from zope.app.location.interfaces import ILocation
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase
 

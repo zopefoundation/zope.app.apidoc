@@ -17,13 +17,13 @@ A list of interfaces from the Interface Service is pretty much unmanagable and
 is very confusing. Therefore it is nice to split the path of the interface, so
 that we get a deeper tree with nodes having shorter, manageable names.
 
-$Id: menu.py,v 1.1 2004/02/19 20:46:41 philikon Exp $
+$Id: menu.py,v 1.2 2004/03/02 17:51:47 philikon Exp $
 """
 from zope.interface import implements
 from zope.proxy import removeAllProxies
 
 from zope.app import zapi
-from zope.app.interfaces.location import ILocation
+from zope.app.location.interfaces import ILocation
 from zope.app.location import LocationProxy
 from zope.app.tree.interfaces import IChildObjects
 

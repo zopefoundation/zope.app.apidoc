@@ -13,13 +13,13 @@
 ##############################################################################
 """Service Documentation Module
 
-$Id: __init__.py,v 1.1 2004/02/19 20:46:41 philikon Exp $
+$Id: __init__.py,v 1.2 2004/03/02 17:51:48 philikon Exp $
 """
 from zope.interface import implements
 from zope.component import ComponentLookupError
 
 from zope.app import zapi
-from zope.app.interfaces.location import ILocation
+from zope.app.location.interfaces import ILocation
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase
 
