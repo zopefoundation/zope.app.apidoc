@@ -192,7 +192,7 @@ class ZCMLModule(ReadContainerBase):
     title = _('ZCML Reference')
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
-    description = """
+    description = _("""
     This module presents you with a complete list of ZCML directives and
     serves therefore well as reference. The menu provides you with a tree that
     organizes the directives by namespaces.
@@ -203,7 +203,7 @@ class ZCMLModule(ReadContainerBase):
     file the directive was declared in. At the end a list of available
     subdirectives is given, also listing the implemented interface and
     available attributes.
-    """
+    """)
 
     def _makeDocStructure(self):
         # Some trivial caching

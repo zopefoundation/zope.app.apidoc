@@ -17,6 +17,8 @@ $Id$
 """
 __docformat__ = 'restructuredtext'
 
+from zope.i18n import translate
+from zope.security.proxy import removeSecurityProxy
 from zope.app.apidoc.utilities import renderText
 
 class APIDocumentationView(object):
@@ -28,8 +30,10 @@ class APIDocumentationView(object):
         Example::
 
           >>> from zope.app.apidoc import APIDocumentation
+          >>> from zope.publisher.browser import TestRequest
           
           >>> view = APIDocumentationView()
+          >>> view.request = TestRequest()
           >>> view.context = APIDocumentation(None, '++apidoc++')
           >>> info = view.getModuleList()
           >>> info = [(i['name'], i['title']) for i in info]
@@ -38,8 +42,15 @@ class APIDocumentationView(object):
         """
         items = list(self.context.items())
         items.sort()
-        return [{'name': name,
-                 'title': module.title,
-                 'description': renderText(module.description,
-                                           module.__class__.__module__)}
-                for name, module in items ]
+        result = []
+        for name, module in items:
+            description = removeSecurityProxy(module.description)
+            description = translate(description, context=self.request,
+                                    default=description)
+            description = renderText(description, module.__class__.__module__)
+            if not isinstance(description, unicode):
+                description = unicode(description, "utf-8")
+            result.append({'name': name,
+                           'title': module.title,
+                           'description': description})
+        return result

@@ -75,7 +75,7 @@ class InterfaceModule(ReadContainerBase):
     title = _('Interfaces')
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
-    description = """
+    description = _("""
     All used and important interfaces are registered through the interface
     service. While it would be possible to just list all attributes, it is
     hard on the user to read such an overfull list. Therefore, interfaces that
@@ -85,7 +85,7 @@ class InterfaceModule(ReadContainerBase):
     information, including of course the declared attributes/fields and
     methods, but also available adapters, services and utilities that provide
     this interface.
-    """
+    """)
 
     def get(self, key, default=None):
         """See zope.app.interfaces.container.IReadContainer"""

@@ -549,7 +549,7 @@ class ClassModule(Module):
     title = _('Classes')
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
-    description = """
+    description = _("""
     This module allows you to get an overview of the modules and classes
     defined in the Zope 3 framework and its supporting packages. There are
     two methods to navigate through the modules to find the classes you are
@@ -569,7 +569,7 @@ class ClassModule(Module):
     implemented interfaces, attributes and methods, but it also lists the
     interface that requires a method or attribute to be implemented and the
     permissions required to access it.
-    """
+    """)
     rootModules = ['ZConfig', 'ZODB', 'transaction', 'zdaemon', 'zope']
 
     def __init__(self):
