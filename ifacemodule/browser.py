@@ -13,7 +13,7 @@
 ##############################################################################
 """Interface Details View
 
-$Id: browser.py,v 1.8 2004/04/08 02:12:25 srichter Exp $
+$Id: browser.py,v 1.9 2004/04/11 18:16:18 jim Exp $
 """
 from types import FunctionType, MethodType, ClassType, TypeType
 from zope.component import ComponentLookupError
@@ -435,14 +435,14 @@ class InterfaceDetails(object):
           >>> factories = [f for f in factories if f.sort() is None]
           >>> factories.sort()
           >>> factories
-          [[('name', 'FooFactory'), ('title', 'Foo Factory')]]
+          [[('name', u'FooFactory'), ('title', 'Foo Factory')]]
         """
         iface = removeAllProxies(self.context)
         return [{'name': n, 'title': f.title} \
                 for n, f in zapi.getFactoriesFor(self.context, iface) \
                 if iface in tuple(f.getInterfaces())]
 
-    def getUtilities(self):
+    def getUtilitiesFor(self):
         """Return all utilities that provide this interface.
 
         Example::
@@ -451,12 +451,12 @@ class InterfaceDetails(object):
           >>> from tests import getInterfaceDetails
           >>> details = getInterfaceDetails()
 
-          >>> utils = details.getUtilities()
+          >>> utils = details.getUtilitiesFor()
           >>> pprint(utils)
-          [[('name', 'The Foo'),
+          [[('name', u'The Foo'),
             ('path', 'zope.app.apidoc.ifacemodule.tests.Foo'),
             ('url', 'zope/app/apidoc/ifacemodule/tests/Foo'),
-            ('url_name', 'The Foo')]]
+            ('url_name', u'The Foo')]]
         """
         service = zapi.getService(self.context, 'Utilities')
         utils = service.getUtilitiesFor(removeAllProxies(self.context))
