@@ -18,7 +18,7 @@ execute them) and uses the collected data to generate the tree. The result of
 the evaluation is stored in thread-global variables, so that we have to parse
 the files only once. 
 
-$Id: __init__.py,v 1.5 2004/03/03 10:38:32 philikon Exp $
+$Id: __init__.py,v 1.6 2004/03/28 23:42:11 srichter Exp $
 """
 import os
 
@@ -199,6 +199,7 @@ class ZCMLModule(ReadContainerBase):
     """
 
     def __init__(self):
+        """Initialize ZCML Documentation Module."""
         # Some trivial caching
         global namespaces
         global subdirs
