@@ -13,7 +13,7 @@
 ##############################################################################
 """Zope 3 API Documentation
 
-$Id: __init__.py,v 1.5 2004/03/28 23:39:08 srichter Exp $
+$Id: __init__.py,v 1.6 2004/04/15 15:29:38 jim Exp $
 """
 from zope.interface import implements
 
@@ -60,7 +60,7 @@ class APIDocumentation(ReadContainerBase):
 
     def items(self):
         """See zope.app.container.interfaces.IReadContainer"""
-        items = zapi.getUtilitiesFor(self, IDocumentationModule)
+        items = list(zapi.getUtilitiesFor(self, IDocumentationModule))
         items.sort()
         utils = []
         for key, value in items:
