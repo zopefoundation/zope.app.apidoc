@@ -27,12 +27,6 @@
 
   <!-- Interface Documentation Module Menu -->
 
-  <adapter
-      provides="zope.app.tree.interfaces.IChildObjects"
-      for=".IInterfaceModule"
-      factory=".menu.InterfaceModuleChildObjects"
-      />
-
   <browser:page
       for=".InterfaceModule"
       permission="zope.app.apidoc.UseAPIDoc"
