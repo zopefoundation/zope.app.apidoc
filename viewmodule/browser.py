@@ -15,7 +15,7 @@
 
 $Id$
 """
-from types import ClassType
+from types import ClassType, FunctionType
 
 from zope.interface import Interface
 from zope.component.adapter import AdapterRegistration
@@ -190,6 +190,8 @@ def _getFactoryData(factory):
     elif type(factory) in (type, ClassType):
         info['path'] = getPythonPath(factory)
 
+    elif isinstance(factory, FunctionType):
+        info['path'] = getPythonPath(factory.factory)
     else:
         info['path'] = getPythonPath(factory)
 
