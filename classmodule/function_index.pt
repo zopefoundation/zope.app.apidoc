@@ -18,7 +18,7 @@
     <h2 class="details-section" i18n:translate="">Documentation String</h2>
 
     <div class="indent">
-      <div class="documentation" tal:content="structure context/getDocString">
+      <div class="documentation" tal:content="structure view/getDocString">
         Here is the doc string
       </div>
     </div>
