@@ -234,6 +234,10 @@ class InterfaceDetails(object):
           >>> pprint(type)
           [('name', 'IType'),
            ('path', 'zope.app.apidoc.ifacemodule.browser.IType')]
+
+          Cleanup
+
+          >>> directlyProvides(removeAllProxies(details.context), [])
         """
         context = removeAllProxies(self.context)
         types = list(providedBy(context))
