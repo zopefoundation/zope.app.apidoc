@@ -760,6 +760,10 @@ def safe_import(path, default=None):
     Now clean up the temporary module, just to play nice:
 
       >>> os.unlink(filename)
+      >>> if os.path.exists(filename + 'c'):
+      ...     os.unlink(filename + 'c')
+      >>> if os.path.exists(filename + 'o'):
+      ...     os.unlink(filename + 'o')
     """
     module = sys.modules.get(path, default)
     if module is default:
