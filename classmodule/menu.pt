@@ -17,7 +17,7 @@
     <div>
       <span i18n:translate="">Class Finder:</span> <br/>
       <i i18n:translate="">(Enter partial Python path)</i></div>
-    <form action="menu.html" method="POST">
+    <form action="menu.html" method="post">
       <input type="text" name="path" 
              style="font-size: 80%; width=95%" />
       <input type="submit" name="SUBMIT" value="Find" 
