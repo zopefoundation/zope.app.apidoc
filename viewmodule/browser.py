@@ -13,7 +13,7 @@
 ##############################################################################
 """Views/Presentation Module Views
 
-$Id: browser.py,v 1.9 2004/04/11 18:16:22 jim Exp $
+$Id: browser.py,v 1.10 2004/04/15 13:24:39 srichter Exp $
 """
 from types import ClassType
 
@@ -81,23 +81,20 @@ class SkinLayer(object):
 
         Example::
 
-          >>> from zope.app.apidoc.tests import pprint
-          >>> from zope.app.apidoc.viewmodule import ViewModule
-          >>> view = SkinLayer()
-          >>> view.context = ViewModule()
-          >>> skins = view.getSkins(False)
-          >>> pprint(skins)
-          [[('layers', ('default',)), ('name', 'default')],
-           [('layers', ('default',)), ('name', 'skinA')],
-           [('layers', ('layer5', 'layer4', 'default')), ('name', 'skinB')],
-           [('layers', ('layer4', 'layer2', 'layer1', 'default')),
-            ('name', 'skinC')]]
+         >>> from zope.app.apidoc.tests import pprint
+         >>> from zope.app.apidoc.viewmodule import ViewModule
+         >>> view = SkinLayer()
+         >>> view.context = ViewModule()
+         >>> skins = view.getSkins(False)
+         >>> pprint(skins)
+         [SkinDocumentation('skinA', ['default']),
+          SkinDocumentation('skinB', ['layer5', 'layer4', 'default']),
+          SkinDocumentation('skinC', ['layer4', 'layer2', 'layer1', 'default'])]
         """
-        info = [{'name': skin, 'layers': layers}
-                for skin, layers in self.context.getSkinLayerMapping().items()]
+        skins = self.context.getSkins()
         if columns:
-            info = columnize(info)
-        return info
+            skins = columnize(skins, 2)
+        return skins
 
 
 def _getFactoryData(factory):
@@ -207,13 +204,21 @@ class ViewsDetails(object):
         self.iface = getInterface(self.context, request['iface'])
         self.type = getInterface(self.context, request['type'])
 
-        # XXX: The local presentation service does not have a
-        # getRegisteredMatching() method. Sigh.
-        service = zapi.getService(None, 'Presentation')
-        self.views = service.getRegisteredMatching(object=self.iface,
-                                                   request=self.type)
-
         self.show_all = request.has_key('all')
+
+        from zope.component.presentation import PresentationRegistration
+        from zope.proxy import removeAllProxies
+        service = zapi.getService(self.context, 'Presentation')
+        # This is okay here, since we only read from the service. Once
+        # registration objects have sensible security declarations, we can
+        # remove that call. 
+        service = removeAllProxies(service)
+        self.regs = [reg
+                     for reg in service.registrations()
+                     if (isinstance(reg, PresentationRegistration) and
+                         # XXX: Handle multiple required ifaces at some point.
+                         self.iface.isOrExtends(reg.required[0]) and 
+                         self.type is reg.required[-1])]
 
 
     def getViewsByLayers(self):
@@ -239,32 +244,43 @@ class ViewsDetails(object):
              ('resource', None),
              ('template', None),
              ('url', 'zope/app/apidoc/viewmodule/tests/FooView')]),
-           ('name', u'index.html'),
+           ('info', ''),
+           ('name', 'index.html'),
            ('provided', 'zope.interface.Interface'),
            ('read_perm', None),
            ('required', 'zope.app.apidoc.viewmodule.tests.IFoo'),
            ('type', 'zope.publisher.interfaces.browser.IBrowserRequest'),
            ('write_perm', None)]
         """
-        result = []
-        for layer, views in self.views.items():
-            entries = []
-            for required, provided, more_req, name, factory in views:
-                if self.show_all or \
-                       not (required is None or required is Interface):
-                    entry = {'name' : name or '<i>no name</i>',
-                             'required' : getPythonPath(required),
-                             'type' : getPythonPath(more_req[0]),
-                             'factory' : _getFactoryData(factory),
-                             'provided' : getPythonPath(provided)
-                             }
-                    # Educated choice of the attribute name
-                    entry.update(getPermissionIds('publishTraverse',
-                                                  klass=factory))
-                    entries.append(entry)
+        entries = {}
+        for reg in self.regs:
+            if self.show_all or \
+                   not (None in reg.required or Interface in reg.required):
+                entry = {'name' : reg.name or '<i>no name</i>',
+                         # XXX: Deal with tuple
+                         'required' : getPythonPath(reg.required[0]),
+                         'type' : getPythonPath(reg.required[-1]),
+                         'factory' : _getFactoryData(reg.factory),
+                         'provided' : getPythonPath(reg.provided)
+                         }
 
-            if entries:
-                entries.sort(lambda x, y: cmp(x['name'], y['name']))
-                result.append({'name': layer, 'views': entries})
+                if isinstance(reg.doc, (unicode, str)):
+                    entry['info'] = reg.doc
+                else:
+                    # We can safely assume that we deal with a ParserInfo
+                    # object here.
+                    entry['info'] = '%s (line %s)' %(
+                        relativizePath(reg.doc.file), reg.doc.line)
 
-        return result
+                # Educated choice of the attribute name
+                entry.update(getPermissionIds('publishTraverse',
+                                              klass=reg.factory))
+
+                layer = entries.setdefault(reg.layer, [])
+                layer.append(entry)
+
+        for entry in entries.values():
+            entry.sort(lambda x, y: cmp(x['name'], y['name']))
+
+        return [{'name': layer, 'views': views}
+                for layer, views in entries.items()]
