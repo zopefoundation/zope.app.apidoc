@@ -140,6 +140,45 @@ def _getFieldInterface(field):
     return {'name': ifaces[0].getName(), 'id': getPythonPath(ifaces[0])}
 
 
+def _getFieldClass(field):
+    """Return PT-friendly dict about the field's class.
+
+    Examples::
+
+      >>> from zope.app.apidoc.tests import pprint
+      >>> from zope.interface import implements, Interface
+      
+      >>> class IField(Interface):
+      ...     pass
+      >>> class ISpecialField(IField):
+      ...     pass
+      >>> class Field(object):
+      ...     implements(IField)
+      >>> class SpecialField(object):
+      ...     implements(ISpecialField)
+      >>> class ExtraField(SpecialField):
+      ...     pass
+
+      >>> info = _getFieldClass(Field())
+      >>> pprint(info)
+      [('name', 'Field'),
+       ('path', 'zope/app/apidoc/ifacemodule/browser/Field')]
+
+      >>> info = _getFieldClass(SpecialField())
+      >>> pprint(info)
+      [('name', 'SpecialField'),
+       ('path', 'zope/app/apidoc/ifacemodule/browser/SpecialField')]
+
+      >>> info = _getFieldClass(ExtraField())
+      >>> pprint(info)
+      [('name', 'ExtraField'),
+       ('path', 'zope/app/apidoc/ifacemodule/browser/ExtraField')]
+    """
+    class_ = removeAllProxies(field).__class__
+    return {'name': class_.__name__,
+            'path': getPythonPath(class_).replace('.', '/')}
+
+
 def _getRequired(field):
     """Return a string representation of whether the field is required.
 
@@ -199,7 +238,10 @@ class InterfaceDetails(object):
           >>> details.getDoc()[:34]
           '<h1>This is the Foo interface</h1>'
         """
-        return renderText(self.context.__doc__, self.context.__module__)
+        # We must remove all proxies here, so that we get the context's
+        # __module__ attribute and not the proxy's. 
+        return renderText(self.context.__doc__,
+                          removeAllProxies(self.context).__module__)
 
     def getBases(self):
         """Get all bases of this class
@@ -293,11 +335,11 @@ class InterfaceDetails(object):
         return [{'name': method.getName(),
                  'signature': method.getSignatureString(),
                  'doc': renderText(method.getDoc() or '',
-                                   self.context.__module__)}
+                                   removeAllProxies(self.context).__module__)}
                 for method in _get(self.context, IMethod).values()]
             
     def getFields(self):
-        """Return a list of fields in the order they were specified.
+        r"""Return a list of fields in the order they were specified.
 
         Example::
 
@@ -307,15 +349,21 @@ class InterfaceDetails(object):
 
           >>> fields = details.getFields()
           >>> pprint(fields)
-          [[('default', "u'Foo'"),
-            ('description', u'Title'),
+          [[('class',
+             [('name', 'TextLine'),
+              ('path', 'zope/schema/_bootstrapfields/TextLine')]),
+            ('default', "u'Foo'"),
+            ('description', '<p>Title</p>\n'),
             ('iface',
              [('id', 'zope.schema.interfaces.ITextLine'),
               ('name', 'ITextLine')]),
             ('name', 'title'),
             ('required', u'required')],
-           [('default', "u'Foo.'"),
-            ('description', u'Desc'),
+           [('class',
+             [('name', 'Text'),
+              ('path', 'zope/schema/_bootstrapfields/Text')]),
+            ('default', "u'Foo.'"),
+            ('description', '<p>Desc</p>\n'),
             ('iface',
              [('id', 'zope.schema.interfaces.IText'), ('name', 'IText')]),
             ('name', 'description'),
@@ -324,10 +372,12 @@ class InterfaceDetails(object):
         fields = map(lambda x: x[1], _getInOrder(self.context, IField))
         return [{'name': field.getName(),
                  'iface': _getFieldInterface(field),
+                 'class': _getFieldClass(field),
                  'required': _getRequired(field),
                  'default': repr(field.default),
-                 'description': field.description
-                 }
+                 'description': renderText(
+                     field.description or '',
+                     removeAllProxies(self.context).__module__)}
                 for field in fields]
 
     def getRequiredAdapters(self):
@@ -361,7 +411,8 @@ class InterfaceDetails(object):
         adapters = []
         for reg in service.registrations():
             # Only grab the adapters for which this interface is required
-            if reg.required and reg.required[0] is not None and iface not in reg.required:
+            if reg.required and reg.required[0] is not None and \
+                   iface not in reg.required:
                 continue
             factory = _getRealFactory(reg.value)
             path = getPythonPath(factory)

@@ -62,12 +62,12 @@
       <b><code tal:content="field/name">field</code></b>
       - <a href=""
            tal:attributes="href 
-               string:../../../Interface/${field/iface/id}/apiindex.html">
-          <code tal:content="field/iface/name">IField</code></a>
+               string:../../../Class/${field/class/path}/index.html">
+          <code tal:content="field/class/name">Field</code></a>
       (<span tal:content="string:${field/required}, ">optional, </span>
         <span i18n:translate="">default</span> =
             <code tal:content="field/default" />)<br>
-      <span tal:content="field/description">field desc</span>      
+      <span tal:content="structure field/description">field desc</span>      
     </li>
 
   </ul>
