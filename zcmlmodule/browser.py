@@ -15,6 +15,8 @@
 
 $Id$
 """
+__docformat__ = 'restructuredtext'
+
 from zope.proxy import removeAllProxies
 from zope.configuration.xmlconfig import ParserInfo
 
