@@ -58,7 +58,7 @@ def _get(iface, type):
     # be able to get to the info.
     # We remove the Proxy on the interface, so we save ourselves the work of
     # removing it later individually from each attribute.
-    iface = zapi.removeSecurityProxy(iface)
+    iface = removeAllProxies(iface)
     items = {}
     for name in iface:
         attr = iface[name]
