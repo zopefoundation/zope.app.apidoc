@@ -15,6 +15,8 @@
 
 $Id$
 """
+__docformat__ = 'restructuredtext'
+
 from zope.interface import implements
 
 from zope.app import zapi
@@ -27,11 +29,11 @@ from utilities import ReadContainerBase
 class APIDocumentation(ReadContainerBase):
     r"""Represent the complete API Documentation.
 
-    This documentation is implemented using a simply 'IReadContainer'. The
+    This documentation is implemented using a simply `IReadContainer`. The
     items of the container are all registered utilities for
-    IDocumentationModule.
+    `IDocumentationModule`.
 
-    Demonstration::
+    Demonstration:
 
       >>> doc = APIDocumentation(None, '++apidoc++')
       >>> doc.get('ZCML').title
@@ -68,7 +70,7 @@ class APIDocumentation(ReadContainerBase):
             utils.append((key, value))
         return utils
         
-class apidocNamespace:
+class apidocNamespace(object):
     """Used to traverse to an API Documentation."""
     def __init__(self, ob, request=None):
         self.context = ob

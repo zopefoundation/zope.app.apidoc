@@ -15,7 +15,10 @@
 
 $Id$
 """
+__docformat__ = 'restructuredtext'
+
 import re
+import sys
 import types
 import inspect
 from os.path import dirname
@@ -23,13 +26,13 @@ from os.path import dirname
 import zope
 from zope.interface import implements, implementedBy
 from zope.proxy import removeAllProxies
+from zope.publisher.browser import TestRequest
 from zope.security.checker import getCheckerForInstancesOf, Global
 from zope.security.interfaces import INameBasedChecker
+
+from zope.app import zapi
 from zope.app.i18n import ZopeMessageIDFactory as _
-
 from zope.app.container.interfaces import IReadContainer
-
-__metaclass__ = type
 
 _remove_html_overhead = re.compile(
     r'(?sm)^<html.*<body.*?>\n(.*)</body>\n</html>\n')
@@ -42,12 +45,12 @@ def relativizePath(path):
     return path.replace(BASEDIR, 'Zope3')
 
 
-class ReadContainerBase:
-    """Base for IReadContainer objects.
+class ReadContainerBase(object):
+    """Base for `IReadContainer` objects.
 
-    This is a base class that minimizes the implementation of IReadContainers
-    to two methods, get() and items(), since the other methods can be
-    implemented using these two.
+    This is a base class that minimizes the implementation of an
+    `IReadContainer` to two methods, `get()` and `items()`, since the other
+    methods can be implemented using these two.
 
     Demonstration::
 
@@ -118,7 +121,7 @@ def getPythonPath(obj):
     """Return the path of the object in standard Python notation.
 
     This method makes only sense for classes and interfaces. Instances do not
-    have a '__name__' attribute, so we would expect them to fail.
+    have a `__name__` attribute, so we would expect them to fail.
 
     Example::
 
@@ -154,30 +157,6 @@ def getPythonPath(obj):
     return '%s.%s' %(module, obj.__name__)
 
 
-def stx2html(text, level=1):
-    r"""Convert STX text to HTML.
-
-    Example::
-
-      >>> text = 'Header\n\n  Normal text goes here.'
-
-      >>> stx2html(text)
-      '<h1>Header</h1>\n<p>  Normal text goes here.</p>\n'
-
-      >>> stx2html(text, level=3)
-      '<h3>Header</h3>\n<p>  Normal text goes here.</p>\n'
-
-      >>> stx2html(text, level=6)
-      '<h6>Header</h6>\n<p>  Normal text goes here.</p>\n'
-    """
-    from zope.structuredtext.document import Document
-    from zope.structuredtext.html import HTML
-    doc = Document()(text)
-    html = HTML()(doc, level)
-    html = _remove_html_overhead.sub(r'\1', html)
-    return html
-
-
 def _evalId(id):
     id = removeAllProxies(id)
     if isinstance(id, Global):
@@ -192,8 +171,8 @@ def getPermissionIds(name, checker=_marker, klass=_marker):
 
     Either the klass or the checker must be specified. If the class is
     specified, then the checker for it is looked up. Furthermore, this
-    function only works with 'INameBasedChecker' checkers. If another checker
-    is found, 'None' is returned for the permissions.
+    function only works with `INameBasedChecker` checkers. If another checker
+    is found, ``None`` is returned for the permissions.
 
     Example::
 
@@ -271,7 +250,7 @@ def getPermissionIds(name, checker=_marker, klass=_marker):
 def getFunctionSignature(func):
     """Return the signature of a function or method.
 
-    The 'func' argument *must* be a generic function or a method of a class. 
+    The `func` argument *must* be a generic function or a method of a class. 
 
     Examples::
 
@@ -357,7 +336,7 @@ def getFunctionSignature(func):
 def getPublicAttributes(obj):
     """Return a list of public attribute names.
 
-    This excludes any attribute starting with '_'. The 'obj' argument can be
+    This excludes any attribute starting with '_'. The `obj` argument can be
     either a classic class, type or instance of the previous two. Note that
     the term "attributes" here includes methods and properties.
 
@@ -372,7 +351,7 @@ def getPublicAttributes(obj):
       ...     def _getAttr(self):
       ...         return self.attr
       ...     attr2 = property(_getAttr)
-      >>> class Sample2:
+      >>> class Sample2(object):
       ...     attr = None
       >>> class Sample3(Sample):
       ...     attr3 = None
@@ -412,14 +391,14 @@ def getInterfaceForAttribute(name, interfaces=_marker, klass=_marker,
     This function is nice, if you have an attribute name which you retrieved
     from a class and want to know which interface requires it to be there.
 
-    Either 'interfaces' or 'klass' must be specified. If 'interfaces' is not
-    specified, the 'klass' is used to retrieve a list of
-    interfaces. 'interfaces' must be iterable.
+    Either `interfaces` or `klass` must be specified. If `interfaces` is not
+    specified, the `klass` is used to retrieve a list of
+    interfaces. `interfaces` must be iteratable.
 
-    'asPath' specifies whether the dotted name of the interface or the
+    `asPath` specifies whether the dotted name of the interface or the
     interface object is returned.
 
-    If no match is found, 'None' is returned.
+    If no match is found, ``None`` is returned.
 
     Example::
 
@@ -530,3 +509,35 @@ def columnize(entries, columns=3):
     if col:
         columns.append(col)
     return columns
+
+_format_dict = {
+    'plaintext': 'zope.source.plaintext',
+    'structuredtext': 'zope.source.stx',
+    'restructuredtext': 'zope.source.rest'
+    }
+    
+
+def getDocFormat(module):
+    """Convert a module's __docformat__ specification to a renderer source
+    id"""
+    format = getattr(module, '__docformat__', 'structuredtext').lower()
+    return _format_dict.get(format, 'zope.source.stx')
+
+
+def renderText(text, module=None, format=None):
+    if module is not None:
+        if isinstance(module, (str, unicode)):
+            module = sys.modules.get(module, None)
+        format = getDocFormat(module)
+
+    if format is None:
+        format = 'zope.source.stx'
+        
+    assert format in _format_dict.values()
+
+    if text:
+        source = zapi.createObject(None, format, text)
+        renderer = zapi.getView(source, '', TestRequest())
+        return renderer.render()
+    else:
+        return u''

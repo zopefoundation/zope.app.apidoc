@@ -20,6 +20,8 @@ the files only once.
 
 $Id$
 """
+__docformat__ = 'restructuredtext'
+
 import os
 
 from zope.configuration import docutils, xmlconfig
@@ -64,7 +66,7 @@ class Namespace(ReadContainerBase):
     r"""Simple namespace object for the ZCML Documentation Module.
 
     The namespace manages a particular ZCML namespace. The object always
-    expects the parent to be a 'ZCMLModule' instance.
+    expects the parent to be a `ZCMLModule` instance.
 
     Demonstration::
 
@@ -157,7 +159,7 @@ class Directive(object):
 class ZCMLModule(ReadContainerBase):
     r"""Represent the Documentation of all Interfaces.
 
-    This documentation is implemented using a simply 'IReadContainer'. The
+    This documentation is implemented using a simple `IReadContainer`. The
     items of the container are all the interfaces listed in the closest
     interface service and above.
 

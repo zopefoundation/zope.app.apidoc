@@ -15,6 +15,8 @@
 
 $Id$
 """
+__docformat__ = 'restructuredtext'
+
 import os
 import inspect
 
@@ -25,7 +27,7 @@ from zope.proxy import removeAllProxies
 
 from zope.app import zapi
 from zope.app.i18n import ZopeMessageIDFactory as _
-from zope.app.apidoc.utilities import getPythonPath, stx2html, columnize
+from zope.app.apidoc.utilities import getPythonPath, renderText, columnize
 from zope.app.apidoc.utilities import getPermissionIds, getFunctionSignature
 from zope.app.apidoc.utilities import getPublicAttributes
 from zope.app.apidoc.utilities import getInterfaceForAttribute
@@ -36,7 +38,7 @@ class Menu(object):
     """Menu for the Class Documentation Module.
 
     The menu allows for looking for classes by partial names. See
-    'findClasses()' for the simple search implementation.
+    `findClasses()` for the simple search implementation.
     """
 
     def findClasses(self):
@@ -113,7 +115,7 @@ class FunctionDetails(object):
     """Represents the details of the function."""
 
     def getDocString(self):
-        r"""Get the doc string of the class STX formatted.
+        r"""Get the doc string of the class in a rendered format.
 
         Example::
 
@@ -123,7 +125,8 @@ class FunctionDetails(object):
           >>> view.getDocString()
           '<p>This is the foo function.</p>\n'
         """
-        return stx2html(self.context.getDocString() or '', 3)
+        return renderText(self.context.getDocString() or '',
+                          zapi.getParent(self.context).getPath())
 
 
     def getAttributes(self):
@@ -275,14 +278,14 @@ class ClassDetails(object):
 
           >>> methods = view.getMethods()
           >>> pprint(methods[-2:])
-          [[('doc', ''),
+          [[('doc', u''),
             ('interface',
              'zope.interface.common.mapping.IEnumerableMapping'),
             ('name', 'keys'),
             ('read_perm', None),
             ('signature', '()'),
             ('write_perm', None)],
-           [('doc', ''),
+           [('doc', u''),
             ('interface',
              'zope.interface.common.mapping.IEnumerableMapping'),
             ('name', 'values'),
@@ -295,7 +298,8 @@ class ClassDetails(object):
         for name, attr, iface in klass.getMethods():
             entry = {'name': name,
                      'signature': getFunctionSignature(attr),
-                     'doc': stx2html(attr.__doc__ or '', 3),
+                     'doc': renderText(attr.__doc__ or '',
+                                       zapi.getParent(self.context).getPath()),
                      'interface': getPythonPath(iface)}
             entry.update(getPermissionIds(name, klass.getSecurityChecker()))
             methods.append(entry)
@@ -313,10 +317,11 @@ class ClassDetails(object):
           >>> from tests import getClassDetailsView
           >>> view = getClassDetailsView()
 
-          >>> print view.getDoc()[:59]
-          <h3>Represent the Documentation of any possible class.</h3>
+          >>> print view.getDoc()[23:80]
+          <p>Represent the Documentation of any possible class.</p>
         """
-        return stx2html(self.context.getDocString() or '', 3)
+        return renderText(self.context.getDocString() or '',
+                          zapi.getParent(self.context).getPath())
 
 
 class ModuleDetails(object):
@@ -333,9 +338,11 @@ class ModuleDetails(object):
           >>> view = getModuleDetailsView()
 
           >>> print view.getDoc().strip()
+          <div class="document">
           <p>Class Documentation Module</p>
           <p>This module is able to take a dotted name of any class and display
           documentation for it.</p>
+          </div>
         """
         text = self.context.getDocString()
         if text is None:
@@ -343,7 +350,7 @@ class ModuleDetails(object):
         lines = text.strip().split('\n')
         # Get rid of possible CVS id.
         lines = [line for line in lines if not line.startswith('$Id')]
-        return stx2html('\n'.join(lines), 3)
+        return renderText('\n'.join(lines), self.context.getPath())
 
     def getEntries(self, columns=True):
         """Return info objects for all modules and classes in this module.
