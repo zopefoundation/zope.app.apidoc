@@ -22,6 +22,7 @@ from zope.component import ComponentLookupError
 from zope.interface.declarations import providedBy
 from zope.interface.interfaces import IMethod, IInterface 
 from zope.proxy import removeAllProxies
+from zope.publisher.interfaces import IRequest
 from zope.schema.interfaces import IField
 from zope.security.proxy import removeSecurityProxy
 
@@ -414,7 +415,7 @@ class InterfaceDetails(object):
 
           >>> adapters = details.getRequiredAdapters()
           >>> adapters.sort()
-          >>> pprint(adapters)
+          >>> pprint(adapters[:2])
           [[('factory', 'None.append'),
             ('factory_url', 'None/append'),
             ('name', None),
@@ -438,6 +439,10 @@ class InterfaceDetails(object):
             # Only grab the adapters for which this interface is required
             if reg.required and reg.required[0] is not None and \
                    iface not in reg.required:
+                continue
+            # Ignore views
+            if IInterface.providedBy(reg.required[-1]) and \
+                   reg.required[-1].isOrExtends(IRequest):
                 continue
             factory = _getRealFactory(reg.value)
             path = getPythonPath(factory)
@@ -480,6 +485,10 @@ class InterfaceDetails(object):
         for reg in service.registrations():
             # Only grab adapters for which this interface is provided
             if iface is not reg.provided:
+                continue
+            # Ignore views
+            if IInterface.providedBy(reg.required[-1]) and \
+                   reg.required[-1].isOrExtends(IRequest):
                 continue
             factory = _getRealFactory(reg.value)
             path = getPythonPath(factory)
