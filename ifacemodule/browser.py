@@ -13,7 +13,7 @@
 ##############################################################################
 """Interface Details View
 
-$Id: browser.py,v 1.5 2004/03/28 23:40:36 srichter Exp $
+$Id: browser.py,v 1.6 2004/03/30 02:00:59 srichter Exp $
 """
 from types import FunctionType, MethodType, ClassType, TypeType
 from zope.component import ComponentLookupError
@@ -95,7 +95,7 @@ def _getFieldInterface(field):
 
     Examples::
 
-      >>> import pprint
+      >>> from zope.app.apidoc.tests import pprint
       >>> from zope.interface import implements, Interface
       
       >>> class IField(Interface):
@@ -109,20 +109,18 @@ def _getFieldInterface(field):
       >>> class ExtraField(SpecialField):
       ...     pass
 
-      >>> info = _getFieldInterface(Field()).items()
-      >>> info.sort()
-      >>> pprint.pprint(info)
-      [('id', 'zope.app.apidoc.ifacemodule.browser.IField'), ('name', 'IField')]
+      >>> info = _getFieldInterface(Field())
+      >>> pprint(info)
+      [('id', 'zope.app.apidoc.ifacemodule.browser.IField'),
+       ('name', 'IField')]
 
-      >>> info = _getFieldInterface(SpecialField()).items()
-      >>> info.sort()
-      >>> pprint.pprint(info)
+      >>> info = _getFieldInterface(SpecialField())
+      >>> pprint(info)
       [('id', 'zope.app.apidoc.ifacemodule.browser.ISpecialField'),
        ('name', 'ISpecialField')]
 
-      >>> info = _getFieldInterface(ExtraField()).items()
-      >>> info.sort()
-      >>> pprint.pprint(info)
+      >>> info = _getFieldInterface(ExtraField())
+      >>> pprint(info)
       [('id', 'zope.app.apidoc.ifacemodule.browser.ISpecialField'),
        ('name', 'ISpecialField')]
     """
@@ -159,6 +157,17 @@ def _getRequired(field):
         return 'required'
     else:
         return 'optional'
+
+
+def _getRealFactory(factory):
+    """Get the real factory.
+
+    Sometimes the original factory is masked by functions. If the function
+    keeps track of the original factory, use it.
+    """
+    if isinstance(factory, FunctionType) and hasattr(factory, 'factory'):
+        return factory.factory
+    return factory
 
 
 class InterfaceDetails(object):
@@ -209,8 +218,7 @@ class InterfaceDetails(object):
 
         Example::
 
-          >>> import pprint
-          >>> pprint = pprint.PrettyPrinter(width=69).pprint
+          >>> from zope.app.apidoc.tests import pprint
           >>> from tests import getInterfaceDetails
           >>> from zope.interface import Interface, directlyProvides
           >>> class IType(Interface):
@@ -221,8 +229,7 @@ class InterfaceDetails(object):
           []
 
           >>> directlyProvides(removeAllProxies(details.context), IType)
-          >>> type = details.getTypes()[0].items()
-          >>> type.sort()
+          >>> type = details.getTypes()[0]
           >>> pprint(type)
           [('name', 'IType'),
            ('path', 'zope.app.apidoc.ifacemodule.browser.IType')]
@@ -239,15 +246,11 @@ class InterfaceDetails(object):
 
         Example::
 
-          >>> import pprint
-          >>> pprint = pprint.PrettyPrinter(width=69).pprint
+          >>> from zope.app.apidoc.tests import pprint
           >>> from tests import getInterfaceDetails
           >>> details = getInterfaceDetails()
 
           >>> attrs = details.getAttributes()
-          >>> attrs = [a.items() for a in attrs]
-          >>> attrs = [a for a in attrs if a.sort() is None]
-          >>> attrs.sort()
           >>> pprint(attrs)
           [[('doc', '<p>This is bar.</p>\n'), ('name', 'bar')],
            [('doc', '<p>This is foo.</p>\n'), ('name', 'foo')]]
@@ -267,15 +270,11 @@ class InterfaceDetails(object):
 
         Example::
 
-          >>> import pprint
-          >>> pprint = pprint.PrettyPrinter(width=69).pprint
+          >>> from zope.app.apidoc.tests import pprint
           >>> from tests import getInterfaceDetails
           >>> details = getInterfaceDetails()
 
           >>> methods = details.getMethods()
-          >>> methods = [m.items() for m in methods]
-          >>> methods = [m for m in methods if m.sort() is None]
-          >>> methods.sort()
           >>> pprint(methods)
           [[('doc', '<p>This is blah.</p>\n'),
             ('name', 'blah'),
@@ -295,20 +294,11 @@ class InterfaceDetails(object):
 
         Example::
 
-          >>> import pprint
-          >>> pprint = pprint.PrettyPrinter(width=69).pprint
+          >>> from zope.app.apidoc.tests import pprint
           >>> from tests import getInterfaceDetails
           >>> details = getInterfaceDetails()
 
           >>> fields = details.getFields()
-
-          Convert all dictionaries to list of tuples and sort them.
-
-          >>> fields = [f.items() for f in fields]
-          >>> fields = [f for f in fields if f.sort() is None]
-          >>> fields = [f[:2] + [(f[2][0], f[2][1].items())] + f[3:]
-          ...           for f in fields]
-          >>> fields = [f for f in fields if f[2][1].sort() is None]
           >>> pprint(fields)
           [[('default', "u'Foo'"),
             ('description', u'Title'),
@@ -338,15 +328,11 @@ class InterfaceDetails(object):
 
         Example::
 
-          >>> import pprint
-          >>> pprint = pprint.PrettyPrinter(width=69).pprint
+          >>> from zope.app.apidoc.tests import pprint
           >>> from tests import getInterfaceDetails
           >>> details = getInterfaceDetails()
 
           >>> adapters = details.getRequiredAdapters()
-          >>> adapters = [a.items() for a in adapters]
-          >>> adapters = [a for a in adapters if a.sort() is None]
-          >>> adapters.sort()
           >>> pprint(adapters)
           [[('factory', 'zope.app.location.LocationPhysicallyLocatable'),
             ('factory_url', 'zope/app/location/LocationPhysicallyLocatable'),
@@ -359,8 +345,9 @@ class InterfaceDetails(object):
         context = removeAllProxies(self.context)
         adapters = []
         for adapter in service.getRegisteredMatching(required=context):
-            path = getPythonPath(adapter[4])
-            if type(adapter[4]) in (FunctionType, MethodType):
+            factory = _getRealFactory(adapter[4])
+            path = getPythonPath(factory)
+            if type(factory) in (FunctionType, MethodType):
                url = None
             else:
                 url = path.replace('.', '/')
@@ -378,15 +365,11 @@ class InterfaceDetails(object):
 
         Example::
 
-          >>> import pprint
-          >>> pprint = pprint.PrettyPrinter(width=69).pprint
+          >>> from zope.app.apidoc.tests import pprint
           >>> from tests import getInterfaceDetails
           >>> details = getInterfaceDetails()
 
           >>> adapters = details.getProvidedAdapters()
-          >>> adapters = [a.items() for a in adapters]
-          >>> adapters = [a for a in adapters if a.sort() is None]
-          >>> adapters.sort()
           >>> pprint(adapters)
           [[('factory', '__builtin__.object'),
             ('factory_url', '__builtin__/object'),
@@ -397,8 +380,9 @@ class InterfaceDetails(object):
         context = removeAllProxies(self.context)
         adapters = []
         for adapter in service.getRegisteredMatching(provided=context):
-            path = getPythonPath(adapter[4])
-            if type(adapter[4]) in (FunctionType, MethodType):
+            factory = _getRealFactory(adapter[4])
+            path = getPythonPath(factory)
+            if type(factory) in (FunctionType, MethodType):
                url = None
             else:
                 url = path.replace('.', '/')
@@ -416,15 +400,11 @@ class InterfaceDetails(object):
 
         Example::
 
-          >>> import pprint
-          >>> pprint = pprint.PrettyPrinter(width=69).pprint
+          >>> from zope.app.apidoc.tests import pprint
           >>> from tests import getInterfaceDetails
           >>> details = getInterfaceDetails()
 
           >>> classes = details.getClasses()
-          >>> classes = [c.items() for c in classes]
-          >>> classes = [c for c in classes if c.sort() is None]
-          >>> classes.sort()
           >>> pprint(classes)
           [[('path', 'zope.app.apidoc.ifacemodule.tests.Foo'),
             ('url', 'zope/app/apidoc/ifacemodule/tests/Foo')]]
@@ -460,19 +440,16 @@ class InterfaceDetails(object):
 
         Example::
 
-          >>> import pprint
-          >>> pprint = pprint.PrettyPrinter(width=69).pprint
+          >>> from zope.app.apidoc.tests import pprint
           >>> from tests import getInterfaceDetails
           >>> details = getInterfaceDetails()
 
           >>> utils = details.getUtilities()
-          >>> utils = [u.items() for u in utils]
-          >>> utils = [u for u in utils if u.sort() is None]
-          >>> utils.sort()
           >>> pprint(utils)
           [[('name', 'The Foo'),
             ('path', 'zope.app.apidoc.ifacemodule.tests.Foo'),
-            ('url', 'zope/app/apidoc/ifacemodule/tests/Foo')]]
+            ('url', 'zope/app/apidoc/ifacemodule/tests/Foo'),
+            ('url_name', 'The Foo')]]
         """
         service = zapi.getService(self.context, 'Utilities')
         utils = service.getUtilitiesFor(removeAllProxies(self.context))
@@ -483,7 +460,9 @@ class InterfaceDetails(object):
             else:
                 klass = util.__class__
             path = getPythonPath(klass)
-            info.append({'name': name, 'path': path,
+            info.append({'name': name or '<i>no name</i>',
+                         'url_name': name or '__noname__',
+                         'path': path,
                          'url': path.replace('.', '/')})
         return info
 
