@@ -13,7 +13,7 @@
 ##############################################################################
 """Tests for the Class Documentation Module
 
-$Id: tests.py,v 1.3 2004/03/29 22:24:57 srichter Exp $
+$Id: tests.py,v 1.4 2004/03/30 02:00:54 srichter Exp $
 """
 import unittest
 from zope.interface import Interface, directlyProvides
@@ -33,6 +33,7 @@ from zope.app.traversing.adapters import Traverser
 
 from zope.app.apidoc.classmodule import ClassModule
 from zope.app.apidoc.classmodule.browser import ClassDetails, ModuleDetails
+from zope.app.apidoc.classmodule.browser import FunctionDetails
 from zope.app.apidoc.interfaces import IDocumentationModule
 
 
@@ -60,6 +61,19 @@ def tearDown():
     placelesssetup.tearDown()
 
 
+def foo(cls, bar=1, *args):
+    """This is the foo function."""
+foo.deprecated = True
+
+
+def getFunctionDetailsView():
+    cm = zapi.getUtility(None, IDocumentationModule, 'Class')
+    view = FunctionDetails()
+    view.context = zapi.traverse(cm, 'zope/app/apidoc/classmodule/tests/foo')
+    view.request = TestRequest()
+    return view
+
+
 def getClassDetailsView():
     cm = zapi.getUtility(None, IDocumentationModule, 'Class')
     view = ClassDetails()
@@ -78,9 +92,9 @@ def getModuleDetailsView():
 
 def test_suite():
     return unittest.TestSuite((
-        #DocTestSuite('zope.app.apidoc.classmodule.browser',
-        #             setUp=setUp, tearDown=tearDown),
-        #DocTestSuite('zope.app.apidoc.classmodule'),
+        DocTestSuite('zope.app.apidoc.classmodule.browser',
+                     setUp=setUp, tearDown=tearDown),
+        DocTestSuite('zope.app.apidoc.classmodule'),
         ))
 
 if __name__ == '__main__':
