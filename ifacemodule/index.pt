@@ -201,7 +201,7 @@
           <ul>
             <li tal:repeat="factory factories">
               <a href=""
-                 tal:attributes="href string:../../Factory/${factory/name}/"
+                 tal:attributes="href string:../../Class/${factory/url}/"
                  tal:content="factory/name" />
               <tal:block replace="string:(${factory/title})" 
                          condition="factory/title" />

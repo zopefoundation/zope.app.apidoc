@@ -283,7 +283,6 @@ class InterfaceDetails(object):
             ('name', 'get'),
             ('signature', '(key, default=None)')]]
         """        
-        methods = []
         return [{'name': method.getName(),
                  'signature': method.getSignatureString(),
                  'doc': stx2html(method.getDoc() or '', 3)}
@@ -427,6 +426,7 @@ class InterfaceDetails(object):
 
         Example::
 
+          >>> from zope.app.apidoc.tests import pprint
           >>> from tests import getInterfaceDetails
           >>> details = getInterfaceDetails()
 
@@ -434,13 +434,26 @@ class InterfaceDetails(object):
           >>> factories = [f.items() for f in factories]
           >>> factories = [f for f in factories if f.sort() is None]
           >>> factories.sort()
-          >>> factories
-          [[('name', u'FooFactory'), ('title', 'Foo Factory')]]
+          >>> pprint(factories)
+          [[('name', u'FooFactory'),
+            ('title', 'Foo Factory'),
+            ('url', 'zope/component/factory/Factory')]]
         """
         iface = removeAllProxies(self.context)
-        return [{'name': n, 'title': f.title} \
-                for n, f in zapi.getFactoriesFor(self.context, iface) \
-                if iface in tuple(f.getInterfaces())]
+        factories = [(n, f) for n, f in
+                    zapi.getFactoriesFor(self.context, iface)
+                    if iface in tuple(f.getInterfaces())]
+        info = []
+        for name, factory in factories:
+            if type(factory) in (ClassType, TypeType):
+                klass = factory
+            else:
+                klass = factory.__class__
+            path = getPythonPath(klass)
+            info.append({'name': name or '<i>no name</i>',
+                         'title': getattr(factory, 'title', ''),
+                         'url': path.replace('.', '/')})
+        return info
 
     def getUtilitiesFor(self):
         """Return all utilities that provide this interface.
@@ -486,5 +499,4 @@ class InterfaceDetails(object):
         iface = removeAllProxies(self.context)
         service = zapi.getService(self.context, 'Services')
         services = service.getServiceDefinitions()
-        services = filter(lambda x: x[1] is iface, services)
-        return [ser[0] for ser in services]
+        return [ser[0] for ser in services if ser[1] is iface]
