@@ -127,10 +127,12 @@
             <tal:block content="adapter/name" />)
         </span>
         <br />
+        <tal:block condition="adapter/provided">
         <i i18n:translate="">provides:</i> 
           <a href=""
               tal:attributes="href string:../${adapter/provided}/apiindex.html"
               tal:content="adapter/provided" /><br />
+        </tal:block>
         <tal:block condition="adapter/required">
         <i i18n:translate="">also required:</i>
           <tal:block repeat="iface adapter/required">
