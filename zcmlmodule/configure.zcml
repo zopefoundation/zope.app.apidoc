@@ -24,14 +24,14 @@
   <browser:page
     for=".ZCMLModule"
     class=".browser.Menu"
-    permission="zope.View"
+    permission="zope.app.apidoc.UseAPIDoc"
     name="menu.html"
     template="menu.pt" />
 
   <browser:page
     for=".Directive"
     class=".browser.DirectiveDetails"
-    permission="zope.View"
+    permission="zope.app.apidoc.UseAPIDoc"
     name="index.html"
     template="index.pt" />
 

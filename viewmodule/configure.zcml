@@ -34,21 +34,21 @@
 
   <browser:page
       for=".ViewModule"
-      permission="zope.View"
+      permission="zope.app.apidoc.UseAPIDoc"
       class=".browser.Menu"
       name="menu.html"
       template="menu.pt" />
 
   <browser:page
       for=".ViewModule"
-      permission="zope.View"
+      permission="zope.app.apidoc.UseAPIDoc"
       class=".browser.SkinLayer"
       name="skin_layer.html"
       template="skin_layer.pt" />
 
   <browser:page
       for=".ViewModule"
-      permission="zope.View"
+      permission="zope.app.apidoc.UseAPIDoc"
       class=".browser.ViewsDetails"
       name="index.html"
       template="index.pt" />

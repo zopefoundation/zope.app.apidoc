@@ -23,14 +23,14 @@
 
   <browser:page
       for=".UtilityModule"
-      permission="zope.View"
+      permission="zope.app.apidoc.UseAPIDoc"
       class=".browser.Menu"
       name="menu.html"
       template="menu.pt" />
 
   <browser:page
       for=".Utility"
-      permission="zope.View"
+      permission="zope.app.apidoc.UseAPIDoc"
       class=".browser.UtilityDetails"
       name="index.html"
       template="index.pt" />

@@ -19,7 +19,7 @@
 
   <browser:page
       for="zope.interface.interfaces.IInterface"
-      permission="zope.View"
+      permission="zope.app.apidoc.UseAPIDoc"
       class=".browser.InterfaceDetails"
       name="apiindex.html"
       template="index.pt"
@@ -35,7 +35,7 @@
 
   <browser:page
       for=".InterfaceModule"
-      permission="zope.View"
+      permission="zope.app.apidoc.UseAPIDoc"
       class=".menu.Menu"
       name="menu.html"
       template="menu.pt"

@@ -2,6 +2,11 @@
   xmlns="http://namespaces.zope.org/zope"
   i18n_domain="zope">
 
+  <permission
+      id="zope.app.apidoc.UseAPIDoc"
+      title="[zope.app.apidoc.UseAPIDoc] Access Online API documentation"
+      />
+
   <class class=".APIDocumentation">
     <require
         interface="zope.app.container.interfaces.IReadContainer"

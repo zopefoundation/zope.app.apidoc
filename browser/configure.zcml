@@ -29,7 +29,7 @@
   <pages
     for="zope.app.apidoc.APIDocumentation"
     class=".apidoc.APIDocumentationView"
-    permission="zope.View">
+    permission="zope.app.apidoc.UseAPIDoc">
 
     <page
         name="index.html"

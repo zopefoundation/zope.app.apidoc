@@ -20,7 +20,7 @@
 
   <browser:page
       for=".ServiceModule"
-      permission="zope.View"
+      permission="zope.app.apidoc.UseAPIDoc"
       class=".browser.Menu"
       name="menu.html"
       template="menu.pt"
@@ -28,7 +28,7 @@
 
   <browser:page
       for=".Service"
-      permission="zope.View"
+      permission="zope.app.apidoc.UseAPIDoc"
       class=".browser.ServiceDetails"
       name="index.html"
       template="index.pt"
