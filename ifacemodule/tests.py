@@ -13,7 +13,7 @@
 ##############################################################################
 """Tests for the Interface Documentation Module
 
-$Id: tests.py,v 1.4 2004/03/28 23:40:52 srichter Exp $
+$Id: tests.py,v 1.5 2004/03/29 00:39:56 srichter Exp $
 """
 import unittest
 from zope.component.interfaces import IFactory
@@ -107,7 +107,6 @@ def setUp():
 
 def tearDown():
     placelesssetup.tearDown()
-    del classRegistry[Foo.__module__ + '.' + Foo.__name__]
     
 def test_suite():
     return unittest.TestSuite((

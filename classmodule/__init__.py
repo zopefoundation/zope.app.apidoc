@@ -16,7 +16,7 @@
 This module is able to take a dotted name of any class and display
 documentation for it. 
 
-$Id: __init__.py,v 1.2 2004/03/28 23:39:48 srichter Exp $
+$Id: __init__.py,v 1.3 2004/03/29 00:39:55 srichter Exp $
 """
 import os
 import sys
@@ -513,8 +513,16 @@ class ClassRegistry(dict):
         return [(path, klass) for path, klass in self.items()
                 if iface.implementedBy(klass)]
 
-# Initialize the registry
+
 classRegistry = ClassRegistry()
+
+def cleanUp():
+    global classRegistry
+    for key in classRegistry.keys():
+        classRegistry.__delitem__(key)
+
+from zope.testing.cleanup import addCleanUp
+addCleanUp(cleanUp)
 
 
 def safe_import(path, default=None):

@@ -13,15 +13,14 @@
 ##############################################################################
 """Tests for the Class Documentation Module
 
-$Id: tests.py,v 1.1 2004/03/28 23:40:12 srichter Exp $
+$Id: tests.py,v 1.2 2004/03/29 00:39:55 srichter Exp $
 """
 import unittest
 from zope.interface import Interface, directlyProvides
 from zope.publisher.browser import TestRequest
 from zope.testing.doctestunit import DocTestSuite
 from zope.app import zapi
-from zope.app.tests import ztapi
-from zope.app.tests.placelesssetup import setUp, tearDown
+from zope.app.tests import placelesssetup, ztapi
 
 from zope.app.traversing.browser import AbsoluteURL, SiteAbsoluteURL
 from zope.app.traversing.interfaces import ITraversable, ITraverser
@@ -37,8 +36,8 @@ from zope.app.apidoc.classmodule.browser import ClassDetails, ModuleDetails
 from zope.app.apidoc.interfaces import IDocumentationModule
 
 
-def browserSetUp():
-    setUp()
+def setUp():
+    placelesssetup.setUp()
     module = ClassModule()
     module.__name__ = ''
     directlyProvides(module, IContainmentRoot)
@@ -57,8 +56,8 @@ def browserSetUp():
     ztapi.browserView(IContainmentRoot, "absolute_url", SiteAbsoluteURL)
 
 
-def browserTearDown():
-    tearDown()
+def tearDown():
+    placelesssetup.tearDown()
 
 
 def getClassDetailsView():
@@ -80,7 +79,7 @@ def getModuleDetailsView():
 def test_suite():
     return unittest.TestSuite((
         DocTestSuite('zope.app.apidoc.classmodule.browser',
-                     setUp=browserSetUp, tearDown=browserTearDown),
+                     setUp=setUp, tearDown=tearDown),
         DocTestSuite('zope.app.apidoc.classmodule'),
         ))
 
