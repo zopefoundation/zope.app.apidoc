@@ -201,8 +201,8 @@ def getPermissionIds(name, checker=_marker, klass=_marker):
       >>> class Sample2(object):
       ...      pass
 
-      >>> checker = Checker({'attr': 'zope.Read', 'attr3': CheckerPublic}.get,
-      ...                   {'attr': 'zope.Write', 'attr3': CheckerPublic}.get) 
+      >>> checker = Checker({'attr': 'zope.Read', 'attr3': CheckerPublic},
+      ...                   {'attr': 'zope.Write', 'attr3': CheckerPublic}) 
       >>> defineChecker(Sample, checker)
 
       Now let's see how this function works
