@@ -537,7 +537,7 @@ class ClassModule(Module):
     def __init__(self):
         """Initialize object."""
         super(ClassModule, self).__init__(None, '', None, False)
-        self.__isSetup = False
+        self.__setup()
 
     def __setup(self):
         """Setup module and class tree."""
@@ -555,20 +555,6 @@ class ClassModule(Module):
     def getPath(self):
         """See Module class."""
         return ''
-
-    def get(self, key, default=None):
-        """See zope.app.container.interfaces.IReadContainer."""
-        if self.__isSetup is False:
-            self.__setup()
-            self.__isSetup = True
-        return super(ClassModule, self).get(key, default)
-
-    def items(self):
-        """See zope.app.container.interfaces.IReadContainer."""
-        if self.__isSetup is False:
-            self.__setup()
-            self.__isSetup = True
-        return super(ClassModule, self).items()
 
 
 class ClassRegistry(dict):
