@@ -24,6 +24,7 @@ from zope.component.presentation import LayerRegistration
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import relativizePath
 from zope.app.i18n import ZopeMessageIDFactory as _
+from zope.app.location import locate
 
 # TODO: Temporary hack, since registering an adapter for a particular class is
 # broken.
@@ -112,6 +113,8 @@ class ViewModule(object):
                  for reg in service.registrations()
                  if isinstance(reg, SkinRegistration)]
         skins.sort(lambda x, y: cmp(x.name, y.name))
+        # Make sure skins have a location
+        [locate(skin, self, skin.name) for skin in skins]
         return skins
 
 
@@ -151,6 +154,7 @@ class SkinDocumentation(object):
     implements(ISkinDocumentation)
 
     def __init__(self, context):
+        self.__parent__ = context
         self.context = context
 
     # See ISkinDocumentation
@@ -184,6 +188,9 @@ class SkinDocumentation(object):
             default = LayerRegistration('default',
                                         'This is a predefined layer.')
             layers.append(ILayerDocumentation(default))
+
+        # Make sure skins have a location
+        [locate(layer, self, layer.name) for layer in layers]
         return layers
         
     # See ISkinDocumentation
