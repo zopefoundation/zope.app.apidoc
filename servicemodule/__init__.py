@@ -60,9 +60,8 @@ class ServiceModule(ReadContainerBase):
       >>> module.get('foo') is None
       True
       
-      >>> print '\n'.join([id for id, iface in module.items()][:4])
+      >>> print '\n'.join([id for id, iface in module.items()][:3])
       Adapters
-      Presentation
       Services
       Utilities
       
