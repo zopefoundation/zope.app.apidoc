@@ -205,7 +205,8 @@
         <h3 class="details-section" i18n:translate="">Factories</h3>
         <div class="indent">
           <div class="small" i18n:translate="">
-            A list of factories that create objects implement this interface.
+            A list of factories that create objects implementing this
+            interface.
           </div>
           <ul>
             <li tal:repeat="factory factories">
