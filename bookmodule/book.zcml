@@ -357,7 +357,7 @@
   </configure>
 
   <!-- Zope Tree -->
-  <configure package="zope.app.generations">
+  <configure package="zope.app.tree">
     <bookchapter
         id="tree"
         title="Zope Tree"
