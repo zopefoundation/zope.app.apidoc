@@ -1,5 +1,5 @@
 body {
-    font: 80% Verdana, Helvetica, Arial, sans-serif;
+    font: 0.8em Verdana, Helvetica, Arial, sans-serif;
     background: white;
     color: black;
     margin: 1em;
@@ -7,7 +7,7 @@ body {
 }
 
 code, pre {
-  font-size: 110%;
+  font-size: 120%;
 }
 
 ul {
