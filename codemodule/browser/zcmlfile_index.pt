@@ -37,11 +37,16 @@
   font-style: italic;
 }
 
+div.highlight {
+  background: #fffbbe;
+  border: 1pt solid #0000c0;
+}
+
   </style>
 </head>
 <body>
 
-  <div tal:replace="structure context/@@display" />
+  <div tal:replace="structure context/rootElement/@@display" />
 
 </body>
 </html>

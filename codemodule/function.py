@@ -23,35 +23,7 @@ from zope.app.apidoc.utilities import getFunctionSignature
 from interfaces import IFunctionDocumentation
 
 class Function(object):
-    """This class represents a function declared in the module.
-
-    Setting up a function for documentation is easy. You only need to provide
-    an object providing 'IModule' as a parent, the name and the function
-    object itself::
-
-      >>> import zope.app.apidoc
-      >>> module = Module(None, 'apidoc', zope.app.apidoc)
-      >>> func = Function(module, 'handleNamespace',
-      ...                 zope.app.apidoc.handleNamespace)
-
-    This class provides data about the function in an accessible format. The
-    Python path, signature and doc string are easily retrieved using::
-
-      >>> func.getPath()
-      'zope.app.apidoc.handleNamespace'
-
-      >>> func.getSignature()
-      '(ob, name)'
-
-      >>> func.getDocString()
-      'Used to traverse to an API Documentation.'
-
-    For a more detailed analysis, you can also retrieve the attributes of the
-    function::
-
-      >>> func.getAttributes()
-      []
-    """
+    """This class represents a function declared in the module."""
     implements(ILocation, IFunctionDocumentation)
 
     def __init__(self, module, name, func):
@@ -72,27 +44,5 @@ class Function(object):
         return getFunctionSignature(self.__func)
 
     def getAttributes(self):
-        """See IClassDocumentation.
-
-        Here a detailed example::
-
-          >>> class ModuleStub(object):
-          ...      def getPath(self): return ''
-
-          >>> def foo(bar=1):
-          ...     pass
-
-          >>> func = Function(ModuleStub(), 'foo', foo)
-
-          >>> attrs = func.getAttributes()
-          >>> attrs.sort()
-          >>> print attrs
-          []
-
-          >>> foo.bar = 'blah'
-          >>> attrs = func.getAttributes()
-          >>> attrs.sort()
-          >>> print attrs
-          [('bar', 'blah')]
-        """
+        """See IClassDocumentation."""
         return self.__func.__dict__.items()

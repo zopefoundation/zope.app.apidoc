@@ -29,53 +29,7 @@ from zope.app.apidoc.utilities import getPythonPath
 from interfaces import IClassDocumentation
 
 class Class(object):
-    """This class represents a class declared in the module.
-
-    Setting up a class for documentation is easy. You only need to provide an
-    object providing 'IModule' as a parent, the name and the klass itself::
-
-      >>> import zope.app.apidoc
-      >>> module = Module(None, 'apidoc', zope.app.apidoc)
-      >>> klass = Class(module, 'APIDocumentation',
-      ...               zope.app.apidoc.APIDocumentation)
-
-    This class provides data about the class in an accessible format. The
-    Python path and doc string are easily retrieved using::
-
-      >>> klass.getPath()
-      'zope.app.apidoc.APIDocumentation'
-
-      >>> klass.getDocString()[:41]
-      'Represent the complete API Documentation.'
-
-    A list of base classes can also be retrieved. The list only includes
-    direct bases, so if we have class 'Blah', which extends 'Bar', which
-    extends 'Foo', then the bases of 'Blah' is just 'Bar'. In our example this
-    looks like this::
-
-      >>> klass.getBases()
-      (<class 'zope.app.apidoc.utilities.ReadContainerBase'>,)
-
-    In the other direction, you can get a list of known subclasses.  The list
-    only includes those subclasses that are registered with the global
-    classRegistry in this module. In our example::
-
-      >>> class APIDocSubclass(zope.app.apidoc.APIDocumentation):
-      ...   pass
-      >>> klass2 = Class(module, 'APIDocSubclass', APIDocSubclass)
-      >>> klass.getKnownSubclasses()
-      [<class 'zope.app.apidoc.classmodule.APIDocSubclass'>]
-
-    For a more detailed analysis, you can also retrieve the public attributes
-    and methods of this class::
-
-      >>> klass.getAttributes()
-      []
-
-      >>> klass.getMethods()[0]
-      ('get', <unbound method APIDocumentation.get>, None)
-
-    """
+    """This class represents a class declared in the module."""
     implements(ILocation, IClassDocumentation)
 
     def __init__(self, module, name, klass):
@@ -118,31 +72,7 @@ class Class(object):
         return self.__interfaces
 
     def getAttributes(self):
-        """See IClassDocumentation.
-
-        Here a detailed example::
-
-          >>> from zope.app.apidoc.tests import pprint
-
-          >>> class ModuleStub(object):
-          ...      def getPath(self): return ''
-
-          >>> class IBlah(Interface):
-          ...      foo = Attribute('Foo')
-
-          >>> class Blah(object):
-          ...      implements(IBlah)
-          ...      foo = 'f'
-          ...      bar = 'b'
-          ...      _blah = 'l'
-
-          >>> klass = Class(ModuleStub(), 'Blah', Blah)
-
-          >>> attrs = klass.getAttributes()
-          >>> pprint(attrs)
-          [('bar', 'b', None),
-           ('foo', 'f', <InterfaceClass zope.app.apidoc.classmodule.IBlah>)]
-        """
+        """See IClassDocumentation."""
         return [
             (name, getattr(self.__klass, name),
              getInterfaceForAttribute(name, self.__all_ifaces, asPath=False))
@@ -151,33 +81,7 @@ class Class(object):
             if not inspect.ismethod(getattr(self.__klass, name))]
 
     def getMethods(self):
-        """See IClassDocumentation.
-
-        Here a detailed example::
-
-          >>> from zope.app.apidoc.tests import pprint
-
-          >>> class ModuleStub(object):
-          ...      def getPath(self): return ''
-
-          >>> class IBlah(Interface):
-          ...      def foo(): pass
-
-          >>> class Blah(object):
-          ...      implements(IBlah)
-          ...      def foo(self): pass
-          ...      def bar(self): pass
-          ...      def _blah(self): pass
-
-          >>> klass = Class(ModuleStub(), 'Blah', Blah)
-
-          >>> methods = klass.getMethods()
-          >>> pprint(methods)
-          [('bar', <unbound method Blah.bar>, None),
-           ('foo',
-            <unbound method Blah.foo>,
-            <InterfaceClass zope.app.apidoc.classmodule.IBlah>)]
-        """
+        """See IClassDocumentation."""
         return [
             (name, getattr(self.__klass, name),
              getInterfaceForAttribute(name, self.__all_ifaces, asPath=False))

@@ -11,14 +11,14 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Functional Tests for Class Documentation Module.
+"""Functional Tests for Code Documentation Module.
 
 $Id$
 """
 import unittest
 from zope.app.testing.functional import BrowserTestCase
 
-class ClassModuleTests(BrowserTestCase):
+class CodeModuleTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
 
     def testMenu(self):
@@ -30,13 +30,14 @@ class ClassModuleTests(BrowserTestCase):
         self.checkForBrokenLinks(body, '/++apidoc++/Code/menu.html',
                                  basic='mgr:mgrpw')
 
-    def testMenuClassFinder(self):
+    def testMenuCodeFinder(self):
         response = self.publish('/++apidoc++/Code/menu.html',
                                 basic='mgr:mgrpw',
                                 form={'path': 'Code', 'SUBMIT': 'Find'})
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find('zope.app.apidoc.codemodule.CodeModule') > 0)
+        self.assert_(
+            body.find('zope.app.apidoc.codemodule.codemodule.CodeModule') > 0)
         self.checkForBrokenLinks(body, '/++apidoc++/Code/menu.html',
                                  basic='mgr:mgrpw')
 
@@ -71,6 +72,16 @@ class ClassModuleTests(BrowserTestCase):
             body, '/++apidoc++/Code/zope/app/apidoc/apidoc/handleNamesapce',
             basic='mgr:mgrpw')
 
+    def testTextFileDetailsView(self):
+        response = self.publish(
+            '/++apidoc++/Code/zope/app/apidoc/README.txt/index.html',
+            basic='mgr:mgrpw')
+        self.assertEqual(response.getStatus(), 200)
+        body = response.getBody()
+        self.checkForBrokenLinks(
+            body, '/++apidoc++/Code/zope/app/apidoc/README.txt/index.html',
+            basic='mgr:mgrpw')
+
     def testZCMLFileDetailsView(self):
         response = self.publish(
             '/++apidoc++/Code/zope/app/apidoc/configure.zcml/index.html',
@@ -84,7 +95,7 @@ class ClassModuleTests(BrowserTestCase):
 
 def test_suite():
     return unittest.TestSuite((
-        unittest.makeSuite(ClassModuleTests),
+        unittest.makeSuite(CodeModuleTests),
         ))
 
 if __name__ == '__main__':

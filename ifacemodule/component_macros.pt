@@ -5,7 +5,7 @@
 <metal:block define-macro="zcml">
   <a href=""
       tal:attributes="href 
-         string:../../Code/${zcml/url}/index.html" 
+        string:../../Code/${zcml/url}/index.html?line=${zcml/line}#${zcml/line}"
       tal:content="zcml/file">
     zope/app/configure.zcml
   </a>

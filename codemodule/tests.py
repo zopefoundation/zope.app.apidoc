@@ -15,132 +15,44 @@
 
 $Id$
 """
+import os
 import unittest
-from zope.component.interfaces import IFactory
 from zope.configuration import xmlconfig
-from zope.interface import Interface, directlyProvides, implements
-from zope.publisher.browser import TestRequest
-from zope.testing.doctestunit import DocTestSuite
+from zope.testing import doctest, doctestunit
 
-from zope.app import zapi
-from zope.app.location.traversing import LocationPhysicallyLocatable
-from zope.app.renderer.rest import ReStructuredTextSourceFactory
-from zope.app.renderer.rest import IReStructuredTextSource
-from zope.app.renderer.rest import ReStructuredTextToHTMLRenderer
-from zope.app.renderer.stx import StructuredTextSourceFactory
-from zope.app.renderer.stx import IStructuredTextSource
-from zope.app.renderer.stx import StructuredTextToHTMLRenderer
-from zope.app.testing import placelesssetup, ztapi
-from zope.app.traversing.browser import AbsoluteURL, SiteAbsoluteURL
-from zope.app.traversing.interfaces import ITraversable, ITraverser
-from zope.app.traversing.interfaces import IPhysicallyLocatable
-from zope.app.traversing.interfaces import IContainmentRoot
-from zope.app.traversing.adapters import DefaultTraversable
-from zope.app.traversing.adapters import RootPhysicallyLocatable
-from zope.app.traversing.adapters import Traverser
-
-from zope.app.apidoc.codemodule import CodeModule, IAPIDocRootModule
-from zope.app.apidoc.codemodule.browser.class_ import ClassDetails
-from zope.app.apidoc.codemodule.browser.function import FunctionDetails
-from zope.app.apidoc.codemodule.browser.module import ModuleDetails
-from zope.app.apidoc.interfaces import IDocumentationModule
+import zope.app.appsetup.appsetup
+from zope.app.testing import placelesssetup
 
 
 def setUp(test):
     placelesssetup.setUp()
 
-    class RootModule(str):
-        implements(IAPIDocRootModule)
-    ztapi.provideUtility(IAPIDocRootModule, RootModule('zope'), "zope")
+    meta = os.path.join(os.path.dirname(zope.app.__file__), 'meta.zcml')
+    context = xmlconfig.file(meta, zope.app)
+    meta = os.path.join(os.path.dirname(zope.app.apidoc.__file__), 'meta.zcml')
+    context = xmlconfig.file(meta, zope.app.apidoc, context)
 
-    module = CodeModule()
-    module.__name__ = ''
-    directlyProvides(module, IContainmentRoot)
-    ztapi.provideUtility(IDocumentationModule, module, "Code")
+    # Fix up path for tests.
+    global old_context
+    old_context = zope.app.appsetup.appsetup.__config_context
+    zope.app.appsetup.appsetup.__config_context = context
 
-    ztapi.provideAdapter(
-        None, ITraverser, Traverser)
-    ztapi.provideAdapter(
-        None, ITraversable, DefaultTraversable)
-    ztapi.provideAdapter(
-        None, IPhysicallyLocatable, LocationPhysicallyLocatable)
-    ztapi.provideAdapter(
-        IContainmentRoot, IPhysicallyLocatable, RootPhysicallyLocatable)
-
-    ztapi.browserView(Interface, "absolute_url", AbsoluteURL)
-    ztapi.browserView(IContainmentRoot, "absolute_url", SiteAbsoluteURL)
-
-    # Register Renderer Components
-    ztapi.provideUtility(IFactory, StructuredTextSourceFactory,
-                         'zope.source.stx')    
-    ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
-                         'zope.source.rest')    
-    ztapi.browserView(IStructuredTextSource, '', 
-                      StructuredTextToHTMLRenderer)
-    ztapi.browserView(IReStructuredTextSource, '', 
-                      ReStructuredTextToHTMLRenderer)
-
-
-def foo(cls, bar=1, *args):
-    """This is the foo function."""
-foo.deprecated = True
-
-
-def getFunctionDetailsView():
-    cm = zapi.getUtility(IDocumentationModule, 'Code')
-    view = FunctionDetails()
-    view.context = zapi.traverse(cm, 'zope/app/apidoc/codemodule/tests/foo')
-    view.request = TestRequest()
-    return view
-
-
-def getClassDetailsView():
-    cm = zapi.getUtility(IDocumentationModule, 'Code')
-    view = CodeDetails()
-    view.context = zapi.traverse(cm, 'zope/app/apidoc/codemodule/CodeModule')
-    view.request = TestRequest()
-    return view
-
-
-def getModuleDetailsView():
-    cm = zapi.getUtility(IDocumentationModule, 'Code')
-    view = ModuleDetails()
-    view.context = zapi.traverse(cm, 'zope/app/apidoc/codemodule')
-    view.request = TestRequest()
-    return view
-
-
-class DirectivesTest(placelesssetup.PlacelessSetup, unittest.TestCase):
-
-    template = """
-        <configure
-            xmlns='http://namespaces.zope.org/apidoc'>
-          %s
-        </configure>"""
-    
-    def setUp(self):
-        super(DirectivesTest, self).setUp()
-        import zope.app.apidoc.codemodule
-        self.context = xmlconfig.file('meta.zcml', zope.app.apidoc.codemodule)
-
-    def testRootModule(self):
-        self.assertEqual(len(list(zapi.getUtilitiesFor(IAPIDocRootModule))), 0)
-        xmlconfig.string(
-            self.template %'<rootModule module="zope" />', self.context)
-
-        self.assertEqual(zapi.getUtilitiesFor(IAPIDocRootModule).next()[0],
-                         'zope')
+def tearDown(test):
+    placelesssetup.tearDown()
+    global old_context
+    zope.app.appsetup.appsetup.__config_context = old_context    
 
 
 def test_suite():
     return unittest.TestSuite((
-        # XXX: Redo browser tests
-        #DocTestSuite('zope.app.apidoc.codemodule.browser',
-        #             setUp=setUp, tearDown=placelesssetup.tearDown),
-        DocTestSuite('zope.app.apidoc.codemodule',
-                     setUp=setUp, tearDown=placelesssetup.tearDown),
-        unittest.makeSuite(DirectivesTest),
+        doctest.DocFileSuite('README.txt',
+                             setUp=setUp, tearDown=tearDown,
+                             globs={'pprint': doctestunit.pprint},
+                             optionflags=doctest.NORMALIZE_WHITESPACE),
+        doctest.DocFileSuite('directive.txt',
+                             setUp=placelesssetup.setUp,
+                             tearDown=placelesssetup.tearDown),
         ))
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(default="test_suite")

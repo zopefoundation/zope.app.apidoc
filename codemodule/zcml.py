@@ -11,170 +11,91 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Configuration File Representation
+"""ZCML File Representation
 
 $Id$
 """
 __docformat__ = "reStructuredText"
-
-from persistent import Persistent
-from xml.dom import minidom
-from xml.parsers.expat import ExpatError
+from xml.sax import make_parser
+from xml.sax.xmlreader import InputSource
+from xml.sax.handler import feature_namespaces
 
 from zope.cachedescriptors.property import Lazy
-from zope.configuration import xmlconfig
-from zope.configuration.config import ConfigurationContext
-from zope.configuration.zopeconfigure import IZopeConfigure
-from zope.interface import implements
-from zope.schema import getFields
-from zope.schema.interfaces import IFromUnicode
+from zope.configuration import xmlconfig, config
+from zope.interface import implements, directlyProvides
 
 import zope.app.appsetup.appsetup
 from zope.app import zapi
-from zope.app.location import locate
-from zope.app.container.contained import Contained
 
-from interfaces import IElement, IComment, IDirective, IConfiguration
-
-context = None
-def getContext():
-    global context
-    if context is None:
-        context = xmlconfig.file(zope.app.appsetup.appsetup.getConfigSource(),
-                                 execute=False)
-    return context
+from interfaces import IDirective, IRootDirective, IZCMLFile
 
 
-class Element(Contained):
-    """A wrapper for a Mini-DOM Element to provide a Python/Zope-native
-    representation.
-    """
-    implements(IElement)
-    
-    def __init__(self, dom):
-        """Initialize the Element object."""
-        self.domElement = dom
+class MyConfigHandler(xmlconfig.ConfigurationHandler, object):
+    """Special configuration handler to generate an XML tree."""
 
-    def _getSubElement(self, dom, index):
-        """Helper method to create new element."""
-        element = Element(dom)
-        locate(element, self, unicode(index))
-        return element
+    def __init__(self, context):
+        super(MyConfigHandler, self).__init__(context)
+        self.rootElement = self.currentElement = None
+        self.prefixes = {}
 
-    def get(self, key, default=None):
-        """See zope.app.container.interfaces.IReadContainer"""        
-        try:
-            return self[key]
-        except KeyError:
-            return default
+    def startPrefixMapping(self, prefix, uri):
+        self.prefixes[uri] = prefix
 
-    def keys(self):
-        """See zope.app.container.interfaces.IReadContainer"""        
-        dom = self.domElement
-        return [unicode(index) for index in range(len(dom.childNodes))
-                if dom.childNodes[index].nodeType != dom.TEXT_NODE]
+    def startElementNS(self, name, qname, attrs):
+        # The last stack item is parent of the stack item that we are about to
+        # create
+        stackitem = self.context.stack[-1]
+        super(MyConfigHandler, self).startElementNS(name, qname, attrs)
 
-    def values(self):
-        """See zope.app.container.interfaces.IReadContainer"""        
-        return [self[key] for key in self.keys()]
+        # Get the parser info from the correct context
+        info = self.context.stack[-1].context.info
 
-    def items(self):
-        """See zope.app.container.interfaces.IReadContainer"""        
-        return [(key, self[key]) for key in self.keys()]
-
-    def __iter__(self):
-        """See zope.app.container.interfaces.IReadContainer"""        
-        return iter(self.keys())
-
-    def __len__(self):
-        """See zope.app.container.interfaces.IReadContainer"""        
-        return len(self.keys())
-
-    def __contains__(self, key):
-        """See zope.app.container.interfaces.IReadContainer"""        
-        try:
-            index = int(key)
-        except ValueError:
-            raise KeyError, '%s cannot be converted to an index.' %key
-        return index >= 0 and index < len(self.domElement.childNodes) and \
-               self.domElement.childNodes[index] != self.domElement.TEXT_NODE
-
-    def __getitem__(self, key):
-        """See zope.app.container.interfaces.IReadContainer"""        
-        try:
-            index = int(key)
-        except ValueError:
-            raise KeyError, '%s cannot be converted to an index.' %key
-        # Create the sub-element from the index and give it a location before
-        # returning it.
-        element = self._getSubElement(self.domElement.childNodes[index], index)
-        locate(element, self, key)
-        return element
-
-    def getElementType(self):
-        """See configeditor.interfaces.IElement"""
-        return self.domElement.nodeType
-
-
-class Comment(Element):
-    """ """
-    implements(IComment)
-
-    def getValue(self):
-        return self.domElement.nodeValue
-    value = property(getValue)
-
-
-class Directive(Element):
-    """ """
-    implements(IDirective)
-    
-    def __init__(self, dom, tagName=None, namespaceURI=None,
-                 attributes=None, config=None):
-        self.domElement = dom
-        self.config = config
-        # Delay lookup till later
-        self.schema = None
-
-    def _getSubElement(self, dom, index):
-        """Helper method to create new element."""
-        if dom.nodeType == dom.ELEMENT_NODE:
-            element = Directive(dom, config=self.config)
-            element.schema = self.config.getSchema(
-                dom.namespaceURI, dom.localName, self.schema)
-        elif dom.nodeType == dom.COMMENT_NODE:
-            element = Comment(dom)
+        # complex stack items behave a bit different than the other ones, so
+        # we need to handle it separately
+        if isinstance(stackitem, config.ComplexStackItem):
+            schema = stackitem.meta.get(name[1])[0]
         else:
-            element = Element(dom)
-        locate(element, self, unicode(index))
-        return element
+            schema = stackitem.context.factory(stackitem.context, name).schema
 
-    def getFullTagName(self):
-        """See configeditor.interfaces.IDirective"""
-        return self.domElement.tagName
+        # Now we have all the necessary information to create the directive
+        element = Directive(name, schema, attrs, stackitem.context, info,
+                            self.prefixes)
+        # Now we place the directive into the XML directive tree.
+        if self.rootElement is None:
+            self.rootElement = element
+        else:
+            self.currentElement.subs.append(element)
+            
+        element.__parent__ = self.currentElement
+        self.currentElement = element
+
+
+    def endElementNS(self, name, qname):
+        super(MyConfigHandler, self).endElementNS(name, qname)
+        self.currentElement = self.currentElement.__parent__
+
+
+class Directive(object):
+    """Representation of a ZCML directive."""
+    implements(IDirective)
         
-    def getAttribute(self, name):
-        """See configeditor.interfaces.IDirective"""
-        if name not in self.schema  and name+'_' not in self.schema:
-            raise AttributeError, "'%s' not in schema" %name
-        return self.domElement.getAttribute(name)
+    def __init__(self, name, schema, attrs, context, info, prefixes):
+        self.name = name
+        self.schema = schema
+        self.attrs = attrs
+        self.context = context
+        self.info = info
+        self.__parent__ = None
+        self.subs = []
+        self.prefixes = prefixes
 
-    def getAttributeMap(self):
-        """See configeditor.interfaces.IDirective"""
-        return dict(self.domElement.attributes.items())
-    
-    def getAvailableSubdirectives(self):
-        """ """
-        registry = self.config._registry
-        return [
-            ((ns, name), schema) 
-            for (ns, name), schema, usedIn, handler, info, parent in registry
-            if parent and self.schema.isOrExtends(parent.schema)]
-        
+    def __repr__(self):
+        return '<Directive %s>' %str(self.name)
 
-class Configuration(Directive):
-    """Cofiguration Object"""
-    implements(IConfiguration)
+
+class ZCMLFile(object):
+    """Representation of an entire ZCML file."""
+    implements(IZCMLFile)
 
     def __init__(self, filename, package, parent=None, name=None):
         # Retrieve the directive registry
@@ -182,65 +103,33 @@ class Configuration(Directive):
         self.package = package
         self.__parent__ = parent
         self.__name__ = name
-        self.config = self
-        self.schema = None
-                      
 
-    def _registry(self):
-        return getContext()._docRegistry
-    _registry = property(_registry)
-        
-    def domElement(self):
-        domElement = self.parse()
-        self.schema = self.getSchema(domElement.namespaceURI,
-                                     domElement.localName)
-        return domElement
-    domElement = Lazy(domElement)
+    def rootElement(self):
+        # Get the context that was originally generated during startup.
+        context = zope.app.appsetup.appsetup.getConfigContext()
+        context.package = self.package
 
-    def parse(self):
-        """See configeditor.interfaces.IConfiguration"""
-        return minidom.parse(self.filename).getElementsByTagName('configure')[0]
+        # Since we want to use a custom configuration handler, we need to
+        # instantiate the parser object ourselves 
+        parser = make_parser()
+        handler = MyConfigHandler(context)
+        parser.setContentHandler(handler)
+        parser.setFeature(feature_namespaces, True)
 
-    def getSchema(self, namespaceURI, tagName, parentSchema=None):
-        """See configeditor.interfaces.IConfiguration"""
-        if parentSchema is IZopeConfigure:
-            parentSchema = None
-        for (ns, name), schema, usedIn, handler, info, pDir in self._registry:
-            if ((ns == namespaceURI or ns == '') and name == tagName and
-                ((pDir is None and parentSchema is None) or
-                 (pDir is not None and parentSchema is pDir.schema))):
-                return schema
-        return None
+        # Now open the file
+        file = open(self.filename)
+        src = InputSource(getattr(file, 'name', '<string>'))
+        src.setByteStream(file)
 
-    def getNamespacePrefix(self, namespaceURI):
-        """ """
-        for name, value in self.getAttributeMap().items():
-            if name.startswith('xmlns') and value == namespaceURI:
-                if name == 'xmlns':
-                    return ''
-                else:
-                    return name[6:]
-        return None
+        # and parse it
+        parser.parse(src)
 
-    def getNamespaceURI(self, prefix):
-        """ """
-        for name, value in self.getAttributeMap().items():
-            if name == 'xmlns' and prefix == '':
-                return value
-            if name.startswith('xmlns') and name.endswith(prefix):
-                return value
+        # Finally we retrieve the root element, have it provide a special root
+        # directive interface and give it a location, so that we can do local
+        # lookups.
+        root = handler.rootElement
+        directlyProvides(root, IRootDirective)
+        root.__parent__ = self
+        return root
 
-        return None
-
-    def getResolver(self):
-        """ """
-        if self.package is None:
-            return None
-        resolver = ConfigurationContext()
-        resolver.package = self.package
-        resolver.i18n_domain = self.domElement.getAttribute('i18n_domain')
-        resolver.i18n_strings = {}
-        resolver.actions = []
-        from zope.configuration.xmlconfig import ParserInfo
-        resolver.info = ParserInfo(self.filename, 0, 0)
-        return resolver
+    rootElement = Lazy(rootElement)

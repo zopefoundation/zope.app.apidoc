@@ -22,6 +22,7 @@ class TextFileDetails(object):
     """Represents the details of the text file."""
 
     def renderedContent(self):
+        """Render the file content to HTML."""
         if self.context.path.endswith('.stx'):
             format = 'zope.source.stx'
         else:

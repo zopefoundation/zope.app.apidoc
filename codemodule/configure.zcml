@@ -15,15 +15,19 @@
     <allow interface=".interfaces.IFunctionDocumentation" />
   </class>
 
-  <class class=".zcml.Configuration">
-    <allow interface=".interfaces.IConfiguration" />
+  <class class=".zcml.Directive">
+    <allow interface=".interfaces.IDirective" />
+  </class>
+
+  <class class=".zcml.ZCMLFile">
+    <allow interface=".interfaces.IZCMLFile" />
   </class>
 
   <class class=".text.TextFile">
     <allow attributes="getContent path" />
   </class>
 
-  <class class=".CodeModule">
+  <class class=".codemodule.CodeModule">
     <allow interface="..interfaces.IDocumentationModule" />
     <allow interface=".interfaces.IModuleDocumentation" />
     <allow attributes="rootModules" />
@@ -41,7 +45,7 @@
 
   <utility
     provides="..interfaces.IDocumentationModule"
-    factory=".CodeModule"
+    factory=".codemodule.CodeModule"
     name="Code" />
 
   <include package=".browser" />

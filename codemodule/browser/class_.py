@@ -36,62 +36,18 @@ class ClassDetails(object):
     """Represents the details of the class."""
 
     def getBases(self):
-        """Get all bases of this class.
-
-        Example::
-
-          The class we are using for this view is
-          zope.app.apidoc.classmodule.ClassModule.
-
-          >>> import pprint
-          >>> from tests import getClassDetailsView
-          >>> view = getClassDetailsView()
-
-          >>> pprint.pprint(view.getBases())
-          [{'path': 'zope.app.apidoc.classmodule.Module',
-            'url': 'http://127.0.0.1/zope/app/apidoc/classmodule/Module'}]
-        """
+        """Get all bases of this class."""
         return self._listClasses(self.context.getBases())
 
 
     def getKnownSubclasses(self):
-        """Get all known subclasses of this class.
-
-        Example::
-
-          The class we are using for this view is
-          zope.app.apidoc.classmodule.ClassModule.
-
-          >>> import pprint
-          >>> from tests import getClassDetailsView
-          >>> view = getClassDetailsView()
-
-          >>> pprint.pprint(view.getKnownSubclasses())
-          []
-        """
+        """Get all known subclasses of this class."""
         entries = self._listClasses(self.context.getKnownSubclasses())
         entries.sort(lambda x, y: cmp(x['path'], y['path']))
         return entries
 
     def _listClasses(self, classes):
-        """Prepare a list of classes for presentation.
-
-        Example::
-
-          >>> import pprint
-          >>> from tests import getClassDetailsView
-          >>> view = getClassDetailsView()
-          >>> import zope.app.apidoc
-          >>> import zope.app.apidoc.classmodule
-
-          >>> pprint.pprint(view._listClasses([
-          ...       zope.app.apidoc.APIDocumentation,
-          ...       zope.app.apidoc.classmodule.Module]))
-          [{'path': 'zope.app.apidoc.APIDocumentation',
-            'url': 'http://127.0.0.1/zope/app/apidoc/APIDocumentation'},
-           {'path': 'zope.app.apidoc.classmodule.Module',
-            'url': 'http://127.0.0.1/zope/app/apidoc/classmodule/Module'}]
-        """
+        """Prepare a list of classes for presentation."""
         info = []
         codeModule = zapi.getUtility(IDocumentationModule, "Code")
         for cls in classes:
@@ -113,66 +69,18 @@ class ClassDetails(object):
 
 
     def getBaseURL(self):
-        """Return the URL for the API Documentation Tool.
-
-        Example::
-
-          >>> from tests import getClassDetailsView
-          >>> view = getClassDetailsView()
-
-          Note that the following output is a bit different than usual, since
-          we have not setup all path elements.
-
-          >>> view.getBaseURL()
-          'http://127.0.0.1'
-        """
+        """Return the URL for the API Documentation Tool."""
         m = zapi.getUtility(IDocumentationModule, "Code")
         return zapi.absoluteURL(zapi.getParent(m), self.request)
 
 
     def getInterfaces(self):
-        """Get all implemented interfaces (as paths) of this class.
-
-        Example::
-
-          The class we are using for this view is
-          zope.app.apidoc.classmodule.ClassModule.
-
-          >>> from zope.app.apidoc.tests import pprint
-          >>> from tests import getClassDetailsView
-          >>> view = getClassDetailsView()
-
-          >>> pprint(view.getInterfaces())
-          ['zope.app.apidoc.interfaces.IDocumentationModule',
-           'zope.app.location.interfaces.ILocation',
-           'zope.app.apidoc.classmodule.IModuleDocumentation',
-           'zope.app.container.interfaces.IReadContainer']
-        """
+        """Get all implemented interfaces (as paths) of this class."""
         return map(getPythonPath, self.context.getInterfaces())
 
 
     def getAttributes(self):
-        """Get all attributes of this class.
-
-        Example::
-
-          The class we are using for this view is
-          zope.app.apidoc.classmodule.ClassModule.
-
-          >>> from zope.app.apidoc.tests import pprint
-          >>> from tests import getClassDetailsView
-          >>> view = getClassDetailsView()
-
-          >>> attr = view.getAttributes()[1]
-          >>> pprint(attr)
-          [('interface', 'zope.app.apidoc.interfaces.IDocumentationModule'),
-           ('name', 'title'),
-           ('read_perm', None),
-           ('type', 'MessageID'),
-           ('type_link', 'zope.i18nmessageid.messageid.MessageID'),
-           ('value', "u'Classes'"),
-           ('write_perm', None)]
-        """
+        """Get all attributes of this class."""
         attrs = []
         for name, attr, iface in self.context.getAttributes():
             entry = {'name': name,
@@ -190,34 +98,7 @@ class ClassDetails(object):
 
 
     def getMethods(self):
-        """Get all methods of this class.
-
-        Example::
-
-          The class we are using for this view is
-          zope.app.apidoc.classmodule.ClassModule.
-
-          >>> from zope.app.apidoc.tests import pprint
-          >>> from tests import getClassDetailsView
-          >>> view = getClassDetailsView()
-
-          >>> methods = view.getMethods()
-          >>> pprint(methods[-2:])
-          [[('doc', u''),
-            ('interface',
-             'zope.interface.common.mapping.IEnumerableMapping'),
-            ('name', 'keys'),
-            ('read_perm', None),
-            ('signature', '()'),
-            ('write_perm', None)],
-           [('doc', u''),
-            ('interface',
-             'zope.interface.common.mapping.IEnumerableMapping'),
-            ('name', 'values'),
-            ('read_perm', None),
-            ('signature', '()'),
-            ('write_perm', None)]]
-        """
+        """Get all methods of this class."""
         methods = []
         # remove the security proxy, so that `attr` is not proxied. We could
         # unproxy `attr` for each turn, but that would be less efficient.
@@ -237,19 +118,7 @@ class ClassDetails(object):
 
 
     def getDoc(self):
-        """Get the doc string of the class STX formatted.
-
-        Example::
-
-          The class we are using for this view is
-          zope.app.apidoc.classmodule.ClassModule.
-
-          >>> from tests import getClassDetailsView
-          >>> view = getClassDetailsView()
-
-          >>> print view.getDoc()[23:80]
-          <p>Represent the Documentation of any possible class.</p>
-        """
+        """Get the doc string of the class STX formatted."""
         return renderText(self.context.getDocString() or '',
                           zapi.getParent(self.context).getPath())
 

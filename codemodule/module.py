@@ -23,7 +23,7 @@ import zope
 from zope.interface import implements
 from zope.interface.interface import InterfaceClass
 from zope.app.location.interfaces import ILocation
-from zope.app.location import locate
+from zope.app.location import LocationProxy
 
 from zope.app.apidoc.classregistry import safe_import
 from zope.app.apidoc.utilities import ReadContainerBase
@@ -32,70 +32,15 @@ from interfaces import IModuleDocumentation
 from zope.app.apidoc.codemodule.class_ import Class
 from zope.app.apidoc.codemodule.function import Function
 from zope.app.apidoc.codemodule.text import TextFile
-from zope.app.apidoc.codemodule.zcml import Configuration
+from zope.app.apidoc.codemodule.zcml import ZCMLFile
 
 # Ignore these files, since they are not necessary or cannot be imported
 # correctly.
-# TODO: I want to be able to specify paths with wildcards later, so that we do
-# not ignore all files/dirs with a certain name.
 IGNORE_FILES = ('tests', 'tests.py', 'ftests', 'ftests.py', 'CVS', 'gadfly',
                 'setup.py', 'introspection.py', 'Mount.py')
 
 class Module(ReadContainerBase):
-    """This class represents a Python module.
-
-    The module can be easily setup by simply passing the parent module, the
-    module name (not the entire Python path) and the Python module instance
-    itself::
-
-      >>> import zope.app.apidoc
-      >>> module = Module(None, 'apidoc', zope.app.apidoc)
-
-    We can now get some of the common module attributes via accessor methods::
-
-      >>> module.getDocString()[:24]
-      'Zope 3 API Documentation'
-
-      >>> fname = module.getFileName()
-      >>> fname = fname.replace('\\\\', '/') # normalize pathname separator
-      >>> 'zope/app/apidoc/__init__.py' in fname
-      True
-
-      >>> module.getPath()
-      'zope.app.apidoc'
-
-    The setup for creating the sub module and class tree is automatically
-    called during initialization, so that the sub-objects are available as
-    soon as you have the object::
-
-      >>> keys = module.keys()
-      >>> 'APIDocumentation' in keys
-      True
-      >>> 'apidocNamespace' in keys
-      True
-      >>> 'handleNamespace' in keys
-      True
-
-      >>> print module['browser'].getPath()
-      zope.app.apidoc.browser
-
-    Now, the ``get(key, default=None)`` is actually much smarter than you might
-    originally suspect, since it can actually get to more objects than it
-    promises. If a key is not found in the module's children, it tries to
-    import the key as a module relative to this module.
-
-    For example, while 'tests' directories are not added to the module and
-    classes hierarchy (since they do not provide or implement any API), we can
-    still get to them::
-
-      >>> print module['tests'].getPath()
-      zope.app.apidoc.tests
-
-      >>> names = module['tests'].keys()
-      >>> names.sort()
-      >>> names
-      ['Root', 'pprint', 'rootLocation', 'setUp', 'test_suite']
-    """
+    """This class represents a Python module."""
     implements(ILocation, IModuleDocumentation)
 
     def __init__(self, parent, name, module, setup=True):
@@ -135,8 +80,8 @@ class Module(ReadContainerBase):
                         self._children[name] = Module(self, name, module)
 
                 elif os.path.isfile(path) and file.endswith('.zcml'):
-                    self._children[file] = Configuration(path, self._module,
-                                                         self, file)
+                    self._children[file] = ZCMLFile(path, self._module,
+                                                    self, file)
 
                 elif os.path.isfile(path) and file.endswith('.txt'):
                     self._children[file] = TextFile(path, file, self)
@@ -157,8 +102,8 @@ class Module(ReadContainerBase):
                 if isinstance(attr, (types.ClassType, types.TypeType)):
                     self._children[name] = Class(self, name, attr)
 
-                if isinstance(attr, (InterfaceClass)):
-                    self._children[name] = locate(attr, self, name)
+                if isinstance(attr, InterfaceClass):
+                    self._children[name] = LocationProxy(attr, self, name)
 
                 elif type(attr) is types.FunctionType:
                     self._children[name] = Function(self, name, attr)

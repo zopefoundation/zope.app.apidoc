@@ -23,36 +23,13 @@ class FunctionDetails(object):
     """Represents the details of the function."""
 
     def getDocString(self):
-        r"""Get the doc string of the function in a rendered format.
-
-        Example::
-
-          >>> from tests import getFunctionDetailsView
-          >>> view = getFunctionDetailsView()
-
-          >>> view.getDocString()
-          u'<p>This is the foo function.</p>\n'
-        """
+        """Get the doc string of the function in a rendered format."""
         return renderText(self.context.getDocString() or '',
                           zapi.getParent(self.context).getPath())
 
 
     def getAttributes(self):
-        """Get all attributes of this function.
-
-        Example::
-
-          >>> from zope.app.apidoc.tests import pprint
-          >>> from tests import getFunctionDetailsView
-          >>> view = getFunctionDetailsView()
-
-          >>> attr = view.getAttributes()[0]
-          >>> pprint(attr)
-          [('name', 'deprecated'),
-           ('type', 'bool'),
-           ('type_link', '__builtin__/bool'),
-           ('value', 'True')]
-        """
+        """Get all attributes of this function."""
         return [{'name': name,
                  'value': `attr`,
                  'type': type(attr).__name__,

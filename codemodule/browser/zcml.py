@@ -16,8 +16,9 @@
 $Id$
 """
 __docformat__ = "reStructuredText"
-from zope.configuration.fields import GlobalObject, GlobalInterface
+from zope.configuration.fields import GlobalObject, GlobalInterface, Tokens
 from zope.interface import implements
+from zope.interface.interfaces import IInterface
 from zope.schema import getFieldNamesInOrder, getFieldsInOrder
 from zope.schema.interfaces import IFromUnicode
 from zope.security.proxy import removeSecurityProxy
@@ -26,6 +27,8 @@ from zope.app import zapi
 from zope.app.tree.interfaces import IUniqueId
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import getPythonPath
+
+from zope.app.apidoc.codemodule.interfaces import IRootDirective
 
 def findDocModule(obj):
     if IDocumentationModule.providedBy(obj):
@@ -44,83 +47,117 @@ def _compareAttrs(x, y, nameOrder):
         valueY = 999999
 
     return cmp(valueX, valueY)
-        
-
-class DisplayComment(object):
-
-    value = property(lambda self: self.context.value)
-
-    id = property(lambda self: IUniqueId(self.context).getId())
 
 
-class DisplayDirective(object):
+class DirectiveDetails(object):
 
-    id = property(lambda self: IUniqueId(self.context).getId())
+    def fullTagName(self):
+        context = removeSecurityProxy(self.context)
+        ns, name = context.name
+        if context.prefixes[ns]:
+            return '%s:%s' %(context.prefixes[ns], name)
+        else:
+            return name
 
-    fullTagName = property(lambda self: self.context.getFullTagName())
+    def line(self):
+        return str(removeSecurityProxy(self.context).info.line)
+
+    def highlight(self):
+        if self.request.get('line') == self.line():
+            return 'highlight'
+        return ''
 
     def url(self):
-        # XXX: Determine URLs of directives that are in all namespaces
         context = removeSecurityProxy(self.context)
-        ns = context.domElement.namespaceURI
+        ns, name = context.name
         ns = ns.replace(':', '_co_')
         ns = ns.replace('/', '_sl_')
         zcml = zapi.getUtility(IDocumentationModule, 'ZCML')
+        if name not in zcml[ns]:
+            ns = 'ALL'
         return '%s/../ZCML/%s/%s/index.html' %(
-            zapi.absoluteURL(findDocModule(self), self.request), ns,
-            context.domElement.localName)
+            zapi.absoluteURL(findDocModule(self), self.request), ns, name)
         
+    def ifaceURL(self, value, field, rootURL):
+        bound = field.bind(self.context.context)
+        iface = bound.fromUnicode(value)
+        return rootURL+'/../Interface/%s/apiindex.html' %(getPythonPath(iface))
+  
+    def objectURL(self, value, field, rootURL):
+        bound = field.bind(self.context.context)
+        obj = bound.fromUnicode(value)
+        if IInterface.providedBy(obj):
+            return rootURL+'/../Interface/%s/apiindex.html' %(
+                getPythonPath(obj))
+        try:
+            return rootURL + '/%s/index.html' %(
+                getPythonPath(obj).replace('.', '/'))
+        except AttributeError:
+            # probably an instance
+            pass
 
     def attributes(self):
-        schema = removeSecurityProxy(self.context.schema)
-        resolver = self.context.config.getResolver()
-        attrs = [{'name': name, 'value': value, 'url': None}
-                 for name, value in self.context.getAttributeMap().items()]
+        context = removeSecurityProxy(self.context)
+        attrs = [{'name': (ns and context.prefixes[ns]+':' or '') + name,
+                  'value': value, 'url': None, 'values': []}
+                 for (ns, name), value in context.attrs.items()]
 
+        names = context.schema.names(True)
+        rootURL = zapi.absoluteURL(findDocModule(self), self.request)
         for attr in attrs:
-            if name in schema:
-                field = schema[name]
-            elif name+'_' in schema:
-                field = schema[name+'_']
-            else:
-                continue
+            name = (attr['name'] in names) and attr['name'] or attr['name']+'_'
+            field = context.schema.get(name)
+            if zapi.isinstance(field, GlobalInterface):
+                attr['url'] = self.ifaceURL(attr['value'], field, rootURL)
+                
+            elif zapi.isinstance(field, GlobalObject):
+                attr['url'] = self.objectURL(attr['value'], field, rootURL)
 
-            # XXX: This is extremly brittle!!!
-            # Handle tokens; handle instances
-            if isinstance(field, GlobalInterface):
-                bound = field.bind(resolver)
-                converter = IFromUnicode(bound)
-                try:
-                    value = converter.fromUnicode(attr['value'])
-                except: continue
-                attr['url'] = '%s/../Interface/%s/apiindex.html' %(
-                    zapi.absoluteURL(findDocModule(self), self.request),
-                    getPythonPath(value))
-
-            elif isinstance(field, GlobalObject):
-                bound = field.bind(resolver)
-                converter = IFromUnicode(bound)
-                # XXX: Fix later
-                try:
-                    value = converter.fromUnicode(attr['value'])
-                except:
-                    pass
-                try:
-                    attr['url'] = getPythonPath(value)                
-                except AttributeError: continue
+            elif zapi.isinstance(field, Tokens):
+                field = field.value_type
+                values = attr['value'].strip().split()
+                if len(values) == 1:
+                    attr['value'] = values[0]
+                    if zapi.isinstance(field, GlobalInterface):
+                        attr['url'] = self.ifaceURL(values[0], field, rootURL)
+                    elif zapi.isinstance(field, GlobalObject):
+                        attr['url'] = self.objectURL(values[0], field, rootURL)
+                    break
+                    
+                for value in values: 
+                    if zapi.isinstance(field, GlobalInterface):
+                        url = self.ifaceURL(value, field, rootURL)
+                    elif zapi.isinstance(field, GlobalObject):
+                        url = self.objectURL(value, field, rootURL)
+                    else:
+                        break
+                    attr['values'].append({'value': value, 'url': url})
+                    
 
         # Make sure that the attributes are in the same order they are defined
         # in the schema.
-        fieldNames = getFieldNamesInOrder(schema)
+        fieldNames = getFieldNamesInOrder(context.schema)
         fieldNames = [name.endswith('_') and name[:-1] or name
                       for name in fieldNames]
         attrs.sort(lambda x, y: _compareAttrs(x, y, fieldNames))
 
-        return attrs
+        if not IRootDirective.providedBy(context):
+            return attrs
+
+        xmlns = []
+        for uri, prefix in context.prefixes.items():
+            name = prefix and ':'+prefix or ''
+            xmlns.append({'name': 'xmlns'+name,
+                          'value': uri,
+                          'url': None,
+                          'values': []})
+
+        xmlns.sort(lambda x, y: cmp(x['name'], y['name']))
+        return xmlns + attrs
 
     def hasSubDirectives(self):
-        return len(self.context) != 0
+        return len(removeSecurityProxy(self.context).subs) != 0
 
     def getElements(self):
         context = removeSecurityProxy(self.context)
-        return context.values()
+        return context.subs

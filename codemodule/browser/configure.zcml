@@ -3,7 +3,7 @@
     xmlns:zope="http://namespaces.zope.org/zope">
 
   <page
-      for="..CodeModule"
+      for="..codemodule.CodeModule"
       permission="zope.app.apidoc.UseAPIDoc"
       class=".menu.Menu"
       name="menu.html"
@@ -39,7 +39,7 @@
 
   <!-- ZCML File -->
   <page
-      for="..interfaces.IConfiguration"
+      for="..interfaces.IZCMLFile"
       name="index.html"
       template="zcmlfile_index.pt"
       permission="zope.View"/>
@@ -47,16 +47,8 @@
   <page
       name="display"
       for="..interfaces.IDirective"
-      template="displayDirective.pt"
-      class=".zcml.DisplayDirective"
+      template="directive.pt"
+      class=".zcml.DirectiveDetails"
       permission="zope.ManageContent"/>
-
-  <page
-      name="display"
-      for="..interfaces.IComment"
-      template="displayComment.pt"
-      class=".zcml.DisplayComment"
-      permission="zope.ManageContent"/>
-
 
 </configure>

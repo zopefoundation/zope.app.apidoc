@@ -1,0 +1,34 @@
+=================================
+The `apidoc:rootModule` Directive
+=================================
+
+The `rootModule` directive allows you to register a third party Python package
+with apidoc's code browser. 
+
+Before we can register a new root module, we need to load the
+metaconfiguration:
+
+  >>> from zope.configuration import xmlconfig
+  >>> import zope.app.apidoc.codemodule
+  >>> context = xmlconfig.file('meta.zcml', zope.app.apidoc.codemodule)
+
+Now we can run the directive. First, let's make sure that no root modules have
+been registered yet:
+
+  >>> from zope.app import zapi
+  >>> from zope.app.apidoc.codemodule.interfaces import IAPIDocRootModule
+  >>> list(zapi.getUtilitiesFor(IAPIDocRootModule))
+  []
+
+Now run the registration code:
+
+  >>> context = xmlconfig.string('''
+  ...     <configure
+  ...         xmlns='http://namespaces.zope.org/apidoc'>
+  ...       <rootModule module="zope" />
+  ...     </configure>''', context)
+
+and the root module is available:
+
+  >>> list(zapi.getUtilitiesFor(IAPIDocRootModule))
+  [(u'zope', 'zope')]

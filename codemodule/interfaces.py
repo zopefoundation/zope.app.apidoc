@@ -16,13 +16,21 @@
 $Id$
 """
 __docformat__ = "reStructuredText"
-from zope.interface import Interface
-from zope.schema import Field, BytesLine, Text
+import zope.interface
+import zope.schema
 
 from zope.app.container.interfaces import IContainer
 from zope.app.container.interfaces import IReadContainer
 from zope.app.i18n import ZopeMessageIDFactory as _
 
+
+class IAPIDocRootModule(zope.interface.Interface):
+    """Marker interface for utilities that represent class browser root
+    modules.
+
+    The utilities will be simple strings, representing the modules Python
+    dotted name.
+    """ 
 
 class IModuleDocumentation(IReadContainer):
     """Representation of a Python module for documentation.
@@ -39,7 +47,7 @@ class IModuleDocumentation(IReadContainer):
         """Return the Python path of the module."""
 
 
-class IClassDocumentation(Interface):
+class IClassDocumentation(zope.interface.Interface):
     """Representation of a class or type for documentation."""
 
     def getDocString():
@@ -88,7 +96,7 @@ class IClassDocumentation(Interface):
         """
 
 
-class IFunctionDocumentation(Interface):
+class IFunctionDocumentation(zope.interface.Interface):
     """Representation of a function for documentation."""
 
     def getDocString():
@@ -107,109 +115,67 @@ class IFunctionDocumentation(Interface):
         second is the attribute object itself.
         """
 
+class IDirective(zope.interface.Interface):
+    """Representation of a directive in IZCMLFile."""
 
-class IElement(IContainer):
-    """Represents an XML Element in the ZCML Configuration File
+    name = zope.schema.Tuple(
+        title=u'Name',
+        description=u'Name of the directive in the form (Namespace. Name)',
+        required = True)
+    
+    schema = zope.schema.Field(
+        title=u'Schema',
+        description=u'Schema describing the directive attributes',
+        required = True)
 
-    The names of the container items is simply their index (as string).
-    """
-
-    domElement = Field(
-        title=_("Mini-DOM Element"),
-        description=_("Mini-DOM element representing this configuration "
-                      "element."),
-        required=True)
-
-    def toXML():
-        """Returns a string completely representing this DOM Element.
+    attrs = zope.schema.Field(
+        title=u'Attributes',
+        description=u'SAX parser representation of the directive\'s attributes',
+        required = True)
         
-        The returned XML should be well formatted, including all correct
-        indentations and lines not being long than 80 characters, if possible.
-        """
+    context = zope.schema.Field(
+        title=u'Configuration Context',
+        description=u'Configuration context while the directive was parsed.',
+        required = True)
 
-    def getElementType():
-        """Return the type of the DOM element.
-        
-        Possible values are:
+    prefixes = zope.schema.Dict(
+        title=u'Prefixes',
+        description=u'Mapping from namespace URIs to prefixes.',
+        required = True)
 
-        - ELEMENT_NODE (1): An XML tag. If an element is of this type it is a
-          standard ZCML directive or sub-directive.
+    info = zope.schema.Field(
+        title=u'Info',
+        description=u'ParserInfo objects containing line and column info.',
+        required = True)
 
-        - COMMENT_NODE (8): An XML comment. Comments are used to explain
-          features of the ZCML directives and are thus supported by the editor.
+    __parent__ = zope.schema.Field(
+        title=u'Parent',
+        description=u'Parent Directive',
+        required = True)
 
-        - TEXT_NODE (3): A simple text node. These are commonly ignored by te
-          configuration editor, since they are arbitrary and ZCML does not make
-          use of text nodes ever. Thus, an element having this type would be
-          considered a bug.
-        """
-
-    def isFirstChild():
-        """Determine whether this element is the first child in its parent."""
-
-    def isLastChild():
-        """Determine whether this element is the last child in its parent."""
-
-    def validate():
-        """Validate the element's data.
-
-        If the validation is successful, `None` should be returned; otherwise
-        return a `ValidationError` or a list of validation errors.
-
-        While a DOM element always represents a valid XML expression, this might
-        not be true for ZCML, since it is just a subset of XML.
-        """
+    subs = zope.schema.List(
+        title=u'Sub-Directives',
+        description=u'List of sub-directives',
+        required = True)
 
 
-class IComment(IElement):
-    """A special element representing a comment in the configuration."""
-
-    value = Text(
-        title=_("Comment"),
-        description=_("This is the actual comment text. It is automatically "
-                      "extracted from the DOM element."),
-        required=True)
+class IRootDirective(IDirective):
+    """Marker interface"""
 
 
-class IDirective(IElement):
-    """
-
-    The element will also expose the attributes of the XML element as attributes
-    of this class.
-    """
-    config = Field()
-
-    schema = Field()
-
-    def getFullTagName():
-        """ """
-
-    def getAttribute(name):
-        """ """
-
-    def getAttributeMap():
-        """ """
-
-    def removeAttribute(name):
-        """ """
-
-    def getAvailableSubdirectives():
-        """ """
-        
-
-class IConfiguration(IDirective):
-    """ZCML Configuration Object
+class IZCMLFile(zope.interface.Interface):
+    """ZCML File Object
 
     This is the main object that will manage the configuration of one particular
     ZCML configuration file.
     """
 
-    filename = BytesLine(
+    filename = zope.schema.BytesLine(
         title=_('Configuration Filename'),
         description=_('Path to the configuration file'),
         required=True)
 
-    package = BytesLine(
+    package = zope.schema.BytesLine(
         title=_('Configuration Package'),
         description=_(
         '''Specifies the package from which the configuration file will be
@@ -217,24 +183,8 @@ class IConfiguration(IDirective):
         cannot be fully validated and improper ZCML files might be written.'''),
         required=False)
 
-    def parse():
-        """Parse the ZCML located in the specified file.
-
-        If the file does not exist, a configuration will be initialized.
-        """
-
-    def getSchema(namespaceURI, tagName):
-        """Given the namespace and the tag name, lookup the directive's
-        schema.
-
-        If no schema is found, `None` is returned.
-        """
-
-    def getNamespacePrefix(namespaceURI):
-        """ """
-
-    def getNamespaceURI(prefix):
-        """ """
-
-    def getResolver():
-        """ """
+    rootElement = zope.schema.Field(
+        title=_("XML Root Element"),
+        description=_("XML element representing the configuration root."),
+        required=True)
+    

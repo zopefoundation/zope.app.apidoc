@@ -28,29 +28,14 @@ from zope.app.apidoc.codemodule.module import Module
 from zope.app.apidoc.codemodule.class_ import Class
 from zope.app.apidoc.codemodule.function import Function
 from zope.app.apidoc.codemodule.text import TextFile
-from zope.app.apidoc.codemodule.zcml import Configuration
+from zope.app.apidoc.codemodule.zcml import ZCMLFile
 
 
 class ModuleDetails(object):
     """Represents the details of the module."""
 
     def getDoc(self):
-        """Get the doc string of the module STX formatted.
-
-        Example::
-
-          The class we are using for this view is zope.app.apidoc.classmodule.
-
-          >>> from tests import getModuleDetailsView
-          >>> view = getModuleDetailsView()
-
-          >>> print view.getDoc().strip()
-          <div class="document">
-          <p>Class Documentation Module</p>
-          <p>This module is able to take a dotted name of any class and display
-          documentation for it.</p>
-          </div>
-        """
+        """Get the doc string of the module STX formatted."""
         text = self.context.getDocString()
         if text is None:
             return None
@@ -60,32 +45,7 @@ class ModuleDetails(object):
         return renderText('\n'.join(lines), self.context.getPath())
 
     def getEntries(self, columns=True):
-        """Return info objects for all modules and classes in this module.
-
-        Example::
-
-          The class we are using for this view is zope.app.apidoc.classmodule.
-
-          >>> from zope.app.apidoc.tests import pprint
-          >>> from tests import getModuleDetailsView
-          >>> view = getModuleDetailsView()
-
-          >>> entries = view.getEntries(False)
-          >>> entries.sort(lambda x, y: cmp(x['name'], y['name']))
-          >>> pprint(entries[6:8])
-          [[('isclass', False),
-            ('isfunction', False),
-            ('ismodule', True),
-            ('iszcmlfile', False),
-            ('name', 'browser'),
-            ('url', 'http://127.0.0.1/zope/app/apidoc/classmodule/browser')],
-           [('isclass', False),
-            ('isfunction', True),
-            ('ismodule', False),
-            ('iszcmlfile', False),
-            ('name', 'cleanUp'),
-            ('url', 'http://127.0.0.1/zope/app/apidoc/classmodule/cleanUp')]]
-        """
+        """Return info objects for all modules and classes in this module."""
         entries = [{'name': name,
                     'url': zapi.absoluteURL(obj, self.request),
                     'ismodule': zapi.isinstance(obj, Module),
@@ -94,7 +54,7 @@ class ModuleDetails(object):
                     'isclass': zapi.isinstance(obj, Class),
                     'isfunction': zapi.isinstance(obj, Function),
                     'istextfile': zapi.isinstance(obj, TextFile),
-                    'iszcmlfile': zapi.isinstance(obj, Configuration)}
+                    'iszcmlfile': zapi.isinstance(obj, ZCMLFile)}
                    for name, obj in self.context.items()]
         entries.sort(lambda x, y: cmp(x['name'], y['name']))
         if columns:
@@ -105,23 +65,7 @@ class ModuleDetails(object):
         """Create breadcrumbs for the module path.
 
         We cannot reuse the the system's bread crumbs, since they go all the
-        way up to the root, but we just want to go to the root module.
-
-        Example::
-
-          >>> from zope.app.apidoc.tests import pprint
-          >>> from tests import getModuleDetailsView
-          >>> view = getModuleDetailsView()
-
-          >>> crumbs = [crumb.items() for crumb in view.getBreadCrumbs()]
-          >>> pprint(crumbs)
-          [[('url', 'http://127.0.0.1'), ('name', u'[top]')],
-           [('url', 'http://127.0.0.1/zope'), ('name', u'zope')],
-           [('url', 'http://127.0.0.1/zope/app'), ('name', 'app')],
-           [('url', 'http://127.0.0.1/zope/app/apidoc'), ('name', 'apidoc')],
-           [('url', 'http://127.0.0.1/zope/app/apidoc/classmodule'),
-            ('name', 'classmodule')]]
-        """
+        way up to the root, but we just want to go to the root module."""
         names = self.context.getPath().split('.') 
         crumbs = []
         module = self.context
