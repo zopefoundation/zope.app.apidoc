@@ -108,7 +108,7 @@ class UtilityModule(ReadContainerBase):
 
     This documentation is implemented using a simple `IReadContainer`. The
     items of the container are all factories listed in the closest
-    factory service and above.
+    site manager and above.
 
     Demonstration::
 
@@ -131,14 +131,14 @@ class UtilityModule(ReadContainerBase):
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
     description = _("""
-    Utilities are also nicely registered in a service, so that it is easy to
-    create a listing of available utilities. A utility is identified by the
+    Utilities are also nicely registered in a site manager, so that it is easy
+    to create a listing of available utilities. A utility is identified by the
     providing interface and a name, which can be empty. The menu provides you
     with a list of interfaces that utilities provide and as sub-items the
     names of the various implementations.
 
     Again, the documentation of a utility lists all the attributes/fields and
-    methods the utility provides and provides a link to the implementation. 
+    methods the utility provides and provides a link to the implementation.
     """)
 
     def get(self, key, default=None):
