@@ -13,7 +13,7 @@
 ##############################################################################
 """Zope 3 API Documentation
 
-$Id: __init__.py,v 1.4 2004/03/03 10:38:30 philikon Exp $
+$Id: __init__.py,v 1.5 2004/03/28 23:39:08 srichter Exp $
 """
 from zope.interface import implements
 
@@ -33,9 +33,6 @@ class APIDocumentation(ReadContainerBase):
 
     Demonstration::
 
-      >>> from zope.app.apidoc import tests
-      >>> tests.setUp()
-
       >>> doc = APIDocumentation(None, '++apidoc++')
       >>> doc.get('ZCML').title
       'ZCML Reference'
@@ -46,8 +43,6 @@ class APIDocumentation(ReadContainerBase):
       >>> print '\n'.join([id for id, mod in doc.items()])
       Interface
       ZCML
-      
-      >>> tests.tearDown()
     """
 
     implements(ILocation)
