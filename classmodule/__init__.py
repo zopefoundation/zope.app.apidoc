@@ -40,7 +40,7 @@ from zope.app.apidoc.utilities import getFunctionSignature
 
 # Ignore these files, since they are not necessary or cannot be imported
 # correctly.
-# XXX: I want to be able to specify paths with wildcards later, so that we do
+# TODO: I want to be able to specify paths with wildcards later, so that we do
 # not ignore all files/dirs with a certain name.
 IGNORE_FILES = ('tests', 'tests.py', 'ftests', 'ftests.py', 'CVS', 'gadfly',
                 'setup.py', 'introspection.py', 'Mount.py')

@@ -25,7 +25,7 @@ from zope.app.apidoc.utilities import relativizePath
 from zope.proxy import removeAllProxies
 from zope.app.i18n import ZopeMessageIDFactory as _
 
-# XXX: Temporary hack, since registering an adapter for a particular class is
+# TODO: Temporary hack, since registering an adapter for a particular class is
 # broken.
 class ISkinRegistration(Interface): pass
 classImplements(SkinRegistration, ISkinRegistration)
