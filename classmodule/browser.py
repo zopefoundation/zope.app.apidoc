@@ -13,7 +13,7 @@
 ##############################################################################
 """Class Documentation Module Views
 
-$Id: browser.py,v 1.5 2004/03/30 02:00:20 srichter Exp $
+$Id: browser.py,v 1.6 2004/04/02 08:28:41 philikon Exp $
 """
 import os
 import inspect
@@ -328,7 +328,7 @@ class ModuleDetails(object):
           >>> print view.getDoc().strip()
           <p>Class Documentation Module</p>
           <p>This module is able to take a dotted name of any class and display
-          documentation for it. </p>
+          documentation for it.</p>
         """
         text = self.context.getDocString()
         if text is None:
