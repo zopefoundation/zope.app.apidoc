@@ -95,14 +95,9 @@ class UtilityInterface(ReadContainerBase):
     def items(self):
         """See zope.app.container.interfaces.IReadContainer"""
         service = zapi.getService(Utilities)
-        items = []
-
-        while service is not None:
-            items += [(reg.name or NONAME, Utility(self, reg))
-                      for reg in service.registrations()
-                      if self.interface == reg.provided]
-            service = queryNextService(service, Utilities)
-
+        items = [(reg.name or NONAME, Utility(self, reg))
+                 for reg in service.registrations()
+                 if self.interface == reg.provided]
         items.sort()
         return items
 
