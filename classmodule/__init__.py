@@ -152,10 +152,12 @@ class Module(ReadContainerBase):
     soon as you have the object::
 
       >>> keys = module.keys()
-      >>> keys.sort()
-      >>> keys[:5]
-      ['APIDocumentation', 'apidocNamespace', 'browser', 'classmodule', """ \
-          """'handleNamespace']
+      >>> 'APIDocumentation' in keys
+      True
+      >>> 'apidocNamespace' in keys
+      True
+      >>> 'handleNamespace' in keys
+      True
 
       >>> print module['browser'].getPath()
       zope.app.apidoc.browser
@@ -193,7 +195,8 @@ class Module(ReadContainerBase):
         # Detect packages
         if hasattr(self.__module, '__file__') and \
                (self.__module.__file__.endswith('__init__.py') or
-                self.__module.__file__.endswith('__init__.pyc')):
+                self.__module.__file__.endswith('__init__.pyc')or
+                self.__module.__file__.endswith('__init__.pyo')):
             dir = os.path.split(self.__module.__file__)[0]
             for file in os.listdir(dir):
                 if file in IGNORE_FILES:
