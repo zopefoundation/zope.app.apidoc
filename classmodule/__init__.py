@@ -681,6 +681,10 @@ def safe_import(path, default=None):
     Now clean up the temporary module, just to play nice:
 
       >>> os.unlink(filename)
+
+      Cleanup
+
+      >>> del sys.modules['shelve']
     """
     module = sys.modules.get(path, default)
     if module is default:
