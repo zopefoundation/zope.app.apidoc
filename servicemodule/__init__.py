@@ -75,23 +75,24 @@ class ServiceModule(ReadContainerBase):
     title = _('Services')
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
-    description = """
+    description = _("""
     The services module let's the reader browse through all defined
     services. It uses the service name as a key. In general services can be
     queried using::
 
       >>> from zope.app import zapi
-      >>> service = zapi.getGlobalService('ServiceName')
+      >>> service = zapi.getService('ServiceName')
 
-    Here we used 'None' as the location, which means that always a global
-    service is returned. If you use an object that has a location in the
-    traversal tree, you will generally get the closest service, which includes
-    the local ones. The second argument is the service name, which you can
-    replace with any name listed in this module's menu.
+    Here we used 'None' as the context by default, which means that
+    always a global service is returned. If you use an object that has
+    a location in the traversal tree, you will generally get the closest
+    service, which includes the local ones. The first argument is the
+    service name, which you can replace with any name listed in this
+    module's menu.
 
     For each service, the attributes and methods of the service interface are
     presented. At the end a list of implementations is given.
-    """
+    """)
 
     def get(self, key, default=None):
         """See zope.app.container.interfaces.IReadContainer"""

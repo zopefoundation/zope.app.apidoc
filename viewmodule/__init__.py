@@ -65,7 +65,7 @@ class ViewModule(object):
     title = _('Presentations')
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
-    description = """
+    description = _("""
     The Presentations (or Views) module is somewhat crazy, since a view or
     resource cannot be identified by a single interface or name, but of four
     to five pieces of information. Conclusively, the menu lets you select an
@@ -87,7 +87,7 @@ class ViewModule(object):
     Completely independent of all this, there is a link "Show Skins, Layers
     and Usages" that brings you to a simple screen that shows the mapping of
     the layers to skins and provides a list of available usages.
-    """
+    """)
 
     def getSkins(self):
         """Get the names of all available skins.

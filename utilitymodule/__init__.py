@@ -129,7 +129,7 @@ class UtilityModule(ReadContainerBase):
     title = _('Utilities')
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
-    description = """
+    description = _("""
     Utilities are also nicely registered in a service, so that it is easy to
     create a listing of available utilities. A utility is identified by the
     providing interface and a name, which can be empty. The menu provides you
@@ -138,7 +138,7 @@ class UtilityModule(ReadContainerBase):
 
     Again, the documentation of a utility lists all the attributes/fields and
     methods the utility provides and provides a link to the implementation. 
-    """
+    """)
 
     def get(self, key, default=None):
         parts = key.split('.')
