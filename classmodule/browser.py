@@ -467,10 +467,12 @@ class ClassDetails(object):
         info = []
         classModule = zapi.getUtility(IDocumentationModule, "Class")
         for cls in classes:
-            # XXX Certain classes cause the following line to raise an
-            #     exception.  The easiest way to reproduce the problem is to
-            #     go to /++apidoc++/Class/__builtin__/object/index.html
-            path = getPythonPath(cls)
+            # We need to removeAllProxies because the security checkers for
+            # zope.app.container.contained.ContainedProxy and
+            # zope.app.i18n.messagecatalog.MessageCatalog prevent us from
+            # accessing __name__ and __module__.
+            unwrapped_cls = removeAllProxies(cls)
+            path = getPythonPath(unwrapped_cls)
             try:
                 klass = zapi.traverse(classModule, path.replace('.', '/'))
                 url = zapi.getView(klass, 'absolute_url', self.request)()
