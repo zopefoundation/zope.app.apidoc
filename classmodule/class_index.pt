@@ -79,7 +79,7 @@
         <i>Interface:</i>
         <a href=""
            tal:attributes="href 
-          string:${view/getBaseURL}/Interface/${method/interface}/apiindex.html"
+          string:${view/getBaseURL}/Interface/${attr/interface}/apiindex.html"
            tal:content="attr/interface">Iface</a><br />
       </span>
       <span class="small" 
