@@ -24,7 +24,7 @@ from zope.schema.interfaces import IField
 
 from zope.app import zapi
 from zope.app.i18n import ZopeMessageIDFactory as _
-from zope.app.apidoc.utilities import getPythonPath, stx2html
+from zope.app.apidoc.utilities import getPythonPath, renderText
 from zope.app.apidoc.classmodule import classRegistry
 
 def _get(iface, type):
@@ -197,7 +197,7 @@ class InterfaceDetails(object):
           >>> details.getDoc()[:34]
           '<h1>This is the Foo interface</h1>'
         """
-        return stx2html(self.context.__doc__)
+        return renderText(self.context.__doc__, self.context.__module__)
 
     def getBases(self):
         """Get all bases of this class
@@ -267,7 +267,7 @@ class InterfaceDetails(object):
             if not IMethod.providedBy(attr) and not IField.providedBy(attr):
                 attrs.append(attr)
         return [{'name': attr.getName(),
-                 'doc': stx2html(attr.getDoc() or '', 3)}
+                 'doc': renderText(attr.getDoc() or '', iface.__module__)}
                 for attr in attrs]
 
     def getMethods(self):
@@ -290,7 +290,8 @@ class InterfaceDetails(object):
         """        
         return [{'name': method.getName(),
                  'signature': method.getSignatureString(),
-                 'doc': stx2html(method.getDoc() or '', 3)}
+                 'doc': renderText(method.getDoc() or '',
+                                   self.context.__module__)}
                 for method in _get(self.context, IMethod).values()]
             
     def getFields(self):

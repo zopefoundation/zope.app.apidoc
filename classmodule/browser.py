@@ -25,7 +25,7 @@ from zope.proxy import removeAllProxies
 
 from zope.app import zapi
 from zope.app.i18n import ZopeMessageIDFactory as _
-from zope.app.apidoc.utilities import getPythonPath, stx2html, columnize
+from zope.app.apidoc.utilities import getPythonPath, renderText, columnize
 from zope.app.apidoc.utilities import getPermissionIds, getFunctionSignature
 from zope.app.apidoc.utilities import getPublicAttributes
 from zope.app.apidoc.utilities import getInterfaceForAttribute
@@ -113,7 +113,7 @@ class FunctionDetails(object):
     """Represents the details of the function."""
 
     def getDocString(self):
-        r"""Get the doc string of the class STX formatted.
+        r"""Get the doc string of the class in a rendered format.
 
         Example::
 
@@ -123,7 +123,8 @@ class FunctionDetails(object):
           >>> view.getDocString()
           '<p>This is the foo function.</p>\n'
         """
-        return stx2html(self.context.getDocString() or '', 3)
+        return renderText(self.context.getDocString() or '',
+                          zapi.getParent(self.context).getPath())
 
 
     def getAttributes(self):
@@ -275,14 +276,14 @@ class ClassDetails(object):
 
           >>> methods = view.getMethods()
           >>> pprint(methods[-2:])
-          [[('doc', ''),
+          [[('doc', u''),
             ('interface',
              'zope.interface.common.mapping.IEnumerableMapping'),
             ('name', 'keys'),
             ('read_perm', None),
             ('signature', '()'),
             ('write_perm', None)],
-           [('doc', ''),
+           [('doc', u''),
             ('interface',
              'zope.interface.common.mapping.IEnumerableMapping'),
             ('name', 'values'),
@@ -295,7 +296,8 @@ class ClassDetails(object):
         for name, attr, iface in klass.getMethods():
             entry = {'name': name,
                      'signature': getFunctionSignature(attr),
-                     'doc': stx2html(attr.__doc__ or '', 3),
+                     'doc': renderText(attr.__doc__ or '',
+                                       zapi.getParent(self.context).getPath()),
                      'interface': getPythonPath(iface)}
             entry.update(getPermissionIds(name, klass.getSecurityChecker()))
             methods.append(entry)
@@ -314,9 +316,10 @@ class ClassDetails(object):
           >>> view = getClassDetailsView()
 
           >>> print view.getDoc()[:59]
-          <h3>Represent the Documentation of any possible class.</h3>
+          <h1>Represent the Documentation of any possible class.</h1>
         """
-        return stx2html(self.context.getDocString() or '', 3)
+        return renderText(self.context.getDocString() or '',
+                          zapi.getParent(self.context).getPath())
 
 
 class ModuleDetails(object):
@@ -343,7 +346,7 @@ class ModuleDetails(object):
         lines = text.strip().split('\n')
         # Get rid of possible CVS id.
         lines = [line for line in lines if not line.startswith('$Id')]
-        return stx2html('\n'.join(lines), 3)
+        return renderText('\n'.join(lines), self.context.getPath())
 
     def getEntries(self, columns=True):
         """Return info objects for all modules and classes in this module.

@@ -18,6 +18,7 @@ $Id$
 __docformat__ = 'restructuredtext'
 
 import re
+import sys
 import types
 import inspect
 from os.path import dirname
@@ -25,10 +26,12 @@ from os.path import dirname
 import zope
 from zope.interface import implements, implementedBy
 from zope.proxy import removeAllProxies
+from zope.publisher.browser import TestRequest
 from zope.security.checker import getCheckerForInstancesOf, Global
 from zope.security.interfaces import INameBasedChecker
-from zope.app.i18n import ZopeMessageIDFactory as _
 
+from zope.app import zapi
+from zope.app.i18n import ZopeMessageIDFactory as _
 from zope.app.container.interfaces import IReadContainer
 
 __metaclass__ = type
@@ -146,30 +149,6 @@ def getPythonPath(obj):
         return None
     module = obj.__module__
     return '%s.%s' %(module, obj.__name__)
-
-
-def stx2html(text, level=1):
-    r"""Convert STX text to HTML.
-
-    Example::
-
-      >>> text = 'Header\n\n  Normal text goes here.'
-
-      >>> stx2html(text)
-      '<h1>Header</h1>\n<p>  Normal text goes here.</p>\n'
-
-      >>> stx2html(text, level=3)
-      '<h3>Header</h3>\n<p>  Normal text goes here.</p>\n'
-
-      >>> stx2html(text, level=6)
-      '<h6>Header</h6>\n<p>  Normal text goes here.</p>\n'
-    """
-    from zope.structuredtext.document import Document
-    from zope.structuredtext.html import HTML
-    doc = Document()(text)
-    html = HTML()(doc, level)
-    html = _remove_html_overhead.sub(r'\1', html)
-    return html
 
 
 def _evalId(id):
@@ -519,3 +498,35 @@ def columnize(entries, columns=3):
     if col:
         columns.append(col)
     return columns
+
+_format_dict = {
+    'plaintext': 'zope.source.plaintext',
+    'structuredtext': 'zope.source.stx',
+    'restructuredtext': 'zope.source.rest'
+    }
+    
+
+def getDocFormat(module):
+    """Convert a module's __docformat__ specification to a renderer source
+    id"""
+    format = getattr(module, '__docformat__', 'structuredtext').lower()
+    return _format_dict.get(format, 'zope.source.stx')
+
+
+def renderText(text, module=None, format=None):
+    if module is not None:
+        if isinstance(module, (str, unicode)):
+            module = sys.modules.get(module, None)
+        format = getDocFormat(module)
+
+    if format is None:
+        format = 'zope.source.stx'
+        
+    assert format in _format_dict.values()
+
+    if text:
+        source = zapi.createObject(None, format, text)
+        renderer = zapi.getView(source, '', TestRequest())
+        return renderer.render()
+    else:
+        return u''

@@ -119,6 +119,22 @@ div.documentation ul, ol {
   margin: 0.5em 2em;
 }
 
+
+div.inline-documentation h1 {
+  font-size: 120%;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 0.5em;
+}
+
+div.inline-documentation h2 {
+  font-size: 110%;
+  font-style: italic;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 0.5em;
+}
+
 div.inline-documentation h3 {
   font-style: italic;
   font-weight: normal;

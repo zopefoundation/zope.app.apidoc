@@ -16,18 +16,25 @@
 $Id$
 """
 import unittest
+from zope.component.interfaces import IFactory
 from zope.interface import Interface, directlyProvides
 from zope.publisher.browser import TestRequest
 from zope.testing.doctestunit import DocTestSuite
-from zope.app import zapi
-from zope.app.tests import placelesssetup, ztapi
 
+from zope.app import zapi
+from zope.app.location.traversing import LocationPhysicallyLocatable
+from zope.app.renderer.rest import ReStructuredTextSourceFactory
+from zope.app.renderer.rest import IReStructuredTextSource
+from zope.app.renderer.rest import ReStructuredTextToHTMLRenderer
+from zope.app.renderer.stx import StructuredTextSourceFactory
+from zope.app.renderer.stx import IStructuredTextSource
+from zope.app.renderer.stx import StructuredTextToHTMLRenderer
+from zope.app.tests import placelesssetup, ztapi
 from zope.app.traversing.browser import AbsoluteURL, SiteAbsoluteURL
 from zope.app.traversing.interfaces import ITraversable, ITraverser
 from zope.app.traversing.interfaces import IPhysicallyLocatable
 from zope.app.traversing.interfaces import IContainmentRoot
 from zope.app.traversing.adapters import DefaultTraversable
-from zope.app.location.traversing import LocationPhysicallyLocatable
 from zope.app.traversing.adapters import RootPhysicallyLocatable
 from zope.app.traversing.adapters import Traverser
 
@@ -55,6 +62,16 @@ def setUp():
 
     ztapi.browserView(Interface, "absolute_url", AbsoluteURL)
     ztapi.browserView(IContainmentRoot, "absolute_url", SiteAbsoluteURL)
+
+    # Register Renderer Components
+    ztapi.provideUtility(IFactory, StructuredTextSourceFactory,
+                         'zope.source.stx')    
+    ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
+                         'zope.source.rest')    
+    ztapi.browserView(IStructuredTextSource, '', 
+                      StructuredTextToHTMLRenderer)
+    ztapi.browserView(IReStructuredTextSource, '', 
+                      ReStructuredTextToHTMLRenderer)
 
 
 def tearDown():

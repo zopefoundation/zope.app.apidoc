@@ -15,7 +15,7 @@
 
 $Id$
 """
-from zope.app.apidoc.utilities import stx2html
+from zope.app.apidoc.utilities import renderText
 
 class APIDocumentationView(object):
     """View for the API Documentation"""
@@ -38,6 +38,6 @@ class APIDocumentationView(object):
         items.sort()
         return [{'name': name,
                  'title': module.title,
-                 # FIXME: Seems like stx2html() doesn't like message ids
-                 'description': stx2html(module.description)}
+                 'description': renderText(module.description,
+                                           module.__class__.__module__)}
                 for name, module in items ]

@@ -33,7 +33,7 @@ class APIDocumentation(ReadContainerBase):
     items of the container are all registered utilities for
     `IDocumentationModule`.
 
-    Demonstration::
+    Demonstration:
 
       >>> doc = APIDocumentation(None, '++apidoc++')
       >>> doc.get('ZCML').title
