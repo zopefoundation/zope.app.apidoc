@@ -505,7 +505,6 @@ class ClassModule(Module):
       >>> names == cm.rootModules
       True
     """
-
     implements(IDocumentationModule)
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
@@ -533,9 +532,6 @@ class ClassModule(Module):
     interface that requires a method or attribute to be implemented and the
     permissions required to access it.
     """
-
-    # XXX: had to remove 'persistence' from the list, since it made
-    #      distributions fail. :-(
     rootModules = ['ZConfig', 'ZODB', 'transaction', 'zdaemon', 'zope']
 
     def __init__(self):
