@@ -64,5 +64,30 @@
 
   </pages>
 
+  <!-- Preference Views -->
+
+  <page
+      name="apidocTree"
+      for="zope.app.preference.interfaces.IPreferenceGroup"
+      class=".preference.APIDocPreferencesTree"
+      permission="zope.View"
+      attribute="apidocTree" 
+      />
+
+  <page
+      for="zope.app.preference.interfaces.IPreferenceGroup"
+      permission="zope.Public"
+      name="apidocMenu.html"
+      template="prefmenu.pt"
+      />
+
+  <page
+      for="zope.app.preference.interfaces.IPreferenceGroup"
+      permission="zope.Public"
+      name="apidocIndex.html"
+      template="prefIndex.pt"
+      class="zope.app.preference.browser.EditPreferenceGroup"
+      />
+
 </configure>
 

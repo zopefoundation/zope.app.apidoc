@@ -19,11 +19,9 @@
       </li>
     </ul>
     <div id="preference_entry">
-<!--
-      <a href="./++preferences++/@@menu.html" target="menu">
+      <a href="./++preferences++/apidoc/@@apidocMenu.html" target="menu">
         User Preferences
       </a>
--->
     </div>
   </div>
 
