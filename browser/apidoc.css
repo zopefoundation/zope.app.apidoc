@@ -10,6 +10,10 @@ code, pre, span.pre {
   font-size: 120%;
 }
 
+a[href] {
+  color: #0000c0;
+}
+
 ul {
     margin: 0;
     margin-left: 1.5em;
@@ -33,6 +37,11 @@ div.menu {
     border-top: solid 1pt black;
     margin-bottom: 3pt;
     font-weight: bold;
+}
+
+#preference_entry {
+    margin-top: 5pt;
+    font-style: italic;
 }
 
 p.small, div.small {

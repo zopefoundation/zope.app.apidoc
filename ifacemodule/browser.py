@@ -227,30 +227,29 @@ class InterfaceDetails(BrowserView):
 
 
     def _prepareViews(self):
-        self.httpViews = []
-        self.browserViews = []
-        self.ftpViews = []
-        self.xmlrpcViews = []
-        self.otherViews = []
+        views = {IBrowserRequest: [], IXMLRPCRequest: [], IHTTPRequest: [],
+                 IFTPRequest: [], None: []}
+        type_map = {IBrowserRequest: 'Browser', IXMLRPCRequest: 'XMLRPC',
+                    IHTTPRequest: 'HTTP', IFTPRequest: 'FTP', None: 'Other'}
+        level_map = {'generic': component.GENERIC_INTERFACE_LEVEL,
+                     'extended': component.EXTENDED_INTERFACE_LEVEL,
+                     'specific': component.SPECIFIC_INTERFACE_LEVEL}
 
-        for reg in presentation.getViews(removeAllProxies(self.context)):
+        iface = removeAllProxies(self.context)
+
+        for reg in presentation.getViews(iface):
             type = presentation.getPresentationType(reg.required[-1])
-            info = presentation.getViewInfoDictionary(reg)
 
-            if type is IBrowserRequest:
-                self.browserViews.append(info)
-            elif type is IXMLRPCRequest:
-                self.xmlrpcViews.append(info)
-            elif type is IHTTPRequest:
-                self.httpViews.append(info)
-            elif type is IFTPRequest:
-                self.ftpViews.append(info)
-            else:
-                self.otherViews.append(info)
+            views[(type in views) and type or None].append(reg)
+
 
         sort_function = lambda x, y: cmp(x['name'], y['name']) 
-        self.httpViews.sort(sort_function)
-        self.browserViews.sort(sort_function)
-        self.ftpViews.sort(sort_function)
-        self.xmlrpcViews.sort(sort_function)
-        self.otherViews.sort(sort_function)
+
+        for type, sel_views in views.items():
+            for level, qualifier in level_map.items():
+                regs = tuple(component.filterAdapterRegistrations(
+                    sel_views, iface, level=qualifier))
+                infos = [presentation.getViewInfoDictionary(reg)
+                         for reg in regs]
+                infos.sort()
+                setattr(self, level+type_map[type]+'Views', infos)

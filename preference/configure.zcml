@@ -1,0 +1,49 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  xmlns:browser="http://namespaces.zope.org/browser"
+  xmlns:apidoc="http://namespaces.zope.org/apidoc"
+  i18n_domain="zope">
+
+  <class class=".preference.UserPreferences">
+    <allow interface=".interfaces.IUserPreferences" 
+           attributes="__parent__ __name__" />
+  </class>
+
+  <view
+      name="preferences" type="*"
+      provides="zope.app.traversing.interfaces.ITraversable" for="*"
+      factory=".preference.preferencesNamespace"
+      />
+
+  <adapter
+      name="preferences"
+      provides="zope.app.traversing.interfaces.ITraversable" for="*"
+      factory=".preference.preferencesNamespace"
+      />
+
+  <!-- Browser Views -->
+
+  <browser:page
+      for=".interfaces.IUserPreferences"
+      permission="zope.Public"
+      name="menu.html"
+      template="menu.pt"
+      />
+
+  <browser:page
+      name="edit.html"
+      for=".interfaces.IPreferencesGroup"
+      class=".browser.EditPreferencesGroup"
+      template="edit.pt"
+      permission="zope.Public"
+      />
+
+  <!-- Books Chapter -->
+
+  <apidoc:bookchapter 
+      id="preferences"
+      title="User Preferences API"
+      doc_path="README.txt"
+      />
+
+</configure>

@@ -65,40 +65,78 @@
     
       <h3 i18n:translate="">Adapters where this interface is required:</h3>
     
-      <h4 i18n:translate="">Specific Adapters</h4>
-      <ul class="attr-list" 
-          tal:condition="specific_adapters">
-        <li tal:repeat="adapter specific_adapters">
-          <metal:block use-macro="context/@@interface_macros/adapter" />
-        </li>
-      </ul>
-      <p tal:condition="not:specific_adapters">
-        <em i18n:translate="">There are no specific adapters registered for
-            this interface.</em>
-      </p>
+      <div tal:define="
+  elementId string:adapters.required.specific;
+  show context/++preferences++InterfaceDetails/showSpecificRequiredAdapters">
+
+        <h4 i18n:translate="">
+          <metal:block use-macro="context/@@apidoc_macros/displaySwitch" />
+          Specific Adapters
+        </h4>
+        <metal:block use-macro="context/@@apidoc_macros/display" >
+        <div metal:fill-slot="content">
+          <ul class="attr-list" 
+              tal:condition="specific_adapters">
+            <li tal:repeat="adapter specific_adapters">
+              <metal:block use-macro="context/@@interface_macros/adapter" />
+            </li>
+          </ul>
+          <p tal:condition="not:specific_adapters">
+            <em i18n:translate="">There are no specific adapters registered 
+                for this interface.</em>
+          </p>
+        </div>
+        </metal:block>
+      </div>
     
-      <h4 i18n:translate="">Extended Adapters</h4>
-      <ul class="attr-list" 
-          tal:condition="extended_adapters">
-        <li tal:repeat="adapter extended_adapters">
-          <metal:block use-macro="context/@@interface_macros/adapter" />
-        </li>
-      </ul>
-      <p tal:condition="not:extended_adapters">
-        <em i18n:translate="">There are no extended adapters registered for
-            this interface.</em>
-      </p>
-    
-      <h4 i18n:translate="">Generic Adapters</h4>
-      <ul class="attr-list"
-          tal:condition="generic_adapters">
-        <li tal:repeat="adapter generic_adapters">
-          <metal:block use-macro="context/@@interface_macros/adapter" />
-        </li>
-      </ul>
-      <p tal:condition="not:generic_adapters">
-        <em i18n:translate="">There are no generic adapters registered.</em>
-      </p>
+      <div tal:define="
+  elementId string:adapters.required.extended;
+  show context/++preferences++InterfaceDetails/showExtendedRequiredAdapters">
+
+        <h4>
+          <metal:block use-macro="context/@@apidoc_macros/displaySwitch" />
+          <span i18n:translate="">Extended Adapters</span>
+        </h4>
+        <metal:block use-macro="context/@@apidoc_macros/display" >
+        <div metal:fill-slot="content">
+          <ul class="attr-list" 
+              tal:condition="extended_adapters">
+            <li tal:repeat="adapter extended_adapters">
+              <metal:block use-macro="context/@@interface_macros/adapter" />
+            </li>
+          </ul>
+          <p tal:condition="not:extended_adapters">
+            <em i18n:translate="">There are no extended adapters registered for
+                this interface.</em>
+          </p>
+        </div>
+        </metal:block>
+      </div>
+
+      <div tal:define="
+  elementId string:adapters.required.generic;
+  show context/++preferences++InterfaceDetails/showGenericRequiredAdapters">
+
+        <h4>
+          <metal:block use-macro="context/@@apidoc_macros/displaySwitch" />
+          <span i18n:translate="">Generic Adapters</span>
+        </h4>
+        <metal:block use-macro="context/@@apidoc_macros/display" >
+        <div metal:fill-slot="content">
+          <ul class="attr-list"
+              tal:condition="generic_adapters">
+            <li tal:repeat="adapter generic_adapters">
+              <metal:block use-macro="context/@@interface_macros/adapter" />
+            </li>
+          </ul>
+          <p tal:condition="not:generic_adapters">
+            <em i18n:translate="">
+              There are no generic adapters registered.
+            </em>
+          </p>
+        </div>
+        </metal:block>
+      </div>
     
     </div>
     
@@ -122,66 +160,100 @@
     </p>
   </div>
 
-  <div tal:define="Views view/browserViews"
-       tal:condition="Views">
+  <div>
 
     <h2 class="details-section" i18n:translate="">Views</h2>
 
     <div class="indent">
 
-      <tal:block condition="view/browserViews">
-        <h3 class="details-section" i18n:translate="">Browser</h3>
-        <div class="indent">    
-          <ul class="attr-list">
-            <li tal:repeat="View view/browserViews">
-              <metal:block use-macro="context/@@interface_macros/View" />
-            </li>
-          </ul>
-        </div>
+      <tal:block define="
+          type string:Browser;
+          specific_views view/specificBrowserViews;
+          extended_views view/extendedBrowserViews;
+          generic_views view/genericBrowserViews;
+          show context/++preferences++InterfaceDetails/showBrowserViews;
+          show_specific 
+            context/++preferences++InterfaceDetails/showSpecificBrowserViews;
+          show_extended
+            context/++preferences++InterfaceDetails/showExtendedBrowserViews;
+          show_generic
+            context/++preferences++InterfaceDetails/showGenericBrowserViews;
+          ">
+
+        <metal:block use-macro="context/@@interface_macros/viewtype" />
+
       </tal:block>
-  
-      <tal:block condition="view/xmlrpcViews">
-        <h3 class="details-section" i18n:translate="">XML-RPC</h3>
-        <div class="indent">    
-          <ul class="attr-list">
-            <li tal:repeat="View view/xmlrpcViews">
-              <metal:block use-macro="context/@@interface_macros/View" />
-            </li>
-          </ul>
-        </div>
+
+      <tal:block define="
+          type string:XML-RPC;
+          specific_views view/specificXMLRPCViews;
+          extended_views view/extendedXMLRPCViews;
+          generic_views view/genericXMLRPCViews;
+          show context/++preferences++InterfaceDetails/showXMLRPCViews;
+          show_specific 
+            context/++preferences++InterfaceDetails/showSpecificXMLRPCViews;
+          show_extended
+            context/++preferences++InterfaceDetails/showExtendedXMLRPCViews;
+          show_generic
+            context/++preferences++InterfaceDetails/showGenericXMLRPCViews;
+          ">
+
+        <metal:block use-macro="context/@@interface_macros/viewtype" />
+
       </tal:block>
-  
-      <tal:block condition="view/httpViews">
-        <h3 class="details-section" i18n:translate="">HTTP</h3>
-        <div class="indent">    
-          <ul class="attr-list">
-            <li tal:repeat="View view/httpViews">
-              <metal:block use-macro="context/@@interface_macros/View" />
-            </li>
-          </ul>
-        </div>
+
+      <tal:block define="
+          type string:HTTP;
+          specific_views view/specificHTTPViews;
+          extended_views view/extendedHTTPViews;
+          generic_views view/genericHTTPViews;
+          show context/++preferences++InterfaceDetails/showHTTPViews;
+          show_specific 
+            context/++preferences++InterfaceDetails/showSpecificHTTPViews;
+          show_extended
+            context/++preferences++InterfaceDetails/showExtendedHTTPViews;
+          show_generic
+            context/++preferences++InterfaceDetails/showGenericHTTPViews;
+          ">
+
+        <metal:block use-macro="context/@@interface_macros/viewtype" />
+
       </tal:block>
-  
-      <tal:block condition="view/ftpViews">
-        <h3 class="details-section" i18n:translate="">FTP</h3>
-        <div class="indent">    
-          <ul class="attr-list">
-            <li tal:repeat="View view/ftpViews">
-              <metal:block use-macro="context/@@interface_macros/View" />
-            </li>
-          </ul>
-        </div>
+
+      <tal:block define="
+          type string:FTP;
+          specific_views view/specificFTPViews;
+          extended_views view/extendedFTPViews;
+          generic_views view/genericFTPViews;
+          show context/++preferences++InterfaceDetails/showFTPViews;
+          show_specific 
+            context/++preferences++InterfaceDetails/showSpecificFTPViews;
+          show_extended
+            context/++preferences++InterfaceDetails/showExtendedFTPViews;
+          show_generic
+            context/++preferences++InterfaceDetails/showGenericFTPViews;
+          ">
+
+        <metal:block use-macro="context/@@interface_macros/viewtype" />
+
       </tal:block>
-  
-      <tal:block condition="view/otherViews">
-        <h3 class="details-section" i18n:translate="">Other</h3>
-        <div class="indent">    
-          <ul class="attr-list">
-            <li tal:repeat="View view/otherViews">
-              <metal:block use-macro="context/@@interface_macros/View" />
-            </li>
-          </ul>
-        </div>
+
+      <tal:block define="
+          type string:Other;
+          specific_views view/specificOtherViews;
+          extended_views view/extendedOtherViews;
+          generic_views view/genericOtherViews;
+          show context/++preferences++InterfaceDetails/showOtherViews;
+          show_specific 
+            context/++preferences++InterfaceDetails/showSpecificOtherViews;
+          show_extended
+            context/++preferences++InterfaceDetails/showExtendedOtherViews;
+          show_generic
+            context/++preferences++InterfaceDetails/showGenericOtherViews;
+          ">
+
+        <metal:block use-macro="context/@@interface_macros/viewtype" />
+
       </tal:block>
 
     </div>

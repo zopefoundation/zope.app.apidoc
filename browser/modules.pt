@@ -17,6 +17,11 @@
         </a>
       </li>
     </ul>
+    <div id="preference_entry">
+      <a href="./++preferences++/@@menu.html" target="menu">
+        User Preferences
+      </a>
+    </div>
   </div>
 
 </body>

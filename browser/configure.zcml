@@ -26,6 +26,21 @@
       template="details_macros.pt"
       />
 
+  <resource 
+      name="utilities.js" 
+      file="utilities.js" 
+      />
+
+  <resource 
+      name="harrow.png" 
+      file="harrow.png" 
+      />
+
+  <resource 
+      name="varrow.png" 
+      file="varrow.png" 
+      />
+
   <pages
     for="zope.app.apidoc.apidoc.APIDocumentation"
     class=".apidoc.APIDocumentationView"

@@ -31,7 +31,9 @@
 
 <body>
 
-  <div class="menu" i18n:translate="">Menu</div>
+  <metal:block define-slot="menu-title">
+    <div class="menu" i18n:translate="">Menu</div>
+  </metal:block>
  
   <metal:block define-slot="pre_menu" />
 
