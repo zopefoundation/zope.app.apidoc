@@ -73,10 +73,9 @@
             <br />
           </tal:omit-tag>
           <span 
-              tal:condition="python: View['read_perm'] and View['write_perm']">
-            <i i18n:translate="">Permissions:</i>
-            <span tal:replace="View/read_perm">zope.View</span> (read), 
-            <span tal:replace="View/write_perm">zope.View</span> (write)
+              tal:condition="View/read_perm">
+            <i i18n:translate="">Permission:</i>
+            <span tal:replace="View/read_perm">zope.View</span>
           </span>
         </span></div>
         <br />
