@@ -13,7 +13,7 @@
 ##############################################################################
 """Utilties to make the life of Documentation Modules easier.
 
-$Id: utilities.py,v 1.3 2004/03/03 10:38:30 philikon Exp $
+$Id: utilities.py,v 1.4 2004/03/05 22:08:51 jim Exp $
 """
 import re
 import types
@@ -217,7 +217,7 @@ def getPermissionIds(name, checker=_marker, klass=_marker):
         checker = getCheckerForInstancesOf(klass)
     
     if checker is not None and \
-           INameBasedChecker.isImplementedBy(checker):
+           INameBasedChecker.providedBy(checker):
         entry['read_perm'] = checker.permission_id(name) or 'N/A'
         entry['write_perm'] = checker.setattr_permission_id(name) or 'N/A'
     else:

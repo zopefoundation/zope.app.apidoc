@@ -13,7 +13,7 @@
 ##############################################################################
 """Interface Details View
 
-$Id: browser.py,v 1.2 2004/02/25 22:26:46 faassen Exp $
+$Id: browser.py,v 1.3 2004/03/05 22:08:51 jim Exp $
 """
 
 from zope.component import ComponentLookupError
@@ -31,7 +31,7 @@ def _get(iface, type):
     items = {}
     for name in iface:
         attr = iface[name]
-        if type.isImplementedBy(attr):
+        if type.providedBy(attr):
             items[name] = attr
     return items
 
@@ -101,8 +101,7 @@ class InterfaceDetails(object):
         attrs = []
         for name in iface:
             attr = iface[name]
-            if not IMethod.isImplementedBy(attr) and \
-               not IField.isImplementedBy(attr):
+            if not IMethod.providedBy(attr) and not IField.providedBy(attr):
                 attrs.append(attr)
         return [{'name': attr.getName(),
                  'doc': stx2html(attr.getDoc() or '', 3)}
