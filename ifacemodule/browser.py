@@ -242,7 +242,7 @@ class InterfaceDetails(object):
           >>> from tests import getInterfaceDetails
           >>> details = getInterfaceDetails()
           >>> details.getDoc()[:55]
-          '<div class="document">\n<p>This is the Foo interface</p>'
+          u'<div class="document">\n<p>This is the Foo interface</p>'
         """
         # We must remove all proxies here, so that we get the context's
         # __module__ attribute. If we only remove security proxies, the
