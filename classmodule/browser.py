@@ -120,8 +120,7 @@ class Menu(object):
                 klass = zapi.traverse(classModule, p.replace('.', '/'))
                 results.append(
                     {'path': p,
-                     'url': zapi.getMultiAdapter(
-                               (klass, self.request), name='absolute_url')()
+                     'url': zapi.absoluteURL(klass, self.request)
                      })
         results.sort(lambda x, y: cmp(x['path'], y['path']))
         return results
@@ -172,8 +171,7 @@ class ZCMLFileDetails(ConfigurationContext):
           'http://127.0.0.1'
         """
         m = zapi.getUtility(IDocumentationModule, "Class")
-        return zapi.getMultiAdapter(
-            (zapi.getParent(m), self.request), name='absolute_url')()
+        return zapi.absoluteURL(zapi.getParent(m), self.request)
 
     def getHTMLContents(self):
         """Return an HTML markup version of the ZCML file with links to other
@@ -482,8 +480,7 @@ class ClassDetails(object):
             path = getPythonPath(unwrapped_cls)
             try:
                 klass = zapi.traverse(classModule, path.replace('.', '/'))
-                url = zapi.getMultiAdapter(
-                    (klass, self.request), name='absolute_url')()
+                url = zapi.absoluteURL(klass, self.request)
             except TraversalError:
                 # If one of the classes is implemented in C, we will not
                 # be able to find it.
@@ -507,8 +504,7 @@ class ClassDetails(object):
           'http://127.0.0.1'
         """
         m = zapi.getUtility(IDocumentationModule, "Class")
-        return zapi.getMultiAdapter(
-            (zapi.getParent(m), self.request), name='absolute_url')()
+        return zapi.absoluteURL(zapi.getParent(m), self.request)
 
 
     def getInterfaces(self):
@@ -691,8 +687,7 @@ class ModuleDetails(object):
             ('url', 'http://127.0.0.1/zope/app/apidoc/classmodule/cleanUp')]]
         """
         entries = [{'name': name,
-                    'url': zapi.getMultiAdapter(
-                            (obj, self.request), name='absolute_url')(),
+                    'url': zapi.absoluteURL(obj, self.request),
                     'ismodule': zapi.isinstance(obj, Module),
                     'isclass': zapi.isinstance(obj, Class),
                     'isfunction': zapi.isinstance(obj, Function),
@@ -731,8 +726,7 @@ class ModuleDetails(object):
         while removeSecurityProxy(module).__class__ is Module:
             crumbs.append(
                 {'name': zapi.name(module),
-                 'url': zapi.getMultiAdapter(
-                         (module, self.request), name='absolute_url')()}
+                 'url': zapi.absoluteURL(module, self.request)}
                 )
             module = zapi.getParent(module)
 
