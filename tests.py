@@ -30,8 +30,9 @@ from zope.testing.doctestunit import DocTestSuite
 
 def setUp():
     placelesssetup.setUp()
-    service = zapi.getService(None, 'Utilities')
-    service.provideUtility(IDocumentationModule, InterfaceModule(), 'Interface')
+    service = zapi.getGlobalService('Utilities')
+    service.provideUtility(IDocumentationModule, InterfaceModule(),
+                           'Interface')
     service.provideUtility(IDocumentationModule, ZCMLModule(), 'ZCML')
 
 def tearDown():

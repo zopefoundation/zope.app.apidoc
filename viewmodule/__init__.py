@@ -99,7 +99,7 @@ class ViewModule(object):
           >>> skins
           ['skinA', 'skinB', 'skinC']
 
-          >>> pres = zapi.getService(None, 'Presentation')
+          >>> pres = zapi.getGlobalService('Presentation')
           >>> pres.defineSkin('skinD', ['layer3'])
           >>> skins = [skin.name for skin in module.getSkins()]
           >>> skins.sort()
@@ -107,7 +107,7 @@ class ViewModule(object):
           ['skinA', 'skinB', 'skinC', 'skinD']
         """ 
         # Only the global presentation service defines skins 
-        service = zapi.getService(None, 'Presentation')
+        service = zapi.getGlobalService('Presentation')
         skins = [zapi.getAdapter(reg, ISkinDocumentation)
                  for reg in service.registrations()
                  if isinstance(reg, SkinRegistration)]
@@ -126,7 +126,7 @@ class SkinDocumentation(object):
 
       >>> from zope.app.apidoc.tests import pprint
 
-      >>> pres = zapi.getService(None, 'Presentation')
+      >>> pres = zapi.getGlobalService('Presentation')
       >>> reg = pres._registrations[('skin', 'skinA')]
       >>> doc = SkinDocumentation(reg)
       >>> doc.name

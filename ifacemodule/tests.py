@@ -102,7 +102,7 @@ def setUp():
     ztapi.provideUtility(IFactory, Factory(Foo, title='Foo Factory'),
                          'FooFactory')
     ztapi.provideUtility(IFoo, Foo(), 'The Foo')
-    sm = zapi.getService(None, 'Services')
+    sm = zapi.getGlobalServices()
     sm.defineService('Foo', IFoo)
     sm.provideService('Foo', Foo())
 

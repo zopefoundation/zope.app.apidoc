@@ -78,7 +78,7 @@ class ServiceModule(ReadContainerBase):
     queried using::
 
       >>> from zope.app import zapi
-      >>> service = zapi.getService(None, 'ServiceName')
+      >>> service = zapi.getGlobalService('ServiceName')
 
     Here we used 'None' as the location, which means that always a global
     service is returned. If you use an object that has a location in the

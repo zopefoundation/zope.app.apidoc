@@ -40,7 +40,7 @@ from zope.app.location.traversing import LocationPhysicallyLocatable
 
 def setUp():
     placelesssetup.setUp()
-    service = zapi.getService(None, 'Utilities')
+    service = zapi.getGlobalService('Utilities')
     service.provideUtility(IDocumentationModule, InterfaceModule(), '')
     service.provideUtility(IDocumentationModule, ClassModule(), 'Classes')
 

@@ -42,7 +42,7 @@ def setUp():
     ztapi.provideAdapter(ILayerRegistration, ILayerDocumentation,
                          LayerDocumentation)
 
-    pres = zapi.getService(None, 'Presentation')
+    pres = zapi.getGlobalService('Presentation')
     for index in range(1, 6):
         pres.defineLayer('layer'+str(index))
     pres.defineSkin('skinA', ['default'], 'doc skin A')
