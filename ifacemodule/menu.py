@@ -19,6 +19,8 @@ that we get a deeper tree with nodes having shorter, manageable names.
 
 $Id$
 """
+__docformat__ = 'restructuredtext'
+
 from zope.interface import implements
 from zope.proxy import removeAllProxies
 
@@ -134,8 +136,8 @@ class Menu(object):
     """Menu View Helper Class
 
     A class that helps building the menu. The menu_macros expects the menu view
-    class to have the getMenuTitle(node) and getMenuLink(node) methods
-    implemented. 'node' is a 'zope.app.tree.node.Node' instance.
+    class to have the `getMenuTitle(node)` and `getMenuLink(node)` methods
+    implemented. ``node`` is a ``zope.app.tree.node.Node`` instance.
 
     Examples::
 

@@ -15,6 +15,8 @@
 
 $Id$
 """
+__docformat__ = 'restructuredtext'
+
 from types import FunctionType, MethodType, ClassType, TypeType
 from zope.component import ComponentLookupError
 from zope.interface.declarations import providedBy
@@ -65,7 +67,7 @@ def _getInOrder(iface, type,
     """Return a list of (name, value) tuples in native interface order.
 
     The type specifies whether we are looking for attributes or methods. The
-    '_itemsorter' argument provides the function that is used to order the
+    `_itemsorter` argument provides the function that is used to order the
     fields. The default function should be the correct one for 99% of your
     needs.
 
