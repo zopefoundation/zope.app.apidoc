@@ -242,8 +242,9 @@ class InterfaceDetails(object):
           >>> details.getDoc()[:34]
           '<h1>This is the Foo interface</h1>'
         """
-        # We must remove all security proxies here, so that we get the context's
-        # __module__ attribute.
+        # We must remove all proxies here, so that we get the context's
+        # __module__ attribute. If we only remove security proxies, the
+        # location proxy's module will be returned.
         return renderText(self.context.__doc__,
                           zapi.removeSecurityProxy(self.context).__module__)
 
@@ -314,8 +315,9 @@ class InterfaceDetails(object):
         """
         # The `Interface` and `Attribute` class have no security declarations,
         # so that we are not able to access any API methods on proxied
-        # objects. 
-        iface = zapi.removeSecurityProxy(self.context)
+        # objects. If we only remove security proxies, the location proxy's
+        # module will be returned.
+        iface = removeAllProxies(self.context)
         attrs = []
         for name in iface:
             attr = iface[name]
@@ -344,12 +346,14 @@ class InterfaceDetails(object):
             ('signature', '(key, default=None)')]]
         """        
         # The `Interface` class have no security declarations, so that we are
-        # not able to access any API methods on proxied objects.
+        # not able to access any API methods on proxied objects. If we only
+        # remove security proxies, the location proxy's module will be
+        # returned.
         return [{'name': method.getName(),
                  'signature': method.getSignatureString(),
                  'doc': renderText(
                             method.getDoc() or '',
-                            zapi.removeSecurityProxy(self.context).__module__)}
+                            removeAllProxies(self.context).__module__)}
                 for method in _get(self.context, IMethod).values()]
             
     def getFields(self):
@@ -384,7 +388,9 @@ class InterfaceDetails(object):
             ('required', u'optional')]]
         """
         # The `Interface` class have no security declarations, so that we are
-        # not able to access any API methods on proxied objects.
+        # not able to access any API methods on proxied objects.  If we only
+        # remove security proxies, the location proxy's module will be
+        # returned.
         fields = map(lambda x: x[1], _getInOrder(self.context, IField))
         return [{'name': field.getName(),
                  'iface': _getFieldInterface(field),
@@ -393,7 +399,7 @@ class InterfaceDetails(object):
                  'default': field.default.__repr__(),
                  'description': renderText(
                      field.description or '',
-                     zapi.removeSecurityProxy(self.context).__module__)}
+                     removeAllProxies(self.context).__module__)}
                 for field in fields]
 
     def getRequiredAdapters(self):
