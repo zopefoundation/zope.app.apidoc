@@ -95,7 +95,7 @@
   </ul>
 
   <p tal:condition="not: view/getMethods">
-    <em>There are no methods or fields specified.</em>
+    <em>There are no methods specified.</em>
   </p>
 
   </div>
@@ -221,8 +221,8 @@
             <li tal:repeat="utility utilities">
               <a href=""
                  tal:attributes="href 
-                  string:../../Utility/${view/getId}/${utility/name}/index.html"
-                 tal:content="utility/name" />
+              string:../../Utility/${view/getId}/${utility/url_name}/index.html"
+                 tal:content="structure utility/name" />
               <br />
               <div>Class: <code>
                 <a href=""
