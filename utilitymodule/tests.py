@@ -13,21 +13,29 @@
 ##############################################################################
 """Tests for the Utility Documentation Module
 
-$Id: tests.py,v 1.2 2004/03/13 21:03:02 srichter Exp $
+$Id: tests.py,v 1.3 2004/03/28 23:41:35 srichter Exp $
 """
 import unittest
 
 from zope.interface import implements
+from zope.publisher.browser import TestRequest
 from zope.testing.doctestunit import DocTestSuite
 
 from zope.app import zapi
-from zope.app.traversing.interfaces import IContainmentRoot
-from zope.app.location import LocationProxy
-from zope.app.tests import placelesssetup
+from zope.app.tests import placelesssetup, ztapi
 
+from zope.app.apidoc.interfaces import IDocumentationModule
+from zope.app.apidoc.tests import Root
 from zope.app.apidoc.ifacemodule import InterfaceModule
 from zope.app.apidoc.classmodule import ClassModule
-from zope.app.apidoc.interfaces import IDocumentationModule
+from zope.app.apidoc.utilitymodule import UtilityModule, Utility
+from browser import UtilityDetails
+
+from zope.app.tree.interfaces import IUniqueId
+from zope.app.tree.adapters import LocationUniqueId 
+
+from zope.app.traversing.interfaces import IPhysicallyLocatable
+from zope.app.location import LocationPhysicallyLocatable
 
 
 def setUp():
@@ -36,22 +44,30 @@ def setUp():
     service.provideUtility(IDocumentationModule, InterfaceModule(), '')
     service.provideUtility(IDocumentationModule, ClassModule(), 'Classes')
 
+    ztapi.provideAdapter(None, IUniqueId, LocationUniqueId)
+    ztapi.provideAdapter(None, IPhysicallyLocatable,
+                         LocationPhysicallyLocatable)
+
+
 def tearDown():
     placelesssetup.tearDown()
 
+def getDetailsView():
+    utils = UtilityModule()
+    utils.__parent__ = Root
+    utils.__name__ = 'Utility'
+    util = Utility(utils, 'Classes', IDocumentationModule, ClassModule())
+    details = UtilityDetails()
+    details.context = util
+    details.request = TestRequest()
+    return details
 
-class Root:
-    implements(IContainmentRoot)
-
-    __parent__ = None
-    __name__ = ''
-
-def rootLocation(obj, name):
-    return LocationProxy(obj, Root(), name)
-    
 def test_suite():
     return unittest.TestSuite((
-        DocTestSuite('zope.app.apidoc.utilitymodule'),
+        DocTestSuite('zope.app.apidoc.utilitymodule',
+                     setUp=setUp, tearDown=tearDown),
+        DocTestSuite('zope.app.apidoc.utilitymodule.browser',
+                     setUp=setUp, tearDown=tearDown),
         ))
 
 if __name__ == '__main__':

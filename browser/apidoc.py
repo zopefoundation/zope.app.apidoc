@@ -13,15 +13,27 @@
 ##############################################################################
 """Main API Documentation View
 
-$Id: apidoc.py,v 1.2 2004/03/10 12:24:16 srichter Exp $
+$Id: apidoc.py,v 1.3 2004/03/28 23:39:32 srichter Exp $
 """
 from zope.app.apidoc.utilities import stx2html
 
-class APIDocumentation(object):
+class APIDocumentationView(object):
     """View for the API Documentation"""
 
     def getModuleList(self):
-        """Get a list of all available documentation modules."""
+        """Get a list of all available documentation modules.
+
+        Example::
+
+          >>> from zope.app.apidoc import APIDocumentation
+          
+          >>> view = APIDocumentationView()
+          >>> view.context = APIDocumentation(None, '++apidoc++')
+          >>> info = view.getModuleList()
+          >>> info = [(i['name'], i['title']) for i in info]
+          >>> print info
+          [('Interface', 'Interfaces'), ('ZCML', 'ZCML Reference')]
+        """
         items = list(self.context.items())
         items.sort()
         return [{'name': name,

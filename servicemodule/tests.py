@@ -13,14 +13,33 @@
 ##############################################################################
 """Tests for the Service Documentation Module
 
-$Id: tests.py,v 1.1 2004/02/19 20:46:41 philikon Exp $
+$Id: tests.py,v 1.2 2004/03/28 23:41:12 srichter Exp $
 """
 import unittest
 from zope.testing.doctestunit import DocTestSuite
-    
+from zope.app.tests import placelesssetup, ztapi
+
+from zope.app.tree.interfaces import IUniqueId
+from zope.app.tree.adapters import LocationUniqueId 
+
+from zope.app.traversing.interfaces import IPhysicallyLocatable
+from zope.app.location import LocationPhysicallyLocatable
+
+def setUp():
+    placelesssetup.setUp()
+    ztapi.provideAdapter(None, IUniqueId, LocationUniqueId)
+    ztapi.provideAdapter(None, IPhysicallyLocatable,
+                         LocationPhysicallyLocatable)
+
+def tearDown():
+    placelesssetup.tearDown()
+
+
 def test_suite():
     return unittest.TestSuite((
         DocTestSuite('zope.app.apidoc.servicemodule'),
+        DocTestSuite('zope.app.apidoc.servicemodule.browser',
+                     setUp=setUp, tearDown=tearDown),
         ))
 
 if __name__ == '__main__':
