@@ -13,7 +13,7 @@
 ##############################################################################
 """Service Documentation Module
 
-$Id: __init__.py,v 1.3 2004/03/03 10:38:31 philikon Exp $
+$Id: __init__.py,v 1.4 2004/03/05 15:46:25 eddala Exp $
 """
 from zope.interface import implements
 from zope.component import ComponentLookupError
@@ -49,8 +49,8 @@ class ServiceModule(ReadContainerBase):
 
       >>> module = ServiceModule()
 
-      >>> module.get('Interfaces').__name__
-      'Interfaces'
+      >>> module.get('Utilities').__name__
+      'Utilities'
 
       >>> module.get('foo') is None
       True
@@ -59,7 +59,7 @@ class ServiceModule(ReadContainerBase):
       Adapters
       EventPublication
       Factories
-      Interfaces
+      Presentation
       
       >>> setup.tearDown()
     """
@@ -92,6 +92,7 @@ class ServiceModule(ReadContainerBase):
         """See zope.app.container.interfaces.IReadContainer"""
         service = zapi.getService(self, 'Services')        
         items = service.getServiceDefinitions()
+
         for name, iface in items:
             if name == key:
                 try:
