@@ -158,7 +158,8 @@
             tal:content="cls/path"
             tal:condition="cls/url" />
         <div tal:condition="not: cls/url">
-          <span tal:replace="cls/path" /> (C-based class)
+          <span tal:replace="cls/path" />
+          <span i18n:translate="">(C-based class)</span>
         </div>
       </li>
     </ul>
