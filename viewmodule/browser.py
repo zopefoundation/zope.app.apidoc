@@ -208,7 +208,7 @@ class ViewsDetails(object):
 
         from zope.component.presentation import PresentationRegistration
         from zope.proxy import removeAllProxies
-        service = zapi.getService(self.context, 'Presentation')
+        service = zapi.getService('Presentation')
         # This is okay here, since we only read from the service. Once
         # registration objects have sensible security declarations, we can
         # remove that call. 
