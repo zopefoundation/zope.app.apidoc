@@ -25,21 +25,7 @@ class APIDocumentationView(object):
     """View for the API Documentation"""
 
     def getModuleList(self):
-        """Get a list of all available documentation modules.
-
-        Example::
-
-          >>> from zope.app.apidoc import APIDocumentation
-          >>> from zope.publisher.browser import TestRequest
-          
-          >>> view = APIDocumentationView()
-          >>> view.request = TestRequest()
-          >>> view.context = APIDocumentation(None, '++apidoc++')
-          >>> info = view.getModuleList()
-          >>> info = [(i['name'], i['title']) for i in info]
-          >>> print info
-          [(u'Interface', u'Interfaces'), (u'ZCML', u'ZCML Reference')]
-        """
+        """Get a list of all available documentation modules."""
         items = list(self.context.items())
         items.sort()
         result = []

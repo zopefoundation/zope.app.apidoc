@@ -1,5 +1,6 @@
-<html metal:use-macro="views/apidoc_macros/details">
-<body metal:fill-slot="contents">
+<html metal:use-macro="context/@@apidoc_macros/details">
+<body metal:fill-slot="contents"
+      tal:define="rootURL view/apidocRoot">
 
   <h1 class="details-header" tal:content="view/getId">
     zope.app.interfaces.IInterface
@@ -37,165 +38,157 @@
     </ul>
     
     <p tal:condition="not: bases">
-      <em i18n:translate="">There are no base classes.</em>
+      <em i18n:translate="">There are no base interfaces.</em>
     </p>
     
   </div>
 
 
-  <h2 class="details-section" i18n:translate="">Attributes/Fields</h2>
+  <tal:block define="attributes view/getAttributes;
+                     fields view/getFields">
+    <metal:block use-macro="context/@@interface_macros/attributes_fields" />
+  </tal:block>
 
-  <div class="indent"
-      tal:define="attributes view/getAttributes;
-                  fields view/getFields">
-
-  <ul class="attr-list" 
-      tal:condition="python: attributes or fields">
-  
-    <li tal:repeat="attr attributes">
-      <b><code tal:content="attr/name">attr</code></b>
-        <span i18n:translate="">(Attribute)</span><br>
-      <div class="inline-documentation" tal:content="structure attr/doc">
-        attr desc
-      </div>      
-    </li>
-
-    <li tal:repeat="field fields">
-      <b tal:attributes="class field/required_css">
-        <code tal:content="field/name">field</code>
-        <span tal:condition="field/required">*</span>
-      </b>
-      - <a href=""
-           tal:attributes="
-             href string:../../Class/${field/class/path}/index.html">
-          <code tal:content="field/class/name">Field</code></a>
-      (<span i18n:translate="">default</span> =
-            <code tal:content="field/default" />)<br />
-      <div tal:content="structure field/title" class="field-title">title</div>
-      <span tal:content="structure field/description">field desc</span>      
-    </li>
-
-  </ul>
-
-  <p tal:condition="python: not (attributes or fields)">
-    <em i18n:translate="">There are no attributes or fields specified.</em>
-  </p>
-
-  </div>
-
-
-
-  <h2 class="details-section" i18n:translate="">Methods</h2>
-
-  <div class="indent">
-
-  <ul class="attr-list" tal:condition="view/getMethods">
-    <li tal:repeat="method view/getMethods">
-      <b><code 
-          tal:content="string:${method/name}${method/signature}" />
-      </b><br>
-      <div class="inline-documentation" tal:content="structure method/doc">
-        method desc
-      </div>      
-    </li>
-  </ul>
-
-  <p tal:condition="not: view/getMethods">
-    <em i18n:translate="">There are no methods specified.</em>
-  </p>
-
-  </div>
-
-
+  <tal:block define="methods view/getMethods">
+    <metal:block use-macro="context/@@interface_macros/methods" />
+  </tal:block>
 
   <h2 class="details-section" i18n:translate="">Adapters</h2>
   
-  <div class="indent" 
-       tal:define="adapters view/getRequiredAdapters"
-       tal:condition="adapters">
+  <div tal:define="specific_adapters view/getSpecificRequiredAdapters;
+                   extended_adapters view/getExtendedRequiredAdapters;
+                   generic_adapters view/getGenericRequiredAdapters;
+                   provided_adapters view/getProvidedAdapters">
 
-    <h3 i18n:translate="">Adapters where this interface is required:</h3>
-    <ul class="attr-list">
-      <li tal:repeat="adapter adapters">
-        <b><code>
-          <a href=""
-                tal:attributes="href 
-                    string:../../Class/${adapter/factory_url}/index.html" 
-                tal:content="adapter/factory" 
-                tal:condition="adapter/factory_url" />
-          <span tal:content="adapter/factory" 
-                tal:condition="not: adapter/factory_url" />
-        </code></b>
-        <span tal:condition="adapter/name">
-          (<span i18n:translate="">name:</span>
-            <tal:block content="adapter/name" />)
-        </span>
-        <br />
-        <tal:block condition="adapter/provided">
-        <i i18n:translate="">provides:</i> 
-          <a href=""
-              tal:attributes="href string:../${adapter/provided}/apiindex.html"
-              tal:content="adapter/provided" /><br />
-        </tal:block>
-        <tal:block condition="adapter/required">
-        <i i18n:translate="">also required:</i>
-          <tal:block repeat="iface adapter/required">
-            <a href=""
-                tal:attributes="href string:../$iface/apiindex.html"
-                tal:content="iface" /><tal:block 
-                condition="not:repeat/iface/end">, </tal:block>
-          </tal:block>
-        </tal:block>
-      </li>
-    </ul>
-
+    <div class="indent" 
+         tal:condition="python: specific_adapters or generic_adapters">
+    
+      <h3 i18n:translate="">Adapters where this interface is required:</h3>
+    
+      <h4 i18n:translate="">Specific Adapters</h4>
+      <ul class="attr-list" 
+          tal:condition="specific_adapters">
+        <li tal:repeat="adapter specific_adapters">
+          <metal:block use-macro="context/@@interface_macros/adapter" />
+        </li>
+      </ul>
+      <p tal:condition="not:specific_adapters">
+        <em i18n:translate="">There are no specific adapters registered for
+            this interface.</em>
+      </p>
+    
+      <h4 i18n:translate="">Extended Adapters</h4>
+      <ul class="attr-list" 
+          tal:condition="extended_adapters">
+        <li tal:repeat="adapter extended_adapters">
+          <metal:block use-macro="context/@@interface_macros/adapter" />
+        </li>
+      </ul>
+      <p tal:condition="not:extended_adapters">
+        <em i18n:translate="">There are no extended adapters registered for
+            this interface.</em>
+      </p>
+    
+      <h4 i18n:translate="">Generic Adapters</h4>
+      <ul class="attr-list"
+          tal:condition="generic_adapters">
+        <li tal:repeat="adapter generic_adapters">
+          <metal:block use-macro="context/@@interface_macros/adapter" />
+        </li>
+      </ul>
+      <p tal:condition="not:generic_adapters">
+        <em i18n:translate="">There are no generic adapters registered.</em>
+      </p>
+    
+    </div>
+    
+    <div class="indent" 
+         tal:condition="provided_adapters">
+    
+      <h3 i18n:translate="">Adapters that provide this interface:</h3>
+      <ul>
+        <li tal:repeat="adapter provided_adapters">
+          <metal:block use-macro="context/@@interface_macros/adapter" />
+        </li>
+      </ul>
+    
+    </div>
+    
+    <p tal:condition="
+       python: not (specific_adapters or extended_adapters or generic_adapters
+                    or provided_adapters)">
+      <em i18n:translate="">There are no adapters registered for
+          this interface.</em>
+    </p>
   </div>
 
-  <div class="indent" 
-       tal:define="adapters view/getProvidedAdapters"
-       tal:condition="adapters">
+  <div tal:define="Views view/browserViews"
+       tal:condition="Views">
 
-    <h3 i18n:translate="">Adapters that provide this interface:</h3>
-    <ul>
-      <li tal:repeat="adapter adapters">
-        <b><code>
-          <a href=""
-                tal:attributes="href
-                    string:../../Class/${adapter/factory_url}/index.html" 
-                tal:content="adapter/factory" 
-                tal:condition="adapter/factory_url" />
-          <span tal:content="adapter/factory" 
-                tal:condition="not: adapter/factory_url" />
-        </code></b>
-        <span tal:condition="adapter/name">
-          (<span i18n:translate="">name:</span>
-            <tal:block content="adapter/name" />)
-        </span>
-        <br />
-        <i i18n:translate="">requires:</i> 
-          <tal:block repeat="iface adapter/required">
-            <a href=""
-                tal:condition="iface"
-                tal:attributes="href string:../$iface/"
-                tal:content="iface" /><tal:block 
-                condition="not:repeat/iface/end">, </tal:block>
-            <span tal:condition="not: iface" i18n:translate="">
-              No interface required.
-            </span>
-          </tal:block>
-      </li>
-    </ul>
+    <h2 class="details-section" i18n:translate="">Views</h2>
 
+    <div class="indent">
+
+      <tal:block condition="view/browserViews">
+        <h3 class="details-section" i18n:translate="">Browser</h3>
+        <div class="indent">    
+          <ul class="attr-list">
+            <li tal:repeat="View view/browserViews">
+              <metal:block use-macro="context/@@interface_macros/View" />
+            </li>
+          </ul>
+        </div>
+      </tal:block>
+  
+      <tal:block condition="view/xmlrpcViews">
+        <h3 class="details-section" i18n:translate="">XML-RPC</h3>
+        <div class="indent">    
+          <ul class="attr-list">
+            <li tal:repeat="View view/xmlrpcViews">
+              <metal:block use-macro="context/@@interface_macros/View" />
+            </li>
+          </ul>
+        </div>
+      </tal:block>
+  
+      <tal:block condition="view/httpViews">
+        <h3 class="details-section" i18n:translate="">HTTP</h3>
+        <div class="indent">    
+          <ul class="attr-list">
+            <li tal:repeat="View view/httpViews">
+              <metal:block use-macro="context/@@interface_macros/View" />
+            </li>
+          </ul>
+        </div>
+      </tal:block>
+  
+      <tal:block condition="view/ftpViews">
+        <h3 class="details-section" i18n:translate="">FTP</h3>
+        <div class="indent">    
+          <ul class="attr-list">
+            <li tal:repeat="View view/ftpViews">
+              <metal:block use-macro="context/@@interface_macros/View" />
+            </li>
+          </ul>
+        </div>
+      </tal:block>
+  
+      <tal:block condition="view/otherViews">
+        <h3 class="details-section" i18n:translate="">Other</h3>
+        <div class="indent">    
+          <ul class="attr-list">
+            <li tal:repeat="View view/otherViews">
+              <metal:block use-macro="context/@@interface_macros/View" />
+            </li>
+          </ul>
+        </div>
+      </tal:block>
+
+    </div>
   </div>
-
-  <p tal:condition="
-     python: not (view.getRequiredAdapters() or view.getProvidedAdapters())">
-    <em i18n:translate="">There are no adapters registered for
-        this interface.</em>
-  </p>
 
   <div tal:define="factories view/getFactories;
-                   utilities view/getUtilitiesFor;
+                   utilities view/getUtilities;
                    classes view/getClasses"
        tal:condition="python: factories or utilities or classes">
 
@@ -212,11 +205,7 @@
           </div>
           <ul>
             <li tal:repeat="factory factories">
-              <a href=""
-                 tal:attributes="href string:../../Class/${factory/url}/"
-                 tal:content="factory/name" />
-              <tal:block replace="string:(${factory/title})" 
-                         condition="factory/title" />
+              <metal:block use-macro="context/@@interface_macros/factory" />
             </li>
           </ul>
         </div>
@@ -231,17 +220,7 @@
           </div>
           <ul>
             <li tal:repeat="utility utilities">
-              <a href=""
-                 tal:attributes="href 
-              string:../../Utility/${view/getId}/${utility/url_name}/index.html"
-                 tal:content="structure utility/name" />
-              <br />
-              <div><span i18n:translate="">Class:</span> <code>
-                <a href=""
-                   tal:attributes="href 
-                       string:../../Class/${utility/url}/index.html"
-                   tal:content="utility/path" />
-              </code></div>              
+              <metal:block use-macro="context/@@interface_macros/utility" />
             </li>
           </ul>
         </div>
@@ -256,12 +235,7 @@
           </div>
           <ul>
             <li tal:repeat="klass classes">
-              <b><code>
-                <a href=""
-                   tal:attributes="href 
-                       string:../../Class/${klass/url}/index.html"
-                   tal:content="klass/path" />
-              </code></b>
+              <metal:block use-macro="context/@@interface_macros/class" />
             </li>
           </ul>
         </div>
@@ -269,11 +243,6 @@
     
     </div>
   </div>
-
-  <p>
-    <em><b class="required">*</b> =
-    <span i18n:translate="">required</span></em>
-  </p>
 
 </body>
 </html>

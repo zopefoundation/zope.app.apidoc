@@ -35,16 +35,18 @@ class UtilityModuleTests(BrowserTestCase):
         response = self.publish(
             '/++apidoc++/Utility/'
             'zope.app.apidoc.interfaces.IDocumentationModule/'
-            'Class/index.html',
+            'Utility/index.html',
             basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find('zope.app.apidoc.classmodule.ClassModule') > 0)
+        self.assert_(
+            body.find(
+               'zope.app.apidoc.utilitymodule.utilitymodule.UtilityModule') > 0)
         self.checkForBrokenLinks(
             body,
             '/++apidoc++/Utility/'
             'zope.app.apidoc.interfaces.IDocumentationModule/'
-            'Class/index.html',
+            'Utility/index.html',
             basic='mgr:mgrpw')
 
 

@@ -1,6 +1,7 @@
 <html metal:use-macro="views/apidoc_macros/details">
 <body metal:fill-slot="contents"
-      tal:define="schema view/getSchema">
+      tal:define="schema view/getSchema;
+                  rootURL string:../../..">
 
   <h1 class="details-header">
     <span tal:replace="context/zope:name" /> 
@@ -37,7 +38,7 @@
     <i i18n:translate="">Handler:</i>
     <a href=""
        tal:attributes="href 
-           string:../../../Class/${handler/url}/index.html"
+           string:../../../Code/${handler/url}/index.html"
        tal:content="handler/path">
     </a>
   </div>
@@ -58,18 +59,7 @@
       tal:condition="fields">
   
     <li tal:repeat="field fields">
-      <b tal:attributes="class field/required_css">
-        <code tal:content="field/name">field</code>
-        <span tal:condition="field/required">*</span>
-      </b>
-      - <a href=""
-           tal:attributes="href 
-               string:../../../Class/${field/class/path}/index.html">
-          <code tal:content="field/class/name">Field</code></a>
-      (<span i18n:translate="">default</span> =
-            <code tal:content="field/default" />)<br />
-      <div tal:content="structure field/title" class="field-title">title</div>
-      <span tal:content="structure field/description">field desc</span>      
+      <metal:block use-macro="context/@@interface_macros/field" />
     </li>
 
   </ul>
@@ -80,7 +70,7 @@
 
   </div>
 
-  <tal:omit-tag 
+  <tal:block
       define="dir view/getSubdirectives"
       condition="dir">
 
@@ -93,10 +83,8 @@
     directive
   </h3>
 
-  <div>
-    <div class="documentation" tal:content="structure dir/schema/getDoc">
-      Here is the doc string
-    </div>
+  <div class="documentation" tal:content="structure dir/schema/getDoc">
+    Here is the doc string
   </div>
 
   <br />
@@ -106,7 +94,7 @@
     <i i18n:translate="">Handler:</i>
     <a href=""
        tal:attributes="href 
-           string:../../../Class/${dir/handler/url}/index.html"
+           string:../../../Code/${dir/handler/url}/index.html"
        tal:content="dir/handler/path">
     </a>
   </div>
@@ -115,42 +103,31 @@
     <a href=""
        tal:attributes="href 
            string:../../../Interface/${dir/schema/getId}/apiindex.html">
-      <h4 tal:content="dir/schema/getId">zope.fields.Schema</h4>
+      <h3 tal:content="dir/schema/getId">zope.fields.Schema</h3>
     </a>
   </div>
 
   <div class="indent"
       tal:define="fields dir/schema/getFields">
 
-  <ul class="attr-list" 
-      tal:condition="fields">
-  
-    <li tal:repeat="field fields">
-      <b tal:attributes="class field/required_css">
-        <code tal:content="field/name">field</code>
-        <span tal:condition="field/required">*</span>
-      </b>
-      - <a href=""
-           tal:attributes="href 
-               string:../../../Interface/${field/iface/id}/apiindex.html">
-          <code tal:content="field/iface/name">IField</code></a>
-      (<span i18n:translate="">default</span> =
-            <code tal:content="field/default" />)<br />
-      <div tal:content="structure field/title" class="field-title">title</div>
-      <span tal:content="structure field/description">field desc</span>
-    </li>
-
-  </ul>
-
-  <p tal:condition="not: fields">
-    <em i18n:translate="">There are no fields specified.</em>
-  </p>
+    <ul class="attr-list" 
+        tal:condition="fields">
+    
+      <li tal:repeat="field fields">
+        <metal:block use-macro="context/@@interface_macros/field" />
+      </li>
+    
+    </ul>
+    
+    <p tal:condition="not: fields">
+      <em i18n:translate="">There are no fields specified.</em>
+    </p>
 
   </div>
 
   </div>
 
-  </tal:omit-tag>
+  </tal:block>
 
   <p>
     <em><b class="required">*</b> =

@@ -1,5 +1,6 @@
 <configure
   xmlns="http://namespaces.zope.org/zope"
+  xmlns:apidoc="http://namespaces.zope.org/apidoc"
   i18n_domain="zope">
 
   <permission
@@ -7,7 +8,7 @@
       title="[zope.app.apidoc.UseAPIDoc] Access Online API documentation"
       />
 
-  <class class=".APIDocumentation">
+  <class class=".apidoc.APIDocumentation">
     <require
         interface="zope.app.container.interfaces.IReadContainer"
         permission="zope.ManageApplication"
@@ -17,23 +18,59 @@
   <view
       name="apidoc" type="*"
       provides="zope.app.traversing.interfaces.ITraversable" for="*"
-      factory=".apidocNamespace"
+      factory=".apidoc.apidocNamespace"
       />
   <adapter
       name="apidoc"
       provides="zope.app.traversing.interfaces.ITraversable" for="*"
-      factory=".apidocNamespace"
+      factory=".apidoc.apidocNamespace"
+      />
+
+  <!-- Register Public API Dcoumentation -->
+
+  <apidoc:bookchapter 
+      id="inspect"
+      title="Inspection API"
+      />
+  <apidoc:bookchapter 
+      id="interface"
+      title="Interfaces"
+      doc_path="interface.txt"
+      parent="inspect"
+      />
+  <apidoc:bookchapter 
+      id="component"
+      title="Components"
+      doc_path="component.txt"
+      parent="inspect"
+      />
+  <apidoc:bookchapter 
+      id="presentation"
+      title="Presentation"
+      doc_path="presentation.txt"
+      parent="inspect"
+      />
+  <apidoc:bookchapter 
+      id="misc"
+      title="Miscellaneous"
+      doc_path="utilities.txt"
+      parent="inspect"
+      />
+  <apidoc:bookchapter 
+      id="classregistry"
+      title="Class Registry"
+      doc_path="classregistry.txt"
+      parent="inspect"
       />
 
   <include package=".browser" />
 
   <!-- API Documentation Modules -->
   <include package=".bookmodule" />
-  <include package=".classmodule" />
+  <include package=".codemodule" />
   <include package=".ifacemodule" />
   <include package=".typemodule" />
   <include package=".utilitymodule" />
-  <include package=".viewmodule" />
   <include package=".zcmlmodule" />
 
 </configure>

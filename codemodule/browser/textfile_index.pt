@@ -1,0 +1,10 @@
+<html metal:use-macro="views/apidoc_macros/details">
+<body metal:fill-slot="contents">
+
+  <div class="documentation"
+       tal:content="structure view/renderedContent">
+    file content
+  </div>
+
+</body>
+</html>

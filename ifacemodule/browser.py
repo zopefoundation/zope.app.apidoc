@@ -16,210 +16,41 @@
 $Id$
 """
 __docformat__ = 'restructuredtext'
+from zope.interface import Interface
 
-from types import FunctionType, MethodType, ClassType, TypeType
-from zope.component.site import AdapterRegistration
-from zope.interface.declarations import providedBy
-from zope.interface.interfaces import IMethod, IInterface 
-from zope.proxy import removeAllProxies
 from zope.publisher.interfaces import IRequest
 from zope.publisher.interfaces.browser import ILayer
-from zope.schema.interfaces import IField
+from zope.publisher.interfaces.browser import IBrowserRequest
+from zope.publisher.interfaces.xmlrpc import IXMLRPCRequest
+from zope.publisher.interfaces.http import IHTTPRequest
+from zope.publisher.interfaces.ftp import IFTPRequest
 from zope.security.proxy import removeSecurityProxy
+from zope.proxy import removeAllProxies
 
 from zope.app import zapi
+from zope.app.publisher.browser import BrowserView
+
 from zope.app.apidoc.utilities import getPythonPath, renderText
-from zope.app.apidoc.classmodule import classRegistry
+from zope.app.apidoc.apidoc import APIDocumentation
+from zope.app.apidoc import classregistry
+from zope.app.apidoc import interface, component, presentation
 
-def _get(iface, type):
-    """Return a dictionary containing all the attributes in an interface.
+def findAPIDocumentationRoot(obj, request):
+    if zapi.isinstance(obj, APIDocumentation):
+        return zapi.absoluteURL(obj, request)
+    return findAPIDocumentationRoot(zapi.getParent(obj), request)
 
-    The type specifies whether we are looking for attributes or methods.
-
-    Example::
-
-      >>> from zope.interface import Interface, Attribute
-      >>> from zope.schema import Field
-
-      >>> class IFoo(Interface):
-      ...     foo = Field()
-      ...     bar = Field()
-      ...     def blah():
-      ...         pass
-
-      >>> _get(IFoo, IMethod).keys()
-      ['blah']
-
-      >>> names = _get(IFoo, IField).keys()
-      >>> names.sort()
-      >>> names
-      ['bar', 'foo']
-    """
-    # We really just want the attributes to be unproxied, since there are no
-    # security declarations for generic interface attributes, but we need to
-    # be able to get to the info.
-    # We remove the Proxy on the interface, so we save ourselves the work of
-    # removing it later individually from each attribute.
-    iface = removeAllProxies(iface)
-    items = {}
-    for name in iface:
-        attr = iface[name]
-        if type.providedBy(attr):
-            items[name] = attr
-    return items
-
-
-def _getInOrder(iface, type,
-                _itemsorter=lambda x, y: cmp(x[1].order, y[1].order)):
-    """Return a list of (name, value) tuples in native interface order.
-
-    The type specifies whether we are looking for attributes or methods. The
-    `_itemsorter` argument provides the function that is used to order the
-    fields. The default function should be the correct one for 99% of your
-    needs.
-
-    Example::
-
-      >>> from zope.interface import Interface, Attribute
-      >>> from zope.schema import Field
-
-      >>> class IFoo(Interface):
-      ...     foo = Field()
-      ...     bar = Field()
-      ...     def blah():
-      ...         pass
-
-      >>> [n for n, a in _getInOrder(IFoo, IMethod)]
-      ['blah']
-
-      >>> [n for n, a in _getInOrder(IFoo, IField)]
-      ['foo', 'bar']
-    """
-    items = _get(iface, type).items()
-    items.sort(_itemsorter)
-    return items
-
-
-def _getFieldInterface(field):
-    """Return PT-friendly dict about the field's interface.
-
-    Examples::
-
-      >>> from zope.app.apidoc.tests import pprint
-      >>> from zope.interface import implements, Interface
-      
-      >>> class IField(Interface):
-      ...     pass
-      >>> class ISpecialField(IField):
-      ...     pass
-      >>> class Field(object):
-      ...     implements(IField)
-      >>> class SpecialField(object):
-      ...     implements(ISpecialField)
-      >>> class ExtraField(SpecialField):
-      ...     pass
-
-      >>> info = _getFieldInterface(Field())
-      >>> pprint(info)
-      [('id', 'zope.app.apidoc.ifacemodule.browser.IField'),
-       ('name', 'IField')]
-
-      >>> info = _getFieldInterface(SpecialField())
-      >>> pprint(info)
-      [('id', 'zope.app.apidoc.ifacemodule.browser.ISpecialField'),
-       ('name', 'ISpecialField')]
-
-      >>> info = _getFieldInterface(ExtraField())
-      >>> pprint(info)
-      [('id', 'zope.app.apidoc.ifacemodule.browser.ISpecialField'),
-       ('name', 'ISpecialField')]
-    """
-    # This is bad, but due to bootstrapping, directlyProvidedBy does
-    # not work 
-    name = field.__class__.__name__
-    ifaces = list(providedBy(field))
-    # Usually fields have interfaces with the same name (with an 'I')
-    for iface in ifaces:
-        if iface.getName() == 'I' + name:
-            return {'name': iface.getName(), 'id': getPythonPath(iface)}
-    # Giving up...
-    return {'name': ifaces[0].getName(), 'id': getPythonPath(ifaces[0])}
-
-
-def _getFieldClass(field):
-    """Return PT-friendly dict about the field's class.
-
-    Examples::
-
-      >>> from zope.app.apidoc.tests import pprint
-      >>> from zope.interface import implements, Interface
-      
-      >>> class IField(Interface):
-      ...     pass
-      >>> class ISpecialField(IField):
-      ...     pass
-      >>> class Field(object):
-      ...     implements(IField)
-      >>> class SpecialField(object):
-      ...     implements(ISpecialField)
-      >>> class ExtraField(SpecialField):
-      ...     pass
-
-      >>> info = _getFieldClass(Field())
-      >>> pprint(info)
-      [('name', 'Field'),
-       ('path', 'zope/app/apidoc/ifacemodule/browser/Field')]
-
-      >>> info = _getFieldClass(SpecialField())
-      >>> pprint(info)
-      [('name', 'SpecialField'),
-       ('path', 'zope/app/apidoc/ifacemodule/browser/SpecialField')]
-
-      >>> info = _getFieldClass(ExtraField())
-      >>> pprint(info)
-      [('name', 'ExtraField'),
-       ('path', 'zope/app/apidoc/ifacemodule/browser/ExtraField')]
-    """
-    class_ = field.__class__
-    return {'name': class_.__name__,
-            'path': getPythonPath(class_).replace('.', '/')}
-
-
-def _getRequiredCSS(field):
-    """Return a CSS class name that represents whether the field is required.
-
-    Examples::
-
-      >>> class Field(object):
-      ...     required = False
-
-      >>> field = Field()
-      >>> _getRequiredCSS(field)
-      'optional'
-      >>> field.required = True
-      >>> _getRequiredCSS(field)
-      'required'
-
-    """
-    if field.required:
-        return 'required'
-    else:
-        return 'optional'
-
-
-def _getRealFactory(factory):
-    """Get the real factory.
-
-    Sometimes the original factory is masked by functions. If the function
-    keeps track of the original factory, use it.
-    """
-    if isinstance(factory, FunctionType) and hasattr(factory, 'factory'):
-        return factory.factory
-    return factory
-
-
-class InterfaceDetails(object):
+class InterfaceDetails(BrowserView):
     """View class for an Interface."""
+
+    def __init__(self, context, request):
+        super(InterfaceDetails, self).__init__(context, request)
+        self._prepareViews()
+        try:
+            self.apidocRoot = findAPIDocumentationRoot(context, request)
+        except TypeError:
+            # Probably context without location; it's a test
+            self.apidocRoot = ''
 
     def getId(self):
         """Return the id of the field as it is defined for the interface
@@ -264,263 +95,97 @@ class InterfaceDetails(object):
 
     def getTypes(self):
         """Return a list of interface types that are specified for this
-        interface.
-
-        Note that you should only expect one type at a time.
-
-        Example::
-
-          >>> from zope.app.apidoc.tests import pprint
-          >>> from tests import getInterfaceDetails, IFoo
-          >>> from zope.interface import Interface, directlyProvides
-          >>> class IType(Interface):
-          ...     pass
-
-          >>> details = getInterfaceDetails()
-          >>> details.getTypes()
-          []
-
-          >>> directlyProvides(IFoo, IType)
-          >>> type = details.getTypes()[0]
-          >>> pprint(type)
-          [('name', 'IType'),
-           ('path', 'zope.app.apidoc.ifacemodule.browser.IType')]
-
-          Cleanup
-
-          >>> directlyProvides(IFoo, [])
-        """
+        interface."""
         # We have to really, really remove all proxies, since self.context (an
         # interface) is usually security proxied and location proxied. To get
         # the types, we need all proxies gone, otherwise the proxies'
         # interfaces are picked up as well. 
-        context = removeAllProxies(self.context)
-        types = list(providedBy(context))
-        types.remove(IInterface)
+        iface = removeAllProxies(self.context)
         return [{'name': type.getName(),
                  'path': getPythonPath(type)}
-                for type in types]
+                for type in interface.getInterfaceTypes(iface)]
     
     def getAttributes(self):
-        r"""Return a list of attributes in the order they were specified.
-
-        Example::
-
-          >>> from zope.app.apidoc.tests import pprint
-          >>> from tests import getInterfaceDetails
-          >>> details = getInterfaceDetails()
-
-          >>> attrs = details.getAttributes()
-          >>> pprint(attrs)
-          [[('doc', u'<p>This is bar.</p>\n'), ('name', 'bar')],
-           [('doc', u'<p>This is foo.</p>\n'), ('name', 'foo')]]
-        """
+        """Return a list of attributes in the order they were specified."""
         # The `Interface` and `Attribute` class have no security declarations,
         # so that we are not able to access any API methods on proxied
         # objects. If we only remove security proxies, the location proxy's
         # module will be returned.
         iface = removeAllProxies(self.context)
-        attrs = []
-        for name in iface:
-            attr = iface[name]
-            if not IMethod.providedBy(attr) and not IField.providedBy(attr):
-                attrs.append(attr)
-        return [{'name': attr.getName(),
-                 'doc': renderText(attr.getDoc() or '', iface.__module__)}
-                for attr in attrs]
+        return [interface.getAttributeInfoDictionary(attr)
+                for name, attr in interface.getAttributes(iface)]
 
     def getMethods(self):
-        r"""Return a list of methods in the order they were specified.
-
-        Example::
-
-          >>> from zope.app.apidoc.tests import pprint
-          >>> from tests import getInterfaceDetails
-          >>> details = getInterfaceDetails()
-
-          >>> methods = details.getMethods()
-          >>> pprint(methods)
-          [[('doc', u'<p>This is blah.</p>\n'),
-            ('name', 'blah'),
-            ('signature', '()')],
-           [('doc', u'<p>This is get.</p>\n'),
-            ('name', 'get'),
-            ('signature', '(key, default=None)')]]
-        """        
+        """Return a list of methods in the order they were specified."""
         # The `Interface` class have no security declarations, so that we are
         # not able to access any API methods on proxied objects. If we only
         # remove security proxies, the location proxy's module will be
         # returned.
-        return [{'name': method.getName(),
-                 'signature': method.getSignatureString(),
-                 'doc': renderText(
-                            method.getDoc() or '',
-                            removeAllProxies(self.context).__module__)}
-                for method in _get(self.context, IMethod).values()]
-            
+        iface = removeAllProxies(self.context)
+        return [interface.getMethodInfoDictionary(method)
+                for name, method in interface.getMethods(iface)]
+
     def getFields(self):
         r"""Return a list of fields in required + alphabetical order.
 
         The required attributes are listed first, then the optional
-        attributes.
-
-        Example::
-
-          >>> from zope.app.apidoc.tests import pprint
-          >>> from tests import getInterfaceDetails
-          >>> details = getInterfaceDetails()
-
-          >>> fields = details.getFields()
-          >>> pprint(fields)
-          [[('class',
-             [('name', 'TextLine'),
-              ('path', 'zope/schema/_bootstrapfields/TextLine')]),
-            ('default', "u'Foo'"),
-            ('description', u'<p>Title</p>\n'),
-            ('iface',
-             [('id', 'zope.schema.interfaces.ITextLine'),
-              ('name', 'ITextLine')]),
-            ('name', 'title'),
-            ('required', True),
-            ('required_css', 'required'),
-            ('title', u'')],
-           [('class',
-             [('name', 'Text'),
-              ('path', 'zope/schema/_bootstrapfields/Text')]),
-            ('default', "u'Foo.'"),
-            ('description', u'<p>Desc</p>\n'),
-            ('iface',
-             [('id', 'zope.schema.interfaces.IText'), ('name', 'IText')]),
-            ('name', 'description'),
-            ('required', False),
-            ('required_css', 'optional'),
-            ('title', u'')]]
-        """
+        attributes."""
         # The `Interface` class have no security declarations, so that we are
         # not able to access any API methods on proxied objects.  If we only
         # remove security proxies, the location proxy's module will be
         # returned.
-        _itemsorter = lambda x, y: cmp(
-            (x[1].required and '1' or '2', x[0].lower()),
-            (y[1].required and '1' or '2', y[0].lower()))
-        fields = map(lambda x: x[1], _getInOrder(
-            self.context, IField, _itemsorter=_itemsorter))
-        return [{'name': self._getFieldName(field),
-                 'iface': _getFieldInterface(field),
-                 'class': _getFieldClass(field),
-                 'required': field.required,
-                 'required_css': _getRequiredCSS(field),
-                 'default': repr(field.default),
-                 'title': field.title,
-                 'description': renderText(
-                     field.description or '',
-                     removeAllProxies(self.context).__module__)}
-                for field in fields]
+        iface = removeAllProxies(self.context)
+        # Make sure that the required fields are shown first
+        sorter = lambda x, y: cmp((not x[1].required, x[0].lower()),
+                                  (not y[1].required, y[0].lower()))
+        return [interface.getFieldInfoDictionary(field)
+                for name, field in interface.getFieldsInOrder(iface, sorter)]
 
-    def _getFieldName(self, field):
-        return field.getName()
-
-    def getRequiredAdapters(self):
-        """Get adapters where this interface is required.
-
-        Example::
-
-          >>> from zope.app.apidoc.tests import pprint
-          >>> from tests import getInterfaceDetails
-          >>> details = getInterfaceDetails()
-
-          >>> adapters = details.getRequiredAdapters()
-          >>> adapters.sort()
-          >>> pprint(adapters[0])
-          [('factory',
-            'zope.app.location.traversing.LocationPhysicallyLocatable'),
-           ('factory_url',
-            'zope/app/location/traversing/LocationPhysicallyLocatable'),
-           ('name', ''),
-           ('provided',
-            'zope.app.traversing.interfaces.IPhysicallyLocatable'),
-           ('required', [])]
-        """
-        sm = zapi.getSiteManager()
-        # Must remove security proxies, so that we have access to the API
-        # methods. 
-        iface = removeSecurityProxy(self.context)
-        adapters = []
-        for reg in sm.registrations():
-            # Only grab adapters
-            if not isinstance(reg, AdapterRegistration):
-                continue
-            # Only grab the adapters for which this interface is required
-            if reg.required and reg.required[0] is not None and \
-                   iface not in reg.required:
-                continue
-            # Ignore views and layers
-            if IInterface.providedBy(reg.required[-1]) and (
-                   reg.required[-1].isOrExtends(IRequest) or
-                   reg.required[-1].isOrExtends(ILayer)):
-                continue
-            factory = _getRealFactory(reg.value)
-            path = getPythonPath(factory)
-            if type(factory) in (FunctionType, MethodType):
-               url = None
-            else:
-                url = path.replace('.', '/')
-            adapters.append({
-                'provided': getPythonPath(reg.provided),
-                'required': [getPythonPath(iface)
-                             for iface in reg.required
-                             if iface is not None],
-                'name': getattr(reg, 'name', None),
-                'factory': path,
-                'factory_url': url
-                })
-        return adapters
-        
-    def getProvidedAdapters(self):
-        """Get adapters where this interface is provided.
-
-        Example::
-
-          >>> from zope.app.apidoc.tests import pprint
-          >>> from tests import getInterfaceDetails
-          >>> details = getInterfaceDetails()
-
-          >>> adapters = details.getProvidedAdapters()
-          >>> pprint(adapters)
-          [[('factory', '__builtin__.object'),
-            ('factory_url', '__builtin__/object'),
-            ('name', ''),
-            ('required', ['zope.app.apidoc.ifacemodule.tests.IBar'])]]
-        """
-        sm = zapi.getSiteManager()
+    def getSpecificRequiredAdapters(self):
+        """Get adapters where this interface is required."""
         # Must remove security and location proxies, so that we have access to
         # the API methods and class representation.
         iface = removeAllProxies(self.context)
-        adapters = []
-        for reg in sm.registrations():
-            # Only grab adapters
-            if not isinstance(reg, AdapterRegistration):
-                continue
-            # Only grab adapters for which this interface is provided
-            if iface is not reg.provided:
-                continue
-            # Ignore views
-            if IInterface.providedBy(reg.required[-1]) and \
-                   reg.required[-1].isOrExtends(IRequest):
-                continue
-            factory = _getRealFactory(reg.value)
-            path = getPythonPath(factory)
-            if type(factory) in (FunctionType, MethodType):
-               url = None
-            else:
-                url = path.replace('.', '/')
-            adapters.append({
-                'required': [getPythonPath(iface) for iface in reg.required],
-                'name': reg.name,
-                'factory': path,
-                'factory_url': url
-                })
-        return adapters
+        regs = component.getRequiredAdapters(iface)
+        regs = component.filterAdapterRegistrations(
+            regs, iface,
+            level=component.SPECIFIC_INTERFACE_LEVEL)
+        regs = [component.getAdapterInfoDictionary(reg)
+                  for reg in regs]
+        return regs
+
+    def getExtendedRequiredAdapters(self):
+        """Get adapters where this interface is required."""
+        # Must remove security and location proxies, so that we have access to
+        # the API methods and class representation.
+        iface = removeAllProxies(self.context)
+        regs = component.getRequiredAdapters(iface)
+        regs = component.filterAdapterRegistrations(
+            regs, iface,
+            level=component.EXTENDED_INTERFACE_LEVEL)
+        regs = [component.getAdapterInfoDictionary(reg)
+                  for reg in regs]
+        return regs
+
+    def getGenericRequiredAdapters(self):
+        """Get adapters where this interface is required."""
+        # Must remove security and location proxies, so that we have access to
+        # the API methods and class representation.
+        iface = removeAllProxies(self.context)
+        regs = component.getRequiredAdapters(iface)
+        regs = tuple(component.filterAdapterRegistrations(
+            regs, iface,
+            level=component.GENERIC_INTERFACE_LEVEL))
+        return [component.getAdapterInfoDictionary(reg)
+                for reg in regs]
+        
+    def getProvidedAdapters(self):
+        """Get adapters where this interface is provided."""
+        # Must remove security and location proxies, so that we have access to
+        # the API methods and class representation.
+        regs = component.getProvidedAdapters(removeAllProxies(self.context))
+        return [component.getAdapterInfoDictionary(reg)
+                for reg in regs]
 
     def getClasses(self):
         """Get the classes that implement this interface.
@@ -539,76 +204,53 @@ class InterfaceDetails(object):
         # Must remove security and location proxies, so that we have access to
         # the API methods and class representation.
         iface = removeAllProxies(self.context)
-        classes = classRegistry.getClassesThatImplement(iface)
+        classes = classregistry.classRegistry.getClassesThatImplement(iface)
         return [{'path': path, 'url': path.replace('.', '/')}
                 for path, klass in classes]
 
     def getFactories(self):
         """Return the factories, who will provide objects implementing this
-        interface.
-
-        Example::
-
-          >>> from zope.app.apidoc.tests import pprint
-          >>> from tests import getInterfaceDetails
-          >>> details = getInterfaceDetails()
-
-          >>> factories = details.getFactories()
-          >>> factories = [f.items() for f in factories]
-          >>> factories = [f for f in factories if f.sort() is None]
-          >>> factories.sort()
-          >>> pprint(factories)
-          [[('name', u'FooFactory'),
-            ('title', 'Foo Factory'),
-            ('url', 'zope/component/factory/Factory')]]
-        """
+        interface."""
         # Must remove security and location proxies, so that we have access to
         # the API methods and class representation.
-        iface = removeAllProxies(self.context)
-        factories = [(n, f) for n, f in
-                    zapi.getFactoriesFor(iface)
-                    if iface in tuple(f.getInterfaces())]
-        info = []
-        for name, factory in factories:
-            if type(factory) in (ClassType, TypeType):
-                klass = factory
-            else:
-                klass = factory.__class__
-            path = getPythonPath(klass)
-            info.append({'name': name or '<i>no name</i>',
-                         'title': getattr(factory, 'title', ''),
-                         'url': path.replace('.', '/')})
-        return info
+        regs = component.getFactories(removeAllProxies(self.context))
+        return [component.getFactoryInfoDictionary(reg)
+                for reg in regs]
 
-    def getUtilitiesFor(self):
-        """Return all utilities that provide this interface.
-
-        Example::
-
-          >>> from zope.app.apidoc.tests import pprint
-          >>> from tests import getInterfaceDetails
-          >>> details = getInterfaceDetails()
-
-          >>> utils = details.getUtilitiesFor()
-          >>> pprint(utils)
-          [[('name', u'The Foo'),
-            ('path', 'zope.app.apidoc.ifacemodule.tests.Foo'),
-            ('url', 'zope/app/apidoc/ifacemodule/tests/Foo'),
-            ('url_name', u'The Foo')]]
-        """
-        sm = zapi.getSiteManager()
+    def getUtilities(self):
+        """Return all utilities that provide this interface."""
         # Must remove security and location proxies, so that we have access to
         # the API methods and class representation.
-        utils = sm.getUtilitiesFor(removeAllProxies(self.context))
-        info = []
-        for name, util in utils:
-            if type(util) in (ClassType, TypeType):
-                klass = util
+        regs = component.getUtilities(removeAllProxies(self.context))
+        return [component.getUtilityInfoDictionary(reg)
+                for reg in regs]
+
+
+    def _prepareViews(self):
+        self.httpViews = []
+        self.browserViews = []
+        self.ftpViews = []
+        self.xmlrpcViews = []
+        self.otherViews = []
+
+        for reg in presentation.getViews(removeAllProxies(self.context)):
+            type = presentation.getPresentationType(reg.required[-1])
+            info = presentation.getViewInfoDictionary(reg)
+
+            if type is IBrowserRequest:
+                self.browserViews.append(info)
+            elif type is IXMLRPCRequest:
+                self.xmlrpcViews.append(info)
+            elif type is IHTTPRequest:
+                self.httpViews.append(info)
+            elif type is IFTPRequest:
+                self.ftpViews.append(info)
             else:
-                klass = util.__class__
-            path = getPythonPath(klass)
-            info.append({'name': name or '<i>no name</i>',
-                         'url_name': name or '__noname__',
-                         'path': path,
-                         'url': path.replace('.', '/')})
-        return info
+                self.otherViews.append(info)
+
+        sort_function = lambda x, y: cmp(x['name'], y['name']) 
+        self.httpViews.sort(sort_function)
+        self.browserViews.sort(sort_function)
+        self.ftpViews.sort(sort_function)
+        self.xmlrpcViews.sort(sort_function)
+        self.otherViews.sort(sort_function)

@@ -36,63 +36,20 @@ namespaces = None
 subdirs = None
 
 def quoteNS(ns):
-    """Quotes a namespace to make it URL-secure.
-
-    Example::
-
-      >>> quoteNS('http://namespaces.zope.org/browser')
-      'http_co__sl__sl_namespaces.zope.org_sl_browser'
-    """
+    """Quotes a namespace to make it URL-secure."""
     ns = ns.replace(':', '_co_')
     ns = ns.replace('/', '_sl_')
     return ns
 
 def unquoteNS(ns):
-    """Un-quotes a namespace from a URL-secure version.
-
-    Example::
-
-      >>> unquoteNS('http_co__sl__sl_namespaces.zope.org_sl_browser')
-      'http://namespaces.zope.org/browser'
-    """
+    """Un-quotes a namespace from a URL-secure version."""
     ns = ns.replace('_sl_', '/')
     ns = ns.replace('_co_', ':')
     return ns    
 
 
 class Namespace(ReadContainerBase):
-    r"""Simple namespace object for the ZCML Documentation Module.
-
-    The namespace manages a particular ZCML namespace. The object always
-    expects the parent to be a `ZCMLModule` instance.
-
-    Demonstration::
-
-      >>> module = ZCMLModule()
-      >>> module._makeDocStructure()
-      >>> ns = Namespace(ZCMLModule(), 'http://namespaces.zope.org/browser')
-
-      >>> ns.getShortName()
-      'browser'
-
-      >>> ns.getFullName()
-      'http://namespaces.zope.org/browser'
-    
-      >>> ns.getQuotedName()
-      'http_co__sl__sl_namespaces.zope.org_sl_browser'
-
-      >>> ns.get('pages').__name__
-      'pages'
-
-      >>> ns.get('foo') is None
-      True
-
-      >>> print '\n'.join([name for name, dir in ns.items()][:4])
-      addMenuItem
-      addform
-      addview
-      addwizard
-    """
+    """Simple namespace object for the ZCML Documentation Module."""
 
     implements(ILocation)
 
@@ -152,37 +109,10 @@ class Directive(object):
     
 
 class ZCMLModule(ReadContainerBase):
-    r"""Represent the Documentation of all Interfaces.
+    r"""Represent the Documentation of all ZCML namespaces.
 
     This documentation is implemented using a simple `IReadContainer`. The
-    items of the container are all the interfaces listed in the closest
-    site manager and above.
-
-    Demonstration::
-
-      >>> module = ZCMLModule()
-
-      >>> module.get('http://namespaces.zope.org/browser').getFullName()
-      'http://namespaces.zope.org/browser'
-
-      >>> module.get(
-      ...     'http_co__sl__sl_namespaces.zope.org_sl_browser').getFullName()
-      'http://namespaces.zope.org/browser'
-
-      >>> module.get('browser').getFullName()
-      'http://namespaces.zope.org/browser'
-
-      >>> module.get('foo') is None
-      True
-
-      >>> names = [ns.getShortName() for n, ns in module.items()]
-      >>> 'browser' in names
-      True
-      >>> 'meta' in names
-      True
-      >>> 'ALL' in names
-      True
-    """
+    items of the container."""
 
     implements(IDocumentationModule)
 

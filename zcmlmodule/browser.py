@@ -29,47 +29,7 @@ from zope.app.apidoc.ifacemodule.browser import InterfaceDetails
 from zope.app.apidoc.utilities import getPythonPath, relativizePath
 
 class Menu(object):
-    """Menu View Helper Class
-
-    Examples::
-
-      >>> from zope.app.tree.node import Node 
-      >>> from zope.app.apidoc.zcmlmodule import Namespace, Directive
-      >>> from zope.app.apidoc.zcmlmodule import ZCMLModule
-      >>> from zope.app.apidoc.tests import Root
-      >>> menu = Menu()
-
-      >>> module = ZCMLModule()
-      >>> module.__parent__ = Root()
-      >>> module.__name__ = 'ZCML'
-
-      Namespace representing directives available in all namespaces.
-
-      >>> ns = Namespace(module, 'ALL')
-      >>> node = Node(ns)
-      >>> menu.getMenuTitle(node)
-      'All Namespaces'
-      >>> menu.getMenuLink(node) is None
-      True
-
-      From now on we use the browser namespace.
-      
-      >>> ns = Namespace(module, 'http://namespaces.zope.org/browser')
-      >>> node = Node(ns)
-      >>> menu.getMenuTitle(node)
-      'browser'
-      >>> menu.getMenuLink(node) is None
-      True
-
-      The namespace has a page directive.
-
-      >>> dir = Directive(ns, 'page', None, None, None, None)
-      >>> node = Node(dir)
-      >>> menu.getMenuTitle(node)
-      'page'
-      >>> menu.getMenuLink(node)
-      './http_co__sl__sl_namespaces.zope.org_sl_browser/page/index.html'
-    """
+    """Menu View Helper Class"""
 
     def getMenuTitle(self, node):
         """Return the title of the node that is displayed in the menu."""
@@ -104,80 +64,23 @@ class DirectiveDetails(object):
         schema = LocationProxy(schema,
                                self.context,
                                getPythonPath(schema))
-        details = InterfaceDetails()
+        details = InterfaceDetails(schema, self.request)
         details._getFieldName = _getFieldName
-        details.context = schema
-        details.request = self.request
         return details
 
     def getSchema(self):
-        """Return the schema of the directive.
-
-        Examples::
-        
-          >>> from zope.interface import Interface
-          >>> from zope.publisher.browser import TestRequest
-          >>> from tests import getDirective
-          >>> details = DirectiveDetails()
-          >>> details.context = getDirective()
-          >>> details.request = TestRequest()
-
-          >>> class IFoo(Interface):
-          ...     pass
-          >>> details.context.schema = IFoo
-          >>> iface = details.getSchema()
-          >>> if_class = iface.__class__
-          >>> if_class.__module__ + '.' + if_class.__name__
-          'zope.app.apidoc.ifacemodule.browser.InterfaceDetails'
-          >>> iface.context
-          <InterfaceClass zope.app.apidoc.zcmlmodule.browser.IFoo>
-        """
+        """Return the schema of the directive."""
         return self._getInterfaceDetails(self.context.schema)
 
     def getNamespaceName(self):
-        """Return the name of the namespace.
-
-        Examples::
-
-          >>> from tests import getDirective
-          >>> details = DirectiveDetails()
-
-          >>> details.context = getDirective()
-          >>> details.getNamespaceName()
-          'http://namespaces.zope.org/browser'
-
-          >>> details.context.__parent__.__realname__ = 'ALL'
-          >>> details.getNamespaceName()
-          '<i>all namespaces</i>'
-        """
+        """Return the name of the namespace."""
         name = zapi.getParent(self.context).getFullName()
         if name == 'ALL':
             return '<i>all namespaces</i>'
         return name
 
     def getFileInfo(self):
-        """Get the file where the directive was declared.
-
-        Examples::
-        
-          >>> from zope.app.apidoc.tests import pprint
-          >>> from zope.configuration.xmlconfig import ParserInfo
-          >>> from tests import getDirective
-          >>> details = DirectiveDetails()
-          >>> details.context = getDirective()
-
-          >>> details.getFileInfo() is None
-          True
-
-          >>> details.context.info = ParserInfo('foo.zcml', 2, 3)
-          >>> info = details.getFileInfo()
-          >>> pprint(info)
-          [('column', 3),
-           ('ecolumn', 3),
-           ('eline', 2),
-           ('file', 'foo.zcml'),
-           ('line', 2)]
-        """
+        """Get the file where the directive was declared."""
         # ZCML directive `info` objects do not have security declarations, so
         # everything is forbidden by default. We need to remove the security
         # proxies in order to get to the data.  
@@ -191,45 +94,13 @@ class DirectiveDetails(object):
         return None
 
     def getInfo(self):
-        """Get the file where the directive was declared.
-
-        Examples::
-        
-          >>> from zope.configuration.xmlconfig import ParserInfo
-          >>> from tests import getDirective
-          >>> details = DirectiveDetails()
-          >>> details.context = getDirective()
-
-          >>> details.getInfo() is None
-          True
-
-          >>> details.context.info = 'info here'
-          >>> details.getInfo()
-          'info here'
-
-          >>> details.context.info = ParserInfo('foo.zcml', 2, 3)
-          >>> details.getInfo() is None
-          True
-        """
+        """Get the file where the directive was declared."""
         if isinstance(self.context.info, (str, unicode)):
             return self.context.info
         return None
 
     def getHandler(self):
-        """Return information about the handler.
-
-        Examples::
-        
-          >>> from zope.app.apidoc.tests import pprint
-          >>> from zope.configuration.xmlconfig import ParserInfo
-          >>> from tests import getDirective
-          >>> details = DirectiveDetails()
-          >>> details.context = getDirective()
-
-          >>> pprint(details.getHandler())
-          [('path', 'zope.app.apidoc.zcmlmodule.tests.foo'),
-           ('url', 'zope/app/apidoc/zcmlmodule/tests/foo')]
-        """
+        """Return information about the handler."""
         if self.context.handler is not None:
             path = getPythonPath(self.context.handler)
             return {'path': path,
@@ -237,41 +108,7 @@ class DirectiveDetails(object):
         return None
 
     def getSubdirectives(self):
-        """Create a list of subdirectives.
-
-        Examples::
-        
-          >>> from zope.app.apidoc.tests import pprint
-          >>> from zope.configuration.xmlconfig import ParserInfo
-          >>> from zope.interface import Interface
-          >>> from zope.publisher.browser import TestRequest
-          >>> from tests import getDirective
-          >>> details = DirectiveDetails()
-          >>> details.context = getDirective()
-          >>> details.request = TestRequest()
-
-          >>> class IFoo(Interface):
-          ...     pass
-
-          >>> def handler():
-          ...     pass
-
-          >>> details.getSubdirectives()
-          []
-
-          >>> details.context.subdirs = (
-          ...     ('browser', 'foo', IFoo, handler, 'info'),)
-          >>> info = details.getSubdirectives()[0]
-          >>> info['schema'] = info['schema'].__module__ + '.InterfaceDetails'
-          >>> pprint(info)
-          [('handler',
-            [('path', 'zope.app.apidoc.zcmlmodule.browser.handler'),
-             ('url', 'zope/app/apidoc/zcmlmodule/browser/handler')]),
-           ('info', 'info'),
-           ('name', 'foo'),
-           ('namespace', 'browser'),
-           ('schema', 'zope.app.apidoc.ifacemodule.browser.InterfaceDetails')]
-        """
+        """Create a list of subdirectives."""
         dirs = []
         for ns, name, schema, handler, info in self.context.subdirs:
             details = self._getInterfaceDetails(schema)

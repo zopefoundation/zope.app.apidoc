@@ -17,7 +17,7 @@ $Id$
 """
 import os
 import unittest
-from zope.testing.doctestunit import DocTestSuite
+from zope.testing import doctest, doctestunit
 from zope.app.testing import placelesssetup, ztapi
 from zope.app.apidoc.tests import Root
 
@@ -62,11 +62,15 @@ def getDirective():
 
 def test_suite():
     return unittest.TestSuite((
-        DocTestSuite('zope.app.apidoc.zcmlmodule',
-                     setUp=setUp, tearDown=tearDown),
-        DocTestSuite('zope.app.apidoc.zcmlmodule.browser',
-                     setUp=setUp, tearDown=tearDown),
+        doctest.DocFileSuite('README.txt',
+                             setUp=setUp, tearDown=tearDown,
+                             globs={'pprint': doctestunit.pprint},
+                             optionflags=doctest.NORMALIZE_WHITESPACE),
+        doctest.DocFileSuite('browser.txt',
+                             setUp=setUp, tearDown=tearDown,
+                             globs={'pprint': doctestunit.pprint},
+                             optionflags=doctest.NORMALIZE_WHITESPACE),
         ))
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(default='test_suite')

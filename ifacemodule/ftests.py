@@ -36,7 +36,7 @@ class InterfaceModuleTests(BrowserTestCase):
     def testInterfaceDetailsView(self):
         response = self.publish(
             '/++apidoc++/Interface'
-            '/zope.app.apidoc.ifacemodule.IInterfaceModule'
+            '/zope.app.apidoc.ifacemodule.ifacemodule.IInterfaceModule'
             '/apiindex.html',
             basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)

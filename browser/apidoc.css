@@ -73,6 +73,11 @@ h3.details-section {
     padding: 2px 0.5em 2px 0.5em;
 }
 
+h4 {
+  font-size: 90%;
+  font-style: italic;
+}
+
 p.breadcrumbs {
   padding: 2pt;
   border: solid 1px black;

@@ -1,6 +1,7 @@
 <html metal:use-macro="views/apidoc_macros/details">
 <body metal:fill-slot="contents"
-      tal:define="iface view/getInterface">
+      tal:define="iface view/getInterface;
+                  rootURL iface/apidocRoot">
 
   <h1 class="details-header">
     <a href=""
@@ -17,7 +18,7 @@
       <span i18n:translate="">Component:</span>
       <a href=""
          tal:attributes="href 
-             string:../../../Class/${component/url}/index.html"
+             string:../../../Code/${component/url}/index.html"
          tal:content="component/path" /></h3>
   </div>
 
@@ -27,74 +28,14 @@
     </div>
   </div>
 
-  <h2 class="details-section" i18n:translate="">Attributes/Fields</h2>
+  <tal:block define="attributes iface/getAttributes;
+                     fields iface/getFields">
+    <metal:block use-macro="context/@@interface_macros/attributes_fields" />
+  </tal:block>
 
-  <div class="indent"
-      tal:define="attributes iface/getAttributes;
-                  fields iface/getFields">
-
-  <ul class="attr-list" 
-      tal:condition="python: attributes or fields">
-  
-    <li tal:repeat="attr attributes">
-      <b><code tal:content="attr/name">attr</code></b>
-      	<span i18n:translate="">(Attribute)</span><br>
-      <div class="inline-documentation" tal:content="structure attr/doc">
-        attr desc
-      </div>      
-    </li>
-
-    <li tal:repeat="field fields">
-      <b tal:attributes="class field/required_css">
-        <code tal:content="field/name">field</code>
-        <span tal:condition="field/required">*</span>
-      </b>
-      - <a href=""
-           tal:attributes="
-               href string:../../../Interface/${field/iface/id}/apiindex.html">
-          <code tal:content="field/iface/name">IField</code></a>
-      (<span i18n:translate="">default</span> =
-            <code tal:content="field/default" />)<br />
-      <div tal:content="structure field/title" class="field-title">title</div>
-      <span tal:content="field/description">field desc</span>      
-    </li>
-
-  </ul>
-
-  <p tal:condition="python: not (attributes or fields)">
-    <em i18n:translate="">There are no attributes or fields specified.</em>
-  </p>
-
-  </div>
-
-
-
-  <h2 class="details-section" i18n:translate="">Methods</h2>
-
-  <div class="indent"
-       tal:define="methods iface/getMethods">
-
-  <ul class="attr-list" tal:condition="methods">
-    <li tal:repeat="method methods">
-      <b><code 
-          tal:content="string:${method/name}${method/signature}" />
-      </b><br>
-      <div class="inline-documentation" tal:content="structure method/doc">
-        method desc
-      </div>      
-    </li>
-  </ul>
-
-  <p tal:condition="not: methods">
-    <em i18n:translate="">There are no methods or fields specified.</em>
-  </p>
-
-  </div>
-
-  <p>
-    <em><b class="required">*</b> =
-    <span i18n:translate="">required</span></em>
-  </p>
+  <tal:block define="methods iface/getMethods">
+    <metal:block use-macro="context/@@interface_macros/methods" />
+  </tal:block>
 
 </body>
 </html>

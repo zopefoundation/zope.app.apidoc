@@ -19,14 +19,12 @@ from pprint import PrettyPrinter
 import unittest
 
 from zope.component.interfaces import IFactory
+from zope.interface import implements
+from zope.testing import doctest, doctestunit
+
 from zope.app.traversing.interfaces import IContainmentRoot
 from zope.app.location import LocationProxy
 from zope.app.testing import placelesssetup, ztapi
-from zope.interface import implements
-from zope.app.apidoc.interfaces import IDocumentationModule
-from zope.app.apidoc.ifacemodule import InterfaceModule
-from zope.app.apidoc.zcmlmodule import ZCMLModule
-from zope.testing.doctestunit import DocTestSuite
 
 from zope.app.renderer.rest import ReStructuredTextSourceFactory
 from zope.app.renderer.rest import IReStructuredTextSource
@@ -35,13 +33,14 @@ from zope.app.renderer.rest import ReStructuredTextToHTMLRenderer
 
 def setUp(test):
     placelesssetup.setUp()
-    ztapi.provideUtility(IDocumentationModule, InterfaceModule(),
-                           'Interface')
-    ztapi.provideUtility(IDocumentationModule, ZCMLModule(), 'ZCML')
-
     # Register Renderer Components
     ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
                          'zope.source.rest')    
+    ztapi.browserView(IReStructuredTextSource, '', 
+                      ReStructuredTextToHTMLRenderer)
+    # Cheat and register the ReST renderer as the STX one as well.
+    ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
+                         'zope.source.stx')    
     ztapi.browserView(IReStructuredTextSource, '', 
                       ReStructuredTextToHTMLRenderer)
 
@@ -57,60 +56,40 @@ class Root:
 def rootLocation(obj, name):
     return LocationProxy(obj, Root(), name)
 
-
-def _convertToSortedSequence(obj):
-    """Convert data structures containing dictionaries to data structures
-    using sequences only.
-
-    Examples::
-
-      >>> _convertToSortedSequence(())
-      ()
-      >>> _convertToSortedSequence({})
-      []
-      >>> _convertToSortedSequence({'foo': 1})
-      [('foo', 1)]
-      >>> _convertToSortedSequence({'foo': 1, 'bar': 2})
-      [('bar', 2), ('foo', 1)]
-      >>> _convertToSortedSequence({'foo': {1: 'a'}, 'bar': 2})
-      [('bar', 2), ('foo', [(1, 'a')])]
-    """
-
-    # Handle incoming sequences
-    if isinstance(obj, (tuple, list)):
-        objtype = type(obj)
-        result = []
-        for value in obj:
-            result.append(_convertToSortedSequence(value))
-        return objtype(result)
-
-    # Handle Dictionaries
-    if isinstance(obj, dict):
-        result = []
-        for key, value in obj.items():
-            result.append((key, _convertToSortedSequence(value)))
-        result.sort()
-        return result
-
-    return obj
-
-
-def pprint(info):
-    """Print a datastructure in a nice format."""
-    info = _convertToSortedSequence(info)
-    return PrettyPrinter(width=69).pprint(info)
-
-
-    
+     
 def test_suite():
     return unittest.TestSuite((
-        DocTestSuite('zope.app.apidoc',
-                     setUp=setUp, tearDown=placelesssetup.tearDown),
-        DocTestSuite('zope.app.apidoc.browser.apidoc',
-                     setUp=setUp, tearDown=placelesssetup.tearDown),
-        DocTestSuite('zope.app.apidoc.utilities'),
-        DocTestSuite('zope.app.apidoc.tests'),
+        doctest.DocTestSuite('zope.app.apidoc.browser.apidoc',
+                             setUp=setUp, tearDown=placelesssetup.tearDown),
+        doctest.DocFileSuite('README.txt',
+                             setUp=setUp,
+                             tearDown=placelesssetup.tearDown,
+                             globs={'pprint': doctestunit.pprint},
+                             optionflags=doctest.NORMALIZE_WHITESPACE),
+        doctest.DocFileSuite('classregistry.txt',
+                             globs={'pprint': doctestunit.pprint},
+                             optionflags=doctest.NORMALIZE_WHITESPACE),
+        doctest.DocFileSuite('interface.txt',
+                             setUp=setUp,
+                             tearDown=placelesssetup.tearDown,
+                             globs={'pprint': doctestunit.pprint},
+                             optionflags=doctest.NORMALIZE_WHITESPACE),
+        doctest.DocFileSuite('component.txt',
+                             setUp=setUp,
+                             tearDown=placelesssetup.tearDown,
+                             globs={'pprint': doctestunit.pprint},
+                             optionflags=doctest.NORMALIZE_WHITESPACE),
+        doctest.DocFileSuite('presentation.txt',
+                             setUp=placelesssetup.setUp,
+                             tearDown=placelesssetup.tearDown,
+                             globs={'pprint': doctestunit.pprint},
+                             optionflags=doctest.NORMALIZE_WHITESPACE),
+        doctest.DocFileSuite('utilities.txt',
+                             setUp=setUp,
+                             tearDown=placelesssetup.tearDown,
+                             globs={'pprint': doctestunit.pprint},
+                             optionflags=doctest.NORMALIZE_WHITESPACE),
         ))
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(default="test_suite")
