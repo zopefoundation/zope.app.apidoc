@@ -325,7 +325,7 @@ class InterfaceDetails(object):
         return [{'name': field.getName(),
                  'iface': _getFieldInterface(field),
                  'required': _getRequired(field),
-                 'default': field.default.__repr__(),
+                 'default': repr(field.default),
                  'description': field.description
                  }
                 for field in fields]

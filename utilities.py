@@ -313,7 +313,7 @@ def getFunctionSignature(func):
         if default[i] is placeholder:
             str_args.append(args[i])
         else:
-            str_args.append(args[i] + '=' + default[i].__repr__())
+            str_args.append(args[i] + '=' + repr(default[i]))
 
     if varargs:
         str_args.append('*'+varargs)
