@@ -28,7 +28,7 @@
 
   <pages
     for="zope.app.apidoc.APIDocumentation"
-    class=".apidoc.APIDocumentation"
+    class=".apidoc.APIDocumentationView"
     permission="zope.View">
 
     <page
