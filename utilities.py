@@ -15,6 +15,8 @@
 
 $Id$
 """
+__docformat__ = 'restructuredtext'
+
 import re
 import types
 import inspect
@@ -43,10 +45,10 @@ def relativizePath(path):
 
 
 class ReadContainerBase:
-    """Base for IReadContainer objects.
+    """Base for `IReadContainer` objects.
 
-    This is a base class that minimizes the implementation of IReadContainers
-    to two methods, get() and items(), since the other methods can be
+    This is a base class that minimizes the implementation of an `IReadContainer`
+    to two methods, `get()` and `items()`, since the other methods can be
     implemented using these two.
 
     Demonstration::
@@ -118,7 +120,7 @@ def getPythonPath(obj):
     """Return the path of the object in standard Python notation.
 
     This method makes only sense for classes and interfaces. Instances do not
-    have a '__name__' attribute, so we would expect them to fail.
+    have a `__name__` attribute, so we would expect them to fail.
 
     Example::
 
@@ -184,8 +186,8 @@ def getPermissionIds(name, checker=_marker, klass=_marker):
 
     Either the klass or the checker must be specified. If the class is
     specified, then the checker for it is looked up. Furthermore, this
-    function only works with 'INameBasedChecker' checkers. If another checker
-    is found, 'None' is returned for the permissions.
+    function only works with `INameBasedChecker` checkers. If another checker
+    is found, ``None`` is returned for the permissions.
 
     Example::
 
@@ -263,7 +265,7 @@ def getPermissionIds(name, checker=_marker, klass=_marker):
 def getFunctionSignature(func):
     """Return the signature of a function or method.
 
-    The 'func' argument *must* be a generic function or a method of a class. 
+    The `func` argument *must* be a generic function or a method of a class. 
 
     Examples::
 
@@ -348,7 +350,7 @@ def getFunctionSignature(func):
 def getPublicAttributes(obj):
     """Return a list of public attribute names.
 
-    This excludes any attribute starting with '_'. The 'obj' argument can be
+    This excludes any attribute starting with '_'. The `obj` argument can be
     either a classic class, type or instance of the previous two. Note that
     the term "attributes" here includes methods and properties.
 
@@ -403,14 +405,14 @@ def getInterfaceForAttribute(name, interfaces=_marker, klass=_marker,
     This function is nice, if you have an attribute name which you retrieved
     from a class and want to know which interface requires it to be there.
 
-    Either 'interfaces' or 'klass' must be specified. If 'interfaces' is not
-    specified, the 'klass' is used to retrieve a list of
-    interfaces. 'interfaces' must be iteratable.
+    Either `interfaces` or `klass` must be specified. If `interfaces` is not
+    specified, the `klass` is used to retrieve a list of
+    interfaces. `interfaces` must be iteratable.
 
-    'asPath' specifies whether the dotted name of the interface or the
+    `asPath` specifies whether the dotted name of the interface or the
     interface object is returned.
 
-    If no match is found, 'None' is returned.
+    If no match is found, ``None`` is returned.
 
     Example::
 
