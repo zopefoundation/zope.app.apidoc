@@ -13,9 +13,9 @@
 ##############################################################################
 """API Documentation macros
 
-$Id: macros.py,v 1.1 2004/02/19 20:46:39 philikon Exp $
+$Id: macros.py,v 1.2 2004/03/02 17:11:10 philikon Exp $
 """
-from zope.app.browser.skins.basic.standardmacros import StandardMacros
+from zope.app.basicskin.standardmacros import StandardMacros
 
 BaseMacros = StandardMacros
 
