@@ -15,6 +15,8 @@
 
 $Id$
 """
+__docformat__ = 'restructuredtext'
+
 import os
 import inspect
 
@@ -36,7 +38,7 @@ class Menu(object):
     """Menu for the Class Documentation Module.
 
     The menu allows for looking for classes by partial names. See
-    'findClasses()' for the simple search implementation.
+    `findClasses()` for the simple search implementation.
     """
 
     def findClasses(self):
