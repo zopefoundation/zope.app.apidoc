@@ -13,15 +13,13 @@
 ##############################################################################
 """View Documentation Module
 
-$Id: __init__.py,v 1.1 2004/02/19 20:46:43 philikon Exp $
+$Id: __init__.py,v 1.2 2004/03/28 23:41:39 srichter Exp $
 """
 from zope.app import zapi
 from zope.interface import implements
 from zope.app.apidoc.interfaces import IDocumentationModule
 
-__metaclass__ = type
-
-class ViewModule:
+class ViewModule(object):
     """Represent the Documentation of all Views."""
 
     implements(IDocumentationModule)
@@ -55,26 +53,70 @@ class ViewModule:
     """
     
     def getSkins(self):
-        """Get the names of all available skins.""" 
-        service = zapi.getService(self, 'Presentation')
+        """Get the names of all available skins.
+
+        Examples::
+
+          >>> module = ViewModule()
+          >>> skins = module.getSkins()
+          >>> skins.sort()
+          >>> skins
+          ['default', 'skinA', 'skinB', 'skinC']
+
+          >>> pres = zapi.getService(None, 'Presentation')
+          >>> pres.defineSkin('skinD', ['layer3'])
+          >>> skins = module.getSkins()
+          >>> skins.sort()
+          >>> skins
+          ['default', 'skinA', 'skinB', 'skinC', 'skinD']
+        """ 
+        # Only the global presentation service defines skins 
+        service = zapi.getService(None, 'Presentation')
         return service.skins.keys()
 
     def getLayersForSkin(self, skin):
         """Get the names of all available layers of a particular skin.
 
         Returns a 'KeyError', if the skin does not exist.
+
+        Examples::
+
+          >>> module = ViewModule()        
+          >>> module.getLayersForSkin('default')
+          ('default',)
+          >>> module.getLayersForSkin('skinA')
+          ('default',)
+          >>> module.getLayersForSkin('skinB')
+          ('layer5', 'layer4', 'default')
+          >>> module.getLayersForSkin('skinC')
+          ('layer4', 'layer2', 'layer1', 'default')
+          >>> module.getLayersForSkin('skinD')
+          Traceback (most recent call last):
+          ...
+          KeyError: 'skinD'
         """ 
-        service = zapi.getService(self, 'Presentation')
+        # Only the global presentation service defines skins 
+        service = zapi.getService(None, 'Presentation')
         return service.skins[skin]
         
     def getSkinLayerMapping(self):
         """Return a dictionary with keys being skin names and the value are
-        tuples of layer names.""" 
-        service = zapi.getService(self, 'Presentation')
-        return service.skins
+        tuples of layer names.
 
-    def getUsages(self):
-        """Return a list of all available usages."""
-        service = zapi.getService(self, 'Presentation')
-        return service._usages.keys()
+        Example::
+
+          >>> import pprint
+          >>> pprint = pprint.PrettyPrinter(width=69).pprint
+          >>> module = ViewModule()        
+          >>> map = module.getSkinLayerMapping().items()
+          >>> map.sort()
+          >>> pprint(map)
+          [('default', ('default',)),
+           ('skinA', ('default',)),
+           ('skinB', ('layer5', 'layer4', 'default')),
+           ('skinC', ('layer4', 'layer2', 'layer1', 'default'))]
+        """ 
+        # Only the global presentation service defines skins 
+        service = zapi.getService(None, 'Presentation')
+        return service.skins
         
