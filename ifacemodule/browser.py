@@ -354,7 +354,7 @@ class InterfaceDetails(object):
         adapters = []
         for reg in service.registrations():
             # Only grab the adapters for which this interface is required
-            if reg.required[0] is not None and iface not in reg.required:
+            if reg.required and reg.required[0] is not None and iface not in reg.required:
                 continue
             factory = _getRealFactory(reg.value)
             path = getPythonPath(factory)
