@@ -23,6 +23,7 @@ from zope.interface.declarations import providedBy
 from zope.interface.interfaces import IMethod, IInterface 
 from zope.proxy import removeAllProxies
 from zope.publisher.interfaces import IRequest
+from zope.publisher.interfaces.browser import ILayer
 from zope.schema.interfaces import IField
 from zope.security.proxy import removeSecurityProxy
 
@@ -443,9 +444,10 @@ class InterfaceDetails(object):
             if reg.required and reg.required[0] is not None and \
                    iface not in reg.required:
                 continue
-            # Ignore views
-            if IInterface.providedBy(reg.required[-1]) and \
-                   reg.required[-1].isOrExtends(IRequest):
+            # Ignore views and layers
+            if IInterface.providedBy(reg.required[-1]) and (
+                   reg.required[-1].isOrExtends(IRequest) or
+                   reg.required[-1].isOrExtends(ILayer)):
                 continue
             factory = _getRealFactory(reg.value)
             path = getPythonPath(factory)
