@@ -34,7 +34,7 @@ class APIDocumentationView(object):
           >>> info = view.getModuleList()
           >>> info = [(i['name'], i['title']) for i in info]
           >>> print info
-          [('Interface', 'Interfaces'), ('ZCML', 'ZCML Reference')]
+          [(u'Interface', u'Interfaces'), (u'ZCML', u'ZCML Reference')]
         """
         items = list(self.context.items())
         items.sort()

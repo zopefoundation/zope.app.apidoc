@@ -37,7 +37,7 @@ class APIDocumentation(ReadContainerBase):
 
       >>> doc = APIDocumentation(None, '++apidoc++')
       >>> doc.get('ZCML').title
-      'ZCML Reference'
+      u'ZCML Reference'
 
       >>> doc.get('Documentation') is None
       True
@@ -55,7 +55,7 @@ class APIDocumentation(ReadContainerBase):
     
     def get(self, key, default=None):
         """See zope.app.container.interfaces.IReadContainer"""
-        utility = zapi.queryUtility(IDocumentationModule, key, default, self)
+        utility = zapi.queryUtility(IDocumentationModule, key, default)
         if utility != default:
             locate(utility, self, key)
         return utility
