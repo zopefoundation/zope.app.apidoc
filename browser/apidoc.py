@@ -13,21 +13,18 @@
 ##############################################################################
 """Main API Documentation View
 
-$Id: apidoc.py,v 1.1 2004/02/19 20:46:39 philikon Exp $
+$Id: apidoc.py,v 1.2 2004/03/10 12:24:16 srichter Exp $
 """
 from zope.app.apidoc.utilities import stx2html
 
-__metaclass__ = type
-
-class APIDocumentation:
+class APIDocumentation(object):
     """View for the API Documentation"""
 
     def getModuleList(self):
         """Get a list of all available documentation modules."""
-        modules = []
         items = list(self.context.items())
         items.sort()
         return [{'name': name,
-                 'title': m.title,
-                 'description': stx2html(m.description)}
-                for name, m in items ]
+                 'title': module.title,
+                 'description': stx2html(module.description)}
+                for name, module in items ]
