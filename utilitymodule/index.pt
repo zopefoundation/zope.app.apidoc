@@ -45,13 +45,16 @@
     </li>
 
     <li tal:repeat="field fields">
-      <b><code tal:content="field/name">field</code></b>
+      <b tal:attributes="class field/required_css">
+        <code tal:content="field/name">field</code>
+        <span tal:condition="field/required">*</span>
+      </b>
       - <a href=""
            tal:attributes="
                href string:../../../Interface/${field/iface/id}/apiindex.html">
           <code tal:content="field/iface/name">IField</code></a>
-      (<span tal:content="string:${field/required}, ">optional, </span>
-        default = <code tal:content="field/default" />)<br>
+      (<span i18n:translate="">default</span> =
+            <code tal:content="field/default" />)<br />
       <span tal:content="field/description">field desc</span>      
     </li>
 
@@ -87,6 +90,10 @@
 
   </div>
 
+  <p>
+    <em><b class="required">*</b> =
+    <span i18n:translate="">required</span></em>
+  </p>
 
 </body>
 </html>

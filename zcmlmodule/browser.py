@@ -276,10 +276,12 @@ class DirectiveDetails(object):
         for ns, name, schema, handler, info in self.context.subdirs:
             details = self._getInterfaceDetails(schema)
             path = getPythonPath(handler)
-            dirs.append({'namespace': ns,
-                         'name': name,
-                         'schema': details,
-                         'handler': {'path': path,
-                                     'url': path.replace('.', '/')},
-                         'info': info})
+            dirs.append({
+                'namespace': ns,
+                'name': name,
+                'schema': details,
+                'handler': {'path': path,
+                            'url': path.replace('.', '/')},
+                'info': info,
+                })
         return dirs

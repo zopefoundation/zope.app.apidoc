@@ -55,13 +55,23 @@ h1.details-header {
     margin-top: 0;
 }
 
+div.details-subheader {
+    font-size: 125%;
+    font-weight: normal;
+    margin-top: 0;
+}
+
 h2.details-section {
     font-size: 150%;
     font-style: italic;
+    background-color: #ccf;
+    padding: 2px 0.5em 2px 0.5em;
 }
 
 h3.details-section {
     margin-bottom: 2pt;
+    background-color: #ccf;
+    padding: 2px 0.5em 2px 0.5em;
 }
 
 p.breadcrumbs {
@@ -166,4 +176,11 @@ code.zcml .tagname {
 
 code.zcml .objectref {
   color: DarkSalmon;
+}
+
+b.required {
+  color: red;
+}
+
+b.optional { 
 }

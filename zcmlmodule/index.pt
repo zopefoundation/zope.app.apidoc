@@ -7,8 +7,15 @@
     (<span tal:replace="structure view/getNamespaceName" />)
   </h1>
 
-  <div class="indent" 
-       tal:define="info view/getFileInfo"
+  <div class="details-subheader">
+    <div class="documentation" tal:content="structure schema/getDoc">
+      Here is the doc string
+    </div>
+  </div>
+
+  <br />
+
+  <div tal:define="info view/getFileInfo"
        tal:condition="info">
     <i i18n:translate="">File:</i>
     <tal:var replace="info/file" />
@@ -20,14 +27,12 @@
     </tal:block>
   </div>
 
-  <div class="indent"
-       tal:condition="view/getInfo">
+  <div tal:condition="view/getInfo">
     <i i18n:translate="">Info:</i>
     <tal:block replace="view/getInfo" />
   </div>
 
-  <div class="indent"
-       tal:define="handler view/getHandler"
+  <div tal:define="handler view/getHandler"
        tal:condition="handler">
     <i i18n:translate="">Handler:</i>
     <a href=""
@@ -46,12 +51,6 @@
     </a>
   </div>
 
-  <div class="indent">
-    <div class="documentation" tal:content="structure schema/getDoc">
-      Here is the doc string
-    </div>
-  </div>
-
   <div class="indent"
       tal:define="fields schema/getFields">
 
@@ -59,14 +58,16 @@
       tal:condition="fields">
   
     <li tal:repeat="field fields">
-      <b><code tal:content="field/name">field</code></b>
+      <b tal:attributes="class field/required_css">
+        <code tal:content="field/name">field</code>
+        <span tal:condition="field/required">*</span>
+      </b>
       - <a href=""
            tal:attributes="href 
                string:../../../Class/${field/class/path}/index.html">
           <code tal:content="field/class/name">Field</code></a>
-      (<span tal:content="string:${field/required}, ">optional, </span>
-        <span i18n:translate="">default</span> =
-            <code tal:content="field/default" />)<br>
+      (<span i18n:translate="">default</span> =
+            <code tal:content="field/default" />)<br />
       <span tal:content="structure field/description">field desc</span>      
     </li>
 
@@ -91,6 +92,14 @@
     directive
   </h3>
 
+  <div>
+    <div class="documentation" tal:content="structure dir/schema/getDoc">
+      Here is the doc string
+    </div>
+  </div>
+
+  <br />
+
   <div class="indent" 
        tal:condition="dir/handler">
     <i i18n:translate="">Handler:</i>
@@ -109,12 +118,6 @@
     </a>
   </div>
 
-  <div class="indent">
-    <div class="documentation" tal:content="structure dir/schema/getDoc">
-      Here is the doc string
-    </div>
-  </div>
-
   <div class="indent"
       tal:define="fields dir/schema/getFields">
 
@@ -122,13 +125,16 @@
       tal:condition="fields">
   
     <li tal:repeat="field fields">
-      <b><code tal:content="field/name">field</code></b>
+      <b tal:attributes="class field/required_css">
+        <code tal:content="field/name">field</code>
+        <span tal:condition="field/required">*</span>
+      </b>
       - <a href=""
            tal:attributes="href 
                string:../../../Interface/${field/iface/id}/apiindex.html">
           <code tal:content="field/iface/name">IField</code></a>
-      (<span tal:content="string:${field/required}, ">optional, </span>
-        default = <code tal:content="field/default" />)<br>
+      (<span i18n:translate="">default</span> =
+            <code tal:content="field/default" />)<br />
       <span tal:content="structure field/description">field desc</span>      
     </li>
 
@@ -143,6 +149,11 @@
   </div>
 
   </tal:omit-tag>
+
+  <p>
+    <em><b class="required">*</b> =
+    <span i18n:translate="">required</span></em>
+  </p>
 
 </body>
 </html>

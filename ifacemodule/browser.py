@@ -186,8 +186,8 @@ def _getFieldClass(field):
             'path': getPythonPath(class_).replace('.', '/')}
 
 
-def _getRequired(field):
-    """Return a string representation of whether the field is required.
+def _getRequiredCSS(field):
+    """Return a CSS class name that represents whether the field is required.
 
     Examples::
 
@@ -195,17 +195,17 @@ def _getRequired(field):
       ...     required = False
 
       >>> field = Field()
-      >>> _getRequired(field)
-      u'optional'
+      >>> _getRequiredCSS(field)
+      'optional'
       >>> field.required = True
-      >>> _getRequired(field)
-      u'required'
+      >>> _getRequiredCSS(field)
+      'required'
 
     """
     if field.required:
-        return _('required')
+        return 'required'
     else:
-        return _('optional')
+        return 'optional'
 
 
 def _getRealFactory(factory):
@@ -360,7 +360,10 @@ class InterfaceDetails(object):
                 for method in _get(self.context, IMethod).values()]
             
     def getFields(self):
-        r"""Return a list of fields in the order they were specified.
+        r"""Return a list of fields in required + alphabetical order.
+
+        The required attributes are listed first, then the optional
+        attributes.
 
         Example::
 
@@ -379,7 +382,8 @@ class InterfaceDetails(object):
              [('id', 'zope.schema.interfaces.ITextLine'),
               ('name', 'ITextLine')]),
             ('name', 'title'),
-            ('required', u'required')],
+            ('required', True),
+            ('required_css', 'required')],
            [('class',
              [('name', 'Text'),
               ('path', 'zope/schema/_bootstrapfields/Text')]),
@@ -388,17 +392,23 @@ class InterfaceDetails(object):
             ('iface',
              [('id', 'zope.schema.interfaces.IText'), ('name', 'IText')]),
             ('name', 'description'),
-            ('required', u'optional')]]
+            ('required', False),
+            ('required_css', 'optional')]]
         """
         # The `Interface` class have no security declarations, so that we are
         # not able to access any API methods on proxied objects.  If we only
         # remove security proxies, the location proxy's module will be
         # returned.
-        fields = map(lambda x: x[1], _getInOrder(self.context, IField))
+        _itemsorter = lambda x, y: cmp(
+            (x[1].required and '1' or '2', x[0].lower()),
+            (y[1].required and '1' or '2', y[0].lower()))
+        fields = map(lambda x: x[1], _getInOrder(
+            self.context, IField, _itemsorter=_itemsorter))
         return [{'name': self._getFieldName(field),
                  'iface': _getFieldInterface(field),
                  'class': _getFieldClass(field),
-                 'required': _getRequired(field),
+                 'required': field.required,
+                 'required_css': _getRequiredCSS(field),
                  'default': repr(field.default),
                  'description': renderText(
                      field.description or '',
