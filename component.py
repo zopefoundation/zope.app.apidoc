@@ -190,9 +190,9 @@ def getFactoryInfoDictionary(reg):
 
     callable = factory
 
-    if IFactory.providedBy(factory):
+    # Usually only zope.component.factory.Factory instances have this attribute
+    if IFactory.providedBy(factory) and hasattr(factory, '_callable'):
         callable = factory._callable
-
     elif hasattr(callable, '__class__'):
         callable = callable.__class__
 
