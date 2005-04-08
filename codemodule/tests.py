@@ -41,10 +41,6 @@ def tearDown(test):
     placelesssetup.tearDown()
     global old_context
     zope.app.appsetup.appsetup.__config_context = old_context    
-    from zope.app.apidoc import zcmlmodule
-    zcmlmodule.namespaces = None
-    zcmlmodule.subdirs = None
-
 
 
 def test_suite():

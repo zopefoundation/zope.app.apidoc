@@ -178,3 +178,13 @@ class ZCMLModule(ReadContainerBase):
             list.append((namespace.getQuotedName(), namespace))
         list.sort()
         return list
+
+
+def _clear():
+    global namespaces
+    global subdirs
+    namespaces = None
+    subdirs = None
+    
+from zope.testing.cleanup import addCleanUp
+addCleanUp(_clear)
