@@ -144,3 +144,5 @@ Now clean up the temporary module, just to play nice:
   ...     os.unlink(filename + 'c')
   >>> if os.path.exists(filename + 'o'):
   ...     os.unlink(filename + 'o')
+
+  >>> del sys.modules['zope.app.apidoc.testmodule']
