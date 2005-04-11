@@ -41,6 +41,9 @@ def getRequiredAdapters(iface, withViews=False):
         # Only get adapters
         if not isinstance(reg, (AdapterRegistration, SubscriptionRegistration)):
             continue
+        # Ignore adapters that have no required interfaces
+        if len(reg.required) == 0:
+            continue
         # Ignore views
         if not withViews and reg.required[-1] and \
                reg.required[-1].isOrExtends(IRequest):
@@ -57,6 +60,9 @@ def getProvidedAdapters(iface, withViews=False):
     for reg in gsm.registrations():
         # Only get adapters
         if not isinstance(reg, (AdapterRegistration, SubscriptionRegistration)):
+            continue
+        # Ignore adapters that have no required interfaces
+        if len(reg.required) == 0:
             continue
         # Ignore views
         if not withViews and reg.required[-1] and \

@@ -96,6 +96,7 @@ def getViews(iface, type=IRequest):
     gsm = zapi.getGlobalSiteManager()
     for reg in gsm.registrations():
         if (isinstance(reg, AdapterRegistration) and
+            len(reg.required) > 0 and
             reg.required[-1] is not None and
             reg.required[-1].isOrExtends(type)):
 
