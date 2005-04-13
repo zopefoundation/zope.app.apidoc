@@ -395,15 +395,6 @@
         />
   </configure>
 
-  <!-- Transactions -->
-  <configure package="transaction">
-    <bookchapter
-        id="transaction"
-        title="Transaction API"
-        doc_path="notes.txt"
-        />
-  </configure>
-
   <!-- ZODB -->
   <configure package="ZODB">
     <bookchapter
