@@ -67,7 +67,7 @@ def getViewFactoryData(factory):
         info['path'] = getPythonPath(factory)
 
     elif isinstance(factory, FunctionType):
-        info['path'] = getPythonPath(factory.factory)
+        info['path'] = getPythonPath(factory)
     else:
         info['path'] = getPythonPath(factory)
 
