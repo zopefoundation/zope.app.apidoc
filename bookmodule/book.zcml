@@ -52,6 +52,7 @@
       id="ca"
       title="Component Architecture"
       />
+  
   <configure package="zope.component">
     <bookchapter 
         id="global"
@@ -72,7 +73,7 @@
         doc_path="factory.txt"
         />
   </configure>
-
+  
   <configure package="zope.app.component">
     <bookchapter
         id="local"
@@ -100,8 +101,17 @@
         />
   </configure>
 
+  <!-- Events -->
+  <configure package="zope.event">
+    <bookchapter
+        id="event"
+        title="Events"
+        doc_path="README.txt"
+        />
+  </configure>
+
   <!-- Security -->
-  <configure package="zope.security">
+ <configure package="zope.security">
     <bookchapter
         id="security"
         title="Security"
@@ -132,57 +142,12 @@
         parent="security/untrusted"
         />
   </configure>
-  <configure package="zope.app.securitypolicy">
-    <bookchapter
-        id="zopepolicy"
-        title="Default Security Policy"
-        doc_path="zopepolicy.txt"
-        parent="security"
-        />
-  </configure>
   <configure package="zope.app.security">
     <bookchapter
         id="globalprincipals"
         title="Global Principals"
         doc_path="globalprincipals.txt"
         parent="security"
-        />
-  </configure>
-  <configure package="zope.app.authentication">
-    <bookchapter
-        id="authentication"
-        title="Pluggable Authentication"
-        doc_path="README.txt"
-        parent="security"
-        />
-    <bookchapter
-        id="principalfolder"
-        title="Principal Folder"
-        doc_path="principalfolder.txt"
-        parent="security/authentication"
-        />
-    <bookchapter
-        id="groupfolder"
-        title="Group Folders"
-        doc_path="groupfolder.txt"
-        parent="security/authentication"
-        />
-  </configure>
-  <configure package="zope.app.homefolder">
-    <bookchapter
-        id="homefolder"
-        title="Principal Home Folder"
-        doc_path="README.txt"
-        parent="security"
-        />
-  </configure>
-
-  <!-- Events -->
-  <configure package="zope.event">
-    <bookchapter
-        id="event"
-        title="Events"
-        doc_path="README.txt"
         />
   </configure>
 
@@ -216,81 +181,6 @@
         />
   </configure>
 
-  <!-- ZAPI -->
-  <configure package="zope.app.zapi">
-    <bookchapter
-        id="zapi"
-        title="ZAPI"
-        doc_path="README.txt"
-        />
-  </configure>
-
-  <!-- Workflow -->
-  <configure package="zope.wfmc">
-    <bookchapter
-        id="wfmc"
-        title="WfMC Workflows"
-        doc_path="README.txt"
-        />
-    <bookchapter
-        id="xpdl"
-        title="Workflows using XPDL"
-        doc_path="README.txt"
-        parent="wfmc"
-        />
-  </configure>
-  <configure package="zope.app.wfmc">
-    <bookchapter
-        id="zcml"
-        title="Registering XPDL using ZCML"
-        doc_path="zcml.txt"
-        parent="wfmc"
-        />
-  </configure>
-
-  <!-- Indexes and Catalogs -->
-  <bookchapter
-      id="indexcatalog"
-      title="Indexes and Catalogs"
-      />
-  <configure package="zope.index">
-    <bookchapter
-        id="fieldindex"
-        title="Field Indexes"
-        doc_path="field/README.txt"
-        parent="indexcatalog"
-        />
-    <bookchapter
-        id="testindex"
-        title="Text Indexes"
-        doc_path="text/textindex.txt"
-        parent="indexcatalog"
-        />
-  </configure>
-  <configure package="zope.app.catalog">
-    <bookchapter
-        id="catalog"
-        title="Catalog"
-        doc_path="README.txt"
-        parent="indexcatalog"
-        />
-  </configure>
-
-  <!-- Sessions -->
-  <configure package="zope.app.session">
-    <bookchapter
-        id="session"
-        title="Sessions"
-        doc_path="design.txt"
-        />
-    <bookchapter
-        id="api"
-        title="API"
-        doc_path="api.txt"
-        parent="session"
-        />
-  </configure>
-
   <!-- Cached Properties -->
   <bookchapter
       id="i18nl10n"
@@ -311,60 +201,6 @@
         id="cachedprops"
         title="Cached Properties"
         doc_path="property.txt"
-        />
-  </configure>
-
-  <!-- Generations -->
-  <configure package="zope.app.generations">
-    <bookchapter
-        id="generations"
-        title="Generations"
-        doc_path="README.txt"
-        />
-  </configure>
-
-  <!-- Locking -->
-  <configure package="zope.app.locking">
-    <bookchapter
-        id="locking"
-        title="Object Locking"
-        doc_path="README.txt"
-        />
-  </configure>
-
-  <!-- Version Control -->
-  <configure package="zope.app.versioncontrol">
-    <bookchapter
-        id="versioncontrol"
-        title="Version Control"
-        doc_path="README.txt"
-        />
-  </configure>
-
-  <!-- Persistent Modules -->
-  <configure package="zope.app.module">
-    <bookchapter
-        id="module"
-        title="Persistent Modules"
-        doc_path="README.txt"
-        />
-  </configure>
-
-  <!-- Zope Tree -->
-  <configure package="zope.app.tree">
-    <bookchapter
-        id="tree"
-        title="Zope Tree"
-        doc_path="README.txt"
-        />
-  </configure>
-
-  <!-- Persistent Key References -->
-  <configure package="zope.app.keyreference">
-    <bookchapter
-        id="keyref"
-        title="Persistent Key References"
-        doc_path="persistent.txt"
         />
   </configure>
 
