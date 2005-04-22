@@ -1,5 +1,6 @@
 <configure
-    xmlns="http://namespaces.zope.org/apidoc">
+    xmlns="http://namespaces.zope.org/apidoc"
+    xmlns:zcml="http://namespaces.zope.org/zcml">
 
   <!-- Interfaces -->
   <bookchapter 
@@ -205,7 +206,8 @@
   </configure>
 
   <!-- BForest -->
-  <configure package="zope.bforest">
+  <configure package="zope.bforest"
+             zcml:condition="installed zope.bforest">
     <bookchapter
         id="bforest"
         title="BForest API"
