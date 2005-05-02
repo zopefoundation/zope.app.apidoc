@@ -1,2 +1,0 @@
-This book has been compiled from various documentation files in the Zope 3
-source code.
