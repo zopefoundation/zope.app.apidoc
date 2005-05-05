@@ -105,7 +105,8 @@
 
   <h4>
     <metal:block use-macro="context/@@apidoc_macros/displaySwitch" />
-    <span i18n:translate=""><span tal:replace="name" /> Views</span>
+    <span i18n:translate=""><span i18n:name="name" tal:replace="name"
+        /> Views</span>
   </h4>
   <metal:block use-macro="context/@@apidoc_macros/display" >
   <div metal:fill-slot="content">
@@ -122,7 +123,7 @@
 
   <h3 class="details-section">
     <metal:block use-macro="context/@@apidoc_macros/displaySwitch" />
-    <span i18n:translate="" tal:content="type">Browser</span>
+    <span tal:content="type">Browser</span>
   </h3>
   <metal:block use-macro="context/@@apidoc_macros/display" >
   <div class="indent" metal:fill-slot="content">
