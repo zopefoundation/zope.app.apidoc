@@ -79,6 +79,37 @@ type. In this case we can just retrieve the reference directly:
    'template': None,
    'url': '__builtin__/Factory'}
  
+When factories are created by the directive, they can also be functions. In
+those cases we just simply return the function path:
+
+  >>> def factory():
+  ...     pass
+  
+  # The testing framework does not set the __module__ correctly
+  >>> factory.__module__ = '__builtin__'
+
+  >>> info = presentation.getViewFactoryData(factory)
+  >>> pprint(info)
+  {'path': '__builtin__.factory',
+   'referencable': True,
+   'resource': None,
+   'template': None,
+   'url': '__builtin__/factory'}
+
+However, the function is rather unhelpful, since it will be the same for all
+views that use that code path. For this reason the function keeps track of the
+original factory component in a function attribute called ``factory``:
+
+  >>> factory.factory = Factory
+
+  >>> info = presentation.getViewFactoryData(factory)
+  >>> pprint(info)
+  {'path': '__builtin__.Factory',
+   'referencable': True,
+   'resource': None,
+   'template': None,
+   'url': '__builtin__/Factory'} 
+
 
 `getPresentationType(iface)`
 ----------------------------

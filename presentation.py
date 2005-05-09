@@ -52,7 +52,8 @@ def getViewFactoryData(factory):
     elif isinstance(factory, (str, unicode, float, int, list, tuple)):
         info['referencable'] = False
 
-    elif factory.__module__.startswith('zope.app.publisher.browser.viewmeta'):
+    elif factory.__module__ is not None and \
+         factory.__module__.startswith('zope.app.publisher.browser.viewmeta'):
         info['path'] = getPythonPath(factory.__bases__[0])
 
     elif hasattr(factory, '__class__') and \
@@ -67,7 +68,8 @@ def getViewFactoryData(factory):
         info['path'] = getPythonPath(factory)
 
     elif isinstance(factory, FunctionType):
-        info['path'] = getPythonPath(factory)
+        info['path'] = getPythonPath(getattr(factory, 'factory', factory))
+
     else:
         info['path'] = getPythonPath(factory)
 
