@@ -14,7 +14,7 @@
 <div class="row"
      tal:define="interfaces view/direct_interfaces"
      tal:condition="interfaces">
-  <div class="label" i18n:translate="">Directly provided interfaces</div>
+  <div class="label" i18n:translate="">Directly provided interfaces in the provided order</div>
   <div class="field">
     <ul>
       <li tal:repeat="iface interfaces"><a tal:attributes="href iface/url"

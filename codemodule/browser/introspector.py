@@ -13,7 +13,7 @@
 ##############################################################################
 """Introspector view for content components
 
-$Id: browser.py 29143 2005-02-14 22:43:16Z srichter $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 
@@ -50,5 +50,4 @@ class Introspector(BrowserView):
                            {"name": iface.__name__,
                             "module": iface.__module__,
                             "url": url}))
-        result.sort()
         return [dict for name, dict in result]
