@@ -3,7 +3,7 @@
   <style type="text/css" media="all">
 
 .directive {
-  font-family: monospace;  
+  font-family: monospace;
   padding: 1px;
   margin: 2px 0px;
 }

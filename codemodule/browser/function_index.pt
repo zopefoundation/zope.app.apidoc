@@ -26,7 +26,7 @@
   </div>
 
   <div 
-      tal:define="attributes view/getAttributes"      
+      tal:define="attributes view/getAttributes"
       tal:condition="attributes">
 
   <h2 class="details-section" i18n:translate="">Attributes</h2>
@@ -34,7 +34,7 @@
   <div class="indent">
 
     <ul class="attr-list">
-    
+
       <li tal:repeat="attr attributes">
         <b><code tal:content="attr/name">attr</code></b>
         <tal:omit-tag condition="not: attr/type_link">
@@ -43,8 +43,8 @@
         </tal:omit-tag>
         <tal:omit-tag condition="attr/type_link">
           (<span i18n:translate="">type:</span>
-          <a href="" 
-             tal:attributes="href 
+          <a href=""
+             tal:attributes="href
                  string:${view/getBaseURL}/Code/${attr/type_link}/index.html">
             <code tal:content="attr/type" /></a>)
         </tal:omit-tag>
@@ -52,7 +52,7 @@
         <i i18n:translate="">Value:</i>
         <code tal:content="attr/value">u''</code><br />
       </li>
-    
+
     </ul>
 
   </div>

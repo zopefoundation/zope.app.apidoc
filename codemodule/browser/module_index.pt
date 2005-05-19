@@ -6,9 +6,9 @@
 
   <p class="breadcrumbs">
     <span tal:repeat="entry view/getBreadCrumbs">
-      <a href="" 
+      <a href=""
          tal:attributes="href string:${entry/url}/index.html"
-         tal:content="entry/name" />
+         tal:content="entry/name" i18n:translate=""/>
       <tal:omit-tag condition="not: repeat/entry/end">/</tal:omit-tag>
     </span>
   </p>
@@ -16,13 +16,14 @@
   <div class="highlight"
        tal:define="doc view/getDoc"
        tal:condition="doc"
-       tal:content="structure doc">
+       tal:content="structure doc"
+       i18n:translate="">
     Module Documentation
   </div>
 
 
   <table width="100%" valign="top"><tr>
-   
+
   <td tal:repeat="column view/getEntries"><ul>
     <li tal:repeat="entry column">
       <a href=""

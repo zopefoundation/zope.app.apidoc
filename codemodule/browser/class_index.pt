@@ -8,7 +8,8 @@
   </h1>
 
   <div class="indent">
-    <div class="documentation" tal:content="structure view/getDoc">
+    <div class="documentation" i18n:translate=""
+        tal:content="structure view/getDoc">
       Here is the doc string
     </div>
   </div>
@@ -92,9 +93,9 @@
       <span class="small"
           tal:condition="python: attr['read_perm'] and attr['write_perm']">
         <i i18n:translate="">Permissions:</i>
-        <span tal:replace="attr/read_perm">zope.View</span>
+        <span tal:replace="attr/read_perm" i18n:translate="">zope.View</span>
             <span i18n:translate="">(read)</span>,
-        <span tal:replace="attr/write_perm">zope.View</span>
+        <span tal:replace="attr/write_perm" i18n:translate="">zope.View</span>
             <span i18n:translate="">(write)</span>
       </span>
     </li>
@@ -134,9 +135,9 @@
       <span class="small"
           tal:condition="python: method['read_perm'] and method['write_perm']">
         <i i18n:translate="">Permissions:</i>
-        <span tal:replace="method/read_perm">zope.View</span>
+        <span tal:replace="method/read_perm" i18n:translate="">zope.View</span>
             <span i18n:translate="">(read)</span>,
-        <span tal:replace="method/write_perm">zope.View</span>
+        <span tal:replace="method/write_perm" i18n:translate="">zope.View</span>
             <span i18n:translate="">(write)</span>
       </span>
     </li>

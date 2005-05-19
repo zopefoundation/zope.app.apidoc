@@ -123,7 +123,7 @@
 
   <h3 class="details-section">
     <metal:block use-macro="context/@@apidoc_macros/displaySwitch" />
-    <span tal:content="type">Browser</span>
+    <span i18n:translate="" tal:content="type">Browser</span>
   </h3>
   <metal:block use-macro="context/@@apidoc_macros/display" >
   <div class="indent" metal:fill-slot="content">
