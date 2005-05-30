@@ -109,6 +109,14 @@ class ClassDetails(object):
         # `getPermissionIds()` also expects the class's security checker not
         # to be proxied.
         klass = removeSecurityProxy(self.context)
+        for name, attr, iface in klass.getMethodDescriptors():
+            entry = {'name': name,
+                     'signature': "(...)",
+                     'doc': renderText(attr.__doc__ or '',
+                                       zapi.getParent(self.context).getPath()),
+                     'interface': getPythonPath(iface)}
+            entry.update(getPermissionIds(name, klass.getSecurityChecker()))
+            methods.append(entry)
         for name, attr, iface in klass.getMethods():
             entry = {'name': name,
                      'signature': getFunctionSignature(attr),

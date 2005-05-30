@@ -87,6 +87,17 @@ class IClassDocumentation(zope.interface.Interface):
         that do not start with an '_'-character.
         """
 
+    def getMethodDescriptors():
+        """Return a list of 3-tuple method descriptor information.
+
+        The first entry of the 3-tuple is the name of the method, the
+        second is the method descriptor object itself. The third entry is the
+        interface in which the method is defined.
+
+        Note that only public methods are returned, meaning only method
+        descriptors that do not start with an '_'-character.
+        """
+
     def getSecurityChecker():
         """Return the security checker for this class.
 
@@ -122,7 +133,7 @@ class IDirective(zope.interface.Interface):
         title=u'Name',
         description=u'Name of the directive in the form (Namespace. Name)',
         required = True)
-    
+
     schema = zope.schema.Field(
         title=u'Schema',
         description=u'Schema describing the directive attributes',
@@ -132,7 +143,7 @@ class IDirective(zope.interface.Interface):
         title=u'Attributes',
         description=u'SAX parser representation of the directive\'s attributes',
         required = True)
-        
+
     context = zope.schema.Field(
         title=u'Configuration Context',
         description=u'Configuration context while the directive was parsed.',
@@ -187,4 +198,3 @@ class IZCMLFile(zope.interface.Interface):
         title=_("XML Root Element"),
         description=_("XML element representing the configuration root."),
         required=True)
-    

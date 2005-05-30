@@ -18,7 +18,7 @@ $Id: __init__.py 29143 2005-02-14 22:43:16Z srichter $
 
 __docformat__ = 'restructuredtext'
 
-from inspect import ismethod
+from inspect import ismethod, ismethoddescriptor
 
 from zope.interface import implements, implementedBy
 from zope.security.checker import getCheckerForInstancesOf
@@ -82,12 +82,17 @@ class Class(object):
     def getAttributes(self):
         """See IClassDocumentation."""
         return [(name, obj, iface) for name, obj, iface
-            in self._iterAllAttributes() if not ismethod(obj)]
+            in self._iterAllAttributes()
+            if not (ismethod(obj) or ismethoddescriptor(obj))]
 
     def getMethods(self):
         """See IClassDocumentation."""
         return [(name, obj, iface) for name, obj, iface
             in self._iterAllAttributes() if ismethod(obj)]
+
+    def getMethodDescriptors(self):
+        return [(name, obj, iface) for name, obj, iface
+            in self._iterAllAttributes() if ismethoddescriptor(obj)]
 
     def getSecurityChecker(self):
         """See IClassDocumentation."""
