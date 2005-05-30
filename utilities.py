@@ -51,7 +51,7 @@ class ReadContainerBase(object):
 
     def get(self, key, default=None):
         raise NotImplemented
-    
+
     def items(self):
         raise NotImplemented
 
@@ -70,7 +70,7 @@ class ReadContainerBase(object):
 
     def __iter__(self):
         return self.values().__iter__()
-        
+
     def values(self):
         return map(lambda x: x[1], self.items())
 
@@ -102,16 +102,16 @@ def _evalId(id):
         if id == 'CheckerPublic':
             id = 'zope.Public'
     return id
-        
+
 
 def getPermissionIds(name, checker=_marker, klass=_marker):
     """Get the permissions of an attribute."""
     assert (klass is _marker) != (checker is _marker)
     entry = {}
-    
+
     if klass is not _marker:
         checker = getCheckerForInstancesOf(klass)
-    
+
     if checker is not None and INameBasedChecker.providedBy(checker):
         entry['read_perm'] = _evalId(checker.permission_id(name)) \
                              or _('n/a')
@@ -127,7 +127,7 @@ def getFunctionSignature(func):
     """Return the signature of a function or method."""
     if not isinstance(func, (types.FunctionType, types.MethodType)):
         raise TypeError("func must be a function or method")
-    
+
     args, varargs, varkw, defaults = inspect.getargspec(func)
     placeholder = object()
     sig = '('
@@ -192,7 +192,7 @@ def getInterfaceForAttribute(name, interfaces=_marker, klass=_marker,
             for base in interface.getBases():
                 interfaces[base] = 1
         interfaces = interfaces.keys()
-        
+
     for interface in interfaces:
         if name in interface.names():
             if asPath:
@@ -231,7 +231,7 @@ _format_dict = {
     'structuredtext': 'zope.source.stx',
     'restructuredtext': 'zope.source.rest'
     }
-    
+
 def getDocFormat(module):
     """Convert a module's __docformat__ specification to a renderer source
     id"""
@@ -250,7 +250,7 @@ def renderText(text, module=None, format=None):
 
     if format is None:
         format = 'zope.source.stx'
-        
+
     assert format in _format_dict.values()
 
     source = zapi.createObject(format, text)
