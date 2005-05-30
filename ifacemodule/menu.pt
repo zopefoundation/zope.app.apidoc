@@ -5,22 +5,22 @@
   <div metal:fill-slot="menu" class="small">
 
     <div>
-      <span i18n:translate="">Interface Finder:</span> 
+      <span i18n:translate="">Interface Finder:</span>
     </div>
     <form action="menu.html" method="post">
       <input type="checkbox" name="name_only" value="on" checked="checked" />
-      name only search
+      <tal:block i18n:translate="">name only search</tal:block>
       <br />
       <input type="text" name="search_str" 
-             style="font-size: 80%; width=95%" 
+             style="font-size: 80%; width=95%"
              tal:attributes="value request/search_str|nothing" />
-      <input type="submit" name="SUBMIT" value="Find" 
+      <input type="submit" name="SUBMIT" value="Find"
              i18n:attributes="value find-button" style="font-size: 80%"/>
     </form>
 
     <div tal:define="ifaces view/findInterfaces"
          tal:condition="ifaces">
-    
+
       <div tal:repeat="info ifaces">
         <a href="" target="main"
            tal:attributes="href info/url"
@@ -33,7 +33,7 @@
   </div>
 
   <p metal:fill-slot="post_menu" class="small" i18n:translate="">
-    Note: These are only interfaces that are registered with the site manager. 
+    Note: These are only interfaces that are registered with the site manager.
   </p>
 
 </body>
