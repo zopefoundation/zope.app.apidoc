@@ -49,7 +49,7 @@ def test_suite():
                              setUp=setUp, tearDown=tearDown,
                              globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE),
-        doctest.DocFileSuite('directive.txt',
+        doctest.DocFileSuite('directives.txt',
                              setUp=placelesssetup.setUp,
                              tearDown=placelesssetup.tearDown),
         ))

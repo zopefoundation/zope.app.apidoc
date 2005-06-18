@@ -4,8 +4,8 @@ The Class Registry
 
 This little registry allows us to quickly query a complete list of classes
 that are defined and used by Zope 3. The prime feature of the class is the
-'getClassesThatImplement(iface)' method that returns all classes that
-implement the passed interface. Another method, 'getSubclassesOf(klass)'
+``getClassesThatImplement(iface)`` method that returns all classes that
+implement the passed interface. Another method, ``getSubclassesOf(klass)``
 returns all registered subclassess of the given class.
 
 The class registry, subclassing the dictionary type, can be instantiated like
@@ -96,14 +96,17 @@ This method will find all classes that inherit the specified class:
 Safe Imports
 ------------
 
-Using the `safe_import()` we can quickly look up modules by minimizing import
-calls.
+Using the ``safe_import()`` we can quickly look up modules by minimizing
+import calls.
 
+  >>> from zope.app.apidoc import classregistry
   >>> from zope.app.apidoc.classregistry import safe_import
 
-First we try to find the path in 'sys.modules', since this lookup is much
+First we try to find the path in ``sys.modules``, since this lookup is much
 more efficient than importing it. If it was not found, we go back and try
-to import the path. If that also fails, we return the 'default' value.
+to import the path. For security reasons, importing new modules is disabled by
+default, unless the global ``__import_unknown_modules__`` variable is set to
+true. If that also fails, we return the `default` value.
 
 Here are some examples::
 
@@ -126,12 +129,23 @@ For this example, we'll create a dummy module:
   >>> f.write('# dummy module\n')
   >>> f.close()
 
-The temporary module is not already imported, but will be once
-we've called safe_import():
+The temporary module is not already imported:
 
   >>> module_name = 'zope.app.apidoc.testmodule'
   >>> module_name in sys.modules
   False
+
+When we try ``safe_import()`` now, we will still get the `default` value,
+because importing new modules is disabled by default:
+
+  >>> safe_import(module_name) is None
+  True
+
+But once we activate the ``__import_unknown_modules__`` hook, the module
+should be imported:
+
+  >>> classregistry.__import_unknown_modules__ = True
+
   >>> safe_import(module_name).__name__ == module_name
   True
   >>> module_name in sys.modules
@@ -146,3 +160,8 @@ Now clean up the temporary module, just to play nice:
   ...     os.unlink(filename + 'o')
 
   >>> del sys.modules['zope.app.apidoc.testmodule']
+
+We also need to play nice concerning variables and have to reset the module
+globals:
+
+  >>> classregistry.__import_unknown_modules__ = False

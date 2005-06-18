@@ -16,15 +16,26 @@
 $Id: metadirectives.py 26613 2004-07-18 21:50:40Z srichter $
 """
 __docformat__ = 'restructuredtext'
-from zope.interface import Interface
-from zope.schema import TextLine
+import zope.interface
+import zope.schema
 
-class IRootModule(Interface):
+class IRootModule(zope.interface.Interface):
     """Declares a new root module to be available for the class documentation
     module."""
 
-    module = TextLine(
+    module = zope.schema.TextLine(
         title=u"Root Module Name",
         description=u"This is the Python path of the new root module.",
         required=True
+        )
+
+class IModuleImport(zope.interface.Interface):
+    """Set a flag whether new modules can be imported to the class registry or
+       not."""
+
+    allow = zope.schema.Bool(
+        title=u"Allow Importing Modules",
+        description=u"When set to true, new modules will be imported by path.",
+        required=True,
+        default=False
         )

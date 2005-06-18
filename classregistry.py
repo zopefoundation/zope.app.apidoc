@@ -16,6 +16,9 @@
 $Id: __init__.py 29143 2005-02-14 22:43:16Z srichter $
 """
 __docformat__ = 'restructuredtext'
+
+__import_unknown_modules__ = False
+
 import sys
 
 from zope.app import zapi
@@ -52,7 +55,7 @@ addCleanUp(cleanUp)
 def safe_import(path, default=None):
     """Import a given path as efficiently as possible and without failure."""
     module = sys.modules.get(path, default)
-    if module is default:
+    if module is default and __import_unknown_modules__:
         try:
             module = __import__(path, {}, {}, ('*',))
         except ImportError:
