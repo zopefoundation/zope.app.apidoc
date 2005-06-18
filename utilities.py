@@ -45,6 +45,14 @@ def relativizePath(path):
     return path.replace(BASEDIR, 'Zope3')
 
 
+def truncateSysPath(path):
+    """Remove the system path prefix from the path."""
+    for syspath in sys.path:
+        if path.startswith(syspath):
+            return path.replace(syspath, '')[1:]
+    return path
+
+
 class ReadContainerBase(object):
     """Base for `IReadContainer` objects."""
     implements(IReadContainer)

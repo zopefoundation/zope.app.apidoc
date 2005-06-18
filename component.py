@@ -26,8 +26,8 @@ from zope.publisher.interfaces import IRequest
 
 from zope.app import zapi
 from zope.app.i18n import ZopeMessageIDFactory as _
-from zope.app.apidoc.utilities import getPythonPath, relativizePath
-from zope.app.apidoc.utilities import renderText
+from zope.app.apidoc.utilities import relativizePath, truncateSysPath
+from zope.app.apidoc.utilities import getPythonPath, renderText
 from zope.app.apidoc.classregistry import classRegistry
 
 SPECIFIC_INTERFACE_LEVEL = 1
@@ -149,7 +149,7 @@ def getRealFactory(factory):
 def getParserInfoInfoDictionary(info):
     """Return a PT-friendly info dictionary for a parser info object."""
     return {'file': relativizePath(info.file),
-            'url': relativizePath(info.file)[10:].replace('\\', '/'),
+            'url': truncateSysPath(info.file).replace('\\', '/'),
             'line': info.line,
             'eline': info.eline,
             'column': info.column,

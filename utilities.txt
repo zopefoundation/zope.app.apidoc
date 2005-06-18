@@ -41,6 +41,26 @@ returned:
   'foo/bar/blah.txt'
 
 
+`truncateSysPath(path)`
+----------------------
+
+In some cases it is useful to just know the path after the sys path of a
+module. For example, you have a path of a file in a module. To look up the
+module, the simplest to do is to retrieve the module path and look into the
+system's modules list.
+
+  >>> import sys
+  >>> sysBase = sys.path[0]
+
+  >>> utilities.truncateSysPath(sysBase + '/some/module/path')
+  'some/module/path'
+
+If there is no matching system path, then the whole path is returned:
+
+  >>> utilities.truncateSysPath('some/other/path')
+  'some/other/path' 
+
+
 `ReadContainerBase` (Class)
 ---------------------------
 
