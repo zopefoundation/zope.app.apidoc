@@ -85,11 +85,13 @@
     &nbsp;<a href="" target="main"
         tal:attributes="href python: view.getMenuLink(node)"
         tal:content="python: view.getMenuTitle(node)"
-        tal:condition="python: view.getMenuLink(node) is not None">
+        tal:condition="python: view.getMenuLink(node) is not None"
+        i18n:translate="">
       node/id
     </a><tal:block 
         replace="python: view.getMenuTitle(node)"
-        condition="python: view.getMenuLink(node) is None" />
+        condition="python: view.getMenuLink(node) is None"
+        i18n:translate="" />
   </td>
 
     </tal:block>
