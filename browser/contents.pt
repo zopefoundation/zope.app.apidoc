@@ -23,10 +23,10 @@
     <h2>
       <a target="menu" href=""
          tal:attributes="href string:./${module/name}/@@menu.html"
-         tal:content="module/title">Module Title</a>
+         tal:content="module/title" i18n:translate="">Module Title</a>
     </h2>
 
-    <p tal:replace="structure module/description">
+    <p tal:replace="structure module/description" i18n:translate="">
       Module Description
     </p>
 
