@@ -15,154 +15,158 @@
 
 $Id$
 """
+
 __docformat__ = "reStructuredText"
+
 import zope.interface
 import zope.schema
 
+from zope.app.i18n import ZopeMessageIDFactory as _
+
+
 class IInterfaceDetailsPreferences(zope.interface.Interface):
-    """
+    __doc__ = _("""
     Preferences for API Docs' Interface Details Screen
 
     It is possible to hide and show various sections of the interface details'
     screen. The following preferences allow you to choose the sections to be
     shown by default.
-    """
+    """)
 
     showSpecificRequiredAdapters = zope.schema.Bool(
-        title=u"Specific Required Interface Adapters",
-        description=u"Show specific required interface adapters",
+        title=_("Specific Required Interface Adapters"),
+        description=_("Show specific required interface adapters"),
         required=False,
         default=True)
 
     showExtendedRequiredAdapters = zope.schema.Bool(
-        title=u"Extended Required Interface Adapters",
-        description=u"Show extended required interface adapters",
+        title=_("Extended Required Interface Adapters"),
+        description=_("Show extended required interface adapters"),
         required=False,
         default=True)
 
     showGenericRequiredAdapters = zope.schema.Bool(
-        title=u"Generic Required Interface Adapters",
-        description=u"Show generic required interface adapters",
+        title=_("Generic Required Interface Adapters"),
+        description=_("Show generic required interface adapters"),
         required=False,
         default=False)
 
     showBrowserViews = zope.schema.Bool(
-        title=u"Browser Views",
-        description=u"Show browser views",
+        title=_("Browser Views"),
+        description=_("Show browser views"),
         required=False,
         default=True)
 
     showSpecificBrowserViews = zope.schema.Bool(
-        title=u"Specific Browser Views",
-        description=u"Show specific browser views",
+        title=_("Specific Browser Views"),
+        description=_("Show specific browser views"),
         required=False,
         default=True)
 
     showExtendedBrowserViews = zope.schema.Bool(
-        title=u"Extended Browser Views",
-        description=u"Show extended browser views",
+        title=_("Extended Browser Views"),
+        description=_("Show extended browser views"),
         required=False,
         default=False)
 
     showGenericBrowserViews = zope.schema.Bool(
-        title=u"Generic Browser Views",
-        description=u"Show generic browser views",
+        title=_("Generic Browser Views"),
+        description=_("Show generic browser views"),
         required=False,
         default=False)
 
     showXMLRPCViews = zope.schema.Bool(
-        title=u"XML-RPC Views",
-        description=u"Show XML-RPC views",
+        title=_("XML-RPC Views"),
+        description=_("Show XML-RPC views"),
         required=False,
         default=False)
 
     showSpecificXMLRPCViews = zope.schema.Bool(
-        title=u"Specific XML-RPC Views",
-        description=u"Show specific XML-RPC views",
+        title=_("Specific XML-RPC Views"),
+        description=_("Show specific XML-RPC views"),
         required=False,
         default=True)
 
     showExtendedXMLRPCViews = zope.schema.Bool(
-        title=u"Extended XML-RPC Views",
-        description=u"Show extended XML-RPC views",
+        title=_("Extended XML-RPC Views"),
+        description=_("Show extended XML-RPC views"),
         required=False,
         default=False)
 
     showGenericXMLRPCViews = zope.schema.Bool(
-        title=u"Generic XML-RPC Views",
-        description=u"Show generic XML-RPC views",
+        title=_("Generic XML-RPC Views"),
+        description=_("Show generic XML-RPC views"),
         required=False,
         default=False)
 
     showHTTPViews = zope.schema.Bool(
-        title=u"Generic HTTP Views",
-        description=u"Show generic HTTP views",
+        title=_("Generic HTTP Views"),
+        description=_("Show generic HTTP views"),
         required=False,
         default=False)
 
     showSpecificHTTPViews = zope.schema.Bool(
-        title=u"Specific HTTP Views",
-        description=u"Show specific HTTP views",
+        title=_("Specific HTTP Views"),
+        description=_("Show specific HTTP views"),
         required=False,
         default=True)
 
     showExtendedHTTPViews = zope.schema.Bool(
-        title=u"Extended HTTP Views",
-        description=u"Show extended HTTP views",
+        title=_("Extended HTTP Views"),
+        description=_("Show extended HTTP views"),
         required=False,
         default=False)
 
     showGenericHTTPViews = zope.schema.Bool(
-        title=u"Generic HTTP Views",
-        description=u"Show generic HTTP views",
+        title=_("Generic HTTP Views"),
+        description=_("Show generic HTTP views"),
         required=False,
         default=False)
 
     showFTPViews = zope.schema.Bool(
-        title=u"FTP Views",
-        description=u"Show FTP views",
+        title=_("FTP Views"),
+        description=_("Show FTP views"),
         required=False,
         default=False)
 
     showSpecificFTPViews = zope.schema.Bool(
-        title=u"Specific FTP Views",
-        description=u"Show specific FTP views",
+        title=_("Specific FTP Views"),
+        description=_("Show specific FTP views"),
         required=False,
         default=True)
 
     showExtendedFTPViews = zope.schema.Bool(
-        title=u"Extended FTP Views",
-        description=u"Show extended FTP views",
+        title=_("Extended FTP Views"),
+        description=_("Show extended FTP views"),
         required=False,
         default=False)
 
     showGenericFTPViews = zope.schema.Bool(
-        title=u"Generic FTP Views",
-        description=u"Show generic FTP views",
+        title=_("Generic FTP Views"),
+        description=_("Show generic FTP views"),
         required=False,
         default=False)
 
     showOtherViews = zope.schema.Bool(
-        title=u"Other Views",
-        description=u"Show other (unidentified) views",
+        title=_("Other Views"),
+        description=_("Show other (unidentified) views"),
         required=False,
         default=False)
 
     showSpecificOtherViews = zope.schema.Bool(
-        title=u"Specific Other Views",
-        description=u"Show specific other views",
+        title=_("Specific Other Views"),
+        description=_("Show specific other views"),
         required=False,
         default=True)
 
     showExtendedOtherViews = zope.schema.Bool(
-        title=u"Extended Other Views",
-        description=u"Show extended other views",
+        title=_("Extended Other Views"),
+        description=_("Show extended other views"),
         required=False,
         default=False)
 
     showGenericOtherViews = zope.schema.Bool(
-        title=u"Generic Other Views",
-        description=u"Show generic other views",
+        title=_("Generic Other Views"),
+        description=_("Show generic other views"),
         required=False,
         default=False)
-    

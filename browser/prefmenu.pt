@@ -49,9 +49,9 @@
   <td class="list-item"
       tal:attributes="colspan python:maxDepth-len(nodeInfo['row-state'])+1">
     &nbsp;<a href="" target="main"
-       tal:attributes="href 
+       tal:attributes="href
            string:${node/context/@@absolute_url}/@@apidocIndex.html"
-       tal:content="node/context/__title__">
+       tal:content="node/context/__title__" i18n:translate="">
       node/id
     </a>
   </td>
