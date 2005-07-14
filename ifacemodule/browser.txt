@@ -184,8 +184,8 @@ utility.
 
 Return the main documentation string of the interface.
 
-  >>> details.getDoc()[:55]
-  u'<div class="document">\n<p>This is the Foo interface</p>'
+  >>> details.getDoc()[:32]
+  u'<p>This is the Foo interface</p>'
 
 
 `getBases()`
@@ -227,9 +227,9 @@ we get a result:
 Return a list of attributes in the order they were specified.
 
   >>> pprint(details.getAttributes())
-  [{'doc': u'<div class="document">\nThis is bar.</div>\n',
+  [{'doc': u'<p>This is bar.</p>\n',
     'name': 'bar'},
-   {'doc': u'<div class="document">\nThis is foo.</div>\n',
+   {'doc': u'<p>This is foo.</p>\n',
     'name': 'foo'}]
 
 
@@ -239,10 +239,10 @@ Return a list of attributes in the order they were specified.
 Return a list of methods in the order they were specified.
 
   >>> pprint(details.getMethods())
-  [{'doc': u'<div class="document">\nThis is blah.</div>\n',
+  [{'doc': u'<p>This is blah.</p>\n',
     'name': 'blah',
     'signature': '()'},
-   {'doc': u'<div class="document">\nThis is get.</div>\n',
+   {'doc': u'<p>This is get.</p>\n',
     'name': 'get',
     'signature': '(key, default=None)'}]
 
@@ -258,7 +258,7 @@ The required attributes are listed first, then the optional attributes.
   [{'class': {'name': 'TextLine',
               'path': 'zope/schema/_bootstrapfields/TextLine'},
     'default': "u'Foo'",
-    'description': u'<div class="document">\nTitle</div>\n',
+    'description': u'<p>Title</p>\n',
     'iface': {'id': 'zope.schema.interfaces.ITextLine',
               'name': 'ITextLine'},
     'name': 'title',
@@ -268,7 +268,7 @@ The required attributes are listed first, then the optional attributes.
    {'class': {'name': 'Text',
               'path': 'zope/schema/_bootstrapfields/Text'},
     'default': "u'Foo.'",
-    'description': u'<div class="document">\nDesc</div>\n',
+    'description': u'<p>Desc</p>\n',
     'iface': {'id': 'zope.schema.interfaces.IText',
               'name': 'IText'},
     'name': 'description',

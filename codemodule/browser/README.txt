@@ -34,11 +34,9 @@ process to get a module documentation object:
 Get the doc string of the module formatted in STX or ReST.
 
   >>> print details.getDoc().strip()
-  <div class="document">
   <p>Code Documentation Module</p>
   <p>This module is able to take a dotted name of any class and display
   documentation for it.</p>
-  </div>
 
 `getEntries(columns=True)`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -165,7 +163,7 @@ Get all attributes of this class.
 Get all methods of this class.
 
   >>> pprint(details.getMethods()[-2:])
-  [{'doc': u'<div class="document">\nSetup module and class tree.</div>\n',
+  [{'doc': u'<p>Setup module and class tree.</p>\n',
     'interface': None,
     'name': 'setup',
     'read_perm': None,
@@ -184,8 +182,7 @@ Get all methods of this class.
 Get the doc string of the class STX formatted.
 
   >>> print details.getDoc()[:-1]
-  <div class="document">
-  Represent the code browser documentation root</div>
+  <p>Represent the code browser documentation root</p>
 
 
 Function Details
@@ -207,7 +204,7 @@ Here are the methods:
 Get the doc string of the function in a rendered format.
 
   >>> details.getDocString()
-  u'<div class="document">\nThis is the foo function.</div>\n'
+  u'<p>This is the foo function.</p>\n'
 
 `getAttributes()`
 ~~~~~~~~~~~~~~~~~
@@ -240,7 +237,7 @@ Here are the methods:
 
 Render the file content to HTML.
 
-  >>> print details.renderedContent()[54:102]
+  >>> print details.renderedContent()[:48]
   <h1 class="title">Code Documentation Module</h1>
 
 

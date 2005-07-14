@@ -564,11 +564,11 @@ used. Clearly, you cannot specify both, the `module` and `format` argument.
 You specify the format as follows:
 
   >>> utilities.renderText('Hello!\n', format='zope.source.rest')
-  u'<div class="document">\nHello!</div>\n'
+  u'<p>Hello!</p>\n'
 
 Note that the format string must be a valid source factory id; if the factory
 id is not a match, 'zope.source.stx' is used. Thus, specifying the module is
 often safer (if available):
 
   >>> utilities.renderText('Hello!\n', module=apidoc)
-  u'<div class="document">\nHello!</div>\n'
+  u'<p>Hello!</p>\n'

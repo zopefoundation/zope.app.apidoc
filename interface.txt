@@ -215,7 +215,7 @@ This function returns a page-template-friendly dictionary for a simple
 attribute:
 
   >>> pprint(interface.getAttributeInfoDictionary(IFoo['baz']))
-  {'doc': u'<div class="document">\nThis is the baz attribute</div>\n',
+  {'doc': u'<p>This is the baz attribute</p>\n',
    'name': 'baz'}
 
 
@@ -226,7 +226,7 @@ This function returns a page-template-friendly dictionary for a method:
 
   >>> pprint(interface.getMethodInfoDictionary(IFoo['blah'])) #doc
   {'doc': 
-     u'<div class="document">\nThis is the <cite>blah</cite> method.</div>\n',
+     u'<p>This is the <cite>blah</cite> method.</p>\n',
    'name': 'blah',
    'signature': '(one, two, three=None, *args, **kwargs)'}
 
@@ -240,7 +240,7 @@ This function returns a page-template-friendly dictionary for a field:
   {'class': {'name': 'TextLine',
              'path': 'zope/schema/_bootstrapfields/TextLine'},
    'default': "u'My Bar'",
-   'description': u'<div class="document">\nThe Bar</div>\n',
+   'description': u'<p>The Bar</p>\n',
    'iface': {'id': 'zope.schema.interfaces.ITextLine',
              'name': 'ITextLine'},
    'name': 'bar',

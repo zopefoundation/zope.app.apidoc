@@ -278,7 +278,7 @@ registrations:
 
   >>> pprint(component.getFactoryInfoDictionary(
   ...     component.getFactories(IFooBar).next()))
-  {'description': u'<div class="document">\nMy Foo Bar</div>\n',
+  {'description': u'<p>My Foo Bar</p>\n',
    'name': 'MyFooBar',
    'title': 'MyFooBar',
    'url': '__builtin__/MyFooBar'}
