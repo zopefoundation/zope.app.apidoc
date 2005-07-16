@@ -22,7 +22,7 @@
   </div>
 
 
-  <table width="100%" valign="top"><tr>
+  <table width="100%"><tr valign="top">
 
   <td tal:repeat="column view/getEntries"><ul>
     <li tal:repeat="entry column">
