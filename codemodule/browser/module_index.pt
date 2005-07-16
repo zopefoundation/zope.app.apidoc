@@ -13,7 +13,7 @@
     </span>
   </p>
 
-  <div class="highlight"
+  <div class="highlight documentation"
        tal:define="doc view/getDoc"
        tal:condition="doc"
        tal:content="structure doc"
