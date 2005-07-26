@@ -240,8 +240,13 @@ class InterfaceDetails(object):
 
           >>> from tests import getInterfaceDetails
           >>> details = getInterfaceDetails()
-          >>> details.getDoc()[:55]
-          '<div class="document">\n<p>This is the Foo interface</p>'
+
+          We need to be a little weird about this test here because
+          reST/STX behaviour changes from Zope X3.0 to Zope 2.8 (which
+          X3.0 is a part of):
+
+          >>> '<p>This is the Foo interface</p>' in details.getDoc()
+          True
         """
         # We must remove all proxies here, so that we get the context's
         # __module__ attribute. If we only remove security proxies, the

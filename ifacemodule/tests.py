@@ -80,7 +80,6 @@ class IBar(Interface):
 class Foo(object):
     implements(IFoo)
 
-
 def getInterfaceDetails():
     ifacemodule = InterfaceModule()
     ifacemodule.__parent__ = Root()
@@ -90,7 +89,7 @@ def getInterfaceDetails():
     view.context = iface
     view.request = TestRequest()
     return view
-    
+
 
 def setUp(test):
     placelesssetup.setUp()
@@ -133,4 +132,4 @@ def test_suite():
         ))
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(defaultTest='test_suite')

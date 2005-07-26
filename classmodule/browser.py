@@ -574,8 +574,13 @@ class ClassDetails(object):
           >>> from tests import getClassDetailsView
           >>> view = getClassDetailsView()
 
-          >>> print view.getDoc()[23:80]
-          <p>Represent the Documentation of any possible class.</p>
+          We need to be a little weird about this test here because
+          reST/STX behaviour changes from Zope X3.0 to Zope 2.8 (which
+          X3.0 is a part of):
+
+          >>> '<p>Represent the Documentation of any possible class.</p>' \\
+          ...     in view.getDoc()
+          True
         """
         return renderText(self.context.getDocString() or '',
                           zapi.getParent(self.context).getPath())
@@ -594,12 +599,15 @@ class ModuleDetails(object):
           >>> from tests import getModuleDetailsView
           >>> view = getModuleDetailsView()
 
-          >>> print view.getDoc().strip()
-          <div class="document">
-          <p>Class Documentation Module</p>
-          <p>This module is able to take a dotted name of any class and display
-          documentation for it.</p>
-          </div>
+          We need to be a little weird about this test here because
+          reST/STX behaviour changes from Zope X3.0 to Zope 2.8 (which
+          X3.0 is a part of):
+
+          >>> '''\\
+          ... <p>Class Documentation Module</p>
+          ... <p>This module is able to take a dotted name of any class and display
+          ... documentation for it.</p>''' in view.getDoc().strip()
+          True
         """
         text = self.context.getDocString()
         if text is None:
