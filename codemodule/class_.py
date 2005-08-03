@@ -42,13 +42,9 @@ class Class(object):
         self.__klass = klass
 
         # Setup interfaces that are implemented by this class.
-        self.__interfaces = list(implementedBy(klass))
+        self.__interfaces = tuple(implementedBy(klass))
         all_ifaces = {}
-        for iface in self.__interfaces:
-            all_ifaces[getPythonPath(iface)] = iface
-            for base in iface.__bases__:
-                all_ifaces[getPythonPath(base)] = base
-        self.__all_ifaces = all_ifaces.values()
+        self.__all_ifaces = tuple(implementedBy(klass).flattened())
 
         # Register the class with the global class registry.
         classRegistry[self.getPath()] = klass

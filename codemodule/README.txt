@@ -131,21 +131,26 @@ and methods of this class::
   >>> klass.getAttributes()
   []
 
-  >>> klass.getMethods()[0]
-  ('get', <unbound method APIDocumentation.get>, None)
+  >>> klass.getMethods()[0] #doctest:+NORMALIZE_WHITESPACE
+  ('get', <unbound method APIDocumentation.get>, 
+   <InterfaceClass zope.interface.common.mapping.IReadMapping>)
 
 
 Let's have a closer look at the `getAttributes()` method. First we create an
 interface called `IBlah` that is implemented by the class `Blah`:
 
   >>> import zope.interface
-  >>> class IBlah(zope.interface.Interface):
+  >>> class IBlie(zope.interface.Interface):
+  ...      bli = zope.interface.Attribute('Blie')
+
+  >>> class IBlah(IBlie):
   ...      foo = zope.interface.Attribute('Foo')
 
   >>> class Blah(object):
   ...      zope.interface.implements(IBlah)
   ...      foo = 'f'
   ...      bar = 'b'
+  ...      bli = 'i'
   ...      _blah = 'l'
 
 The `Blah` class also implements a public and private attribute that is not
@@ -155,6 +160,7 @@ listed in the interface. Now we create the class documentation wrapper:
 
   >>> pprint(klass.getAttributes())
   [('bar', 'b', None),
+   ('bli', 'i', <InterfaceClass __builtin__.IBlie>),
    ('foo', 'f', <InterfaceClass __builtin__.IBlah>)]
 
 So, the function returns a list of tuples of the form (name, value,
