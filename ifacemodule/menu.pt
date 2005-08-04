@@ -7,7 +7,8 @@
     <div>
       <span i18n:translate="">Interface Finder:</span>
     </div>
-    <form action="" method="post">
+    <form action="" method="post"
+          tal:attributes="action request/URL">
       <input type="checkbox" name="name_only" value="on" checked="checked" />
       <tal:block i18n:translate="">name only search</tal:block>
       <br />

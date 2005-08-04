@@ -7,7 +7,8 @@
     <div>
       <span i18n:translate="">Class Finder:</span> <br/>
       <i i18n:translate="">(Enter partial Python path)</i></div>
-    <form action="" method="post">
+    <form action="" method="post"
+          tal:attributes="action request/URL">
       <input type="text" name="path" 
              style="font-size: 80%; width=95%" />
       <input type="submit" name="SUBMIT" value="Find" 
