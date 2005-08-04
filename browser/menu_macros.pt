@@ -29,7 +29,7 @@
 
 <head>
 
-<body>
+<body class="menu">
 
   <metal:block define-slot="menu-title">
     <div class="menu" i18n:translate="">Menu</div>
