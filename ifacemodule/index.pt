@@ -74,7 +74,7 @@
 
         <h4 i18n:translate="">
           <metal:block use-macro="context/@@apidoc_macros/displaySwitch" />
-          Specific Adapters
+          <span i18n:translate="">Specific Adapters</span>
         </h4>
         <metal:block use-macro="context/@@apidoc_macros/display" >
         <div metal:fill-slot="content">
