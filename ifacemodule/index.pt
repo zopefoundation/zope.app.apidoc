@@ -72,7 +72,7 @@
   elementId string:adapters.required.specific;
   show context/++preferences++apidoc/InterfaceDetails/showSpecificRequiredAdapters">
 
-        <h4 i18n:translate="">
+        <h4>
           <metal:block use-macro="context/@@apidoc_macros/displaySwitch" />
           <span i18n:translate="">Specific Adapters</span>
         </h4>
