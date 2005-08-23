@@ -295,7 +295,7 @@
         <h3 class="details-section" i18n:translate="">Utilities</h3>
         <div class="indent">
           <div class="small" i18n:translate="">
-            A list of utilities that are are registered to provide this 
+            A list of utilities that are registered to provide this 
             interface.
           </div>
           <ul>
