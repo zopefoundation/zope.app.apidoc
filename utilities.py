@@ -67,7 +67,7 @@ class ReadContainerBase(object):
         default = object()
         obj = self.get(key, default)
         if obj is default:
-            raise KeyError, key
+            raise KeyError(key)
         return obj
 
     def __contains__(self, key):
