@@ -59,32 +59,33 @@ class Module(ReadContainerBase):
                (self._module.__file__.endswith('__init__.py') or
                 self._module.__file__.endswith('__init__.pyc')or
                 self._module.__file__.endswith('__init__.pyo')):
-            dir = os.path.dirname(self._module.__file__)
-            for file in os.listdir(dir):
-                if file in IGNORE_FILES:
-                    continue
-                path = os.path.join(dir, file)
-
-                if os.path.isdir(path) and '__init__.py' in os.listdir(path):
-                    fullname = self._module.__name__ + '.' + file
-                    module = safe_import(fullname)
-                    if module is not None:
-                        self._children[file] = Module(self, file, module)
-
-                elif os.path.isfile(path) and file.endswith('.py') and \
-                         not file.startswith('__init__'):
-                    name = file[:-3]
-                    fullname = self._module.__name__ + '.' + name
-                    module = safe_import(fullname)
-                    if module is not None:
-                        self._children[name] = Module(self, name, module)
-
-                elif os.path.isfile(path) and file.endswith('.zcml'):
-                    self._children[file] = ZCMLFile(path, self._module,
-                                                    self, file)
-
-                elif os.path.isfile(path) and file.endswith('.txt'):
-                    self._children[file] = TextFile(path, file, self)
+            for dir in self._module.__path__:
+                for file in os.listdir(dir):
+                    if file in IGNORE_FILES or file in self._children:
+                        continue
+                    path = os.path.join(dir, file)
+    
+                    if (os.path.isdir(path) and
+                        '__init__.py' in os.listdir(path)):
+                        fullname = self._module.__name__ + '.' + file
+                        module = safe_import(fullname)
+                        if module is not None:
+                            self._children[file] = Module(self, file, module)
+    
+                    elif os.path.isfile(path) and file.endswith('.py') and \
+                             not file.startswith('__init__'):
+                        name = file[:-3]
+                        fullname = self._module.__name__ + '.' + name
+                        module = safe_import(fullname)
+                        if module is not None:
+                            self._children[name] = Module(self, name, module)
+    
+                    elif os.path.isfile(path) and file.endswith('.zcml'):
+                        self._children[file] = ZCMLFile(path, self._module,
+                                                        self, file)
+    
+                    elif os.path.isfile(path) and file.endswith('.txt'):
+                        self._children[file] = TextFile(path, file, self)
 
         # Setup classes in module, if any are available.
         zope.deprecation.__show__.off()
