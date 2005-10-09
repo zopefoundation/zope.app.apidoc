@@ -27,6 +27,13 @@
       class=".browser.Menu"
       name="menu.html"
       template="menu.pt" />
+      
+  <browser:page
+      for=".utilitymodule.UtilityModule"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".browser.Menu"
+      name="staticmenu.html"
+      template="static_menu.pt" />      
 
   <browser:page
       for=".utilitymodule.Utility"

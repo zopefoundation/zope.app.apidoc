@@ -108,6 +108,10 @@ def test_suite():
                              setUp=setUp, tearDown=tearDown,
                              globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE),
+       doctest.DocTestSuite('zope.app.apidoc.codemodule.browser.menu',
+                             setUp=setUp, tearDown=tearDown,
+                             globs={'pprint': doctestunit.pprint},
+                             optionflags=doctest.NORMALIZE_WHITESPACE),
         ))
 
 if __name__ == '__main__':

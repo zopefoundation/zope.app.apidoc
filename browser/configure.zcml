@@ -21,6 +21,13 @@
 
   <page 
       for="*"
+      name="static_menu_macros"
+      permission="zope.View"
+      template="static_menu_macros.pt"
+      />
+
+  <page 
+      for="*"
       name="details_macros"
       permission="zope.View"
       template="details_macros.pt"
@@ -61,8 +68,35 @@
     <page
       name="contents.html"
       template="contents.pt" />
+            
+  </pages>
+
+  <!-- Static apidoc -->
+
+  <pages
+    for="zope.app.apidoc.apidoc.APIDocumentation"
+    class=".apidoc.APIDocumentationView"
+    permission="zope.app.apidoc.UseAPIDoc">
+
+            
+    <page
+        name="static.html"
+        template="static_index.pt" />
+
+    <page
+      name="staticmodulelist.html"
+      template="static_modules.pt" />
+
+    <page
+      name="staticmenu.html"
+      template="static_menu.pt" />
+      
+    <page
+      name="staticcontents.html"
+      template="contents.pt" />
 
   </pages>
+
 
   <!-- Preference Views -->
 

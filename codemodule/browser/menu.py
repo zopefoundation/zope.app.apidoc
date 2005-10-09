@@ -31,26 +31,29 @@ class Menu(object):
         """Find the classes that match a partial path.
 
         Examples::
-
-          >>> from zope.app.apidoc.tests import pprint
-          >>> from zope.app.apidoc.classmodule import Class
-          >>> cm = zapi.getUtility(IDocumentationModule, 'Class')
-          >>> mod = cm['zope']['app']['apidoc']['classmodule']['browser']
+          >>> from zope.app import zapi
+          >>> from zope.app.apidoc.codemodule.class_ import Class
+          >>> from zope.app.apidoc.interfaces import IDocumentationModule
+      
+          
+          >>> cm = zapi.getUtility(IDocumentationModule, 'Code')
+          >>> mod = cm['zope']['app']['apidoc']['codemodule']['browser']
 
           Setup a couple of classes and register them.
 
           >>> class Foo(object):
           ...     pass
-          >>> mod._Module__children['Foo'] = Class(mod, 'Foo', Foo)
+          >>> mod._children['Foo'] = Class(mod, 'Foo', Foo)
           >>> class Foo2(object):
           ...     pass
-          >>> mod._Module__children['Foo2'] = Class(mod, 'Foo2', Foo2)
+          >>> mod._children['Foo2'] = Class(mod, 'Foo2', Foo2)
           >>> class Blah(object):
           ...     pass
-          >>> mod._Module__children['Blah'] = Class(mod, 'Blah', Blah)
+          >>> mod._children['Blah'] = Class(mod, 'Blah', Blah)
 
           Setup the view.
 
+          >>> from zope.app.apidoc.codemodule.browser.menu import Menu
           >>> from zope.publisher.browser import TestRequest
           >>> menu = Menu()
           >>> menu.context = None
@@ -61,26 +64,24 @@ class Menu(object):
           >>> info = menu.findClasses()
 
           >>> pprint(info)
-          [[('path', 'zope.app.apidoc.classmodule.browser.Foo'),
-            ('url',
-             'http://127.0.0.1/zope/app/apidoc/classmodule/browser/Foo')],
-           [('path', 'zope.app.apidoc.classmodule.browser.Foo2'),
-            ('url',
-             'http://127.0.0.1/zope/app/apidoc/classmodule/browser/Foo2')]]
-          
+          [{'path': 'zope.app.apidoc.codemodule.browser.Foo',
+            'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Foo'},
+           {'path': 'zope.app.apidoc.codemodule.browser.Foo2',
+            'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Foo2'}]
+            
           >>> menu.request = TestRequest(form={'path': 'o2'})
           >>> info = menu.findClasses()
           >>> pprint(info)
-          [[('path', 'zope.app.apidoc.classmodule.browser.Foo2'),
-            ('url',
-             'http://127.0.0.1/zope/app/apidoc/classmodule/browser/Foo2')]]
+          [{'path': 'zope.app.apidoc.codemodule.browser.Foo2',
+            'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Foo2'}]
+
           
           >>> menu.request = TestRequest(form={'path': 'Blah'})
           >>> info = menu.findClasses()
           >>> pprint(info)
-          [[('path', 'zope.app.apidoc.classmodule.browser.Blah'),
-            ('url',
-             'http://127.0.0.1/zope/app/apidoc/classmodule/browser/Blah')]]
+          [{'path': 'zope.app.apidoc.codemodule.browser.Blah',
+            'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Blah'}]
+
         """
         path = self.request.get('path', None)
         if path is None:
@@ -94,5 +95,61 @@ class Menu(object):
                     {'path': p,
                      'url': zapi.absoluteURL(klass, self.request)
                      })
+        results.sort(lambda x, y: cmp(x['path'], y['path']))
+        return results
+    
+    def findAllClasses(self):
+        
+        """Find all classes 
+
+        Examples::
+          >>> from zope.app import zapi
+          >>> from zope.app.apidoc.codemodule.class_ import Class
+          >>> from zope.app.apidoc.interfaces import IDocumentationModule
+      
+          
+          >>> cm = zapi.getUtility(IDocumentationModule, 'Code')
+          >>> mod = cm['zope']['app']['apidoc']['codemodule']['browser']
+
+          Setup a couple of classes and register them.
+
+          >>> class Foo(object):
+          ...     pass
+          >>> mod._children['Foo'] = Class(mod, 'Foo', Foo)
+          >>> class Foo2(object):
+          ...     pass
+          >>> mod._children['Foo2'] = Class(mod, 'Foo2', Foo2)
+          >>> class Blah(object):
+          ...     pass
+          >>> mod._children['Blah'] = Class(mod, 'Blah', Blah)
+
+          Setup the view.
+
+          >>> from zope.app.apidoc.codemodule.browser.menu import Menu
+          >>> from zope.publisher.browser import TestRequest
+          >>> menu = Menu()
+          >>> menu.context = None
+
+          Testing the method with various inputs.
+          
+          >>> menu.request = TestRequest(form={'path': 'Foo'})
+          >>> info = menu.findAllClasses()
+
+          >>> len(info) > 3
+          True
+        """
+        classModule = zapi.getUtility(IDocumentationModule, "Code")
+        classModule.setup() # run setup if not yet done
+        results = []
+        counter = 0
+        for p in classRegistry.keys():
+            klass = zapi.traverse(classModule, p.replace('.', '/'))
+            results.append(
+                {'path': p,
+                 'url': zapi.absoluteURL(klass, self.request),
+                 'counter': counter
+                 })
+            counter += 1
+            
         results.sort(lambda x, y: cmp(x['path'], y['path']))
         return results

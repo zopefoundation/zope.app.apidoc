@@ -9,6 +9,13 @@
       class=".menu.Menu"
       name="menu.html"
       template="menu.pt" />
+      
+  <page
+      for="..codemodule.CodeModule"
+      permission="zope.app.apidoc.UseAPIDoc"
+      class=".menu.Menu"
+      name="staticmenu.html"
+      template="static_menu.pt" />      
 
   <page
       for="..interfaces.IModuleDocumentation"

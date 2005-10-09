@@ -82,3 +82,14 @@ Developing a Module
 
 Note:  There are several modules that come with the product. Just look
 in them for some guidance.
+
+
+New Static APIDOC-Version
+-------------------------
+
+An alternative APIDOC-Version is available through ++apidoc++/static.html 
+Find and Tree is implemented in Javascript. So it should be possible to do a
+"wget" - Offline-Version of APIDOC
+
+
+

@@ -29,6 +29,13 @@
     template="menu.pt" />
 
   <browser:page
+    for=".ZCMLModule"
+    class=".browser.Menu"
+    permission="zope.app.apidoc.UseAPIDoc"
+    name="staticmenu.html"
+    template="static_menu.pt" />
+
+  <browser:page
     for=".Directive"
     class=".browser.DirectiveDetails"
     permission="zope.app.apidoc.UseAPIDoc"

@@ -21,4 +21,4 @@ BaseMacros = StandardMacros
 
 class APIDocumentationMacros(BaseMacros):
     """Page Template METAL macros for API Documentation"""
-    macro_pages = ('menu_macros', 'details_macros')
+    macro_pages = ('menu_macros', 'details_macros','static_menu_macros')
