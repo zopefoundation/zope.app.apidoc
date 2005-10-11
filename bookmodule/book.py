@@ -62,3 +62,10 @@ class BookModule(OnlineHelp):
 path = os.path.join(os.path.dirname(zope.app.apidoc.bookmodule.__file__),
                     'intro.txt')
 book = BookModule(_('Book'), path)
+
+def _clear():
+    global book
+    book.__init__(book.title, book.path)
+
+from zope.testing import cleanup
+cleanup.addCleanUp(_clear)

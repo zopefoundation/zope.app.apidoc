@@ -21,6 +21,7 @@ __import_unknown_modules__ = False
 
 import sys
 
+import zope.deprecation
 from zope.app import zapi
 
 class ClassRegistry(dict):
