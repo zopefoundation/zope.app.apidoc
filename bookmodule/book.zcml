@@ -190,7 +190,7 @@
   <configure package="zope.i18nmessageid">
     <bookchapter
         id="messageid"
-        title="Message Ids"
+        title="Messages"
         doc_path="messages.txt"
         parent="i18nl10n"
         />
