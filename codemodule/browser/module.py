@@ -21,7 +21,7 @@ from zope.security.proxy import removeSecurityProxy
 from zope.proxy import removeAllProxies
 
 from zope.app import zapi
-from zope.app.i18n import ZopeMessageIDFactory as _
+from zope.app.i18n import ZopeMessageFactory as _
 
 from zope.app.apidoc.utilities import renderText, columnize
 from zope.app.apidoc.codemodule.module import Module

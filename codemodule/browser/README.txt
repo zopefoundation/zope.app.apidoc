@@ -153,8 +153,8 @@ Get all attributes of this class.
   {'interface': 'zope.app.apidoc.interfaces.IDocumentationModule',
    'name': 'title',
    'read_perm': None,
-   'type': 'MessageID',
-   'type_link': 'zope/i18nmessageid/messageid/MessageID',
+   'type': 'Message',
+   'type_link': 'zope/i18nmessageid/message/Message',
    'value': "u'Code Browser'",
    'write_perm': None}
 

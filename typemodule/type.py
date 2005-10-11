@@ -20,7 +20,7 @@ from  zope.interface import implements
 from zope.interface.interfaces import IInterface
 
 from zope.app import zapi
-from zope.app.i18n import ZopeMessageIDFactory as _
+from zope.app.i18n import ZopeMessageFactory as _
 from zope.app.location import LocationProxy
 from zope.app.location.interfaces import ILocation
 from zope.app.apidoc.interfaces import IDocumentationModule

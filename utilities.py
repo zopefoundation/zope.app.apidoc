@@ -31,7 +31,7 @@ from zope.security.interfaces import INameBasedChecker
 from zope.security.proxy import removeSecurityProxy
 
 from zope.app import zapi
-from zope.app.i18n import ZopeMessageIDFactory as _
+from zope.app.i18n import ZopeMessageFactory as _
 from zope.app.container.interfaces import IReadContainer
 
 _remove_html_overhead = re.compile(

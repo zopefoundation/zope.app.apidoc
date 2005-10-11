@@ -21,7 +21,7 @@ from zope.component.site import UtilityRegistration
 from zope.interface import implements
 
 from zope.app import zapi
-from zope.app.i18n import ZopeMessageIDFactory as _
+from zope.app.i18n import ZopeMessageFactory as _
 from zope.app.component import queryNextSiteManager
 from zope.app.location.interfaces import ILocation
 from zope.app.apidoc.interfaces import IDocumentationModule

@@ -25,7 +25,7 @@ from zope.interface import Interface
 from zope.publisher.interfaces import IRequest
 
 from zope.app import zapi
-from zope.app.i18n import ZopeMessageIDFactory as _
+from zope.app.i18n import ZopeMessageFactory as _
 from zope.app.apidoc.utilities import relativizePath, truncateSysPath
 from zope.app.apidoc.utilities import getPythonPath, renderText
 from zope.app.apidoc.classregistry import classRegistry

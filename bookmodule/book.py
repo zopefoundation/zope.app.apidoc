@@ -27,7 +27,7 @@ import zope.app.apidoc.bookmodule
 from zope.app import zapi
 from zope.interface import implements
 from zope.app.apidoc.interfaces import IDocumentationModule
-from zope.app.i18n import ZopeMessageIDFactory as _
+from zope.app.i18n import ZopeMessageFactory as _
 
 from zope.app.onlinehelp.onlinehelp import OnlineHelp
 

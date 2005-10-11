@@ -29,7 +29,7 @@ from zope.app.apidoc.utilities import ReadContainerBase
 from zope.app.location import LocationProxy
 from zope.app.component.interface \
      import queryInterface, searchInterfaceUtilities
-from zope.app.i18n import ZopeMessageIDFactory as _
+from zope.app.i18n import ZopeMessageFactory as _
 
 class IInterfaceModule(IDocumentationModule):
     """Interface API Documentation Module

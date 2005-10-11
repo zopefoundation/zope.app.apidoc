@@ -21,7 +21,7 @@ $Id: __init__.py 29269 2005-02-23 22:22:48Z srichter $
 __docformat__ = 'restructuredtext'
 from zope.interface import Interface, implements
 from zope.app import zapi
-from zope.app.i18n import ZopeMessageIDFactory as _
+from zope.app.i18n import ZopeMessageFactory as _
 from zope.app.location.interfaces import ILocation
 
 from zope.app.apidoc.interfaces import IDocumentationModule
