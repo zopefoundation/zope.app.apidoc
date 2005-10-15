@@ -351,7 +351,7 @@ will be listed too.
   >>> details.context = details.context.subs[0]
   >>> pprint(details.attributes())
   [{'name': u'class',
-    'url': 
+    'url':
         'http://127.0.0.1/zope/app/apidoc/codemodule/module/Module/index.html',
     'value': u'.module.Module',
     'values': []}]
@@ -362,7 +362,7 @@ will be listed too.
 Returns `True`, if the directive has subdirectives; otherwise `False` is
 returned.
 
-  >>> details.hasSubDirectives() 
+  >>> details.hasSubDirectives()
   True
 
 `getElements()`
@@ -372,42 +372,230 @@ Returns a list of all sub-directives:
 
   >>> details.getElements()
   [<Directive (u'http://namespaces.zope.org/zope', u'allow')>]
- 
 
-The Introspector View
----------------------
 
-In order to allow the quick lookup of documentation from the content
-components themselves, a special "Introspector" tab is added for all content
-types. When clicked, it will forward you to the appropriate code browser
-documentation screen. 
+The Introspector
+----------------
 
-So for a given content type:
-
-  >>> class Content(object):
-  ...    pass
-
-  >>> Content.__module__ = 'module.name.here'
-
-we can generate the introspector redirector like this:
+There are several tools that are used to support the introspector.
 
   >>> from zope.app.apidoc.codemodule.browser import introspector
-  >>> request = TestRequest()
-  >>> view = introspector.Introspector(Content(), request)
-  >>> view.class_name()
-  'module.name.here.Content'
-  >>> view.class_url()
-  'http://127.0.0.1/++apidoc++/Code/module/name/here/Content/index.html'
-  >>> view.direct_interfaces()
-  []
 
-If the instance directly provides any interfaces, these are reported
-as well:
+`getTypeLink(type)`
+~~~~~~~~~~~~~~~~~~
+
+This little helper function returns the path to the type class:
+
+  >>> from zope.app.apidoc.apidoc import APIDocumentation
+  >>> introspector.getTypeLink(APIDocumentation)
+  'zope/app/apidoc/apidoc/APIDocumentation'
+
+  >>> introspector.getTypeLink(dict)
+  '__builtin__/dict'
+
+  >>> introspector.getTypeLink(type(None)) is None
+  True
+
+`++annootations++` Namespace
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This namespace is used to traverse into the annotations of an object.
 
   >>> import zope.interface
-  >>> zope.interface.directlyProvides(view.context,
-  ...                                 IDocumentationModule)
-  >>> pprint(view.direct_interfaces())
-  [{'module': 'zope.app.apidoc.interfaces',
-    'name': 'IDocumentationModule',
-    'url': 'http://127.0.0.1/++apidoc++/Interface/zope.app.apidoc.interfaces.IDocumentationModule/apiindex.html'}]
+  >>> from zope.app.annotation.interfaces import IAttributeAnnotatable
+
+  >>> class Sample(object):
+  ...    zope.interface.implements(IAttributeAnnotatable)
+
+  >>> sample = Sample()
+  >>> sample.__annotations__ = {'zope.my.namespace': 'Hello there!'}
+
+  >>> ns = introspector.annotationsNamespace(sample)
+  >>> ns.traverse('zope.my.namespace', None)
+  'Hello there!'
+
+  >>> ns.traverse('zope.my.unknown', None)
+  Traceback (most recent call last):
+  ...
+  KeyError: 'zope.my.unknown'
+
+Mapping `++items++` namespace
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This namespace allows us to traverse the items of any mapping:
+
+  >>> ns = introspector.mappingItemsNamespace({'mykey': 'myvalue'})
+  >>> ns.traverse('mykey', None)
+  'myvalue'
+
+  >>> ns.traverse('unknown', None)
+  Traceback (most recent call last):
+  ...
+  KeyError: 'unknown'
+
+
+Sequence `++items++` namespace
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This namespace allows us to traverse the items of any sequence:
+
+  >>> ns = introspector.sequenceItemsNamespace(['value1', 'value2'])
+  >>> ns.traverse('0', None)
+  'value1'
+
+  >>> ns.traverse('2', None)
+  Traceback (most recent call last):
+  ...
+  IndexError: list index out of range
+
+  >>> ns.traverse('text', None)
+  Traceback (most recent call last):
+  ...
+  ValueError: invalid literal for int(): text
+
+Introspector View
+~~~~~~~~~~~~~~~~~
+
+The main contents of the introspector view comes from the introspector view
+class. In the following section we are going to demonstrate the methods used
+to collect the data. First we need to create an object though; let's use a
+root folder:
+
+  >>> rootFolder
+  <zope.app.folder.folder.Folder object at ...>
+
+Now we instantiate the view
+
+  >>> from zope.publisher.browser import TestRequest
+  >>> request = TestRequest()
+  >>> inspect = introspector.Introspector(rootFolder, request)
+
+so that we can start looking at the methods. First we should note that the
+class documentation view is directly available:
+
+  >>> inspect.klassView
+  <zope.app.apidoc.codemodule.browser.tests.Details object at ...>
+  >>> inspect.klassView.context
+  <zope.app.apidoc.codemodule.class_.Class object at ...>
+
+You can get the parent of the inspected object, which is ``None`` for the root
+folder:
+
+  >>> inspect.parent() is None
+  True
+
+You can also get the base URL of the request:
+
+  >>> inspect.getBaseURL()
+  'http://127.0.0.1'
+
+Next you can get a list of all directly provided interfaces:
+
+  >>> ifaces = inspect.getDirectlyProvidedInterfaces()
+  >>> ifaces.sort()
+  >>> ifaces
+  ['zope.app.component.interfaces.ISite',
+   'zope.app.folder.interfaces.IRootFolder']
+
+The ``getProvidedInterfaces()`` and ``getBases()`` method simply forwards its
+request to the class documentation view. Thus the next method is
+``getAttributes()``, which collects all sorts of useful information about the
+object's attributes:
+
+  >>> pprint(list(inspect.getAttributes()))
+  [{'interface': None,
+    'name': 'data',
+    'read_perm': None,
+    'type': 'OOBTree',
+    'type_link': 'BTrees/_OOBTree/OOBTree',
+    'value': '<BTrees._OOBTree.OOBTree object at ...>',
+    'value_linkable': True,
+    'write_perm': None}]
+
+Of course, the methods are listed as well:
+
+  >>> pprint(list(inspect.getMethods()))
+    [...
+     {'doc': u'',
+      'interface': 'zope.app.component.interfaces.IPossibleSite',
+      'name': 'getSiteManager',
+      'read_perm': None,
+      'signature': '()',
+      'write_perm': None},
+     ...
+     {'doc': u'<dl class="docutils">\n<dt>Return a sequence-like...',
+      'interface': 'zope.interface.common.mapping.IEnumerableMapping',
+      'name': 'keys',
+      'read_perm': None,
+      'signature': '()',
+      'write_perm': None},
+     {'doc': u'',
+      'interface': 'zope.app.component.interfaces.IPossibleSite',
+      'name': 'setSiteManager',
+      'read_perm': None,
+      'signature': '(sm)',
+      'write_perm': None},
+     ...]
+
+The final methods deal with inspecting the objects data further. For exmaple,
+if we inspect a sequence,
+
+  >>> from persistent.list import PersistentList
+  >>> list = PersistentList(['one', 'two'])
+
+  >>> from zope.interface.common.sequence import IExtendedReadSequence
+  >>> zope.interface.directlyProvides(list, IExtendedReadSequence)
+
+  >>> inspect2 = introspector.Introspector(list, request)
+
+we can first determine whether it really is a sequence
+
+  >>> inspect2.isSequence()
+  True
+
+and then get the sequence items:
+
+  >>> pprint(inspect2.getSequenceItems())
+  [{'index': 0,
+    'value': "'one'",
+    'value_type': 'str',
+    'value_type_link': '__builtin__/str'},
+   {'index': 1,
+    'value': "'two'",
+    'value_type': 'str',
+    'value_type_link': '__builtin__/str'}]
+
+Similar functionality exists for a mapping. But we first have to add an item:
+
+  >>> rootFolder['list'] = list
+
+Now let's have a look:
+
+  >>> inspect.isMapping()
+  True
+
+  >>> pprint(inspect.getMappingItems())
+  [{'key': u'list',
+    'key_string': "u'list'",
+    'value': "['one', 'two']",
+    'value_type': 'ContainedProxy',
+    'value_type_link': 'zope/app/container/contained/ContainedProxy'}]
+
+The final two methods doeal with the introspection of the annotations. If an
+object is annotatable,
+
+  >>> inspect.isAnnotatable()
+  True
+
+then we can get an annotation mapping:
+
+  >>> rootFolder.__annotations__ = {'my.list': list}
+
+  >>> pprint(inspect.getAnnotationsInfo())
+  [{'key': 'my.list',
+    'key_string': "'my.list'",
+    'value': "['one', 'two']",
+    'value_type': 'PersistentList',
+    'value_type_link': 'persistent/list/PersistentList'}]
+
+And that's it. Fur some browser-based demonstration see ``introspector.txt``.

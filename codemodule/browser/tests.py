@@ -58,8 +58,7 @@ meta = '''
 '''
 
 def setUp(test):
-    placelesssetup.setUp()
-    setup.setUpTraversal()
+    test.globs['rootFolder'] = setup.placefulSetUp(True)
 
     class RootModule(str):
         implements(IAPIDocRootModule)
@@ -84,6 +83,18 @@ def setUp(test):
     ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
                          'zope.source.stx')
 
+    # Register ++apidoc++ namespace
+    from zope.app.apidoc.apidoc import apidocNamespace
+    from zope.app.traversing.interfaces import ITraversable
+    ztapi.provideAdapter(None, ITraversable, apidocNamespace, name="apidoc")
+    ztapi.provideView(None, None, ITraversable, "apidoc", apidocNamespace)
+
+    # Register ++apidoc++ namespace
+    from zope.app.traversing.namespace import view
+    from zope.app.traversing.interfaces import ITraversable
+    ztapi.provideAdapter(None, ITraversable, view, name="view")
+    ztapi.provideView(None, None, ITraversable, "view", view)
+
     context = xmlconfig.string(meta)
 
     # Fix up path for tests.
@@ -97,9 +108,17 @@ def setUp(test):
     zope.app.appsetup.appsetup.__config_source = os.path.join(
         os.path.dirname(zope.app.__file__), 'meta.zcml')
 
+    # Register the index.html view for codemodule.class_.Class
+    from zope.app.apidoc.codemodule.class_ import Class
+    from zope.app.apidoc.codemodule.browser.class_ import ClassDetails
+    from zope.app.publisher.browser import BrowserView
+    class Details(ClassDetails, BrowserView):
+        pass
+    ztapi.browserView(Class, 'index.html', Details)
+
 
 def tearDown(test):
-    placelesssetup.tearDown()
+    setup.placefulTearDown()
     global old_context, old_source_file
     zope.app.appsetup.appsetup.__config_context = old_context
     zope.app.appsetup.appsetup.__config_source = old_source_file
@@ -107,14 +126,16 @@ def tearDown(test):
 
 def test_suite():
     return unittest.TestSuite((
-        doctest.DocFileSuite('README.txt',
-                             setUp=setUp, tearDown=tearDown,
-                             globs={'pprint': doctestunit.pprint},
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
-       doctest.DocTestSuite('zope.app.apidoc.codemodule.browser.menu',
-                             setUp=setUp, tearDown=tearDown,
-                             globs={'pprint': doctestunit.pprint},
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
+        doctest.DocFileSuite(
+            'README.txt',
+            setUp=setUp, tearDown=tearDown,
+            globs={'pprint': doctestunit.pprint},
+            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS),
+        doctest.DocTestSuite(
+            'zope.app.apidoc.codemodule.browser.menu',
+            setUp=setUp, tearDown=tearDown,
+            globs={'pprint': doctestunit.pprint},
+            optionflags=doctest.NORMALIZE_WHITESPACE),
         ))
 
 if __name__ == '__main__':

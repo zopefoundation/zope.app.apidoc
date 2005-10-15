@@ -1,6 +1,5 @@
 <configure
     xmlns="http://namespaces.zope.org/browser"
-    xmlns:zope="http://namespaces.zope.org/zope"
     i18n_domain="zope">
 
   <page
@@ -59,14 +58,6 @@
       class=".zcml.DirectiveDetails"
       permission="zope.ManageContent"/>
 
-  <!-- Introspector -->
-  <page
-      name="introspector.html"
-      for="*"
-      class=".introspector.Introspector"
-      permission="zope.ManageContent"
-      menu="zmi_views" title="Introspector"
-      template="introspector.pt"
-      />
+  <include file="introspector.zcml" />
 
 </configure>

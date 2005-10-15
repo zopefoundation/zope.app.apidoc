@@ -17,6 +17,7 @@ $Id$
 """
 import unittest
 
+from zope.testing import doctest
 from zope.app.testing.functional import BrowserTestCase
 from zope.app.testing.functional import FunctionalDocFileSuite
 
@@ -98,7 +99,9 @@ class CodeModuleTests(BrowserTestCase):
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(CodeModuleTests),
-        FunctionalDocFileSuite("introspector.txt"),
+        FunctionalDocFileSuite(
+            "introspector.txt",
+            optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE),
         ))
 
 if __name__ == '__main__':
