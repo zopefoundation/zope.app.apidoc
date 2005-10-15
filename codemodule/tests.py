@@ -29,6 +29,7 @@ def setUp(test):
 
     meta = os.path.join(os.path.dirname(zope.app.__file__), 'meta.zcml')
     context = xmlconfig.file(meta, zope.app)
+    context.provideFeature('devmode')
     meta = os.path.join(os.path.dirname(zope.app.apidoc.__file__), 'meta.zcml')
     context = xmlconfig.file(meta, zope.app.apidoc, context)
 
@@ -40,7 +41,7 @@ def setUp(test):
 def tearDown(test):
     placelesssetup.tearDown()
     global old_context
-    zope.app.appsetup.appsetup.__config_context = old_context    
+    zope.app.appsetup.appsetup.__config_context = old_context
 
 
 def test_suite():

@@ -23,7 +23,7 @@ The module details are easily created, since we can just use the traversal
 process to get a module documentation object:
 
   >>> details = browser.module.ModuleDetails()
-  >>> details.context = zapi.traverse(cm, 
+  >>> details.context = zapi.traverse(cm,
   ...     'zope/app/apidoc/codemodule/codemodule')
   >>> from zope.publisher.browser import TestRequest
   >>> details.request = TestRequest()
@@ -192,7 +192,7 @@ This is the same deal as before, use the path to generate the function
 documentation component:
 
   >>> details = browser.function.FunctionDetails()
-  >>> details.context = zapi.traverse(cm, 
+  >>> details.context = zapi.traverse(cm,
   ...     'zope/app/apidoc/codemodule/browser/tests/foo')
   >>> details.request = TestRequest()
 
@@ -226,7 +226,7 @@ This is the same deal as before, use the path to generate the text file
 documentation component:
 
   >>> details = browser.text.TextFileDetails()
-  >>> details.context = zapi.traverse(cm, 
+  >>> details.context = zapi.traverse(cm,
   ...     'zope/app/apidoc/codemodule/README.txt')
   >>> details.request = TestRequest()
 
@@ -249,7 +249,7 @@ ZCML files, just a template. The template then uses the directive details to
 provide all the view content:
 
   >>> details = browser.zcml.DirectiveDetails()
-  >>> zcml = zapi.traverse(cm, 
+  >>> zcml = zapi.traverse(cm,
   ...     'zope/app/apidoc/codemodule/configure.zcml')
   >>> details.context = zcml.rootElement
   >>> details.request = TestRequest()

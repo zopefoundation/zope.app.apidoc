@@ -1,6 +1,8 @@
 <configure
   xmlns="http://namespaces.zope.org/zope"
   xmlns:apidoc="http://namespaces.zope.org/apidoc"
+  xmlns:zcml="http://namespaces.zope.org/zcml"
+  zcml:condition="have devmode"
   i18n_domain="zope">
 
   <permission
@@ -28,35 +30,35 @@
 
   <!-- Register Public API Dcoumentation -->
 
-  <apidoc:bookchapter 
+  <apidoc:bookchapter
       id="inspect"
       title="Inspection API"
       />
-  <apidoc:bookchapter 
+  <apidoc:bookchapter
       id="interface"
       title="Interfaces"
       doc_path="interface.txt"
       parent="inspect"
       />
-  <apidoc:bookchapter 
+  <apidoc:bookchapter
       id="component"
       title="Components"
       doc_path="component.txt"
       parent="inspect"
       />
-  <apidoc:bookchapter 
+  <apidoc:bookchapter
       id="presentation"
       title="Presentation"
       doc_path="presentation.txt"
       parent="inspect"
       />
-  <apidoc:bookchapter 
+  <apidoc:bookchapter
       id="misc"
       title="Miscellaneous"
       doc_path="utilities.txt"
       parent="inspect"
       />
-  <apidoc:bookchapter 
+  <apidoc:bookchapter
       id="classregistry"
       title="Class Registry"
       doc_path="classregistry.txt"
@@ -67,7 +69,7 @@
 
   <preferenceGroup
       id="apidoc"
-      title="API Doc Tool" 
+      title="API Doc Tool"
       description="
          These are all the preferences related to viewing the API
          documentation."

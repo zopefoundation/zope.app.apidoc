@@ -132,7 +132,7 @@ and methods of this class::
   []
 
   >>> klass.getMethods()[0] #doctest:+NORMALIZE_WHITESPACE
-  ('get', <unbound method APIDocumentation.get>, 
+  ('get', <unbound method APIDocumentation.get>,
    <InterfaceClass zope.interface.common.mapping.IReadMapping>)
 
 
@@ -179,11 +179,11 @@ implementation `Blah`, which has some other additional methods:
   >>> class Blah(object):
   ...      zope.interface.implements(IBlah)
   ...
-  ...      def foo(self): 
+  ...      def foo(self):
   ...          pass
-  ...      def bar(self): 
+  ...      def bar(self):
   ...          pass
-  ...      def _blah(self): 
+  ...      def _blah(self):
   ...          pass
 
 Now we create the class documentation wrapper:
@@ -226,7 +226,7 @@ function
   >>> func.getAttributes()
   []
 
-but this function has none as most functions. So let's create a new function 
+but this function has none as most functions. So let's create a new function
 
   >>> def foo(bar=1):
   ...     pass
@@ -269,9 +269,9 @@ ZCML File
 ZCML file documentation objects present configuration files and parse the file
 content to provide some advanced markup. The object is easily instantiated:
 
-  >>> path = os.path.join(os.path.dirname(codemodule.__file__), 
+  >>> path = os.path.join(os.path.dirname(codemodule.__file__),
   ...                     'configure.zcml')
-  >>> module = codemodule.module.Module(None, 'zope.app.apidoc.codemodule', 
+  >>> module = codemodule.module.Module(None, 'zope.app.apidoc.codemodule',
   ...                                   zope.app.apidoc.codemodule)
 
   >>> zcml = codemodule.zcml.ZCMLFile(path, module)
@@ -309,7 +309,7 @@ objects and/or generate absolute paths of files,
 the parser info object,
 
   >>> info = `root.info`
-  
+
   # Windows fix
   >>> info = info.replace('\\', '/')
 
@@ -321,7 +321,7 @@ the parser info object,
 the sub-directives,
 
   >>> root.subs[:2]
-  [<Directive (u'http://namespaces.zope.org/zope', u'class')>, 
+  [<Directive (u'http://namespaces.zope.org/zope', u'class')>,
    <Directive (u'http://namespaces.zope.org/zope', u'class')>]
 
 and finally a list of all prefixes.

@@ -47,7 +47,10 @@ def foo(cls, bar=1, *args):
 foo.deprecated = True
 
 meta = '''
-<configure i18n_domain="zope">
+<configure
+    xmlns:meta="http://namespaces.zope.org/meta"
+    i18n_domain="zope">
+  <meta:provides feature="devmode" />
   <include package="zope.app" file="meta.zcml" />
   <include package="zope.app.apidoc" file="meta.zcml" />
   <include package="zope.app" file="menus.zcml" />
@@ -74,8 +77,8 @@ def setUp(test):
 
     # Register Renderer Components
     ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
-                         'zope.source.rest')    
-    ztapi.browserView(IReStructuredTextSource, '', 
+                         'zope.source.rest')
+    ztapi.browserView(IReStructuredTextSource, '',
                       ReStructuredTextToHTMLRenderer)
     # Cheat and register the ReST factory for STX as well.
     ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
@@ -98,8 +101,8 @@ def setUp(test):
 def tearDown(test):
     placelesssetup.tearDown()
     global old_context, old_source_file
-    zope.app.appsetup.appsetup.__config_context = old_context    
-    zope.app.appsetup.appsetup.__config_source = old_source_file    
+    zope.app.appsetup.appsetup.__config_context = old_context
+    zope.app.appsetup.appsetup.__config_source = old_source_file
 
 
 def test_suite():
