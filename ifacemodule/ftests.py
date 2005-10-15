@@ -23,7 +23,7 @@ class InterfaceModuleTests(BrowserTestCase):
 
     def testMenu(self):
         response = self.publish(
-            '/++apidoc++/Interface/menu.html', 
+            '/++apidoc++/Interface/menu.html',
             basic='mgr:mgrpw',
             env = {'name_only': True, 'search_str': 'IComponent'})
         self.assertEqual(response.getStatus(), 200)
@@ -46,10 +46,10 @@ class InterfaceModuleTests(BrowserTestCase):
             body,
             '/++apidoc++/Interface'
             '/zope.app.apidoc.ifacemodule.IInterfaceModule'
-            '/apiindex.html',            
+            '/apiindex.html',
             basic='mgr:mgrpw')
-        
-    
+
+
 
 def test_suite():
     return unittest.TestSuite((

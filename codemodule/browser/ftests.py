@@ -24,7 +24,7 @@ class CodeModuleTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
 
     def testMenu(self):
-        response = self.publish('/++apidoc++/Code/menu.html', 
+        response = self.publish('/++apidoc++/Code/menu.html',
                                 basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
@@ -93,7 +93,7 @@ class CodeModuleTests(BrowserTestCase):
         self.checkForBrokenLinks(
             body, '/++apidoc++/Code/zope/app/apidoc/configure.zcml/index.html',
             basic='mgr:mgrpw')
-        
+
 
 def test_suite():
     return unittest.TestSuite((
