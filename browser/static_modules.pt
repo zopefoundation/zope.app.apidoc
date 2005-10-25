@@ -18,12 +18,6 @@
         </a>
       </li>
     </ul>
-    <div id="preference_entry">
-      <a href="./++preferences++/apidoc/@@apidocMenu.html" target="menu"
-        i18n:translate="">
-        User Preferences
-      </a>
-    </div>
   </div>
 
 </body>
