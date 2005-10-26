@@ -99,12 +99,12 @@ class InterfaceDetails(BrowserView):
         # We have to really, really remove all proxies, since self.context (an
         # interface) is usually security proxied and location proxied. To get
         # the types, we need all proxies gone, otherwise the proxies'
-        # interfaces are picked up as well. 
+        # interfaces are picked up as well.
         iface = removeAllProxies(self.context)
         return [{'name': type.getName(),
                  'path': getPythonPath(type)}
                 for type in interface.getInterfaceTypes(iface)]
-    
+
     def getAttributes(self):
         """Return a list of attributes in the order they were specified."""
         # The `Interface` and `Attribute` class have no security declarations,
@@ -178,7 +178,7 @@ class InterfaceDetails(BrowserView):
             level=component.GENERIC_INTERFACE_LEVEL))
         return [component.getAdapterInfoDictionary(reg)
                 for reg in regs]
-        
+
     def getProvidedAdapters(self):
         """Get adapters where this interface is provided."""
         # Must remove security and location proxies, so that we have access to
@@ -243,7 +243,7 @@ class InterfaceDetails(BrowserView):
             views[(type in views) and type or None].append(reg)
 
 
-        sort_function = lambda x, y: cmp(x['name'], y['name']) 
+        sort_function = lambda x, y: cmp(x['name'], y['name'])
 
         for type, sel_views in views.items():
             for level, qualifier in level_map.items():

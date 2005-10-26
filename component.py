@@ -89,7 +89,7 @@ def filterAdapterRegistrations(regs, iface, level=SPECIFIC_INTERFACE_LEVEL):
                        iface.extends(required_iface):
                     yield reg
                     continue
-            
+
         if level & SPECIFIC_INTERFACE_LEVEL:
             for required_iface in reg.required:
                 if required_iface is iface:
@@ -161,7 +161,7 @@ def getInterfaceInfoDictionary(iface):
     if iface is None:
         return None
     return {'module': iface.__module__, 'name': iface.getName()}
-    
+
 
 def getAdapterInfoDictionary(reg):
     """Return a PT-friendly info dictionary for an adapter registration."""

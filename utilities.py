@@ -126,7 +126,7 @@ def getPermissionIds(name, checker=_marker, klass=_marker):
         entry['write_perm'] = _evalId(checker.setattr_permission_id(name)) \
                               or _('n/a')
     else:
-        entry['read_perm'] = entry['write_perm'] = None 
+        entry['read_perm'] = entry['write_perm'] = None
 
     return entry
 
@@ -215,7 +215,7 @@ def columnize(entries, columns=3):
     if len(entries)%columns == 0:
         per_col = len(entries)/columns
         last_full_col = columns
-    else: 
+    else:
         per_col = len(entries)/columns + 1
         last_full_col = len(entries)%columns
     columns = []
