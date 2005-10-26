@@ -50,7 +50,7 @@
          tal:condition="iface">
       <i i18n:translate="">layer:</i>
       <a href=""
-         tal:attributes="href 
+         tal:attributes="href
              string:../${iface/module}.${iface/name}/apiindex.html">
         <metal:block use-macro="context/@@interface_macros/ifacename" />
       </a>
@@ -60,8 +60,8 @@
       <i i18n:translate="">factory path:</i>
       <a href=""
          tal:condition="View/factory/referencable"
-         tal:attributes="href 
-             string: ../../Code/${View/factory/url}/index.html"
+         tal:attributes="href
+             string:../../Code/${View/factory/url}/index.html"
          tal:content="View/factory/path" />
       <span
          tal:condition="not:View/factory/referencable"
@@ -76,7 +76,7 @@
     <div tal:condition="View/factory/resource">
       <i i18n:translate="">resource:</i>
       <a href=""
-         tal:attributes="href 
+         tal:attributes="href
              string: /@@/${View/factory/resource}"
          tal:content="View/factory/resource" />
     </div>

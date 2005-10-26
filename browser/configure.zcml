@@ -9,43 +9,43 @@
       name="apidoc_macros"
       permission="zope.View"
       class=".macros.APIDocumentationMacros"
-      allowed_interface="zope.interface.common.mapping.IItemMapping" 
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
       />
-  
-  <page 
+
+  <page
       for="*"
       name="menu_macros"
       permission="zope.View"
       template="menu_macros.pt"
       />
 
-  <page 
+  <page
       for="*"
       name="static_menu_macros"
       permission="zope.View"
       template="static_menu_macros.pt"
       />
 
-  <page 
+  <page
       for="*"
       name="details_macros"
       permission="zope.View"
       template="details_macros.pt"
       />
 
-  <resource 
-      name="utilities.js" 
-      file="utilities.js" 
+  <resource
+      name="utilities.js"
+      file="utilities.js"
       />
 
-  <resource 
-      name="harrow.png" 
-      file="harrow.png" 
+  <resource
+      name="harrow.png"
+      file="harrow.png"
       />
 
-  <resource 
-      name="varrow.png" 
-      file="varrow.png" 
+  <resource
+      name="varrow.png"
+      file="varrow.png"
       />
 
   <pages
@@ -68,7 +68,7 @@
     <page
       name="contents.html"
       template="contents.pt" />
-            
+
   </pages>
 
   <!-- Static apidoc -->
@@ -78,7 +78,6 @@
     class=".apidoc.APIDocumentationView"
     permission="zope.app.apidoc.UseAPIDoc">
 
-            
     <page
         name="static.html"
         template="static_index.pt" />
@@ -90,10 +89,10 @@
     <page
       name="staticmenu.html"
       template="static_menu.pt" />
-      
+
     <page
       name="staticcontents.html"
-      template="contents.pt" />
+      template="static_contents.pt" />
 
   </pages>
 
@@ -105,7 +104,7 @@
       for="zope.app.preference.interfaces.IPreferenceGroup"
       class=".preference.APIDocPreferencesTree"
       permission="zope.View"
-      attribute="apidocTree" 
+      attribute="apidocTree"
       />
 
   <page

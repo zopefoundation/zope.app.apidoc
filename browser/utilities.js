@@ -21,7 +21,7 @@ function switchDisplay(id) {
     }
 
     // Reference the style ...
-    if (element.style) { 
+    if (element.style) {
         style = element.style;
     }
 
@@ -36,11 +36,11 @@ function switchDisplay(id) {
     // Change the display style
     if (style.display == 'none') {
         style.display = '';
-        switchImage(id, 'varrow.png'); 
+        switchImage(id, 'varrow.png');
    }
     else {
         style.display = 'none'
-        switchImage(id, 'harrow.png'); 
+        switchImage(id, 'harrow.png');
     }
 }
 
@@ -66,7 +66,7 @@ function getSearchResult(searchtext)
 	{
 	if (searchtext.length == 0) found_sets = new Array();
  	var searchindex = searchtext.length - 1;
- 	
+
  	// process backspace i.e search string gets shorter
 	if (found_sets.length > searchindex)
 	{  rubbish = found_sets.pop();
@@ -78,7 +78,7 @@ function getSearchResult(searchtext)
 	   }
 	   return;
 	}
-	
+
 	var reslist = document.getElementById('resultlist');
 	var children = reslist.getElementsByTagName('div') //reslist.childNodes;
     var element;
@@ -96,7 +96,7 @@ function getSearchResult(searchtext)
 	    refelement = subelement[0];                     // get one a element
 	    comparetext = refelement.firstChild.nodeValue;  // get textnode of a element
 	    compareresult = comparetext.search(searchtext);
-	    
+
 		if (compareresult != -1)
 		   {element.style.display='block';
 		    resultarray[itemcount] = element.getAttribute("id");
@@ -108,9 +108,9 @@ function getSearchResult(searchtext)
 
 function simplegetSearchResult(searchtext)
 	{
-	
+
 	var searchindex = searchtext.length - 1;
-	
+
 	var reslist = document.getElementById('resultlist');
 	var children = reslist.getElementsByTagName('div') //reslist.childNodes;
     var element;
@@ -128,7 +128,7 @@ function simplegetSearchResult(searchtext)
 	    compareresult = comparetext.search(searchtext);
 		if (compareresult != -1)
 		   {element.style.display='block';}
-	
+
 		}
 }
 
@@ -149,13 +149,12 @@ function treeClick(treeid) {
     for (var n = 0; n < children.length; n++) {
          var element = children[n];
          if (found==1) {
-             if ( treeiddepth < element.getAttribute("treedepth") ) {                
-		             element.style.display = action;
+             if ( treeiddepth < element.getAttribute("treedepth") ) {
+                        element.style.display = action;
 	                var elid = element.getAttribute("id");
-	                if (document.getElementById("i"+elid) != null) { 
-			            var subimg = document.getElementById("i"+elid);
-	        
-	               
+	                if (document.getElementById("i"+elid) != null) {
+			            var subimg = document.getElementById("i"+elid)
+
 			if (action=="none" && subimg.src.search('minus') != -1) {
 		             subimg.src = subimg.src.replace('minus', 'plus');
 			}
@@ -181,4 +180,3 @@ function treeClick(treeid) {
 		 }
 	   }
 }
-		

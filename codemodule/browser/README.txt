@@ -91,7 +91,7 @@ process to get a class documentation object:
 Now that we have the details class we can just access the various methods:
 
 `getBases()`
-~~~~~~~~~~~
+~~~~~~~~~~~~
 
 Get all bases of this class.
 
@@ -301,7 +301,7 @@ The result is a bit strange, since the ZCML Documentation module is the
 containment root.
 
 `ifaceURL(value, field, rootURL)`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This method converts the string value of the field to an interface and then
 crafts a documentation URL for it:
@@ -382,7 +382,7 @@ There are several tools that are used to support the introspector.
   >>> from zope.app.apidoc.codemodule.browser import introspector
 
 `getTypeLink(type)`
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 This little helper function returns the path to the type class:
 

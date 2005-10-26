@@ -21,9 +21,9 @@
       name="interface_macros"
       permission="zope.View"
       class=".macros.InterfaceDetailsMacros"
-      allowed_interface="zope.interface.common.mapping.IItemMapping" 
+      allowed_interface="zope.interface.common.mapping.IItemMapping"
       />
-  
+
   <browser:page
       for="*"
       name="iface_macros"
@@ -77,7 +77,7 @@
   <preferenceGroup
       id="apidoc.InterfaceDetails"
       schema=".interfaces.IInterfaceDetailsPreferences"
-      title="Interface Details" 
+      title="Interface Details"
       />
 
 </configure>

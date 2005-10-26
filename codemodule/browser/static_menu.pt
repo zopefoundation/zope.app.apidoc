@@ -10,16 +10,17 @@
 	</div>
     <form action="#" method="post" name="searchform" >
 	  <br />
-      <input type="text" name="path" 
+      <input type="text" name="path"
              style="font-size: 80%; width=95%" />
-		  
-	  <br />	  		
-      <input type="button" name="Find" value="Find" 
-		     onClick="javascript:simplegetSearchResult(document.searchform.path.value)"
+
+	  <br />
+      <input type="button" name="Find" value="Find"
+	     onClick="
+               javascript:simplegetSearchResult(document.searchform.path.value)"
              i18n:attributes="value find-button" style="font-size: 80%"/>
-	
+
 <!--
-      <input type="submit" name="SUBMIT" value="Find" 
+      <input type="submit" name="SUBMIT" value="Find"
              i18n:attributes="value find-button" style="font-size: 80%"/>
   -->
   </form>
@@ -31,12 +32,13 @@
 
 	<div>
       <span i18n:translate="">Search results:</span><br /><br />
-    </div>	
-	  
+    </div>
+
     <div tal:define="pyclasses view/findAllClasses"
          tal:condition="pyclasses" id="resultlist">
 
-      <div tal:repeat="info pyclasses" style="display:block" tal:attributes="id info/counter">
+      <div tal:repeat="info pyclasses" style="display:block"
+           tal:attributes="id info/counter">
         <a href="" target="main"
            tal:attributes="href info/url"
            tal:content="info/path">

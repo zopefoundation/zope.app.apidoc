@@ -34,8 +34,7 @@ class Menu(object):
           >>> from zope.app import zapi
           >>> from zope.app.apidoc.codemodule.class_ import Class
           >>> from zope.app.apidoc.interfaces import IDocumentationModule
-      
-          
+
           >>> cm = zapi.getUtility(IDocumentationModule, 'Code')
           >>> mod = cm['zope']['app']['apidoc']['codemodule']['browser']
 
@@ -59,28 +58,28 @@ class Menu(object):
           >>> menu.context = None
 
           Testing the method with various inputs.
-          
+
           >>> menu.request = TestRequest(form={'path': 'Foo'})
           >>> info = menu.findClasses()
 
           >>> pprint(info)
           [{'path': 'zope.app.apidoc.codemodule.browser.Foo',
-            'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Foo'},
+            'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Foo/'},
            {'path': 'zope.app.apidoc.codemodule.browser.Foo2',
-            'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Foo2'}]
-            
+            'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Foo2/'}]
+
           >>> menu.request = TestRequest(form={'path': 'o2'})
           >>> info = menu.findClasses()
           >>> pprint(info)
           [{'path': 'zope.app.apidoc.codemodule.browser.Foo2',
-            'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Foo2'}]
+            'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Foo2/'}]
 
-          
+
           >>> menu.request = TestRequest(form={'path': 'Blah'})
           >>> info = menu.findClasses()
           >>> pprint(info)
           [{'path': 'zope.app.apidoc.codemodule.browser.Blah',
-            'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Blah'}]
+            'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Blah/'}]
 
         """
         path = self.request.get('path', None)
@@ -93,21 +92,21 @@ class Menu(object):
                 klass = zapi.traverse(classModule, p.replace('.', '/'))
                 results.append(
                     {'path': p,
-                     'url': zapi.absoluteURL(klass, self.request)
+                     'url': zapi.absoluteURL(klass, self.request) + '/'
                      })
         results.sort(lambda x, y: cmp(x['path'], y['path']))
         return results
-    
+
     def findAllClasses(self):
-        
-        """Find all classes 
+
+        """Find all classes
 
         Examples::
           >>> from zope.app import zapi
           >>> from zope.app.apidoc.codemodule.class_ import Class
           >>> from zope.app.apidoc.interfaces import IDocumentationModule
-      
-          
+
+
           >>> cm = zapi.getUtility(IDocumentationModule, 'Code')
           >>> mod = cm['zope']['app']['apidoc']['codemodule']['browser']
 
@@ -131,7 +130,7 @@ class Menu(object):
           >>> menu.context = None
 
           Testing the method with various inputs.
-          
+
           >>> menu.request = TestRequest(form={'path': 'Foo'})
           >>> info = menu.findAllClasses()
 
@@ -150,6 +149,6 @@ class Menu(object):
                  'counter': counter
                  })
             counter += 1
-            
+
         results.sort(lambda x, y: cmp(x['path'], y['path']))
         return results

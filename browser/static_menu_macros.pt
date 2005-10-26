@@ -7,17 +7,11 @@
   i18n:domain="zope">
 
   <head>
-    <!-- Waaa -->
-    <title metal:define-slot="title" i18n:translate="">Z3 UI</title>
+    <title metal:define-slot="title" i18n:translate="">Zope 3 apidoc</title>
 
+    <link type="text/css" rel="stylesheet" media="all" href=""
+          tal:attributes="href string:${context/++resource++apidoc.css}" />
 
-    <style type="text/css" 
-           media="all"
-           tal:content=
-           "string: @import url(${context/++resource++apidoc.css});"
-           >
-      @import url(/++resource++apidoc.css);
-    </style>
     <script type="text/javascript" src="utilities.js"
             tal:attributes="src string:${context/++resource++utilities.js}" >
     </script>

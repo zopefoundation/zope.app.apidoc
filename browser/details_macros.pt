@@ -3,19 +3,14 @@
 <html
   xmlns="http://www.w3.org/1999/xhtml"
   xml:lang="en"
-  lang="en" 
+  lang="en"
   i18n:domain="zope">
 
   <head>
-    <title metal:define-slot="title" i18n:translate="">Z3 UI</title>
+    <title metal:define-slot="title" i18n:translate="">Zope 3 apidoc</title>
 
-    <style type="text/css" 
-           media="all"
-           tal:content=
-           "string: @import url(${context/++resource++apidoc.css});"
-           >
-      @import url(/++resource++apidoc.css);
-    </style>
+    <link type="text/css" rel="stylesheet" media="all" href=""
+          tal:attributes="href context/++resource++apidoc.css" />
 
     <script type="text/javascript" src="utilities.js"
             tal:attributes="src string:${context/++resource++utilities.js}" >
@@ -47,7 +42,7 @@
          style="vertical-align: middle"
          tal:condition="not:show"
          tal:attributes="id string:${elementId}.arrow" />
-  
+
     <img src="/@@/varrow.png" border="0" id=".arrow"
          style="vertical-align: middle"
          tal:condition="show"
