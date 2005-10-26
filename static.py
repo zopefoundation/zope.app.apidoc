@@ -93,14 +93,23 @@ def completeURL(url):
 
 def isLocalURL(url):
     """Determine whether the passed in URL is local and accessible."""
+    # Javascript function call
     if url.startswith('javascript:'):
         return False
+    # Mail Link
     if url.startswith('mailto:'):
         return False
+    # External Link
     if url.startswith('http://') and not url.startswith(URL):
         return False
     return True
 
+def isApidocLink(url):
+    if url.startswith(URL+'++apidoc++/'):
+        return True
+    if url.startswith(URL+'@@/'):
+        return True
+    return False
 
 class StaticAPODoc(object):
     """Static API doc Maker"""
@@ -229,11 +238,11 @@ class StaticAPODoc(object):
                 link.absolute_url = completeURL(cleanURL(link.absolute_url))
                 # Add link to the queue
                 if link.absolute_url not in self.visited:
-                    if isLocalURL(link.url):
+                    if isLocalURL(link.url) and isApidocLink(link.absolute_url):
                         self.linkQueue.insert(0, link)
 
                 # Rewrite URLs
-                if isLocalURL(link.url):
+                if isLocalURL(link.url) and isApidocLink(link.absolute_url):
                     parts = ['..']*len(segments)
                     parts.append(link.absolute_url.replace(URL, ''))
                     contents = contents.replace(link.url, '/'.join(parts))
