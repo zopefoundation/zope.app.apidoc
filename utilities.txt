@@ -3,7 +3,7 @@ Miscellaneous Utilities
 =======================
 
 The utilities module provides some useful helper functions and classes that
-make the work of the API doctool and inspection code easier. 
+make the work of the API doctool and inspection code easier.
 
   >>> from zope.app.apidoc import utilities
 
@@ -19,7 +19,7 @@ directory. This function attempts to remove the absolute path to the root
 directory and replaces it with "Zope3".
 
   >>> import os
-  >>> path = os.path.join(utilities.BASEDIR, 'src', 'zope', 'README.txt')  
+  >>> path = os.path.join(utilities.BASEDIR, 'src', 'zope', 'README.txt')
 
   >>> utilities.BASEDIR in path
   True
@@ -42,7 +42,7 @@ returned:
 
 
 `truncateSysPath(path)`
-----------------------
+-----------------------
 
 In some cases it is useful to just know the path after the sys path of a
 module. For example, you have a path of a file in a module. To look up the
@@ -58,7 +58,7 @@ system's modules list.
 If there is no matching system path, then the whole path is returned:
 
   >>> utilities.truncateSysPath('some/other/path')
-  'some/other/path' 
+  'some/other/path'
 
 
 `ReadContainerBase` (Class)
@@ -105,16 +105,16 @@ and then `items()`
 Then naturally, all the other methods work as well:
 
   * `__getitem__(key)`
-  
+
     >>> container['a']
     1
     >>> container['c']
     Traceback (most recent call last):
     ...
     KeyError: 'c'
-  
+
   * `__contains__(key)`
-  
+
     >>> 'a' in container
     True
     >>> 'c' in container
@@ -192,7 +192,7 @@ and even methods. If a method is passed in, its class path is returned.
 Modules are another kind of objects that can return a python path:
 
   >>> utilities.getPythonPath(utilities)
-  'zope.app.apidoc.utilities' 
+  'zope.app.apidoc.utilities'
 
 Passing in `None` returns `None`:
 
@@ -229,7 +229,7 @@ We start out by defining the class and then the checker for it:
   ...      pass
 
   >>> checker = Checker({'attr': 'zope.Read', 'attr3': CheckerPublic},
-  ...                   {'attr': 'zope.Write', 'attr3': CheckerPublic}) 
+  ...                   {'attr': 'zope.Write', 'attr3': CheckerPublic})
   >>> defineChecker(Sample, checker)
 
 Now let's see how this function works:
@@ -241,7 +241,7 @@ Now let's see how this function works:
   'zope.Write'
 
   >>> from zope.security.checker import getCheckerForInstancesOf
-  >>> entries = utilities.getPermissionIds('attr', 
+  >>> entries = utilities.getPermissionIds('attr',
   ...                                      getCheckerForInstancesOf(Sample))
   >>> entries['read_perm']
   'zope.Read'
@@ -297,7 +297,7 @@ Here is a function that has an unspecified amount of keyword arguments:
 And here we mix specified and unspecified keyword arguments:
 
   >>> def func(attr, attr2=None, **kw):
-  ...     pass      
+  ...     pass
   >>> utilities.getFunctionSignature(func)
   '(attr, attr2=None, **kw)'
 
@@ -338,7 +338,7 @@ unspecified keyword arguments:
   '(attr, *args, **kw)'
 
 If you do not pass a function or method to the function, it will fail:
-  
+
   >>> utilities.getFunctionSignature('func')
   Traceback (most recent call last):
   ...
@@ -398,7 +398,7 @@ First we need to create a class with some attributes, properties and methods:
   ...     def _getAttr(self):
   ...         return self.attr
   ...     attr2 = property(_getAttr)
-  
+
 We can simply pass in the class and get the public attributes:
 
   >>> attrs = utilities.getPublicAttributes(Sample)
@@ -412,7 +412,7 @@ But an instance of that class will work as well.
   >>> attrs.sort()
   >>> attrs
   ['attr', 'attr2', 'func']
-  
+
 The function will also take inheritance into account and return all inherited
 attributes as well:
 
@@ -489,7 +489,7 @@ If both, the `interfaces` and `klass` argument are missing, raise an error:
 
 Similarly, it does not make sense if both are specified:
 
-  >>> utilities.getInterfaceForAttribute('getAttr', interfaces=(I1,I2), 
+  >>> utilities.getInterfaceForAttribute('getAttr', interfaces=(I1,I2),
   ...                                    klass=Sample)
   Traceback (most recent call last):
   ...
@@ -511,7 +511,7 @@ Here are some examples:
 
   >>> utilities.columnize([1, 2, 3], 3)
   [[1], [2], [3]]
-  
+
   >>> utilities.columnize([1, 2, 3, 4], 3)
   [[1, 2], [3], [4]]
 
@@ -523,7 +523,7 @@ Here are some examples:
 
   >>> utilities.columnize([1, 2, 3], 2)
   [[1, 2], [3]]
-  
+
   >>> utilities.columnize([1, 2, 3, 4], 2)
   [[1, 2], [3, 4]]
 
@@ -532,7 +532,7 @@ Here are some examples:
 ----------------------
 
 This function inspects a module to determine the supported documentation
-format. The function returns a valid renderer source factory id. 
+format. The function returns a valid renderer source factory id.
 
 If the `__docformat__` module attribute is specified, its value will be used
 to look up the factory id:
@@ -549,7 +549,7 @@ By default structured text is returned:
 
 This is a sensible default, since we only decided later in development to
 endorse restructured text, so that many files are still in the structured text
-format. All converted and new modules will have the `__docformat__` attribute. 
+format. All converted and new modules will have the `__docformat__` attribute.
 
 
 `renderText(text, module=None, format=None)`

@@ -40,7 +40,7 @@ class IBookModule(IDocumentationModule):
     """
 
 class BookModule(OnlineHelp):
-    """Represent a book compiled from various README.txt and other *.txt
+    """Represent a book compiled from various `README.txt` and other `*.txt`
     documentation files.
     """
 

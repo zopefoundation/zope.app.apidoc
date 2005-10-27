@@ -86,9 +86,12 @@ def cleanURL(url):
 def completeURL(url):
     """Add file to URL, if not provided."""
     if url.endswith('/'):
-        url += '@@index.html'
+        url += 'index.html'
     if '.' not in url.split('/')[-1]:
-        url += '/@@index.html'
+        url += '/index.html'
+    filename = url.split('/')[-1]
+    if filename.startswith('@@'):
+        url = url.replace(filename, filename[2:])
     return url
 
 def isLocalURL(url):
@@ -234,18 +237,19 @@ class StaticAPODoc(object):
 
             for link in links:
                 # Make sure URLs have file extensions, but no parameters
+                original_url = link.url
                 link.url = completeURL(cleanURL(link.url))
                 link.absolute_url = completeURL(cleanURL(link.absolute_url))
-                # Add link to the queue
-                if link.absolute_url not in self.visited:
-                    if isLocalURL(link.url) and isApidocLink(link.absolute_url):
+
+                if isLocalURL(link.url) and isApidocLink(link.absolute_url):
+                    # Add link to the queue
+                    if link.absolute_url not in self.visited:
                         self.linkQueue.insert(0, link)
 
-                # Rewrite URLs
-                if isLocalURL(link.url) and isApidocLink(link.absolute_url):
+                    # Rewrite URLs
                     parts = ['..']*len(segments)
                     parts.append(link.absolute_url.replace(URL, ''))
-                    contents = contents.replace(link.url, '/'.join(parts))
+                    contents = contents.replace(original_url, '/'.join(parts))
 
         # Write the data into the file
         file = open(filepath, 'w')

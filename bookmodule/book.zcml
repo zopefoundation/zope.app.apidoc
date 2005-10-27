@@ -251,12 +251,6 @@
         parent="zodb"
         doc_path="subtransactions.txt"
         />
-    <bookchapter
-        id="collaborations"
-        title="Collaborations"
-        parent="zodb"
-        doc_path="collaborations.txt"
-        />
   </configure>
 
 </configure>
