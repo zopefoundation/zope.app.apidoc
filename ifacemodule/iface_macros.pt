@@ -13,7 +13,7 @@
     <code tal:content="field/name">field</code>
     <span tal:condition="field/required">*</span>
   </b>
-  - 
+  -
   <a href=""
      tal:attributes="href string:$rootURL/Code/${field/class/path}/index.html">
     <code tal:content="field/class/name">Field</code>
@@ -63,7 +63,7 @@
   </div>
   <div class="indent">
 
-    <ul class="attr-list" 
+    <ul class="attr-list"
         tal:condition="python: attributes or fields">
       <li tal:repeat="attribute attributes">
         <metal:block use-macro="context/@@interface_macros/attribute" />
@@ -72,11 +72,11 @@
         <metal:block use-macro="context/@@interface_macros/field" />
       </li>
     </ul>
-    
+
     <p tal:condition="python: not (attributes or fields)">
       <em i18n:translate="">There are no attributes or fields specified.</em>
     </p>
-    
+
     <p tal:condition="python: attributes or fields">
       <em><b class="required">*</b> =
       <span i18n:translate="">required</span></em>
@@ -87,7 +87,7 @@
 
 
 <metal:block define-macro="views" i18n:domain="zope">
-  <div class="indent">    
+  <div class="indent">
     <ul class="attr-list" tal:condition="Views">
       <li tal:repeat="View Views">
         <metal:block use-macro="context/@@interface_macros/View" />

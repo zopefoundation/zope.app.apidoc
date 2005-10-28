@@ -3,7 +3,7 @@
 <html
   xmlns="http://www.w3.org/1999/xhtml"
   xml:lang="en"
-  lang="en" 
+  lang="en"
   i18n:domain="zope">
 
   <head>
@@ -30,7 +30,7 @@
   <metal:block define-slot="menu-title">
     <div class="menu" i18n:translate="">Menu</div>
   </metal:block>
- 
+
   <metal:block define-slot="pre_menu" />
 
   <metal:block define-slot="menu">
@@ -41,8 +41,11 @@
                        result    root/getFlatDicts;
                        nodeDictList   python:result[0];
                        maxDepth       python:result[1]">
-    <tr tal:repeat="nodeInfo nodeDictList" 
-	tal:attributes="id repeat/nodeInfo/index; treedepth python:len(nodeInfo['row-state'])+1; treehasChildren nodeInfo/node/hasChildren;"
+    <tr tal:repeat="nodeInfo nodeDictList"
+	tal:attributes="
+            id repeat/nodeInfo/index;
+            treedepth python:len(nodeInfo['row-state'])+1;
+            treehasChildren nodeInfo/node/hasChildren;"
 	style="display:block" treestate="block">
     <tal:block tal:define="node nodeInfo/node">
 
@@ -52,28 +55,29 @@
   </td>
 
   <td style="width:16px">
-    <a href="#"
-       tal:define="treeid repeat/nodeInfo/index"
-       tal:attributes="onClick string:javascript:treeClick($treeid);"
-       tal:condition="node/hasChildren">
+    <tal:block
+        define="treeid repeat/nodeInfo/index"
+        condition="node/hasChildren">
       <tal:block condition="not:nodeInfo/last-level-node">
-        <img tal:attributes="src context/++resource++tree_images/plus_vline.png; id string:i$treeid"
-             tal:condition="not:node/expanded" alt="+" border="0" />
-        <img tal:attributes="src context/++resource++tree_images/minus_vline.png; id string:i$treeid" 
+        <img tal:attributes="
+                 src context/++resource++tree_images/minus_vline.png;
+                 id string:i$treeid;
+                 onClick string:javascript:treeClick($treeid);"
              tal:condition="node/expanded" alt="-" border="0" />
       </tal:block>
       <tal:block condition="nodeInfo/last-level-node">
-        <img tal:attributes="src context/++resource++tree_images/plus.png; id string:i$treeid" 
-             tal:condition="not:node/expanded" alt="+" border="0" />
-        <img tal:attributes="src context/++resource++tree_images/minus.png; id string:i$treeid" 
+        <img tal:attributes="
+                 src context/++resource++tree_images/minus.png;
+                 id string:i$treeid;
+                 onClick string:javascript:treeClick($treeid);"
              tal:condition="node/expanded" alt="-" border="0" />
       </tal:block>
-    </a>
+    </tal:block>
 
     <tal:block condition="not:node/hasChildren">
-      <img tal:attributes="src context/++resource++tree_images/tline.png;"  
+      <img tal:attributes="src context/++resource++tree_images/tline.png;"
            tal:condition="not:nodeInfo/last-level-node" alt="T" border="0" />
-      <img tal:attributes="src context/++resource++tree_images/lline.png;"  
+      <img tal:attributes="src context/++resource++tree_images/lline.png;"
            tal:condition="nodeInfo/last-level-node" alt="L" border="0" />
     </tal:block>
   </td>
@@ -86,7 +90,7 @@
         tal:condition="python: view.getMenuLink(node) is not None"
         i18n:translate="">
       node/id
-    </a><tal:block 
+    </a><tal:block
         replace="python: view.getMenuTitle(node)"
         condition="python: view.getMenuLink(node) is None"
         i18n:translate="" />

@@ -27,7 +27,7 @@ def getAllTextOfInterface(iface):
     for name in iface:
         attr = iface[name]
         text += attr.getName()
-        text += attr.getDoc()
+        text += attr.getDoc() or ''
     return text
 
 
@@ -40,7 +40,7 @@ class Menu(object):
         name_only = ('name_only' in self.request) and True or False
         search_str = self.request.get('search_str', None)
         results = []
-        
+
         if search_str is None:
             return results
         for name, iface in self.context.items():
@@ -55,19 +55,12 @@ class Menu(object):
 
     def findAllInterfaces(self):
         """Find all interfaces."""
-        
-        #name_only = ('name_only' in self.request) and True or False
-        #search_str = self.request.get('search_str', None)
+
         results = []
-        
-        #if search_str is None:
-        #    return results
+
         counter = 0
         for name, iface in self.context.items():
-            #if (search_str in name or
-            #    (not name_only and search_str in getAllTextOfInterface(iface))):
             rtext = getAllTextOfInterface(iface)
-            
             results.append(
                 {'name': name,
                  'url': './%s/apiindex.html' %name,
@@ -75,6 +68,6 @@ class Menu(object):
                  'doc': whitepattern.sub(' ',getAllTextOfInterface(iface))
                  })
             counter += 1
-            
+
         results.sort(lambda x, y: cmp(x['name'], y['name']))
-        return results    
+        return results

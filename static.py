@@ -17,6 +17,7 @@ $Id$
 """
 __docformat__ = "reStructuredText"
 
+import base64
 import os
 import sys
 import time
@@ -37,7 +38,7 @@ USE_PUBLISHER = True
 
 URL = 'http://localhost:8080/'
 
-START_PAGE = '++apidoc++/static.html'
+START_PAGE = '++apidoc++/Type/@@staticmenu.html'
 
 BASE_DIR = 'apidoc'
 
@@ -58,7 +59,11 @@ urltags = {
 additionalURLs = [
     '@@/varrow.png',
     '@@/harrow.png',
-    ]
+    '@@/tree_images/minus.png',
+    '@@/tree_images/plus.png',
+    '@@/tree_images/minus_vline.png',
+    '@@/tree_images/plus_vline.png',
+]
 
 def getMaxWidth():
     try:
@@ -94,40 +99,96 @@ def completeURL(url):
         url = url.replace(filename, filename[2:])
     return url
 
-def isLocalURL(url):
-    """Determine whether the passed in URL is local and accessible."""
-    # Javascript function call
-    if url.startswith('javascript:'):
-        return False
-    # Mail Link
-    if url.startswith('mailto:'):
-        return False
-    # External Link
-    if url.startswith('http://') and not url.startswith(URL):
-        return False
-    return True
 
-def isApidocLink(url):
-    if url.startswith(URL+'++apidoc++/'):
-        return True
-    if url.startswith(URL+'@@/'):
-        return True
-    return False
+class Link(object):
+    """A link in the page."""
 
-class StaticAPODoc(object):
+    def __init__(self, mechLink, referenceURL=None):
+        self.referenceURL = referenceURL
+        self.originalURL = mechLink.url
+        self.callableURL = mechLink.absolute_url
+        self.url = completeURL(cleanURL(mechLink.url))
+        self.absoluteURL = completeURL(cleanURL(mechLink.absolute_url))
+
+    def isLocalURL(self):
+        """Determine whether the passed in URL is local and accessible."""
+        # Javascript function call
+        if self.url.startswith('javascript:'):
+            return False
+        # Mail Link
+        if self.url.startswith('mailto:'):
+            return False
+        # External Link
+        if self.url.startswith('http://') and not self.url.startswith(URL):
+            return False
+        return True
+
+    def isApidocLink(self):
+        # Make sure that only apidoc links are loaded
+        if self.absoluteURL.startswith(URL+'++apidoc++/'):
+            return True
+        if self.absoluteURL.startswith(URL+'@@/'):
+            return True
+        return False
+
+
+class OnlineBrowser(mechanize.Browser, object):
+
+    def setUserAndPassword(self, user, pw):
+        """Specify the username and password to use for the retrieval."""
+        hash = base64.encodestring(user+':'+pw).strip()
+        self.addheaders.append(('Authorization', 'Basic '+hash))
+
+    @property
+    def contents(self):
+        """Get the content of the returned data"""
+        response = self.response()
+        old_location = response.tell()
+        response.seek(0)
+        contents = response.read()
+        response.seek(old_location)
+        return contents
+
+
+class PublisherBrowser(zope.testbrowser.testing.PublisherMechanizeBrowser,
+                       object):
+
+    def __init__(self, *args, **kw):
+        functional.FunctionalTestSetup()
+        super(PublisherBrowser, self).__init__(*args, **kw)
+
+    def setUserAndPassword(self, user, pw):
+        """Specify the username and password to use for the retrieval."""
+        self.addheaders.append(('Authorization', 'Basic %s:%s' %(user, pw)))
+
+    @property
+    def contents(self):
+        """Get the content of the returned data"""
+        response = self.response()
+        old_location = response.tell()
+        response.seek(0)
+        # Remove HTTP Headers
+        for line in iter(lambda: response.readline().strip(), ''):
+            pass
+        contents = response.read()
+        response.seek(old_location)
+        return contents
+
+
+class StaticAPIDocGenerator(object):
     """Static API doc Maker"""
 
     def __init__(self):
-        self.linkQueue = [mechanize.Link(URL, START_PAGE, '', '', ())]
-        for url in additionalURLs:
-            self.linkQueue.append(mechanize.Link(URL, url, '', '', ()))
+        self.linkQueue = []
+        for url in  additionalURLs + [START_PAGE]:
+            link = Link(mechanize.Link(URL, url, '', '', ()))
+            self.linkQueue.append(link)
         self.rootDir = os.path.join(os.path.dirname(__file__), BASE_DIR)
         self.maxWidth = getMaxWidth()-13
 
     def start(self):
         """Start the retrieval of the apidoc."""
         t0 = time.time()
-        c0 = time.clock()
 
         self.visited = []
         self.counter = 0
@@ -136,16 +197,11 @@ class StaticAPODoc(object):
             os.mkdir(self.rootDir)
 
         if USE_PUBLISHER:
-            self.sendMessage('Setting up Zope 3.')
-            functional.FunctionalTestSetup()
-            self.browser = zope.testbrowser.testing.PublisherMechanizeBrowser()
-            self.browser.addheaders.append(
-                ('Authorization', 'Basic mgr:mgrpw'))
+            self.browser = PublisherBrowser()
         else:
-            self.browser = mechanize.Browser()
-            self.browser.addheaders.append(
-                ('Authorization', 'Basic Z2FuZGFsZjoxMjM='))
+            self.browser = OnlineBrowser()
 
+        self.browser.setUserAndPassword('mgr', 'mgrpw')
         self.browser.urltags = urltags
 
         # Work through all links until there are no more to work on.
@@ -155,26 +211,24 @@ class StaticAPODoc(object):
             # Sometimes things are placed many times into the queue, for example
             # if the same link appears twice in a page. In those cases, we can
             # check at this point whether the URL has been already handled.
-            if link.absolute_url not in self.visited:
+            if link.absoluteURL not in self.visited:
                 self.showStatistics(link)
                 self.processLink(link)
 
         t1 = time.time()
-        c1 = time.clock()
 
-        self.sendMessage(
-            "Run time: %.3f sec real, %.3f sec CPU" %(t1-t0, c1-c0))
+        self.sendMessage("Run time: %.3f sec real" % (t1-t0))
 
     def showStatistics(self, link):
         self.counter += 1
         if VERBOSITY >= 3:
-            url = link.absolute_url[-(self.maxWidth):]
+            url = link.absoluteURL[-(self.maxWidth):]
             sys.stdout.write('\r' + ' '*(self.maxWidth+13))
             sys.stdout.write('\rLink %5d: %s' % (self.counter, url))
             sys.stdout.flush()
 
     def sendMessage(self, msg, verbosity=4):
-        if verbosity >= VERBOSITY:
+        if VERBOSITY >= verbosity:
             sys.stdout.write('\n')
             sys.stdout.write(VERBOSITY_MAP.get(verbosity, 'INFO')+': ')
             sys.stdout.write(msg)
@@ -183,7 +237,23 @@ class StaticAPODoc(object):
 
     def processLink(self, link):
         """Process a link."""
-        url = link.absolute_url
+        url = link.absoluteURL
+
+        # Whatever will happen, we have looked at the URL
+        self.visited.append(url)
+
+        # Retrieve the content
+        try:
+            self.browser.open(link.callableURL)
+        except urllib2.HTTPError, error:
+            # Something went wrong with retrieving the page.
+            self.sendMessage(
+                '%s (%i): %s' % (error.msg, error.code, link.callableURL), 2)
+            return
+        except ValueError:
+            # We had a bad URL running the publisher browser
+            self.sendMessage('Bad URL: ' + link.callableURL, 2)
+            return
 
         # Make sure the directory exists and get a file path.
         relativeURL = url.replace(URL, '')
@@ -198,33 +268,8 @@ class StaticAPODoc(object):
 
         filepath = os.path.join(dir, filename)
 
-        # Whatever will happen, we have looked at the URL
-        self.visited.append(url)
-
-        # Retrieve the content
-        try:
-            self.browser.open(url)
-        except urllib2.HTTPError:
-            # TODO: Provide less misleading message; many different errors can
-            #       happen here.
-            self.sendMessage('Link not found: ' + link.absolute_url, 2)
-            return
-        except ValueError:
-            # We had a bad URL running the publisher browser
-            self.sendMessage('Bad URL: ' + link.absolute_url, 2)
-            return
-
-        response = self.browser.response()
-        old_location = response.tell()
-        response.seek(0)
-
-        if USE_PUBLISHER:
-            # Remove HTTP Headers
-            for line in iter(lambda: response.readline().strip(), ''):
-                pass
-
-        contents = response.read()
-        response.seek(old_location)
+        # Get the response content
+        contents = self.browser.contents
 
         # Now retrieve all links
         if self.browser.viewing_html():
@@ -235,21 +280,21 @@ class StaticAPODoc(object):
                 self.sendMessage('Failed to parse HTML: ' + url, 1)
                 links = []
 
+            links = [Link(mech_link, url) for mech_link in links]
+
             for link in links:
-                # Make sure URLs have file extensions, but no parameters
-                original_url = link.url
-                link.url = completeURL(cleanURL(link.url))
-                link.absolute_url = completeURL(cleanURL(link.absolute_url))
+                # Make sure we do not handle unwanted links.
+                if not (link.isLocalURL() and link.isApidocLink()):
+                    continue
 
-                if isLocalURL(link.url) and isApidocLink(link.absolute_url):
-                    # Add link to the queue
-                    if link.absolute_url not in self.visited:
-                        self.linkQueue.insert(0, link)
+                # Add link to the queue
+                if link.absoluteURL not in self.visited:
+                    self.linkQueue.insert(0, link)
 
-                    # Rewrite URLs
-                    parts = ['..']*len(segments)
-                    parts.append(link.absolute_url.replace(URL, ''))
-                    contents = contents.replace(original_url, '/'.join(parts))
+                # Rewrite URLs
+                parts = ['..']*len(segments)
+                parts.append(link.absoluteURL.replace(URL, ''))
+                contents = contents.replace(link.originalURL, '/'.join(parts))
 
         # Write the data into the file
         file = open(filepath, 'w')
@@ -258,14 +303,11 @@ class StaticAPODoc(object):
 
         # Cleanup; this is very important, otherwise we are opening too many
         # files.
-        self.browser.response().close() # bug fix
         self.browser.close()
-        self.browser._history = [] # bug fix
-
 
 def main():
     global BASE_DIR
     BASE_DIR = sys.argv[1]
-    maker = StaticAPODoc()
+    maker = StaticAPIDocGenerator()
     maker.start()
     sys.exit(0)

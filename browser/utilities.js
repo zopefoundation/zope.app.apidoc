@@ -33,18 +33,18 @@ function switchDisplay(id) {
         return;
     }
 
-    // Change the display style
+   // Change the display style
     if (style.display == 'none') {
         style.display = '';
-        switchImage(id, 'varrow.png');
+        switchImage(id, 'harrow.png', 'varrow.png');
    }
     else {
         style.display = 'none'
-        switchImage(id, 'harrow.png');
+        switchImage(id, 'varrow.png', 'harrow.png');
     }
 }
 
-function switchImage(id, name) {
+function switchImage(id, oldname, newname) {
     if(document.getElementById) {
        // DOM
        var element = document.getElementById(id+'.arrow');
@@ -52,7 +52,7 @@ function switchImage(id, name) {
        // Proprietary DOM
        var element = document.all[id+'.arrow'];
     }
-    element.src = '/@@/'+name;
+    element.src = element.src.replace(oldname, newname);
 }
 
 /*

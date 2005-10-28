@@ -35,19 +35,21 @@
 
 <metal:block define-macro="displaySwitch">
 
-  <a href="javascript:switchDisplay('')" style="text-decoration: none"
-     tal:attributes="href string:javascript:switchDisplay('${elementId}')">
+  <img src="/@@/harrow.png" border="0" id=".arrow" onClick=""
+       style="vertical-align: middle"
+       tal:condition="not:show"
+       tal:attributes="
+           id string:${elementId}.arrow;
+           src context/++resource++harrow.png;
+           onClick string:javascript:switchDisplay('${elementId}')">
 
-    <img src="/@@/harrow.png" border="0" id=".arrow"
-         style="vertical-align: middle"
-         tal:condition="not:show"
-         tal:attributes="id string:${elementId}.arrow" />
-
-    <img src="/@@/varrow.png" border="0" id=".arrow"
-         style="vertical-align: middle"
-         tal:condition="show"
-         tal:attributes="id string:${elementId}.arrow" />
-  </a>
+  <img src="/@@/varrow.png" border="0" id=".arrow" onClick=""
+       style="vertical-align: middle"
+       tal:condition="show"
+       tal:attributes="
+           id string:${elementId}.arrow;
+           src context/++resource++varrow.png;
+           onClick string:javascript:switchDisplay('${elementId}')">
 
 </metal:block>
 
