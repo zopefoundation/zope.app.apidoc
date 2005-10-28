@@ -8,7 +8,7 @@ Utilities Menu and Details Views
 
 This is a class that helps building the menu. The `menu_macros` expect the menu
 view class to have the `getMenuTitle(node)` and `getMenuLink(node)` methods
-implemented. `node` is a `zope.app.tree.node.Node` instance. 
+implemented. `node` is a `zope.app.tree.node.Node` instance.
 
 Let's start by creating the menu:
 
@@ -24,7 +24,7 @@ we first have to create a utility interface
 
 and then wrap it in a node:
 
-  >>> from zope.app.tree.node import Node 
+  >>> from zope.app.tree.node import Node
   >>> node = Node(uiface)
 
 You can now get the title and link from the menu:
@@ -39,7 +39,7 @@ have to create a utility registration
 
   >>> foobar_reg = type(
   ...     'RegistrationStub', (),
-  ...     {'name': 'FooBar', 'provided': None, 
+  ...     {'name': 'FooBar', 'provided': None,
   ...      'component': None, 'doc': ''})()
 
 which is then wrapped in a `Utility` documentation class and then in a node:
@@ -53,14 +53,14 @@ We can now ask the menu to give us the tile and link for the utility:
   >>> menu.getMenuTitle(node)
   'FooBar'
   >>> menu.getMenuLink(node)
-  './foo.bar.iface/FooBar/index.html'
+  './foo.bar.iface/Rm9vQmFy/index.html'
 
 Finally, we get menu title and link for a utility without a name:
 
   >>> from zope.app.apidoc.utilitymodule.utilitymodule import NONAME
   >>> noname_reg = type(
   ...     'RegistrationStub', (),
-  ...     {'name': NONAME, 'provided': None, 
+  ...     {'name': NONAME, 'provided': None,
   ...      'component': None, 'doc': ''})()
 
   >>> util = Utility(uiface, noname_reg)
@@ -68,7 +68,7 @@ Finally, we get menu title and link for a utility without a name:
   >>> menu.getMenuTitle(node)
   'no name'
   >>> menu.getMenuLink(node)
-  './foo.bar.iface/__noname__/index.html'
+  './foo.bar.iface/X19ub25hbWVfXw==/index.html'
 
 
 `UtilityDetails` class
@@ -78,7 +78,7 @@ This class provides presentation-ready data about a particular utility.
 
 `getName()`
 -----------
-    
+
 Get the name of the utility.
 
   >>> from zope.app.apidoc.utilitymodule.browser import UtilityDetails
@@ -108,7 +108,7 @@ registration:
 
   >>> blah_reg = type(
   ...     'RegistrationStub', (),
-  ...     {'name': 'Blah', 'provided': IBlah, 
+  ...     {'name': 'Blah', 'provided': IBlah,
   ...      'component': None, 'doc': ''})()
 
 Then we wrap the registration in the utility documentation class and create

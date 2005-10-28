@@ -29,13 +29,13 @@ class UtilityDetails(object):
 
     def getName(self):
         """Get the name of the utility."""
-        name = zapi.name(self.context)
+        name = self.context.name
         if name == NONAME:
             return 'no name'
         return name
 
     def getInterface(self):
-        """Return the interface the utility provides.""" 
+        """Return the interface the utility provides."""
         schema = LocationProxy(self.context.interface,
                                self.context,
                                getPythonPath(self.context.interface))
@@ -46,7 +46,7 @@ class UtilityDetails(object):
         """Return the python path of the implementation class."""
         # We could use `type()` here, but then we would need to remove the
         # security proxy from the component. This is easier and also supports
-        # old-style classes 
+        # old-style classes
         klass = self.context.component.__class__
 
         return {'path': getPythonPath(klass),
@@ -59,11 +59,11 @@ class Menu(object):
     def getMenuTitle(self, node):
         """Return the title of the node that is displayed in the menu."""
         obj = node.context
-        if zapi.name(obj) == NONAME:
-            return 'no name'
         if zapi.isinstance(obj, UtilityInterface):
             return zapi.name(obj).split('.')[-1]
-        return zapi.name(obj)
+        if obj.name == NONAME:
+            return 'no name'
+        return obj.name
 
     def getMenuLink(self, node):
         """Return the HTML link of the node that is displayed in the menu."""

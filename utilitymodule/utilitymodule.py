@@ -17,6 +17,8 @@ $Id: __init__.py 29199 2005-02-17 22:38:55Z srichter $
 """
 __docformat__ = 'restructuredtext'
 
+import base64, binascii
+
 from zope.component.site import UtilityRegistration
 from zope.interface import implements
 
@@ -30,14 +32,24 @@ from zope.app.apidoc.utilities import ReadContainerBase, getPythonPath
 # Constant used when the utility has no name
 NONAME = '__noname__'
 
+def encodeName(name):
+    return base64.encodestring(name.encode('utf-8')).strip()
+
+def decodeName(name):
+    try:
+        return base64.decodestring(name).decode('utf-8')
+    except binascii.Error:
+        return name
+
 class Utility(object):
     """Representation of a utility for the API Documentation"""
     implements(ILocation)
-    
+
     def __init__(self, parent, reg):
         """Initialize Utility object."""
         self.__parent__ = parent
-        self.__name__ = reg.name or NONAME
+        self.__name__ = encodeName(reg.name or NONAME)
+        self.name = reg.name or NONAME
         self.registration = reg
         self.interface = reg.provided
         self.component = reg.component
@@ -56,6 +68,7 @@ class UtilityInterface(ReadContainerBase):
     def get(self, key, default=None):
         """See zope.app.container.interfaces.IReadContainer"""
         sm = zapi.getGlobalSiteManager()
+        key = decodeName(key)
         if key == NONAME:
             key = ''
         utils = [Utility(self, reg)
@@ -67,7 +80,7 @@ class UtilityInterface(ReadContainerBase):
     def items(self):
         """See zope.app.container.interfaces.IReadContainer"""
         sm = zapi.getGlobalSiteManager()
-        items = [(reg.name or NONAME, Utility(self, reg))
+        items = [(encodeName(reg.name or NONAME), Utility(self, reg))
                  for reg in sm.registrations()
                  if zapi.isinstance(reg, UtilityRegistration) and \
                      self.interface == reg.provided]

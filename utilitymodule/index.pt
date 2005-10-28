@@ -13,13 +13,13 @@
         tal:replace="view/getName" i18n:name="name" />")</tal:block>
   </h1>
 
-  <div class="indent" 
+  <div class="indent"
        tal:define="component view/getComponent"
        tal:condition="component">
     <h3>
       <span i18n:translate="">Component:</span>
       <a href=""
-         tal:attributes="href 
+         tal:attributes="href
              string:../../../Code/${component/url}/index.html"
          tal:content="component/path" /></h3>
   </div>
