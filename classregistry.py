@@ -19,6 +19,9 @@ __docformat__ = 'restructuredtext'
 
 __import_unknown_modules__ = False
 
+# List of modules that should never be imported.
+IGNORE_MODULES = []
+
 import sys
 
 from zope.app import zapi
@@ -55,9 +58,16 @@ addCleanUp(cleanUp)
 def safe_import(path, default=None):
     """Import a given path as efficiently as possible and without failure."""
     module = sys.modules.get(path, default)
+    for exclude_name in IGNORE_MODULES:
+        if path.startswith(exclude_name):
+            return default
     if module is default and __import_unknown_modules__:
         try:
             module = __import__(path, {}, {}, ('*',))
         except ImportError:
+            return default
+        # Some software, we cannot control, might raise all sorts of errors;
+        # thus catch all exceptions and return the default.
+        except Exception, error:
             return default
     return module

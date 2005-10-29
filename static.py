@@ -28,9 +28,12 @@ import zope.testbrowser
 import mechanize
 
 from zope.app.testing import functional
+from zope.deprecation import __show__
+
+from zope.app.apidoc import classregistry
 
 # Setup the user feedback detail level.
-VERBOSITY = 2
+VERBOSITY = 4
 
 VERBOSITY_MAP = {1: 'ERROR', 2: 'WARNING', 3: 'INFO'}
 
@@ -38,9 +41,12 @@ USE_PUBLISHER = True
 
 URL = 'http://localhost:8080/'
 
-START_PAGE = '++apidoc++/Type/@@staticmenu.html'
+START_PAGE = '++apidoc++/static.html'
 
 BASE_DIR = 'apidoc'
+
+USERNAME = 'mgr'
+PASSWORD = 'mgrpw'
 
 # A mapping of HTML elements that can contain links to the attribute that
 # actually contains the link
@@ -103,7 +109,7 @@ def completeURL(url):
 class Link(object):
     """A link in the page."""
 
-    def __init__(self, mechLink, referenceURL=None):
+    def __init__(self, mechLink, referenceURL='None'):
         self.referenceURL = referenceURL
         self.originalURL = mechLink.url
         self.callableURL = mechLink.absolute_url
@@ -190,9 +196,11 @@ class StaticAPIDocGenerator(object):
     def start(self):
         """Start the retrieval of the apidoc."""
         t0 = time.time()
+        __show__.off()
 
         self.visited = []
         self.counter = 0
+        self.errors = 0
 
         if not os.path.exists(self.rootDir):
             os.mkdir(self.rootDir)
@@ -202,8 +210,11 @@ class StaticAPIDocGenerator(object):
         else:
             self.browser = OnlineBrowser()
 
-        self.browser.setUserAndPassword('mgr', 'mgrpw')
+        self.browser.setUserAndPassword(USERNAME, PASSWORD)
         self.browser.urltags = urltags
+        #self.browser.addheaders.append(('X-zope-handle-errors', False))
+
+        classregistry.IGNORE_MODULES = ['twisted']
 
         # Work through all links until there are no more to work on.
         self.sendMessage('Starting retrieval.')
@@ -216,9 +227,12 @@ class StaticAPIDocGenerator(object):
                 self.showStatistics(link)
                 self.processLink(link)
 
+        __show__.on()
         t1 = time.time()
 
         self.sendMessage("Run time: %.3f sec real" % (t1-t0))
+        self.sendMessage("Links: %i" %self.counter)
+        self.sendMessage("Errors: %i" %self.errors)
 
     def showStatistics(self, link):
         self.counter += 1
@@ -251,15 +265,20 @@ class StaticAPIDocGenerator(object):
             self.browser.open(link.callableURL)
         except urllib2.HTTPError, error:
             # Something went wrong with retrieving the page.
+            self.errors += 1
             self.sendMessage(
                 '%s (%i): %s' % (error.msg, error.code, link.callableURL), 2)
             self.sendMessage('+-> Reference: ' + link.referenceURL, 2)
             return
         except (urllib2.URLError, ValueError):
             # We had a bad URL running the publisher browser
+            self.errors += 1
             self.sendMessage('Bad URL: ' + link.callableURL, 2)
             self.sendMessage('+-> Reference: ' + link.referenceURL, 2)
             return
+        #except Exception, error:
+        #    import pdb; pdb.set_trace()
+        #    return
 
         # Make sure the directory exists and get a file path.
         relativeURL = url.replace(URL, '')

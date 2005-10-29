@@ -138,12 +138,13 @@ Let's now see whether what results we get:
   >>> classes = component.getClasses(IFooBar)
   >>> classes.sort()
   >>> classes
-  [('MyFooBar', <class 'MyFooBar'>)]
+  [('MyFooBar', <class 'zope.app.apidoc.doctest.MyFooBar'>)]
 
   >>> classes = component.getClasses(IFoo)
   >>> classes.sort()
   >>> classes
-  [('MyFoo', <class 'MyFoo'>), ('MyFooBar', <class 'MyFooBar'>)]
+  [('MyFoo', <class 'zope.app.apidoc.doctest.MyFoo'>),
+   ('MyFooBar', <class 'zope.app.apidoc.doctest.MyFooBar'>)]
 
 
 `getFactories(ifaces)`
@@ -167,15 +168,15 @@ Let's see whether we will be able to get them:
   >>> regs.sort()
   >>> regs
   [UtilityRegistration('IFactory', 'MyFooBar',
-                       <Factory for <class 'MyFooBar'>>, '')]
+      <Factory for <class 'zope.app.apidoc.doctest.MyFooBar'>>, '')]
 
   >>> regs = list(component.getFactories(IFoo))
   >>> regs.sort()
   >>> regs
   [UtilityRegistration('IFactory', 'MyFoo',
-                       <Factory for <class 'MyFoo'>>, ''),
+      <Factory for <class 'zope.app.apidoc.doctest.MyFoo'>>, ''),
    UtilityRegistration('IFactory', 'MyFooBar',
-                       <Factory for <class 'MyFooBar'>>, '')]
+      <Factory for <class 'zope.app.apidoc.doctest.MyFooBar'>>, '')]
 
 
 `getUtilities(iface)`
@@ -195,13 +196,16 @@ Now let's have a look what we have:
   >>> regs = list(component.getUtilities(IFooBar))
   >>> regs.sort()
   >>> regs #doctest:+ELLIPSIS
-  [UtilityRegistration('IFooBar', '', <MyFooBar object at ...>, '')]
+  [UtilityRegistration('IFooBar', '',
+                       <zope.app.apidoc.doctest.MyFooBar object at ...>, '')]
 
   >>> regs = list(component.getUtilities(IFoo))
   >>> regs.sort()
   >>> regs #doctest:+ELLIPSIS
-  [UtilityRegistration('IFoo', '', <MyFoo object at ...>, ''),
-   UtilityRegistration('IFooBar', '', <MyFooBar object at ...>, '')]
+  [UtilityRegistration('IFoo', '',
+                       <zope.app.apidoc.doctest.MyFoo object at ...>, ''),
+   UtilityRegistration('IFooBar', '',
+                       <zope.app.apidoc.doctest.MyFooBar object at ...>, '')]
 
 
 `getInterfaceInfoDictionary(iface)`
@@ -213,7 +217,7 @@ list interfaces in the context of other components, like adapters and
 utilities.
 
   >>> pprint(component.getInterfaceInfoDictionary(IFoo))
-  {'module': '__builtin__', 'name': 'IFoo'}
+  {'module': 'zope.app.apidoc.doctest', 'name': 'IFoo'}
 
 The functions using this function use it with little care and can also
 sometimes pass in `None`. In these cases we want to return `None`:
@@ -241,16 +245,36 @@ And now get the info dictionary:
 
   >>> pprint(component.getAdapterInfoDictionary(reg))
   {'doc': 'doc info',
-   'factory': '__builtin__.MyResult',
-   'factory_url': '__builtin__/MyResult',
+   'factory': 'zope.app.apidoc.doctest.MyResult',
+   'factory_url': 'zope/app/apidoc/doctest/MyResult',
    'name': 'FooToResult',
-   'provided': {'module': '__builtin__', 'name': 'IResult'},
-   'required': [{'module': '__builtin__', 'name': 'IFoo'},
-                {'module': '__builtin__', 'name': 'IBar'}],
+   'provided': {'module': 'zope.app.apidoc.doctest', 'name': 'IResult'},
+   'required': [{'module': 'zope.app.apidoc.doctest', 'name': 'IFoo'},
+                {'module': 'zope.app.apidoc.doctest', 'name': 'IBar'}],
+   'zcml': None}
+
+If the factory's path cannot be referenced, for example if a type has been
+created using the ``type()`` builtin function, then the URL of the factory
+will be ``None``:
+
+  >>> MyResultType = type('MyResult2', (object,), {})
+  >>> from zope.interface import classImplements
+  >>> classImplements(MyResultType, IResult)
+
+  >>> reg = AdapterRegistration((IFoo, IBar), IResult, 'FooToResult',
+  ...                            MyResultType, 'doc info')
+  >>> pprint(component.getAdapterInfoDictionary(reg))
+  {'doc': 'doc info',
+   'factory': 'zope.app.apidoc.doctest.MyResult2',
+   'factory_url': None,
+   'name': 'FooToResult',
+   'provided': {'module': 'zope.app.apidoc.doctest', 'name': 'IResult'},
+   'required': [{'module': 'zope.app.apidoc.doctest', 'name': 'IFoo'},
+                {'module': 'zope.app.apidoc.doctest', 'name': 'IBar'}],
    'zcml': None}
 
 This function can also handle subscription registrations, which are pretty
-much like adapter registrations, except that they do not have name. So let's
+much like adapter registrations, except that they do not have a name. So let's
 see how the function handles subscriptions:
 
   >>> from zope.component.site import SubscriptionRegistration
@@ -258,12 +282,12 @@ see how the function handles subscriptions:
 
   >>> pprint(component.getAdapterInfoDictionary(reg))
   {'doc': 'doc info',
-   'factory': '__builtin__.MyResult',
-   'factory_url': '__builtin__/MyResult',
+   'factory': 'zope.app.apidoc.doctest.MyResult',
+   'factory_url': 'zope/app/apidoc/doctest/MyResult',
    'name': u'<subscription>',
    'provided': None,
-   'required': [{'module': '__builtin__', 'name': 'IFoo'},
-                {'module': '__builtin__', 'name': 'IBar'}],
+   'required': [{'module': 'zope.app.apidoc.doctest', 'name': 'IFoo'},
+                {'module': 'zope.app.apidoc.doctest', 'name': 'IBar'}],
    'zcml': None}
 
 
@@ -281,7 +305,29 @@ registrations:
   {'description': u'<p>My Foo Bar</p>\n',
    'name': 'MyFooBar',
    'title': 'MyFooBar',
-   'url': '__builtin__/MyFooBar'}
+   'url': 'zope/app/apidoc/doctest/MyFooBar'}
+
+If the factory's path cannot be referenced, for example if a type has been
+created using the ``type()`` builtin function, then the URL of the factory
+will be ``None``:
+
+  >>> class IMine(Interface):
+  ...     pass
+
+  >>> class FactoryBase(object):
+  ...     def getInterfaces(self): return [IMine]
+
+  >>> MyFactoryType = type('MyFactory', (FactoryBase,), {})
+  >>> from zope.interface import classImplements
+  >>> classImplements(MyFactoryType, IFactory)
+  >>> ztapi.provideUtility(IFactory, MyFactoryType(), 'MyFactory')
+
+  >>> pprint(component.getFactoryInfoDictionary(
+  ...     component.getFactories(IMine).next()))
+  {'description': u'',
+   'name': 'MyFactory',
+   'title': u'',
+   'url': None}
 
 
 `getUtilityInfoDictionary(name, factory)`
@@ -295,8 +341,8 @@ registrations:
 
   >>> pprint(component.getUtilityInfoDictionary(
   ...     component.getUtilities(IFooBar).next()))
-  {'iface_id': '__builtin__.IFooBar',
+  {'iface_id': 'zope.app.apidoc.doctest.IFooBar',
    'name': u'<i>no name</i>',
-   'path': '__builtin__.MyFooBar',
-   'url': '__builtin__/MyFooBar',
+   'path': 'zope.app.apidoc.doctest.MyFooBar',
+   'url': 'zope/app/apidoc/doctest/MyFooBar',
    'url_name': 'X19ub25hbWVfXw=='}

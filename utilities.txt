@@ -164,7 +164,7 @@ For interfaces we simply get
   ...     pass
 
   >>> utilities.getPythonPath(ISample)
-  '__builtin__.ISample'
+  'zope.app.apidoc.doctest.ISample'
 
 and for classes
 
@@ -173,21 +173,20 @@ and for classes
   ...         pass
 
   >>> utilities.getPythonPath(Sample.sample)
-  '__builtin__.Sample'
+  'zope.app.apidoc.doctest.Sample'
 
 One can also pass functions
 
   >>> def sample():
   ...     pass
 
-  >>> # Result is a bit strange due to doctests
   >>> utilities.getPythonPath(sample)
-  'None.sample'
+  'zope.app.apidoc.doctest.sample'
 
 and even methods. If a method is passed in, its class path is returned.
 
   >>> utilities.getPythonPath(Sample.sample)
-  '__builtin__.Sample'
+  'zope.app.apidoc.doctest.Sample'
 
 Modules are another kind of objects that can return a python path:
 
@@ -204,6 +203,65 @@ Clearly, instance lookups should fail:
   Traceback (most recent call last):
   ...
   AttributeError: 'Sample' object has no attribute '__name__'
+
+
+`isReferencable(path)`
+----------------------
+
+Determine whether a path can be referenced in the API doc, usually by the code
+browser module. Initially you might think that all objects that have paths can
+be referenced somehow. But that's not true, partially by design of apidoc, but
+also due to limitations of the Python language itself.
+
+The first case is ``None``. When you ask for the python path of ``None``, you
+get ``None``, so that result should not be referencable:
+
+  >>> utilities.isReferencable(None)
+  False
+
+By design we also do not document any private classes and functions:
+
+  >>> utilities.isReferencable('some.path.to._Private')
+  False
+  >>> utilities.isReferencable('some.path.to.__Protected')
+  False
+  >>> utilities.isReferencable('zope.app.apidoc.__doc__')
+  True
+
+Some objects might fake their module name, so that it does not exist:
+
+  >>> utilities.isReferencable('foo.bar')
+  False
+
+On the other hand, you might have a valid module, but non-existent attribute:
+
+  >>> utilities.isReferencable('zope.app.apidoc.MyClass')
+  False
+
+Note that this case is also used for types that are generated using the
+``type()`` function:
+
+  >>> mytype = type('MyType', (object,), {})
+  >>> path = utilities.getPythonPath(mytype)
+  >>> path
+  'zope.app.apidoc.doctest.MyType'
+
+  >>> utilities.isReferencable(path)
+  False
+
+Finally, since API doc does not allow the documentation of instances yet, it
+is not possible to document singletons, so they are not referencable:
+
+  >>> class Singelton(object):
+  ...     pass
+
+  >>> utilities.isReferencable('zope.app.apidoc.doctest.Singelton')
+  True
+
+  >>> Singelton = Singelton()
+
+  >>> utilities.isReferencable('zope.app.apidoc.doctest.Singelton')
+  False
 
 
 `getPermissionIds(name, checker=_marker, klass=_marker)`
@@ -455,23 +513,23 @@ First, we need to create some interfaces and a class that implements them:
 First we check whether an aatribute can be found in a list of interfaces:
 
   >>> utilities.getInterfaceForAttribute('attr', (I1, I2), asPath=False)
-  <InterfaceClass __builtin__.I1>
+  <InterfaceClass zope.app.apidoc.doctest.I1>
   >>> utilities.getInterfaceForAttribute('getAttr', (I1, I2), asPath=False)
-  <InterfaceClass __builtin__.I2>
+  <InterfaceClass zope.app.apidoc.doctest.I2>
 
 Now we are repeating the same lookup, but using the class, instead of a list
 of interfaces:
 
   >>> utilities.getInterfaceForAttribute('attr', klass=Sample, asPath=False)
-  <InterfaceClass __builtin__.I1>
+  <InterfaceClass zope.app.apidoc.doctest.I1>
   >>> utilities.getInterfaceForAttribute('getAttr', klass=Sample, asPath=False)
-  <InterfaceClass __builtin__.I2>
+  <InterfaceClass zope.app.apidoc.doctest.I2>
 
 By default, `asPath` is `True`, which means the path of the interface is
 returned:
 
   >>> utilities.getInterfaceForAttribute('attr', (I1, I2))
-  '__builtin__.I1'
+  'zope.app.apidoc.doctest.I1'
 
 If no match is found, ``None`` is returned.
 
@@ -550,6 +608,70 @@ By default structured text is returned:
 This is a sensible default, since we only decided later in development to
 endorse restructured text, so that many files are still in the structured text
 format. All converted and new modules will have the `__docformat__` attribute.
+
+
+`dendentString(text)`
+---------------------
+
+Before doc strings can be processed using STX or ReST they must be dendented,
+since otherwise the output will be incorrect. Let's have a look at some
+docstrings and see how they are correctly dedented.
+
+Let's start with a simple one liner. Nothing should happen:
+
+  >>> def func():
+  ...     '''One line documentation string'''
+
+  >>> utilities.dedentString(func.__doc__)
+  'One line documentation string'
+
+Now what about one line docstrings that start on the second line? While this
+format is discouraged, it is frequently used:
+
+  >>> def func():
+  ...     '''
+  ...     One line documentation string
+  ...     '''
+
+  >>> utilities.dedentString(func.__doc__)
+  '\nOne line documentation string\n'
+
+We can see that the leading whitespace on the string is removed, but not the
+newline character. Let's now try a simple multi-line docstring:
+
+  >>> def func():
+  ...     '''Short description
+  ...
+  ...     Lengthy description, giving some more background information and
+  ...     discuss some edge cases.
+  ...     '''
+
+  >>> print utilities.dedentString(func.__doc__)
+  Short description
+  <BLANKLINE>
+  Lengthy description, giving some more background information and
+  discuss some edge cases.
+  <BLANKLINE>
+
+Again, the whitespace was removed only after the first line. Also note that
+the function determines the indentation level correctly. So what happens if
+there are multiple indentation levels? Well, the first occurrence wins:
+
+  >>> def func():
+  ...     '''Short description
+  ...
+  ...     Root Level
+  ...
+  ...       Second Level
+  ...     '''
+
+  >>> print utilities.dedentString(func.__doc__)
+  Short description
+  <BLANKLINE>
+  Root Level
+  <BLANKLINE>
+    Second Level
+  <BLANKLINE>
 
 
 `renderText(text, module=None, format=None)`

@@ -26,7 +26,8 @@ from zope.app import zapi
 from zope.app.location import LocationProxy
 from zope.app.apidoc.zcmlmodule import Directive, Namespace
 from zope.app.apidoc.ifacemodule.browser import InterfaceDetails
-from zope.app.apidoc.utilities import getPythonPath, relativizePath
+from zope.app.apidoc.utilities import getPythonPath, isReferencable
+from zope.app.apidoc.utilities import relativizePath
 
 class Menu(object):
     """Menu View Helper Class"""
@@ -83,7 +84,7 @@ class DirectiveDetails(object):
         """Get the file where the directive was declared."""
         # ZCML directive `info` objects do not have security declarations, so
         # everything is forbidden by default. We need to remove the security
-        # proxies in order to get to the data.  
+        # proxies in order to get to the data.
         info = removeSecurityProxy(self.context.info)
         if zapi.isinstance(info, ParserInfo):
             return {'file': relativizePath(info.file),
@@ -103,8 +104,9 @@ class DirectiveDetails(object):
         """Return information about the handler."""
         if self.context.handler is not None:
             path = getPythonPath(self.context.handler)
-            return {'path': path,
-                    'url': path.replace('.', '/')}
+            return {
+                'path': path,
+                'url': isReferencable(path) and path.replace('.', '/') or None}
         return None
 
     def getSubdirectives(self):
@@ -113,12 +115,12 @@ class DirectiveDetails(object):
         for ns, name, schema, handler, info in self.context.subdirs:
             details = self._getInterfaceDetails(schema)
             path = getPythonPath(handler)
+            url = isReferencable(path) and path.replace('.', '/') or None
             dirs.append({
                 'namespace': ns,
                 'name': name,
                 'schema': details,
-                'handler': {'path': path,
-                            'url': path.replace('.', '/')},
+                'handler': {'path': path, 'url': url},
                 'info': info,
                 })
         return dirs

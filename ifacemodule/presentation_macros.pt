@@ -16,7 +16,7 @@
       <i i18n:translate="">presentation type:</i>
       <a href=""
          tal:attributes="
-             href string:../${iface/module}.${iface/name}/apiindex.html">
+       href string:$rootURL/Interface/${iface/module}.${iface/name}/index.html">
           <metal:block use-macro="context/@@interface_macros/ifacename" />
       </a>
     </div>
@@ -27,7 +27,7 @@
         <a href=""
             tal:condition="iface"
             tal:attributes="
-                href string:../${iface/module}.${iface/name}/apiindex.html">
+       href string:$rootURL/Interface/${iface/module}.${iface/name}/index.html">
           <metal:block use-macro="context/@@interface_macros/ifacename"
         /></a><tal:block condition="not:repeat/iface/end">, </tal:block>
       </tal:block>
@@ -41,7 +41,7 @@
       <i i18n:translate="">provides:</i>
       <a href=""
          tal:attributes="
-             href string:../${iface/module}.${iface/name}/apiindex.html">
+       href string:$rootURL/Interface/${iface/module}.${iface/name}/index.html">
         <metal:block use-macro="context/@@interface_macros/ifacename" />
       </a>
     </div>
@@ -51,7 +51,7 @@
       <i i18n:translate="">layer:</i>
       <a href=""
          tal:attributes="
-             href string:../${iface/module}.${iface/name}/apiindex.html">
+      href string:$rootURL/Interface/${iface/module}.${iface/name}/index.html">
         <metal:block use-macro="context/@@interface_macros/ifacename" />
       </a>
     </div>
@@ -60,7 +60,8 @@
       <i i18n:translate="">factory path:</i>
       <a href=""
          tal:condition="View/factory/referencable"
-         tal:attributes="href string:../../Code/${View/factory/url}/index.html"
+         tal:attributes="
+             href string:$rootURL/Code/${View/factory/url}/index.html"
          tal:content="View/factory/path" />
       <span
          tal:condition="not:View/factory/referencable"

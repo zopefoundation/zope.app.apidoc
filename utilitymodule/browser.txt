@@ -32,7 +32,7 @@ You can now get the title and link from the menu:
   >>> menu.getMenuTitle(node)
   'iface'
   >>> menu.getMenuLink(node)
-  '../Interface/foo.bar.iface/apiindex.html'
+  '../Interface/foo.bar.iface/index.html'
 
 Next, let's get the menu title and link for a utility with a name. We first
 have to create a utility registration
@@ -140,15 +140,14 @@ registration:
 
   >>> foo_reg = type(
   ...     'RegistrationStub', (),
-  ...     {'name': '', 'provided': None, 'component': Foo(), 'doc': ''})()
+  ...     {'name': '', 'provided': Interface, 'component': Foo(), 'doc': ''})()
 
 Then we create a utility documentation class and its details view:
 
   >>> details = UtilityDetails()
-  >>> details.context = Utility(None, foo_reg)
+  >>> details.context = Utility(Interface, foo_reg)
 
 Now we can get the component information:
 
   >>> pprint(details.getComponent())
-  {'path': '__builtin__.Foo',
-   'url': '__builtin__/Foo'}
+  {'path': '__builtin__.Foo', 'url': None}

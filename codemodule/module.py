@@ -11,7 +11,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Module representation for code browser 
+"""Module representation for code browser
 
 $Id: __init__.py 29143 2005-02-14 22:43:16Z srichter $
 """
@@ -64,14 +64,14 @@ class Module(ReadContainerBase):
                     if file in IGNORE_FILES or file in self._children:
                         continue
                     path = os.path.join(dir, file)
-    
+
                     if (os.path.isdir(path) and
                         '__init__.py' in os.listdir(path)):
                         fullname = self._module.__name__ + '.' + file
                         module = safe_import(fullname)
                         if module is not None:
                             self._children[file] = Module(self, file, module)
-    
+
                     elif os.path.isfile(path) and file.endswith('.py') and \
                              not file.startswith('__init__'):
                         name = file[:-3]
@@ -79,11 +79,11 @@ class Module(ReadContainerBase):
                         module = safe_import(fullname)
                         if module is not None:
                             self._children[name] = Module(self, name, module)
-    
+
                     elif os.path.isfile(path) and file.endswith('.zcml'):
                         self._children[file] = ZCMLFile(path, self._module,
                                                         self, file)
-    
+
                     elif os.path.isfile(path) and file.endswith('.txt'):
                         self._children[file] = TextFile(path, file, self)
 
@@ -136,10 +136,17 @@ class Module(ReadContainerBase):
         else:
             path = key
         obj = safe_import(path)
+
         if obj is not None:
             return Module(self, key, obj)
 
-        return default
+        # Maybe it is a simple attribute of the module
+        if obj is None:
+            obj = getattr(self._module, key, default)
+            if obj is not default:
+                obj = LocationProxy(obj, self, key)
+
+        return obj
 
     def items(self):
         """See zope.app.container.interfaces.IReadContainer."""

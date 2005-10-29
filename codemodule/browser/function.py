@@ -18,7 +18,9 @@ $Id: browser.py 29143 2005-02-14 22:43:16Z srichter $
 __docformat__ = 'restructuredtext'
 from zope.app import zapi
 from zope.app.apidoc.interfaces import IDocumentationModule
-from zope.app.apidoc.utilities import getPythonPath, renderText
+from zope.app.apidoc.utilities import renderText
+
+from class_ import getTypeLink
 
 class FunctionDetails(object):
     """Represents the details of the function."""
@@ -34,7 +36,7 @@ class FunctionDetails(object):
         return [{'name': name,
                  'value': `attr`,
                  'type': type(attr).__name__,
-                 'type_link': getPythonPath(type(attr)).replace('.', '/')}
+                 'type_link': getTypeLink(type(attr))}
 
                 for name, attr in self.context.getAttributes()]
 

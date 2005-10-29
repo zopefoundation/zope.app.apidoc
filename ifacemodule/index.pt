@@ -12,7 +12,7 @@
     <tal:omit-tag tal:repeat="type view/getTypes" >
       <a href=""
           tal:attributes="href
-              string:${rootURL}/Interface/${type/path}/apiindex.html"
+              string:${rootURL}/Interface/${type/path}/index.html"
           tal:content="type/name"/><tal:block
           condition="not:repeat/type/end">, </tal:block>
     </tal:omit-tag>
@@ -35,7 +35,7 @@
       <li tal:repeat="base bases">
         <a href=""
            tal:attributes="href
-               string:${rootURL}/Interface/$base/apiindex.html"
+               string:${rootURL}/Interface/$base/index.html"
            tal:content="base" />
       </li>
     </ul>

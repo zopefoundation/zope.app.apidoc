@@ -37,7 +37,7 @@ class InterfaceModuleTests(BrowserTestCase):
         response = self.publish(
             '/++apidoc++/Interface'
             '/zope.app.apidoc.ifacemodule.ifacemodule.IInterfaceModule'
-            '/apiindex.html',
+            '/index.html',
             basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
@@ -46,7 +46,7 @@ class InterfaceModuleTests(BrowserTestCase):
             body,
             '/++apidoc++/Interface'
             '/zope.app.apidoc.ifacemodule.IInterfaceModule'
-            '/apiindex.html',
+            '/index.html',
             basic='mgr:mgrpw')
 
 

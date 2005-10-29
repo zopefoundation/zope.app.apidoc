@@ -17,9 +17,12 @@ $Id$
 """
 __docformat__ = 'restructuredtext'
 
+from zope.security.proxy import removeSecurityProxy
+
 from zope.app import zapi
 from zope.app.location import LocationProxy
 from zope.app.apidoc.ifacemodule.browser import InterfaceDetails
+from zope.app.apidoc.component import getUtilityInfoDictionary
 from zope.app.apidoc.utilities import getPythonPath
 from zope.app.apidoc.utilitymodule.utilitymodule import NONAME, Utility
 from zope.app.apidoc.utilitymodule.utilitymodule import UtilityInterface
@@ -44,13 +47,10 @@ class UtilityDetails(object):
 
     def getComponent(self):
         """Return the python path of the implementation class."""
-        # We could use `type()` here, but then we would need to remove the
-        # security proxy from the component. This is easier and also supports
-        # old-style classes
-        klass = self.context.component.__class__
-
-        return {'path': getPythonPath(klass),
-                'url':  getPythonPath(klass).replace('.', '/')}
+        # Remove proxy here, so that we can determine the type correctly
+        naked = removeSecurityProxy(self.context.registration)
+        result = getUtilityInfoDictionary(naked)
+        return {'path': result['path'], 'url': result['url']}
 
 
 class Menu(object):
@@ -72,5 +72,5 @@ class Menu(object):
             iface = zapi.getParent(obj)
             return './'+zapi.name(iface) + '/' + zapi.name(obj) + '/index.html'
         if zapi.isinstance(obj, UtilityInterface):
-            return '../Interface/'+zapi.name(obj) + '/apiindex.html'
+            return '../Interface/'+zapi.name(obj) + '/index.html'
         return None

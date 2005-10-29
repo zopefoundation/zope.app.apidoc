@@ -34,7 +34,8 @@ def getTypeLink(type):
     if type is types.NoneType:
         return None
     path = apidoc.utilities.getPythonPath(type)
-    return path.replace('.', '/')
+    importable = apidoc.utilities.isReferencable(path)
+    return importable and path.replace('.', '/') or None
 
 
 class annotationsNamespace(object):

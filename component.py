@@ -22,13 +22,14 @@ from zope.component.interfaces import IFactory
 from zope.component.site import AdapterRegistration, SubscriptionRegistration
 from zope.component.site import UtilityRegistration
 from zope.interface import Interface
+from zope.interface.interface import InterfaceClass
 from zope.publisher.interfaces import IRequest
 
 from zope.app import zapi
 from zope.app.i18n import ZopeMessageFactory as _
 from zope.app.apidoc.classregistry import classRegistry
 from zope.app.apidoc.utilities import relativizePath, truncateSysPath
-from zope.app.apidoc.utilities import getPythonPath, renderText
+from zope.app.apidoc.utilities import getPythonPath, isReferencable, renderText
 from zope.app.apidoc.utilitymodule import utilitymodule
 
 SPECIFIC_INTERFACE_LEVEL = 1
@@ -169,10 +170,10 @@ def getAdapterInfoDictionary(reg):
     factory = getRealFactory(reg.value)
     path = getPythonPath(factory)
 
-    if isinstance(factory, types.MethodType):
-       url = None
-    else:
+    url = None
+    if isReferencable(path):
         url = path.replace('.', '/')
+
     if isinstance(reg.doc, (str, unicode)):
         doc = reg.doc
         zcml = None
@@ -195,7 +196,6 @@ def getAdapterInfoDictionary(reg):
 def getFactoryInfoDictionary(reg):
     """Return a PT-friendly info dictionary for a factory."""
     factory = reg.component
-
     callable = factory
 
     # Usually only zope.component.factory.Factory instances have this attribute
@@ -210,22 +210,29 @@ def getFactoryInfoDictionary(reg):
             'title': getattr(factory, 'title', u''),
             'description': renderText(getattr(factory, 'description', u''),
                                       module=callable.__module__),
-            'url': path.replace('.', '/')}
+            'url': isReferencable(path) and path.replace('.', '/') or None}
 
 
 def getUtilityInfoDictionary(reg):
     """Return a PT-friendly info dictionary for a factory."""
-    if type(reg.component) in (types.ClassType, types.TypeType):
-        klass = reg.component
-    else:
-        klass = reg.component.__class__
+    component = reg.component
+    # Check whether we have an instance of some custom type or not
+    # Unfortunately, a lot of utilities have a `__name__` attribute, so we
+    # cannot simply check for its absence
+    # TODO: Once we support passive display of instances, this insanity can go
+    #       away.
+    if not isinstance(component, (types.MethodType, types.FunctionType,
+                                  types.ClassType, types.TypeType,
+                                  InterfaceClass)):
+        component = getattr(component, '__class__', component)
+
+    path = getPythonPath(component)
 
     # provided interface id
     iface_id = '%s.%s' % (reg.provided.__module__, reg.provided.getName())
 
-    path = getPythonPath(klass)
     return {'name': reg.name or _('<i>no name</i>'),
             'url_name': utilitymodule.encodeName(reg.name or '__noname__'),
             'iface_id': iface_id,
             'path': path,
-            'url': path.replace('.', '/')}
+            'url': isReferencable(path) and path.replace('.', '/') or None}

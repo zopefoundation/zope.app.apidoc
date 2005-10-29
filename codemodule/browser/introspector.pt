@@ -43,7 +43,7 @@
       <li tal:repeat="iface ifaces">
         <a href=""
            tal:attributes="href
-             string:${view/getBaseURL}/Interface/$iface/apiindex.html"
+             string:${view/getBaseURL}/Interface/$iface/index.html"
            tal:content="iface" />
       </li>
     </ul>
@@ -63,7 +63,7 @@
       <li tal:repeat="iface ifaces">
         <a href=""
            tal:attributes="href
-             string:${view/getBaseURL}/Interface/$iface/apiindex.html"
+             string:${view/getBaseURL}/Interface/$iface/index.html"
            tal:content="iface" />
       </li>
     </ul>
@@ -129,7 +129,7 @@ string:${context/@@absolute_url}/++attribute++${attr/name}/@@introspector.html"
         <i i18n:translate="">Interface:</i>
         <a href=""
            tal:attributes="href
-          string:${view/getBaseURL}/Interface/${attr/interface}/apiindex.html"
+               string:${view/getBaseURL}/Interface/${attr/interface}/index.html"
            tal:content="attr/interface">Iface</a><br />
       </span>
       <span class="small"
@@ -169,7 +169,7 @@ string:${context/@@absolute_url}/++attribute++${attr/name}/@@introspector.html"
         <i i18n:translate="">Interface:</i>
         <a href=""
            tal:attributes="href
-          string:${view/getBaseURL}/Interface/${method/interface}/apiindex.html"
+             string:${view/getBaseURL}/Interface/${method/interface}/index.html"
            tal:content="method/interface">Iface</a><br/>
       </span>
 

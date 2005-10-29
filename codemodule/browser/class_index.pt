@@ -48,7 +48,7 @@
       <li tal:repeat="iface ifaces">
         <a href=""
            tal:attributes="href
-               string:${view/getBaseURL}/Interface/$iface/apiindex.html"
+               string:${view/getBaseURL}/Interface/$iface/index.html"
            tal:content="iface" />
       </li>
     </ul>
@@ -75,7 +75,7 @@
       <tal:omit-tag condition="attr/type_link">
         (<span i18n:translate="">type:</span>
         <a href=""
-           tal:attributes="href 
+           tal:attributes="href
                string:${view/getBaseURL}/Code/${attr/type_link}/index.html">
           <code tal:content="attr/type" /></a>)
       </tal:omit-tag>
@@ -87,7 +87,7 @@
         <i i18n:translate="">Interface:</i>
         <a href=""
            tal:attributes="href
-          string:${view/getBaseURL}/Interface/${attr/interface}/apiindex.html"
+               string:${view/getBaseURL}/Interface/${attr/interface}/index.html"
            tal:content="attr/interface">Iface</a><br />
       </span>
       <span class="small"
@@ -128,7 +128,7 @@
         <i i18n:translate="">Interface:</i>
         <a href=""
            tal:attributes="href
-          string:${view/getBaseURL}/Interface/${method/interface}/apiindex.html"
+             string:${view/getBaseURL}/Interface/${method/interface}/index.html"
            tal:content="method/interface">Iface</a><br/>
       </span>
 

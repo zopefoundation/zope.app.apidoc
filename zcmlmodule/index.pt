@@ -48,7 +48,7 @@
 
   <div class="indent">
     <a href="" tal:attributes="href
-           string:../../../Interface/${schema/getId}/apiindex.html">
+           string:../../../Interface/${schema/getId}/index.html">
       <h3 tal:content="schema/getId">zope.fields.Schema</h3>
     </a>
   </div>
@@ -105,7 +105,7 @@
   <div class="indent">
     <a href=""
        tal:attributes="href
-           string:../../../Interface/${dir/schema/getId}/apiindex.html">
+           string:../../../Interface/${dir/schema/getId}/index.html">
       <h3 tal:content="dir/schema/getId">zope.fields.Schema</h3>
     </a>
   </div>

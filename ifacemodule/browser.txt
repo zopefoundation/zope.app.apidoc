@@ -64,14 +64,14 @@ Now let's see how successful our searches are:
   >>> menu.request['search_str'] = 'Elem'
   >>> pprint(menu.findInterfaces())
   [{'name': 'IElement',
-    'url': './IElement/apiindex.html'}]
+    'url': './IElement/index.html'}]
 
   >>> menu.request['search_str'] = 'I'
   >>> pprint(menu.findInterfaces())
   [{'name': 'IAttribute',
-    'url': './IAttribute/apiindex.html'},
+    'url': './IAttribute/index.html'},
    {'name': 'IElement',
-    'url': './IElement/apiindex.html'}]
+    'url': './IElement/index.html'}]
 
 Now using the full text search:
 
@@ -80,14 +80,14 @@ Now using the full text search:
   >>> menu.request['search_str'] = 'object'
   >>> pprint(menu.findInterfaces())
   [{'name': 'IAttribute',
-    'url': './IAttribute/apiindex.html'},
+    'url': './IAttribute/index.html'},
    {'name': 'IElement',
-    'url': './IElement/apiindex.html'}]
+    'url': './IElement/index.html'}]
 
   >>> menu.request['search_str'] = 'Stores'
   >>> pprint(menu.findInterfaces())
   [{'name': 'IAttribute',
-    'url': './IAttribute/apiindex.html'}]
+    'url': './IAttribute/index.html'}]
 
 
 `InterfaceDetails` class
@@ -311,12 +311,10 @@ Get adapters where this interface is provided.
   >>> pprint(details.getProvidedAdapters())
   [{'doc': '',
     'factory': '__builtin__.Foo',
-    'factory_url': '__builtin__/Foo',
+    'factory_url': None,
     'name': '',
-    'provided': {'module': '__builtin__',
-                 'name': 'IFoo'},
-    'required': [{'module': '__builtin__',
-                  'name': 'IBar'}],
+    'provided': {'module': '__builtin__', 'name': 'IFoo'},
+    'required': [{'module': '__builtin__', 'name': 'IBar'}],
     'zcml': None}]
 
 
@@ -339,7 +337,7 @@ interface.
   [{'description': u'',
     'name': 'FooFactory',
     'title': 'Foo Factory',
-    'url': '__builtin__/Foo'}]
+    'url': None}]
 
 `getUtilities()`
 ----------------
@@ -350,5 +348,5 @@ Return all utilities that provide this interface.
   [{'iface_id': '__builtin__.IFoo',
     'name': 'The Foo',
     'path': '__builtin__.Foo',
-    'url': '__builtin__/Foo',
+    'url': None,
     'url_name': 'VGhlIEZvbw=='}]

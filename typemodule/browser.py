@@ -34,4 +34,4 @@ class Menu(object):
 
     def getMenuLink(self, node):
         """Return the HTML link of the node that is displayed in the menu."""
-        return '../Interface/%s/apiindex.html' %zapi.name(node.context)
+        return '../Interface/%s/index.html' %zapi.name(node.context)

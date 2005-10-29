@@ -11,7 +11,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Class representation for code browser 
+"""Class representation for code browser
 
 $Id: __init__.py 29143 2005-02-14 22:43:16Z srichter $
 """
@@ -27,7 +27,6 @@ from zope.app.location.interfaces import ILocation
 from zope.app.apidoc.classregistry import classRegistry
 from zope.app.apidoc.utilities import getInterfaceForAttribute
 from zope.app.apidoc.utilities import getPublicAttributes
-from zope.app.apidoc.utilities import getPythonPath
 from interfaces import IClassDocumentation
 
 

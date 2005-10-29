@@ -131,5 +131,5 @@ def getFieldInfoDictionary(field, format='zope.source.rest'):
 
     # Render the field description
     info['description'] = renderText(field.description or u'', format=format)
-                                     
+
     return info

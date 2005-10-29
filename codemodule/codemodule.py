@@ -69,7 +69,9 @@ class CodeModule(Module):
         if self.__isSetup:
             return
         for name, mod in zapi.getUtilitiesFor(IAPIDocRootModule):
-            self._children[name] = Module(self, name, safe_import(mod))
+            module = safe_import(mod)
+            if module is not None:
+                self._children[name] = Module(self, name, module)
         self.__isSetup = True
 
     def getDocString(self):

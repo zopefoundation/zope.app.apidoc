@@ -62,6 +62,7 @@ soon as you have the object:
   >>> 'meta.zcml' in keys
   True
 
+  >>> import zope.app.apidoc.browser
   >>> print module['browser'].getPath()
   zope.app.apidoc.browser
 
@@ -74,13 +75,14 @@ For example, while `tests` directories are not added to the module and
 classes hierarchy (since they do not provide or implement any API), we can
 still get to them:
 
+  >>> import zope.app.apidoc.tests
   >>> print module['tests'].getPath()
   zope.app.apidoc.tests
 
   >>> names = module['tests'].keys()
   >>> names.sort()
   >>> names
-  ['Root', 'rootLocation', 'setUp', 'test_suite']
+  ['Root', 'rootLocation', 'setUp', 'tearDown', 'test_suite']
 
 
 Classes

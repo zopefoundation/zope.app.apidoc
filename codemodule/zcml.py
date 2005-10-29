@@ -109,6 +109,9 @@ class ZCMLFile(object):
         context = zope.app.appsetup.appsetup.getConfigContext()
         context.package = self.package
 
+        # Shut up i18n domain complaints
+        context.i18n_domain = 'zope'
+
         # Since we want to use a custom configuration handler, we need to
         # instantiate the parser object ourselves
         parser = make_parser()

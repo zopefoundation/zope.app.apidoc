@@ -311,18 +311,6 @@ module.
 The result is a bit strange, since the ZCML Documentation module is the
 containment root.
 
-`ifaceURL(value, field, rootURL)`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This method converts the string value of the field to an interface and then
-crafts a documentation URL for it:
-
-  >>> from zope.configuration.fields import GlobalInterface
-  >>> field = GlobalInterface()
-
-  >>> details.ifaceURL('.interfaces.IZCMLFile', field, '')
-  '/../Interface/zope.app.apidoc.codemodule.interfaces.IZCMLFile/apiindex.html'
-
 `objectURL(value, field, rootURL)`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -333,7 +321,7 @@ crafts a documentation URL for it:
   >>> field = GlobalObject()
 
   >>> details.objectURL('.interfaces.IZCMLFile', field, '')
-  '/../Interface/zope.app.apidoc.codemodule.interfaces.IZCMLFile/apiindex.html'
+  '/../Interface/zope.app.apidoc.codemodule.interfaces.IZCMLFile/index.html'
 
   >>> details.objectURL('.zcml.ZCMLFile', field, '')
   '/zope/app/apidoc/codemodule/zcml/ZCMLFile/index.html'
@@ -534,7 +522,7 @@ Of course, the methods are listed as well:
       'signature': '()',
       'write_perm': None},
      ...
-     {'doc': u'<dl class="docutils">\n<dt>Return a sequence-like...',
+     {'doc': u'<p>Return a sequence-like...',
       'interface': 'zope.interface.common.mapping.IEnumerableMapping',
       'name': 'keys',
       'read_perm': None,

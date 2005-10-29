@@ -52,7 +52,7 @@
       for="zope.interface.interfaces.IInterface"
       permission="zope.app.apidoc.UseAPIDoc"
       class=".browser.InterfaceDetails"
-      name="apiindex.html"
+      name="index.html"
       template="index.pt"
       />
 

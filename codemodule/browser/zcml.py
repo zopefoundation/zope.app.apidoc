@@ -26,7 +26,7 @@ from zope.security.proxy import removeSecurityProxy
 from zope.app import zapi
 from zope.app.tree.interfaces import IUniqueId
 from zope.app.apidoc.interfaces import IDocumentationModule
-from zope.app.apidoc.utilities import getPythonPath
+from zope.app.apidoc.utilities import getPythonPath, isReferencable
 
 from zope.app.apidoc.zcmlmodule import quoteNS
 from zope.app.apidoc.codemodule.interfaces import IRootDirective
@@ -88,13 +88,6 @@ class DirectiveDetails(object):
             link += '#' + subDirective.name[1]
         return link
 
-    def ifaceURL(self, value, field, rootURL):
-        bound = field.bind(self.context.context)
-        iface = bound.fromUnicode(value)
-        if iface is None:
-            return
-        return rootURL+'/../Interface/%s/apiindex.html' %(getPythonPath(iface))
-
     def objectURL(self, value, field, rootURL):
         bound = field.bind(self.context.context)
         obj = bound.fromUnicode(value)
@@ -105,15 +98,15 @@ class DirectiveDetails(object):
         except AttributeError:
             # probably an object that does not like to play nice with the CA
             isInterface = False
+
+        # The object mught be an instance; in this case get a link to the class
+        if not hasattr(obj, '__name__'):
+            obj = getattr(obj, '__class__')
+        path = getPythonPath(obj)
         if isInterface:
-            return rootURL+'/../Interface/%s/apiindex.html' %(
-                getPythonPath(obj))
-        try:
-            return rootURL + '/%s/index.html' %(
-                getPythonPath(obj).replace('.', '/'))
-        except AttributeError:
-            # probably an instance
-            pass
+            return rootURL+'/../Interface/%s/index.html' % path
+        if isReferencable(path):
+            return rootURL + '/%s/index.html' %(path.replace('.', '/'))
 
     def attributes(self):
         context = removeSecurityProxy(self.context)
@@ -126,10 +119,8 @@ class DirectiveDetails(object):
         for attr in attrs:
             name = (attr['name'] in names) and attr['name'] or attr['name']+'_'
             field = context.schema.get(name)
-            if zapi.isinstance(field, GlobalInterface):
-                attr['url'] = self.ifaceURL(attr['value'], field, rootURL)
 
-            elif zapi.isinstance(field, GlobalObject):
+            if zapi.isinstance(field, (GlobalObject, GlobalInterface)):
                 attr['url'] = self.objectURL(attr['value'], field, rootURL)
 
             elif zapi.isinstance(field, Tokens):
@@ -137,15 +128,11 @@ class DirectiveDetails(object):
                 values = attr['value'].strip().split()
                 if len(values) == 1:
                     attr['value'] = values[0]
-                    if zapi.isinstance(field, GlobalInterface):
-                        attr['url'] = self.ifaceURL(values[0], field, rootURL)
-                    elif zapi.isinstance(field, GlobalObject):
-                        attr['url'] = self.objectURL(values[0], field, rootURL)
+                    attr['url'] = self.objectURL(values[0], field, rootURL)
                 else:
                     for value in values:
-                        if zapi.isinstance(field, GlobalInterface):
-                            url = self.ifaceURL(value, field, rootURL)
-                        elif zapi.isinstance(field, GlobalObject):
+                        if zapi.isinstance(field,
+                                           (GlobalObject, GlobalInterface)):
                             url = self.objectURL(value, field, rootURL)
                         else:
                             break

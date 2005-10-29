@@ -48,7 +48,7 @@ class Menu(object):
                 (not name_only and search_str in getAllTextOfInterface(iface))):
                 results.append(
                     {'name': name,
-                     'url': './%s/apiindex.html' %name
+                     'url': './%s/index.html' %name
                      })
         results.sort(lambda x, y: cmp(x['name'], y['name']))
         return results
@@ -63,7 +63,7 @@ class Menu(object):
             rtext = getAllTextOfInterface(iface)
             results.append(
                 {'name': name,
-                 'url': './%s/apiindex.html' %name,
+                 'url': './%s/index.html' %name,
                  'counter': counter,
                  'doc': whitepattern.sub(' ',getAllTextOfInterface(iface))
                  })

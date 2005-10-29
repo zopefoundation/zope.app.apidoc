@@ -34,6 +34,8 @@ from zope.app import zapi
 from zope.app.i18n import ZopeMessageFactory as _
 from zope.app.container.interfaces import IReadContainer
 
+from zope.app.apidoc.classregistry import safe_import
+
 _remove_html_overhead = re.compile(
     r'(?sm)^<html.*<body.*?>\n(.*)</body>\n</html>\n')
 
@@ -87,7 +89,11 @@ class ReadContainerBase(object):
 
 
 def getPythonPath(obj):
-    """Return the path of the object in standard Python notation."""
+    """Return the path of the object in standard Python notation.
+
+    This method should try very hard to return a string, even if it is not a
+    valid Python path.
+    """
     if obj is None:
         return None
 
@@ -100,8 +106,29 @@ def getPythonPath(obj):
     module = getattr(naked, '__module__', _marker)
     if module is _marker:
         return naked.__name__
-    else:
-        return '%s.%s' %(module, naked.__name__)
+    return '%s.%s' %(module, naked.__name__)
+
+
+def isReferencable(path):
+    """Return whether the Python path is referencable."""
+    # Sometimes no path exists, so make a simple check first; example: None
+    if path is None:
+        return False
+    module_name, obj_name = path.rsplit('.', 1)
+    # Do not allow private attributes to be accessible
+    if (obj_name.startswith('_') and
+        not (obj_name.startswith('__') and obj_name.endswith('__'))):
+        return False
+    module = safe_import(module_name)
+    if module is None:
+        return False
+    obj = getattr(module, obj_name, _marker)
+    if obj is _marker:
+        return False
+    # Detect singeltons; those are not referencable in apidoc (yet)
+    if hasattr(obj, '__class__') and getPythonPath(obj.__class__) == path:
+        return False
+    return True
 
 
 def _evalId(id):
@@ -247,7 +274,25 @@ def getDocFormat(module):
     return _format_dict.get(format, 'zope.source.stx')
 
 
-def renderText(text, module=None, format=None):
+def dedentString(text):
+    """Dedent the docstring, so that docutils can correctly render it."""
+    dedent = 0
+    lines = text.split('\n')
+    for line in lines[1:]:
+        if line != '':
+            for char in line:
+                if char == ' ':
+                    dedent += 1
+                else:
+                    break
+            break
+
+    for index in range(1, len(lines)):
+        lines[index] = lines[index][dedent:]
+    return '\n'.join(lines)
+
+
+def renderText(text, module=None, format=None, dedent=True):
     if not text:
         return u''
 
@@ -260,6 +305,8 @@ def renderText(text, module=None, format=None):
         format = 'zope.source.stx'
 
     assert format in _format_dict.values()
+
+    text = dedentString(text)
 
     source = zapi.createObject(format, text)
     renderer = zapi.getMultiAdapter((source, TestRequest()))

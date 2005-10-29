@@ -161,7 +161,42 @@ Now clean up the temporary module, just to play nice:
 
   >>> del sys.modules['zope.app.apidoc.testmodule']
 
+Importing some code we cannot control, such as twisted, might raise errors
+when imported without having a certain environment. In those cases, the safe
+import should prevent the error from penetrating:
+
+  >>> import os, tempfile
+  >>> dir = tempfile.mkdtemp()
+  >>> open(os.path.join(dir, 'alwaysfail.py'), 'w').write('raise ValueError\n')
+  >>> sys.path.insert(0, dir)
+
+  >>> safe_import('alwaysfail') is None
+  True
+
+  >>> del sys.path[0]
+
+  >>> import shutil
+  >>> shutil.rmtree(dir)
+
+Another method to explicitely turning off the import of certain modules is to
+declare that they should be ignored. For example, if we tell the class
+registry to ignore ``zope.app``,
+
+  >>> classregistry.IGNORE_MODULES.append('zope.app')
+
+then we cannot import it anymore, even though we know it is available:
+
+  >>> safe_import('zope.app') is None
+  True
+
+Note that all sub-packages are also unavailable:
+
+  >>> safe_import('zope.app.apidoc') is None
+  True
+
 We also need to play nice concerning variables and have to reset the module
 globals:
 
+  >>> classregistry.IGNORE_MODULES.pop()
+  'zope.app'
   >>> classregistry.__import_unknown_modules__ = False

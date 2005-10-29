@@ -24,6 +24,7 @@ from zope.app import zapi
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import getPythonPath, getPermissionIds
 from zope.app.apidoc.utilities import renderText, getFunctionSignature
+from zope.app.apidoc.utilities import isReferencable
 from zope.app.traversing.interfaces import TraversalError
 
 
@@ -31,7 +32,7 @@ def getTypeLink(type):
     if type is types.NoneType:
         return None
     path = getPythonPath(type)
-    return path.replace('.', '/')
+    return isReferencable(path) and path.replace('.', '/') or None
 
 class ClassDetails(object):
     """Represents the details of the class."""
@@ -65,7 +66,7 @@ class ClassDetails(object):
                 # If one of the classes is implemented in C, we will not
                 # be able to find it.
                 url = None
-            info.append({'path': path, 'url': url})
+            info.append({'path': path or None, 'url': url})
         return info
 
 

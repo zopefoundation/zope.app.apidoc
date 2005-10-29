@@ -19,7 +19,7 @@ For the following demonstrations, we need a nice interface that we can inspect:
   ...                    required=True,
   ...                    default=u"My Bar")
   ...
-  ...     baz = Attribute('baz', 
+  ...     baz = Attribute('baz',
   ...                     'This is the baz attribute')
   ...
   ...     def blah(one, two, three=None, *args, **kwargs):
@@ -171,7 +171,7 @@ Note that ZCML has some more convenient methods of doing this. Now let's get
 the interface types again:
 
   >>> interface.getInterfaceTypes(IFoo)
-  [<InterfaceClass __builtin__.IContentType>]
+  [<InterfaceClass zope.app.apidoc.doctest.IContentType>]
 
 Again note that the interface passed to this function *cannot* be proxied,
 otherwise this method will pick up the proxy's interfaces as well.
@@ -196,7 +196,7 @@ If the name matching method fails, it picks the first interface that extends
 
   >>> from zope.schema.interfaces import IField
   >>> class ISpecialField(IField):
-  ...     pass 
+  ...     pass
   >>> class ISomething(Interface):
   ...     pass
 
@@ -205,7 +205,7 @@ If the name matching method fails, it picks the first interface that extends
   ...     implements(ISomething, ISpecialField)
 
   >>> interface.getFieldInterface(MyField())
-  <InterfaceClass __builtin__.ISpecialField>
+  <InterfaceClass zope.app.apidoc.doctest.ISpecialField>
 
 
 `getAttributeInfoDictionary(attr, format='restructuredtext')`

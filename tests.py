@@ -24,7 +24,7 @@ from zope.testing import doctest, doctestunit
 
 from zope.app.traversing.interfaces import IContainmentRoot
 from zope.app.location import LocationProxy
-from zope.app.testing import placelesssetup, ztapi
+from zope.app.testing import placelesssetup, ztapi, setup
 
 from zope.app.renderer.rest import ReStructuredTextSourceFactory
 from zope.app.renderer.rest import IReStructuredTextSource
@@ -35,15 +35,20 @@ def setUp(test):
     placelesssetup.setUp()
     # Register Renderer Components
     ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
-                         'zope.source.rest')    
-    ztapi.browserView(IReStructuredTextSource, '', 
+                         'zope.source.rest')
+    ztapi.browserView(IReStructuredTextSource, '',
                       ReStructuredTextToHTMLRenderer)
     # Cheat and register the ReST renderer as the STX one as well.
     ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
-                         'zope.source.stx')    
-    ztapi.browserView(IReStructuredTextSource, '', 
+                         'zope.source.stx')
+    ztapi.browserView(IReStructuredTextSource, '',
                       ReStructuredTextToHTMLRenderer)
+    setup.setUpTestAsModule(test, 'zope.app.apidoc.doctest')
 
+
+def tearDown(test):
+    placelesssetup.tearDown()
+    setup.tearDownTestAsModule(test)
 
 # Generally useful classes and functions
 
@@ -56,7 +61,7 @@ class Root:
 def rootLocation(obj, name):
     return LocationProxy(obj, Root(), name)
 
-     
+
 def test_suite():
     return unittest.TestSuite((
         doctest.DocTestSuite('zope.app.apidoc.browser.apidoc',

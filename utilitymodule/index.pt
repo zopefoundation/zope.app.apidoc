@@ -7,7 +7,7 @@
   <h1 class="details-header">
     <a href=""
        tal:attributes="
-           href string:../../../Interface/${iface/getId}/apiindex.html"
+           href string:../../../Interface/${iface/getId}/index.html"
        tal:content="iface/getId" /> <br />
     <tal:block i18n:translate="">(Name: "<span
         tal:replace="view/getName" i18n:name="name" />")</tal:block>

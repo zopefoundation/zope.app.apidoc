@@ -5,7 +5,7 @@
 <metal:block define-macro="zcml" i18n:domain="zope">
   <a href=""
       tal:attributes="href
-        string:../../Code/${zcml/url}/index.html?line=${zcml/line}#${zcml/line}"
+     string:$rootURL/Code/${zcml/url}/index.html?line=${zcml/line}#${zcml/line}"
       tal:content="zcml/file">
     zope/app/configure.zcml
   </a>
@@ -42,7 +42,7 @@
       <a href=""
           tal:condition="iface"
           tal:attributes="href
-              string:../${iface/module}.${iface/name}/apiindex.html">
+            string:$rootURL/Interface/${iface/module}.${iface/name}/index.html">
         <metal:block use-macro="context/@@interface_macros/ifacename"
         /></a><tal:block condition="not:repeat/iface/end">, </tal:block>
     </tal:block>
@@ -56,7 +56,7 @@
     <a href=""
         tal:condition="iface"
         tal:attributes="href
-              string:../${iface/module}.${iface/name}/apiindex.html">
+          string:$rootURL/Interface/${iface/module}.${iface/name}/index.html">
       <metal:block use-macro="context/@@interface_macros/ifacename" />
     </a>
     <span tal:condition="not:iface" i18n:translate="">
@@ -74,7 +74,7 @@
 
 <metal:block define-macro="factory">
   <a href=""
-     tal:attributes="href string:../../Code/${factory/url}/"
+     tal:attributes="href string:$rootURL/Code/${factory/url}/"
      tal:content="factory/name" />
   <tal:block replace="string:(${factory/title})" condition="factory/title" />
 </metal:block>
@@ -87,10 +87,13 @@
      tal:content="structure utility/name" />
   <br />
   <div style="padding-bottom: 3pt;"><span class="small">
-    <span i18n:translate="">Class:</span> <code style="font-size: 100%">
-    <a href=""
-       tal:attributes="href string:$rootURL/Code/${utility/url}/index.html"
-       tal:content="utility/path" />
+    <span i18n:translate="">Component:</span>
+    <code style="font-size: 100%">
+      <a href=""
+         tal:attributes="href string:$rootURL/Code/${utility/url}/index.html"
+         tal:content="utility/path"
+         tal:condition="utility/url" />
+      <span tal:condition="not: utility/url" tal:replace="utility/path" />
   </code></span></div>
 </metal:block>
 

@@ -32,7 +32,7 @@
          tal:content="entry/name" />
       <a href=""
          tal:condition="entry/isinterface"
-         tal:attributes="href string:./${entry/name}/apiindex.html"
+         tal:attributes="href string:./${entry/name}/index.html"
          tal:content="structure string:<b><i>${entry/name}</i></b>" />
       <a href=""
          tal:condition="entry/isclass"

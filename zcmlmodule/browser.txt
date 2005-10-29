@@ -26,7 +26,7 @@ Now we create a namespace representing directives available in all namespaces
 
 and generate a tree node :
 
-  >>> from zope.app.tree.node import Node 
+  >>> from zope.app.tree.node import Node
   >>> node = Node(ns)
 
 We can now ask the menu for the title of the namespace
@@ -41,7 +41,7 @@ and the link to the namespace overview.
 
 Since the 'ALL' namespace is not that useful, let's create a namespace
 instance for the browser namespace:
-  
+
   >>> ns = Namespace(module, 'http://namespaces.zope.org/browser')
   >>> node = Node(ns)
 
@@ -52,7 +52,7 @@ And again we can get its title and menu link:
   >>> menu.getMenuLink(node) is None
   True
 
-Now we add the `page` directive to the browser namespace: 
+Now we add the `page` directive to the browser namespace:
 
   >>> from zope.app.apidoc.zcmlmodule import Directive
   >>> dir = Directive(ns, 'page', None, None, None, None)
@@ -80,7 +80,7 @@ Let's create a directive that we can use as context for the details:
   >>> class IFoo(Interface):
   ...     class_ = Attribute('class_')
 
-  >>> def foo(): 
+  >>> def foo():
   ...     pass
 
   >>> directive = Directive(ns, 'page', IFoo, foo, None, ())
@@ -187,7 +187,7 @@ Return information about the directive handler object.
 
   >>> pprint(details.getHandler())
   {'path': 'None.foo',
-   'url': 'None/foo'}
+   'url': None}
 
 
 `getSubdirectives()`
@@ -210,8 +210,7 @@ but if we add one
 the result becomes more interesting:
 
   >>> pprint(details.getSubdirectives()) #doctest:+ELLIPSIS
-  [{'handler': {'path': 'None.handler',
-                'url': 'None/handler'},
+  [{'handler': {'path': 'None.handler', 'url': None},
     'info': 'info',
     'name': 'foo',
     'namespace': 'browser',

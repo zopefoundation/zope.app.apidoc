@@ -32,10 +32,10 @@ directly provides the ``ISite`` and ``IRootFolder`` interface, so we should
 see those:
 
     >>> browser.getLink('zope.app.component.interfaces.ISite').url
-    '.../++apidoc++/Interface/zope.app.component.interfaces.ISite/apiindex.html'
+    '.../++apidoc++/Interface/zope.app.component.interfaces.ISite/index.html'
 
     >>> browser.getLink('zope.app.folder.interfaces.IRootFolder').url
-    '...apidoc++/Interface/zope.app.folder.interfaces.IRootFolder/apiindex.html'
+    '...apidoc++/Interface/zope.app.folder.interfaces.IRootFolder/index.html'
 
 The next two section, the implemented interfaces and the base classes, are not
 instance specific pieces of information, but they are still nice to see at
@@ -43,16 +43,16 @@ this point. For example, a ``Folder`` instance provides the following
 interfaces:
 
     >>> browser.getLink('zope.app.folder.interfaces.IFolder').url
-    '.../++apidoc++/Interface/zope.app.folder.interfaces.IFolder/apiindex.html'
+    '.../++apidoc++/Interface/zope.app.folder.interfaces.IFolder/index.html'
 
     >>> browser.getLink('persistent.interfaces.IPersistent').url
-    '.../++apidoc++/Interface/persistent.interfaces.IPersistent/apiindex.html'
+    '.../++apidoc++/Interface/persistent.interfaces.IPersistent/index.html'
 
     >>> browser.getLink('zope.app.component.interfaces.IPossibleSite').url
-    '.../Interface/zope.app.component.interfaces.IPossibleSite/apiindex.html'
+    '.../Interface/zope.app.component.interfaces.IPossibleSite/index.html'
 
     >>> browser.getLink('zope.app.container.interfaces.IContained').url
-    '...doc++/Interface/zope.app.container.interfaces.IContained/apiindex.html'
+    '...doc++/Interface/zope.app.container.interfaces.IContained/index.html'
 
 The base classes of the ``Folder`` are as follows:
 
@@ -110,10 +110,7 @@ example:
       <li>
         <b><code>get(name, default=None)</code>
         </b><br>
-        <div class="inline documentation"><dl class="docutils">
-          <dt>Return ...
-        </dl>
-        </div>
+        <div class="inline documentation"><p>Return ... </div>
         <span class="small">
           <i>Interface:</i>
           <a href="...">zope.interface.common.mapping.IReadMapping</a><br />
