@@ -3,7 +3,7 @@ The ZCML Documentation Module
 =============================
 
 This documentation module provides you with a complete reference of all
-directives available on your Zope 3 installation. 
+directives available on your Zope 3 installation.
 
 
 `ZCMLModule` class

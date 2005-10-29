@@ -30,7 +30,7 @@ import mechanize
 from zope.app.testing import functional
 
 # Setup the user feedback detail level.
-VERBOSITY = 4
+VERBOSITY = 2
 
 VERBOSITY_MAP = {1: 'ERROR', 2: 'WARNING', 3: 'INFO'}
 
@@ -185,6 +185,7 @@ class StaticAPIDocGenerator(object):
             self.linkQueue.append(link)
         self.rootDir = os.path.join(os.path.dirname(__file__), BASE_DIR)
         self.maxWidth = getMaxWidth()-13
+        self.needNewLine = False
 
     def start(self):
         """Start the retrieval of the apidoc."""
@@ -226,14 +227,17 @@ class StaticAPIDocGenerator(object):
             sys.stdout.write('\r' + ' '*(self.maxWidth+13))
             sys.stdout.write('\rLink %5d: %s' % (self.counter, url))
             sys.stdout.flush()
+            self.needNewLine = True
 
     def sendMessage(self, msg, verbosity=4):
         if VERBOSITY >= verbosity:
-            sys.stdout.write('\n')
+            if self.needNewLine:
+                sys.stdout.write('\n')
             sys.stdout.write(VERBOSITY_MAP.get(verbosity, 'INFO')+': ')
             sys.stdout.write(msg)
             sys.stdout.write('\n')
             sys.stdout.flush()
+            self.needNewLine = False
 
     def processLink(self, link):
         """Process a link."""
@@ -249,10 +253,12 @@ class StaticAPIDocGenerator(object):
             # Something went wrong with retrieving the page.
             self.sendMessage(
                 '%s (%i): %s' % (error.msg, error.code, link.callableURL), 2)
+            self.sendMessage('+-> Reference: ' + link.referenceURL, 2)
             return
-        except ValueError:
+        except (urllib2.URLError, ValueError):
             # We had a bad URL running the publisher browser
             self.sendMessage('Bad URL: ' + link.callableURL, 2)
+            self.sendMessage('+-> Reference: ' + link.referenceURL, 2)
             return
 
         # Make sure the directory exists and get a file path.

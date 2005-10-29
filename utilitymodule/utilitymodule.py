@@ -33,7 +33,9 @@ from zope.app.apidoc.utilities import ReadContainerBase, getPythonPath
 NONAME = '__noname__'
 
 def encodeName(name):
-    return base64.encodestring(name.encode('utf-8')).strip()
+    # base64 strings can have lines at most 76 chars long; so make sure we get
+    # rid of all newline chars. See RFC-3548.
+    return base64.encodestring(name.encode('utf-8')).replace('\n', '')
 
 def decodeName(name):
     try:

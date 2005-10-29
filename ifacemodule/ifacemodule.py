@@ -66,7 +66,7 @@ class InterfaceModule(ReadContainerBase):
     def get(self, key, default=None):
         """See zope.app.interfaces.container.IReadContainer"""
         iface = queryInterface(key, default)
-        if iface is default: 
+        if iface is default:
             # Yeah, we find more items than we claim to have! This way we can
             # handle all interfaces using this module. :-)
             parts = key.split('.')

@@ -102,25 +102,25 @@ interface:
 
   >>> class IFoo(zope.interface.Interface):
   ...     """This is the Foo interface
-  ... 
+  ...
   ...     More description here...
   ...     """
   ...     foo = zope.interface.Attribute('This is foo.')
   ...     bar = zope.interface.Attribute('This is bar.')
-  ... 
+  ...
   ...     title = zope.schema.TextLine(
-  ...         description=u'Title', 
-  ...         required=True, 
+  ...         description=u'Title',
+  ...         required=True,
   ...         default=u'Foo')
   ...
   ...     description = zope.schema.Text(
-  ...         description=u'Desc', 
+  ...         description=u'Desc',
   ...         required=False,
   ...         default=u'Foo.')
-  ... 
+  ...
   ...     def blah():
   ...         """This is blah."""
-  ...     
+  ...
   ...     def get(key, default=None):
   ...         """This is get."""
 
@@ -347,7 +347,8 @@ interface.
 Return all utilities that provide this interface.
 
   >>> pprint(details.getUtilities())
-  [{'name': 'The Foo',
+  [{'iface_id': '__builtin__.IFoo',
+    'name': 'The Foo',
     'path': '__builtin__.Foo',
     'url': '__builtin__/Foo',
-    'url_name': 'The Foo'}]
+    'url_name': 'VGhlIEZvbw=='}]

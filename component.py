@@ -26,9 +26,10 @@ from zope.publisher.interfaces import IRequest
 
 from zope.app import zapi
 from zope.app.i18n import ZopeMessageFactory as _
+from zope.app.apidoc.classregistry import classRegistry
 from zope.app.apidoc.utilities import relativizePath, truncateSysPath
 from zope.app.apidoc.utilities import getPythonPath, renderText
-from zope.app.apidoc.classregistry import classRegistry
+from zope.app.apidoc.utilitymodule import utilitymodule
 
 SPECIFIC_INTERFACE_LEVEL = 1
 EXTENDED_INTERFACE_LEVEL = 2
@@ -219,8 +220,12 @@ def getUtilityInfoDictionary(reg):
     else:
         klass = reg.component.__class__
 
+    # provided interface id
+    iface_id = '%s.%s' % (reg.provided.__module__, reg.provided.getName())
+
     path = getPythonPath(klass)
     return {'name': reg.name or _('<i>no name</i>'),
-            'url_name': reg.name or '__noname__',
+            'url_name': utilitymodule.encodeName(reg.name or '__noname__'),
+            'iface_id': iface_id,
             'path': path,
             'url': path.replace('.', '/')}

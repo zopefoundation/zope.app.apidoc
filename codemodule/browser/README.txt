@@ -218,6 +218,17 @@ Get all attributes of this function.
    'type_link': '__builtin__/bool',
    'value': 'True'}
 
+`getBaseURL()`
+~~~~~~~~~~~~~~
+
+Return the URL for the API Documentation Tool.
+
+Note that the following output is a bit different than usual, since
+we have not setup all path elements.
+
+  >>> details.getBaseURL()
+  'http://127.0.0.1'
+
 
 Text File Details
 -----------------

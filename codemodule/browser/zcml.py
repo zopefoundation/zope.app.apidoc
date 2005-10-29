@@ -77,16 +77,25 @@ class DirectiveDetails(object):
             ns = 'ALL'
         return '%s/../ZCML/%s/%s/index.html' %(
             zapi.absoluteURL(findDocModule(self), self.request), ns, name)
-        
+
     def ifaceURL(self, value, field, rootURL):
         bound = field.bind(self.context.context)
         iface = bound.fromUnicode(value)
+        if iface is None:
+            return
         return rootURL+'/../Interface/%s/apiindex.html' %(getPythonPath(iface))
-  
+
     def objectURL(self, value, field, rootURL):
         bound = field.bind(self.context.context)
         obj = bound.fromUnicode(value)
-        if IInterface.providedBy(obj):
+        if obj is None:
+            return
+        try:
+            isInterface = IInterface.providedBy(obj)
+        except AttributeError:
+            # probably an object that does not like to play nice with the CA
+            isInterface = False
+        if isInterface:
             return rootURL+'/../Interface/%s/apiindex.html' %(
                 getPythonPath(obj))
         try:
@@ -109,7 +118,7 @@ class DirectiveDetails(object):
             field = context.schema.get(name)
             if zapi.isinstance(field, GlobalInterface):
                 attr['url'] = self.ifaceURL(attr['value'], field, rootURL)
-                
+
             elif zapi.isinstance(field, GlobalObject):
                 attr['url'] = self.objectURL(attr['value'], field, rootURL)
 
@@ -122,17 +131,15 @@ class DirectiveDetails(object):
                         attr['url'] = self.ifaceURL(values[0], field, rootURL)
                     elif zapi.isinstance(field, GlobalObject):
                         attr['url'] = self.objectURL(values[0], field, rootURL)
-                    break
-                    
-                for value in values: 
-                    if zapi.isinstance(field, GlobalInterface):
-                        url = self.ifaceURL(value, field, rootURL)
-                    elif zapi.isinstance(field, GlobalObject):
-                        url = self.objectURL(value, field, rootURL)
-                    else:
-                        break
-                    attr['values'].append({'value': value, 'url': url})
-                    
+                else:
+                    for value in values:
+                        if zapi.isinstance(field, GlobalInterface):
+                            url = self.ifaceURL(value, field, rootURL)
+                        elif zapi.isinstance(field, GlobalObject):
+                            url = self.objectURL(value, field, rootURL)
+                        else:
+                            break
+                        attr['values'].append({'value': value, 'url': url})
 
         # Make sure that the attributes are in the same order they are defined
         # in the schema.

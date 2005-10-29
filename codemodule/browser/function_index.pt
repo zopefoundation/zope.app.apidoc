@@ -25,7 +25,7 @@
     </div>
   </div>
 
-  <div 
+  <div
       tal:define="attributes view/getAttributes"
       tal:condition="attributes">
 

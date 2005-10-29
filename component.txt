@@ -6,7 +6,7 @@ Once you have an interface, you really want to discover on how this interface
 interacts with other components in Zope 3. The functions in
 
   >>> from zope.app.apidoc import component
- 
+
 provide you with utilities to make those discoveries. The functions are
 explained in detail in this document. Before we start though, we have to have
 some interfaces to work with:
@@ -44,7 +44,7 @@ specified interface. So let's create some adapter registrations:
   >>> regs = list(component.getRequiredAdapters(IFoo))
   >>> regs.sort()
   >>> regs
-  [AdapterRegistration(('IFoo', 'IBar'), 'ISpecialResult', '', None, ''), 
+  [AdapterRegistration(('IFoo', 'IBar'), 'ISpecialResult', '', None, ''),
    AdapterRegistration(('IFoo',), 'IResult', '', None, ''),
    SubscriptionRegistration(('IFoo',), None, 'stubFactory', '')]
 
@@ -55,8 +55,8 @@ are not returned by default. But you can simply turn this flag on:
   >>> regs = list(component.getRequiredAdapters(IFoo, withViews=True))
   >>> regs.sort()
   >>> regs
-  [AdapterRegistration(('IFoo', 'IBar'), 'ISpecialResult', '', None, ''), 
-   AdapterRegistration(('IFoo', 'IRequest'), 'ISpecialResult', '', None, ''), 
+  [AdapterRegistration(('IFoo', 'IBar'), 'ISpecialResult', '', None, ''),
+   AdapterRegistration(('IFoo', 'IRequest'), 'ISpecialResult', '', None, ''),
    AdapterRegistration(('IFoo',), 'IResult', '', None, ''),
    SubscriptionRegistration(('IFoo',), None, 'stubFactory', '')]
 
@@ -66,7 +66,7 @@ specified interface extends:
   >>> regs = list(component.getRequiredAdapters(IFoo))
   >>> regs.sort()
   >>> regs
-  [AdapterRegistration(('IFoo', 'IBar'), 'ISpecialResult', '', None, ''), 
+  [AdapterRegistration(('IFoo', 'IBar'), 'ISpecialResult', '', None, ''),
    AdapterRegistration(('IFoo',), 'IResult', '', None, ''),
    SubscriptionRegistration(('IFoo',), None, 'stubFactory', '')]
 
@@ -158,7 +158,7 @@ Again, the first step is to create some factories:
   >>> from zope.component.interfaces import IFactory
   >>> ztapi.provideUtility(IFactory, Factory(MyFoo), 'MyFoo')
   >>> ztapi.provideUtility(IFactory, Factory(MyBar), 'MyBar')
-  >>> ztapi.provideUtility(IFactory, 
+  >>> ztapi.provideUtility(IFactory,
   ...     Factory(MyFooBar, 'MyFooBar', 'My Foo Bar'), 'MyFooBar')
 
 Let's see whether we will be able to get them:
@@ -166,15 +166,15 @@ Let's see whether we will be able to get them:
   >>> regs = list(component.getFactories(IFooBar))
   >>> regs.sort()
   >>> regs
-  [UtilityRegistration('IFactory', 'MyFooBar', 
+  [UtilityRegistration('IFactory', 'MyFooBar',
                        <Factory for <class 'MyFooBar'>>, '')]
 
   >>> regs = list(component.getFactories(IFoo))
   >>> regs.sort()
   >>> regs
-  [UtilityRegistration('IFactory', 'MyFoo', 
+  [UtilityRegistration('IFactory', 'MyFoo',
                        <Factory for <class 'MyFoo'>>, ''),
-   UtilityRegistration('IFactory', 'MyFooBar', 
+   UtilityRegistration('IFactory', 'MyFooBar',
                        <Factory for <class 'MyFooBar'>>, '')]
 
 
@@ -200,7 +200,7 @@ Now let's have a look what we have:
   >>> regs = list(component.getUtilities(IFoo))
   >>> regs.sort()
   >>> regs #doctest:+ELLIPSIS
-  [UtilityRegistration('IFoo', '', <MyFoo object at ...>, ''), 
+  [UtilityRegistration('IFoo', '', <MyFoo object at ...>, ''),
    UtilityRegistration('IFooBar', '', <MyFooBar object at ...>, '')]
 
 
@@ -295,7 +295,8 @@ registrations:
 
   >>> pprint(component.getUtilityInfoDictionary(
   ...     component.getUtilities(IFooBar).next()))
-  {'name': u'<i>no name</i>',
+  {'iface_id': '__builtin__.IFooBar',
+   'name': u'<i>no name</i>',
    'path': '__builtin__.MyFooBar',
    'url': '__builtin__/MyFooBar',
-   'url_name': '__noname__'}
+   'url_name': 'X19ub25hbWVfXw=='}

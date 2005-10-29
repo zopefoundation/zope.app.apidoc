@@ -17,6 +17,7 @@ $Id: browser.py 29143 2005-02-14 22:43:16Z srichter $
 """
 __docformat__ = 'restructuredtext'
 from zope.app import zapi
+from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import getPythonPath, renderText
 
 class FunctionDetails(object):
@@ -34,5 +35,11 @@ class FunctionDetails(object):
                  'value': `attr`,
                  'type': type(attr).__name__,
                  'type_link': getPythonPath(type(attr)).replace('.', '/')}
-                
+
                 for name, attr in self.context.getAttributes()]
+
+
+    def getBaseURL(self):
+        """Return the URL for the API Documentation Tool."""
+        m = zapi.getUtility(IDocumentationModule, "Code")
+        return zapi.absoluteURL(zapi.getParent(m), self.request)

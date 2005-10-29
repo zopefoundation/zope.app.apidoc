@@ -28,7 +28,7 @@
 
 
 <metal:block define-macro="method">
-  <b><code 
+  <b><code
       tal:content="string:${method/name}${method/signature}" />
   </b><br>
   <div class="inline-documentation" tal:content="structure method/doc">

@@ -17,6 +17,7 @@ $Id$
 """
 import os
 import unittest
+from zope.configuration import xmlconfig
 from zope.testing import doctest, doctestunit
 from zope.app.testing import placelesssetup, ztapi
 from zope.app.apidoc.tests import Root
@@ -25,7 +26,7 @@ import zope.app.appsetup.appsetup
 from zope.app.location.traversing import LocationPhysicallyLocatable
 from zope.app.traversing.interfaces import IPhysicallyLocatable
 from zope.app.tree.interfaces import IUniqueId
-from zope.app.tree.adapters import LocationUniqueId 
+from zope.app.tree.adapters import LocationUniqueId
 
 from zope.app.apidoc.zcmlmodule import Namespace, Directive
 from zope.app.apidoc.zcmlmodule import ZCMLModule
@@ -39,15 +40,17 @@ def setUp(test):
     ztapi.provideAdapter(None, IPhysicallyLocatable,
                          LocationPhysicallyLocatable)
 
+    config_file = os.path.join(os.path.dirname(zope.app.__file__), 'meta.zcml')
+
     # Fix up path for tests.
-    global old_source_file
-    old_source_file = zope.app.appsetup.appsetup.__config_source
-    zope.app.appsetup.appsetup.__config_source = os.path.join(
-        os.path.dirname(zope.app.__file__), 'meta.zcml')
+    global old_context
+    old_context = zope.app.appsetup.appsetup.getConfigContext()
+    zope.app.appsetup.appsetup.__config_context = xmlconfig.file(
+        config_file, execute=False)
 
 def tearDown(test):
     placelesssetup.tearDown()
-    zope.app.appsetup.appsetup.__config_source = old_source_file    
+    zope.app.appsetup.appsetup.__config_context = old_context
     from zope.app.apidoc import zcmlmodule
     zcmlmodule.namespaces = None
     zcmlmodule.subdirs = None
@@ -61,7 +64,7 @@ def getDirective():
 
     ns = Namespace(module, 'http://namespaces.zope.org/browser')
     return Directive(ns, 'page', None, foo, None, ())
-    
+
 
 def test_suite():
     return unittest.TestSuite((

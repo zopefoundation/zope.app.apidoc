@@ -66,7 +66,7 @@ class ModuleDetails(object):
 
         We cannot reuse the the system's bread crumbs, since they go all the
         way up to the root, but we just want to go to the root module."""
-        names = self.context.getPath().split('.') 
+        names = self.context.getPath().split('.')
         crumbs = []
         module = self.context
         # I really need the class here, so remove the proxy.

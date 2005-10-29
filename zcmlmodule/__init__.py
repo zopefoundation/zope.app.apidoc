@@ -16,7 +16,7 @@
 The ZCML documentation module reads all of the meta directives (but does not
 execute them) and uses the collected data to generate the tree. The result of
 the evaluation is stored in thread-global variables, so that we have to parse
-the files only once. 
+the files only once.
 
 $Id$
 """
@@ -45,7 +45,7 @@ def unquoteNS(ns):
     """Un-quotes a namespace from a URL-secure version."""
     ns = ns.replace('_sl_', '/')
     ns = ns.replace('_co_', ':')
-    return ns    
+    return ns
 
 
 class Namespace(ReadContainerBase):
@@ -84,7 +84,7 @@ class Namespace(ReadContainerBase):
         sd = subdirs.get((ns, key), [])
         directive = Directive(self, key, schema, handler, info, sd)
         return directive
-    
+
     def items(self):
         """See zope.app.container.interfaces.IReadContainer"""
         list = []
@@ -92,7 +92,7 @@ class Namespace(ReadContainerBase):
             list.append((key, self.get(key)))
         list.sort()
         return list
-        
+
 
 class Directive(object):
     """Represents a ZCML Directive."""
@@ -106,7 +106,7 @@ class Directive(object):
         self.handler = handler
         self.info = info
         self.subdirs = subdirs
-    
+
 
 class ZCMLModule(ReadContainerBase):
     r"""Represent the Documentation of all ZCML namespaces.
@@ -137,9 +137,7 @@ class ZCMLModule(ReadContainerBase):
         # Some trivial caching
         global namespaces
         global subdirs
-        context = xmlconfig.file(
-            zope.app.appsetup.appsetup.getConfigSource(),
-            execute=False)
+        context = zope.app.appsetup.appsetup.getConfigContext()
         namespaces, subdirs = docutils.makeDocStructures(context)
 
         # Empty keys are not so good for a container
@@ -152,7 +150,7 @@ class ZCMLModule(ReadContainerBase):
         """See zope.app.container.interfaces.IReadContainer
 
         Get the namespace by name; long and abbreviated names work.
-        """        
+        """
         if namespaces is None or subdirs is None:
             self._makeDocStructure()
 
@@ -162,8 +160,8 @@ class ZCMLModule(ReadContainerBase):
 
         full_key = 'http://namespaces.zope.org/' + key
         if namespaces.has_key(full_key):
-            return Namespace(self, full_key)        
-        
+            return Namespace(self, full_key)
+
         return default
 
 
@@ -185,6 +183,6 @@ def _clear():
     global subdirs
     namespaces = None
     subdirs = None
-    
+
 from zope.testing.cleanup import addCleanUp
 addCleanUp(_clear)
