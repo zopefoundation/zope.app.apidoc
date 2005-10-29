@@ -65,7 +65,7 @@ class MyConfigHandler(xmlconfig.ConfigurationHandler, object):
             self.rootElement = element
         else:
             self.currentElement.subs.append(element)
-            
+
         element.__parent__ = self.currentElement
         self.currentElement = element
 
@@ -78,7 +78,7 @@ class MyConfigHandler(xmlconfig.ConfigurationHandler, object):
 class Directive(object):
     """Representation of a ZCML directive."""
     implements(IDirective)
-        
+
     def __init__(self, name, schema, attrs, context, info, prefixes):
         self.name = name
         self.schema = schema
@@ -110,7 +110,7 @@ class ZCMLFile(object):
         context.package = self.package
 
         # Since we want to use a custom configuration handler, we need to
-        # instantiate the parser object ourselves 
+        # instantiate the parser object ourselves
         parser = make_parser()
         handler = MyConfigHandler(context)
         parser.setContentHandler(handler)

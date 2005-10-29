@@ -11,7 +11,7 @@
       <span class="attributeName" tal:content="attr/name">
         name
       </span>="<a tal:attributes="href attr/url"><span
-           class="attributeValue" 
+           class="attributeValue"
            tal:content="attr/value">value</span></a>"
     </span>
     <span tal:condition="attr/values">
@@ -21,7 +21,7 @@
       <div tal:repeat="entry attr/values">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <a tal:attributes="href entry/url"><span
-           class="attributeValue" 
+           class="attributeValue"
            tal:content="entry/value">value</span></a>
      </div>
      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
@@ -31,7 +31,7 @@
   &nbsp;&nbsp;&nbsp;
   <span tal:condition="view/hasSubDirectives">&gt;</span>
   <span tal:condition="not:view/hasSubDirectives">/&gt;</span>
-</div>  
+</div>
 
 <div style="margin-left: 1.5em;">
   <tal:block repeat="element view/getElements">
@@ -41,7 +41,7 @@
 
 <div class="directive"
      tal:condition="view/hasSubDirectives">
-  &lt;/<span class="tagName" 
+  &lt;/<span class="tagName"
              tal:content="view/fullTagName" />&gt;
 
 </div>

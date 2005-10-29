@@ -28,6 +28,7 @@ from zope.app.tree.interfaces import IUniqueId
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import getPythonPath
 
+from zope.app.apidoc.zcmlmodule import quoteNS
 from zope.app.apidoc.codemodule.interfaces import IRootDirective
 
 def findDocModule(obj):
@@ -68,15 +69,24 @@ class DirectiveDetails(object):
         return ''
 
     def url(self):
-        context = removeSecurityProxy(self.context)
-        ns, name = context.name
-        ns = ns.replace(':', '_co_')
-        ns = ns.replace('/', '_sl_')
+        directive = removeSecurityProxy(self.context)
+        subDirective = None
+        # Sub-directives are not directly documented, so use parent
+        parent = zapi.getParent(directive)
+        if not (IRootDirective.providedBy(parent) or
+                IRootDirective.providedBy(directive)):
+            subDirective = directive
+            directive = parent
+        ns, name = directive.name
+        ns = quoteNS(ns)
         zcml = zapi.getUtility(IDocumentationModule, 'ZCML')
         if name not in zcml[ns]:
             ns = 'ALL'
-        return '%s/../ZCML/%s/%s/index.html' %(
+        link = '%s/../ZCML/%s/%s/index.html' %(
             zapi.absoluteURL(findDocModule(self), self.request), ns, name)
+        if subDirective:
+            link += '#' + subDirective.name[1]
+        return link
 
     def ifaceURL(self, value, field, rootURL):
         bound = field.bind(self.context.context)

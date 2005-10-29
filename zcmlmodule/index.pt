@@ -5,7 +5,7 @@
                   rootURL string:../../..">
 
   <h1 class="details-header">
-    <span tal:replace="context/zope:name" /> 
+    <span tal:replace="context/zope:name" />
     (<span tal:replace="structure view/getNamespaceName" />)
   </h1>
 
@@ -38,7 +38,7 @@
        tal:condition="handler">
     <i i18n:translate="">Handler:</i>
     <a href=""
-       tal:attributes="href 
+       tal:attributes="href
            string:../../../Code/${handler/url}/index.html"
        tal:content="handler/path">
     </a>
@@ -47,7 +47,7 @@
   <h2 class="details-section" i18n:translate="">Schema</h2>
 
   <div class="indent">
-    <a href="" tal:attributes="href 
+    <a href="" tal:attributes="href
            string:../../../Interface/${schema/getId}/apiindex.html">
       <h3 tal:content="schema/getId">zope.fields.Schema</h3>
     </a>
@@ -56,9 +56,9 @@
   <div class="indent"
       tal:define="fields schema/getFields">
 
-  <ul class="attr-list" 
+  <ul class="attr-list"
       tal:condition="fields">
-  
+
     <li tal:repeat="field fields">
       <metal:block use-macro="context/@@interface_macros/field" />
     </li>
@@ -79,8 +79,10 @@
 
   <div class="indent"
        tal:repeat="dir view/getSubdirectives">
+  <a name="dirname"
+     tal:attributes="name dir/name" />
 
-  <h3 tal:content="dir/name"> 
+  <h3 tal:content="dir/name">
     directive
   </h3>
 
@@ -90,11 +92,11 @@
 
   <br />
 
-  <div class="indent" 
+  <div class="indent"
        tal:condition="dir/handler">
     <i i18n:translate="">Handler:</i>
     <a href=""
-       tal:attributes="href 
+       tal:attributes="href
            string:../../../Code/${dir/handler/url}/index.html"
        tal:content="dir/handler/path">
     </a>
@@ -102,7 +104,7 @@
 
   <div class="indent">
     <a href=""
-       tal:attributes="href 
+       tal:attributes="href
            string:../../../Interface/${dir/schema/getId}/apiindex.html">
       <h3 tal:content="dir/schema/getId">zope.fields.Schema</h3>
     </a>
@@ -111,15 +113,15 @@
   <div class="indent"
       tal:define="fields dir/schema/getFields">
 
-    <ul class="attr-list" 
+    <ul class="attr-list"
         tal:condition="fields">
-    
+
       <li tal:repeat="field fields">
         <metal:block use-macro="context/@@interface_macros/field" />
       </li>
-    
+
     </ul>
-    
+
     <p tal:condition="not: fields">
       <em i18n:translate="">There are no fields specified.</em>
     </p>
