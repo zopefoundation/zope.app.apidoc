@@ -204,6 +204,9 @@ class StaticAPIDocGenerator(object):
 
         classregistry.IGNORE_MODULES = self.options.ignore_modules
 
+        if self.options.import_unknown_modules:
+            classregistry.__import_unknown_modules__ = True
+
         # Work through all links until there are no more to work on.
         self.sendMessage('Starting retrieval.')
         while self.linkQueue:
@@ -401,6 +404,13 @@ Add modules that should be ignored during retrieval. That allows you to limit
 the scope of the generated API documentation.
 """)
 
+retrieval.add_option(
+    '--load-all', '-l', action="store_true", dest='import_unknown_modules',
+    help="""\
+Retrieve all referenced modules, even if they have not been imported during
+the startup process.
+""")
+
 parser.add_option_group(retrieval)
 
 ######################################################################
@@ -450,6 +460,7 @@ default_setup_args = [
     '--add', '@@/tree_images/plus_vline.png',
     '--ignore', 'twisted',
     '--ignore', 'zope.app.twisted.ftp.test',
+    '--load-all'
     ]
 
 def merge_options(options, defaults):
