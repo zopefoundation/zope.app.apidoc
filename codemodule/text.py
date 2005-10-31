@@ -29,7 +29,7 @@ class TextFile(object):
         self.__name__ = name
 
     def getContent(self):
-        file = open(self.path, 'rb')
+        file = open(self.path, 'rU')
         content = file.read()
         file.close()
         return content.decode('utf-8')
