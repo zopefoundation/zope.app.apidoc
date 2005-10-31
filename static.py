@@ -138,7 +138,7 @@ class PublisherBrowser(zope.testbrowser.testing.PublisherMechanizeBrowser,
                        object):
 
     def __init__(self, *args, **kw):
-        functional.FunctionalTestSetup()
+        functional.Functional.setUp()
         super(PublisherBrowser, self).__init__(*args, **kw)
 
     def setUserAndPassword(self, user, pw):
