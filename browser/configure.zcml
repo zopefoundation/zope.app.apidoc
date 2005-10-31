@@ -2,7 +2,18 @@
   xmlns="http://namespaces.zope.org/browser"
   i18n_domain="zope">
 
-  <resource name="apidoc.css" file="apidoc.css" />
+  <layer
+      name="apidoc"
+      interface=".skin.apidoc" />
+
+  <skin
+      name="APIDOC"
+      interface=".skin.APIDOC" />
+
+  <resource
+      name="apidoc.css"
+      file="apidoc.css"
+      />
 
   <page
       for="*"
@@ -10,6 +21,7 @@
       permission="zope.View"
       class=".macros.APIDocumentationMacros"
       allowed_interface="zope.interface.common.mapping.IItemMapping"
+      layer=".skin.apidoc"
       />
 
   <page
@@ -17,6 +29,7 @@
       name="menu_macros"
       permission="zope.View"
       template="menu_macros.pt"
+      layer=".skin.apidoc"
       />
 
   <page
@@ -24,6 +37,7 @@
       name="static_menu_macros"
       permission="zope.View"
       template="static_menu_macros.pt"
+      layer=".skin.apidoc"
       />
 
   <page
@@ -31,6 +45,7 @@
       name="details_macros"
       permission="zope.View"
       template="details_macros.pt"
+      layer=".skin.apidoc"
       />
 
   <resource
@@ -51,7 +66,8 @@
   <pages
     for="zope.app.apidoc.apidoc.APIDocumentation"
     class=".apidoc.APIDocumentationView"
-    permission="zope.app.apidoc.UseAPIDoc">
+    permission="zope.app.apidoc.UseAPIDoc"
+    layer=".skin.apidoc">
 
     <page
         name="index.html"
@@ -76,7 +92,8 @@
   <pages
     for="zope.app.apidoc.apidoc.APIDocumentation"
     class=".apidoc.APIDocumentationView"
-    permission="zope.app.apidoc.UseAPIDoc">
+    permission="zope.app.apidoc.UseAPIDoc"
+    layer=".skin.apidoc">
 
     <page
         name="static.html"
@@ -96,6 +113,16 @@
 
   </pages>
 
+  <!-- Error Views -->
+
+  <page
+      for="zope.publisher.interfaces.INotFound"
+      name="index.html"
+      permission="zope.Public"
+      template="notfound.pt"
+      class="zope.app.exception.browser.notfound.NotFound"
+      layer=".skin.apidoc"
+      />
 
   <!-- Preference Views -->
 
@@ -105,6 +132,7 @@
       class=".preference.APIDocPreferencesTree"
       permission="zope.View"
       attribute="apidocTree"
+      layer=".skin.apidoc"
       />
 
   <page
@@ -112,6 +140,7 @@
       permission="zope.Public"
       name="apidocMenu.html"
       template="prefmenu.pt"
+      layer=".skin.apidoc"
       />
 
   <page
@@ -120,6 +149,7 @@
       name="apidocIndex.html"
       template="prefIndex.pt"
       class="zope.app.preference.browser.EditPreferenceGroup"
+      layer=".skin.apidoc"
       />
 
 </configure>

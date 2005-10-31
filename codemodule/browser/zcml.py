@@ -55,7 +55,7 @@ class DirectiveDetails(object):
     def fullTagName(self):
         context = removeSecurityProxy(self.context)
         ns, name = context.name
-        if context.prefixes[ns]:
+        if context.prefixes.get(ns):
             return '%s:%s' %(context.prefixes[ns], name)
         else:
             return name
@@ -78,7 +78,9 @@ class DirectiveDetails(object):
             subDirective = directive
             directive = parent
         ns, name = directive.name
-        ns = quoteNS(ns)
+        # Sometimes ns is `None`, especially in the slug files, where no
+        # namespaces are used.
+        ns = quoteNS(ns or 'ALL')
         zcml = zapi.getUtility(IDocumentationModule, 'ZCML')
         if name not in zcml[ns]:
             ns = 'ALL'
@@ -89,7 +91,8 @@ class DirectiveDetails(object):
         return link
 
     def objectURL(self, value, field, rootURL):
-        bound = field.bind(self.context.context)
+        naked = removeSecurityProxy(self.context)
+        bound = field.bind(naked.context)
         obj = bound.fromUnicode(value)
         if obj is None:
             return

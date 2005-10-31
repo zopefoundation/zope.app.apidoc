@@ -344,5 +344,5 @@ registrations:
   {'iface_id': 'zope.app.apidoc.doctest.IFooBar',
    'name': u'<i>no name</i>',
    'path': 'zope.app.apidoc.doctest.MyFooBar',
-   'url': 'zope/app/apidoc/doctest/MyFooBar',
+   'url': 'Code/zope/app/apidoc/doctest/MyFooBar',
    'url_name': 'X19ub25hbWVfXw=='}

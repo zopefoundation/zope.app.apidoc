@@ -1,7 +1,7 @@
 <html metal:use-macro="context/@@standard_macros/view">
 <head>
   <metal:block fill-slot="extrahead">
-    <link type="text/css" rel="stylesheet" href="introspector.css"
+    <link type="text/css" rel="stylesheet" href="apidoc.css"
           tal:attributes="href context/++resource++apidoc.css" />
   </metal:block>
 </head>
@@ -63,8 +63,8 @@
       <li tal:repeat="iface ifaces">
         <a href=""
            tal:attributes="href
-             string:${view/getBaseURL}/Interface/$iface/index.html"
-           tal:content="iface" />
+             string:${view/getBaseURL}/Interface/${iface/url}/index.html"
+           tal:content="iface/path" />
       </li>
     </ul>
 
@@ -83,7 +83,6 @@
             tal:condition="base/url" />
         <div tal:condition="not: base/url">
           <span tal:replace="base/path" />
-          <span i18n:translate="">(C-based class)</span>
         </div>
       </li>
     </ul>
@@ -129,7 +128,7 @@ string:${context/@@absolute_url}/++attribute++${attr/name}/@@introspector.html"
         <i i18n:translate="">Interface:</i>
         <a href=""
            tal:attributes="href
-               string:${view/getBaseURL}/Interface/${attr/interface}/index.html"
+         string:${view/getBaseURL}/Interface/${attr/interface}/index.html"
            tal:content="attr/interface">Iface</a><br />
       </span>
       <span class="small"

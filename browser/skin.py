@@ -11,25 +11,18 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Function representation for code browser
+"""`APIdoc` skin.
 
-$Id: __init__.py 29143 2005-02-14 22:43:16Z srichter $
+$Id$
 """
-__docformat__ = 'restructuredtext'
-from zope.interface import implements
-from zope.app.location.interfaces import ILocation
+__docformat__ = "reStructuredText"
 
-class TextFile(object):
-    """This class represents a function declared in the module."""
-    implements(ILocation)
+from zope.publisher.interfaces.browser import IBrowserRequest
+from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 
-    def __init__(self, path, name, package):
-        self.path = path
-        self.__parent__ = package
-        self.__name__ = name
+class apidoc(IBrowserRequest):
+    """The `apidoc` layer."""
 
-    def getContent(self):
-        file = open(self.path, 'rb')
-        content = file.read()
-        file.close()
-        return content.decode('utf-8')
+class APIDOC(apidoc, IDefaultBrowserLayer):
+    """The `APIDOC` skin."""
+

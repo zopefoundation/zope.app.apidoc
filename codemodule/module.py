@@ -96,8 +96,7 @@ class Module(ReadContainerBase):
                    attr.__module__ == self._module.__name__:
 
                 if not hasattr(attr, '__name__') or \
-                       attr.__name__ != name or \
-                       name.startswith('_'):
+                       attr.__name__ != name:
                     continue
 
                 if isinstance(attr, (types.ClassType, types.TypeType)):
@@ -150,4 +149,8 @@ class Module(ReadContainerBase):
 
     def items(self):
         """See zope.app.container.interfaces.IReadContainer."""
-        return self._children.items()
+        # Only publicize public objects, even though we do keep track of
+        # private ones
+        return [(name, value)
+                for name, value in self._children.items()
+                if not name.startswith('_')]

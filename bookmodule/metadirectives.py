@@ -47,10 +47,9 @@ class IBookChapterDirective(Interface):
 
     resources = Tokens(
         title=u"A list of resources.",
-        description=u"""\
-        A list of resources which shall be user for the chapter.
-        The resources must be located in the same directory as
-        the chapter.
+        description=u"""
+        A list of resources which shall be user for the chapter. The
+        resources must be located in the same directory as the chapter.
         """,
         value_type=TextLine(),
         required=False

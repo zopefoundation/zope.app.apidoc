@@ -17,30 +17,36 @@
   </class>
 
   <utility
-    provides="zope.app.apidoc.interfaces.IDocumentationModule"
-    factory=".ZCMLModule"
-    name="ZCML" />
+      provides="zope.app.apidoc.interfaces.IDocumentationModule"
+      factory=".ZCMLModule"
+      name="ZCML" />
 
   <browser:page
-    for=".ZCMLModule"
-    class=".browser.Menu"
-    permission="zope.app.apidoc.UseAPIDoc"
-    name="menu.html"
-    template="menu.pt" />
+      for=".ZCMLModule"
+      class=".browser.Menu"
+      permission="zope.app.apidoc.UseAPIDoc"
+      name="menu.html"
+      template="menu.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc"
+      />
 
   <browser:page
-    for=".ZCMLModule"
-    class=".browser.Menu"
-    permission="zope.app.apidoc.UseAPIDoc"
-    name="staticmenu.html"
-    template="static_menu.pt" />
+      for=".ZCMLModule"
+      class=".browser.Menu"
+      permission="zope.app.apidoc.UseAPIDoc"
+      name="staticmenu.html"
+      template="static_menu.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc"
+      />
 
   <browser:page
-    for=".Directive"
-    class=".browser.DirectiveDetails"
-    permission="zope.app.apidoc.UseAPIDoc"
-    name="index.html"
-    template="index.pt" />
+      for=".Directive"
+      class=".browser.DirectiveDetails"
+      permission="zope.app.apidoc.UseAPIDoc"
+      name="index.html"
+      template="index.pt"
+      layer="zope.app.apidoc.browser.skin.apidoc"
+      />
 
 </configure>
 

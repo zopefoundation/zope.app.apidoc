@@ -20,7 +20,8 @@ __docformat__ = 'restructuredtext'
 __import_unknown_modules__ = False
 
 # List of modules that should never be imported.
-IGNORE_MODULES = []
+# TODO: List hard-coded for now.
+IGNORE_MODULES = ['twisted']
 
 import sys
 

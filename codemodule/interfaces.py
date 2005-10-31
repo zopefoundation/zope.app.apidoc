@@ -30,7 +30,7 @@ class IAPIDocRootModule(zope.interface.Interface):
 
     The utilities will be simple strings, representing the modules Python
     dotted name.
-    """ 
+    """
 
 class IModuleDocumentation(IReadContainer):
     """Representation of a Python module for documentation.

@@ -23,14 +23,16 @@
       class=".browser.Menu"
       name="menu.html"
       template="menu.pt"
+      layer="..browser.skin.apidoc"
       />
-  
+
     <browser:page
       for=".book.IBookModule"
       permission="zope.app.apidoc.UseAPIDoc"
       class=".browser.Menu"
       name="staticmenu.html"
       template="static_menu.pt"
+      layer="..browser.skin.apidoc"
       />
 
   <browser:page
@@ -39,6 +41,7 @@
       class="zope.app.onlinehelp.browser.OnlineHelpTopicView"
       name="show.html"
       template="chapter.pt"
+      layer="..browser.skin.apidoc"
       />
 
   <include file="book.zcml" />

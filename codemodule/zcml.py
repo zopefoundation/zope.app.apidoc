@@ -16,6 +16,7 @@
 $Id$
 """
 __docformat__ = "reStructuredText"
+import copy
 from xml.sax import make_parser
 from xml.sax.xmlreader import InputSource
 from xml.sax.handler import feature_namespaces
@@ -40,6 +41,10 @@ class MyConfigHandler(xmlconfig.ConfigurationHandler, object):
 
     def startPrefixMapping(self, prefix, uri):
         self.prefixes[uri] = prefix
+
+    def evaluateCondition(self, expression):
+        # We always want to process/show all ZCML directives.
+        return True
 
     def startElementNS(self, name, qname, attrs):
         # The last stack item is parent of the stack item that we are about to
@@ -105,8 +110,12 @@ class ZCMLFile(object):
         self.__name__ = name
 
     def rootElement(self):
-        # Get the context that was originally generated during startup.
-        context = zope.app.appsetup.appsetup.getConfigContext()
+        # Get the context that was originally generated during startup and
+        # create a new context using its registrations
+        real_context = zope.app.appsetup.appsetup.getConfigContext()
+        context = config.ConfigurationMachine()
+        context._registry = copy.copy(real_context._registry)
+        context._features = copy.copy(real_context._features)
         context.package = self.package
 
         # Shut up i18n domain complaints

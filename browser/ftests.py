@@ -16,7 +16,9 @@
 $Id$
 """
 import unittest
+from zope.testing import doctest
 from zope.app.testing.functional import BrowserTestCase
+from zope.app.testing.functional import FunctionalDocFileSuite
 
 class APIDocTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
@@ -63,6 +65,9 @@ class APIDocTests(BrowserTestCase):
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(APIDocTests),
+        FunctionalDocFileSuite(
+            "README.txt",
+            optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE),
         ))
 
 if __name__ == '__main__':

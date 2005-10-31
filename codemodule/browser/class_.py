@@ -16,6 +16,8 @@
 $Id: browser.py 29143 2005-02-14 22:43:16Z srichter $
 """
 __docformat__ = 'restructuredtext'
+
+import inspect
 import types
 from zope.proxy import removeAllProxies
 from zope.security.proxy import removeSecurityProxy
@@ -34,6 +36,13 @@ def getTypeLink(type):
     path = getPythonPath(type)
     return isReferencable(path) and path.replace('.', '/') or None
 
+def getInterfaceInfo(iface):
+    if iface is None:
+        return None
+    path = getPythonPath(iface)
+    return {'path': path,
+            'url': isReferencable(path) and path or None}
+
 class ClassDetails(object):
     """Represents the details of the class."""
 
@@ -48,6 +57,7 @@ class ClassDetails(object):
         entries.sort(lambda x, y: cmp(x['path'], y['path']))
         return entries
 
+
     def _listClasses(self, classes):
         """Prepare a list of classes for presentation."""
         info = []
@@ -59,13 +69,14 @@ class ClassDetails(object):
             # accessing __name__ and __module__.
             unwrapped_cls = removeAllProxies(cls)
             path = getPythonPath(unwrapped_cls)
+            url = None
             try:
                 klass = zapi.traverse(codeModule, path.replace('.', '/'))
                 url = zapi.absoluteURL(klass, self.request)
             except TraversalError:
                 # If one of the classes is implemented in C, we will not
                 # be able to find it.
-                url = None
+                pass
             info.append({'path': path or None, 'url': url})
         return info
 
@@ -78,7 +89,8 @@ class ClassDetails(object):
 
     def getInterfaces(self):
         """Get all implemented interfaces (as paths) of this class."""
-        return map(getPythonPath, self.context.getInterfaces())
+        return [getInterfaceInfo(iface)
+                for iface in self.context.getInterfaces()]
 
 
     def getAttributes(self):
@@ -95,7 +107,7 @@ class ClassDetails(object):
                      'value': `attr`,
                      'type': type(attr).__name__,
                      'type_link': getTypeLink(type(attr)),
-                     'interface': getPythonPath(iface)}
+                     'interface': getInterfaceInfo(iface)}
             entry.update(getPermissionIds(name, klass.getSecurityChecker()))
             attrs.append(entry)
         return attrs
@@ -114,16 +126,17 @@ class ClassDetails(object):
             entry = {'name': name,
                      'signature': "(...)",
                      'doc': renderText(attr.__doc__ or '',
-                                       zapi.getParent(self.context).getPath()),
-                     'interface': getPythonPath(iface)}
+                                       inspect.getmodule(attr)),
+                     'interface': getInterfaceInfo(iface)}
             entry.update(getPermissionIds(name, klass.getSecurityChecker()))
             methods.append(entry)
+
         for name, attr, iface in klass.getMethods():
             entry = {'name': name,
                      'signature': getFunctionSignature(attr),
                      'doc': renderText(attr.__doc__ or '',
-                                       zapi.getParent(self.context).getPath()),
-                     'interface': getPythonPath(iface)}
+                                       inspect.getmodule(attr)),
+                     'interface': getInterfaceInfo(iface)}
             entry.update(getPermissionIds(name, klass.getSecurityChecker()))
             methods.append(entry)
         return methods

@@ -22,7 +22,7 @@ import types
 
 import zope.interface
 import zope.security.proxy
-from zope.interface import directlyProvidedBy
+from zope.interface import directlyProvidedBy, directlyProvides
 from zope.app import zapi, apidoc, annotation
 from zope.app.location import location
 from zope.app.publisher.browser import BrowserView
@@ -100,9 +100,15 @@ class Introspector(BrowserView):
         path = apidoc.utilities.getPythonPath(
             context.__class__).replace('.', '/')
 
+        # the ++apidoc++ namespace overrides the skin, so make sure we can get
+        # it back.
+        direct = list(directlyProvidedBy(request))
+
         self.klassView = zapi.traverse(
             TraversalRoot(),
             '/++apidoc++/Code/%s/@@index.html' %path, request=request)
+
+        directlyProvides(request, direct)
 
     def parent(self):
         return zapi.getParent(self.context)

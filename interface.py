@@ -17,12 +17,14 @@ $Id: browser.py 29199 2005-02-17 22:38:55Z srichter $
 """
 __docformat__ = 'restructuredtext'
 
+import inspect
+
 from zope.interface import Interface, providedBy
 from zope.interface.interfaces import IInterface, ISpecification
 from zope.interface.interfaces import IElement, IAttribute, IMethod
 from zope.schema.interfaces import IField
 
-from zope.app.apidoc.utilities import getPythonPath, renderText
+from zope.app.apidoc.utilities import getPythonPath, renderText, getDocFormat
 
 
 def getElements(iface, type=IElement):
@@ -72,7 +74,7 @@ def getInterfaceTypes(iface):
     # Remove interfaces provided by every interface instance
     types.remove(ISpecification)
     types.remove(IElement)
-    types.remove(Interface)    
+    types.remove(Interface)
     # Remove interface provided by every interface type
     types.remove(IInterface)
     return types
@@ -94,25 +96,33 @@ def getFieldInterface(field):
             return iface
 
     # If not even a `IField`-based interface was found, return the first
-    # interface of the implemented interfaces list.  
+    # interface of the implemented interfaces list.
     return field_iface or ifaces[0]
-    
 
-def getAttributeInfoDictionary(attr, format='zope.source.rest'):
+
+def _getDocFormat(attr):
+    module = inspect.getmodule(attr.interface)
+    return getDocFormat(module)
+
+
+def getAttributeInfoDictionary(attr, format=None):
     """Return a page-template-friendly information dictionary."""
+    format = format or _getDocFormat(attr)
     return {'name': attr.getName(),
             'doc': renderText(attr.getDoc() or u'', format=format)}
 
 
-def getMethodInfoDictionary(method, format='zope.source.rest'):
+def getMethodInfoDictionary(method, format=None):
     """Return a page-template-friendly information dictionary."""
+    format = format or _getDocFormat(method)
     return {'name': method.getName(),
             'signature': method.getSignatureString(),
             'doc': renderText(method.getDoc() or u'', format=format)}
 
 
-def getFieldInfoDictionary(field, format='zope.source.rest'):
+def getFieldInfoDictionary(field, format=None):
     """Return a page-template-friendly information dictionary."""
+    format = format or _getDocFormat(field)
 
     info = {'name': field.getName(),
             'required': field.required,

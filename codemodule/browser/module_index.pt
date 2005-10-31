@@ -28,27 +28,28 @@
     <li tal:repeat="entry column">
       <a href=""
          tal:condition="entry/ismodule"
-         tal:attributes="href string:./${entry/name}/index.html"
+         tal:attributes="href string:${entry/url}/index.html"
          tal:content="entry/name" />
       <a href=""
          tal:condition="entry/isinterface"
-         tal:attributes="href string:./${entry/name}/index.html"
+         tal:attributes="
+             href string:${view/apidocRoot}/Interface/${entry/path}/index.html"
          tal:content="structure string:<b><i>${entry/name}</i></b>" />
       <a href=""
          tal:condition="entry/isclass"
-         tal:attributes="href string:./${entry/name}/index.html"
+         tal:attributes="href string:${entry/url}/index.html"
          tal:content="structure string:<b>${entry/name}</b>" />
       <a href=""
          tal:condition="entry/isfunction"
-         tal:attributes="href string:./${entry/name}/index.html"
+         tal:attributes="href string:${entry/url}/index.html"
          tal:content="structure string:<i>${entry/name}</i>" />
       <a href=""
          tal:condition="entry/iszcmlfile"
-         tal:attributes="href string:./${entry/name}/index.html"
+         tal:attributes="href string:${entry/url}/index.html"
          tal:content="structure string:<i>${entry/name}</i>" />
       <a href=""
          tal:condition="entry/istextfile"
-         tal:attributes="href string:./${entry/name}/index.html"
+         tal:attributes="href string:${entry/url}/index.html"
          tal:content="structure string:<i>${entry/name}</i>" />
     </li>
   </ul></td>

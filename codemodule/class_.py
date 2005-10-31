@@ -76,18 +76,20 @@ class Class(object):
 
     def getAttributes(self):
         """See IClassDocumentation."""
-        return [(name, obj, iface) for name, obj, iface
-            in self._iterAllAttributes()
-            if not (ismethod(obj) or ismethoddescriptor(obj))]
+        return [(name, obj, iface)
+                for name, obj, iface in self._iterAllAttributes()
+                if not (ismethod(obj) or ismethoddescriptor(obj))]
 
     def getMethods(self):
         """See IClassDocumentation."""
-        return [(name, obj, iface) for name, obj, iface
-            in self._iterAllAttributes() if ismethod(obj)]
+        return [(name, obj, iface)
+                for name, obj, iface in self._iterAllAttributes()
+                if ismethod(obj)]
 
     def getMethodDescriptors(self):
-        return [(name, obj, iface) for name, obj, iface
-            in self._iterAllAttributes() if ismethoddescriptor(obj)]
+        return [(name, obj, iface)
+                for name, obj, iface in self._iterAllAttributes()
+                if ismethoddescriptor(obj)]
 
     def getSecurityChecker(self):
         """See IClassDocumentation."""

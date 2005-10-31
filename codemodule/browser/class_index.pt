@@ -26,10 +26,8 @@
             tal:attributes="href string:${base/url}/index.html"
             tal:content="base/path"
             tal:condition="base/url" />
-        <div tal:condition="not: base/url">
-          <span tal:replace="base/path" />
-          <span i18n:translate="">(C-based class)</span>
-        </div>
+        <span tal:replace="base/path"
+              tal:condition="not: base/url"/>
       </li>
     </ul>
 
@@ -48,8 +46,11 @@
       <li tal:repeat="iface ifaces">
         <a href=""
            tal:attributes="href
-               string:${view/getBaseURL}/Interface/$iface/index.html"
-           tal:content="iface" />
+               string:${view/getBaseURL}/Interface/${iface/url}/index.html"
+           tal:content="iface/path"
+           tal:condition="iface/url"/>
+        <span tal:replace="iface/path"
+              tal:condition="not: iface/url"/>
       </li>
     </ul>
 
@@ -87,8 +88,12 @@
         <i i18n:translate="">Interface:</i>
         <a href=""
            tal:attributes="href
-               string:${view/getBaseURL}/Interface/${attr/interface}/index.html"
-           tal:content="attr/interface">Iface</a><br />
+      string:${view/getBaseURL}/Interface/${attr/interface/url}/index.html"
+           tal:content="attr/interface/path"
+           tal:condition="attr/interface/url" />
+        <span tal:replace="attr/interface/path"
+              tal:condition="not: attr/interface/url" />
+      <br />
       </span>
       <span class="small"
           tal:condition="python: attr['read_perm'] and attr['write_perm']">
@@ -128,8 +133,12 @@
         <i i18n:translate="">Interface:</i>
         <a href=""
            tal:attributes="href
-             string:${view/getBaseURL}/Interface/${method/interface}/index.html"
-           tal:content="method/interface">Iface</a><br/>
+      string:${view/getBaseURL}/Interface/${method/interface/url}/index.html"
+           tal:content="method/interface/path"
+           tal:condition="method/interface/url" />
+        <span tal:replace="method/interface/path"
+              tal:condition="not: method/interface/url" />
+      <br/>
       </span>
 
       <span class="small"

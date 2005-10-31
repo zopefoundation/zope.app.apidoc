@@ -22,17 +22,32 @@ from zope.proxy import removeAllProxies
 
 from zope.app import zapi
 from zope.app.i18n import ZopeMessageFactory as _
+from zope.app.publisher.browser import BrowserView
 
-from zope.app.apidoc.utilities import renderText, columnize
+from zope.app.apidoc.apidoc import APIDocumentation
+from zope.app.apidoc.utilities import getPythonPath, renderText, columnize
 from zope.app.apidoc.codemodule.module import Module
 from zope.app.apidoc.codemodule.class_ import Class
 from zope.app.apidoc.codemodule.function import Function
 from zope.app.apidoc.codemodule.text import TextFile
 from zope.app.apidoc.codemodule.zcml import ZCMLFile
 
+def findAPIDocumentationRoot(obj, request):
+    if zapi.isinstance(obj, APIDocumentation):
+        return zapi.absoluteURL(obj, request)
+    return findAPIDocumentationRoot(zapi.getParent(obj), request)
 
-class ModuleDetails(object):
+
+class ModuleDetails(BrowserView):
     """Represents the details of the module."""
+
+    def __init__(self, context, request):
+        super(ModuleDetails, self).__init__(context, request)
+        try:
+            self.apidocRoot = findAPIDocumentationRoot(context, request)
+        except TypeError:
+            # Probably context without location; it's a test
+            self.apidocRoot = ''
 
     def getDoc(self):
         """Get the doc string of the module STX formatted."""
@@ -47,6 +62,8 @@ class ModuleDetails(object):
     def getEntries(self, columns=True):
         """Return info objects for all modules and classes in this module."""
         entries = [{'name': name,
+                    # only for interfaces; should be done differently somewhen
+                    'path': getPythonPath(removeAllProxies(obj)),
                     'url': zapi.absoluteURL(obj, self.request),
                     'ismodule': zapi.isinstance(obj, Module),
                     'isinterface': zapi.isinstance(

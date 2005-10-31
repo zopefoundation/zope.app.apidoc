@@ -34,10 +34,12 @@ from zope.app import zapi
 from zope.app.i18n import ZopeMessageFactory as _
 from zope.app.container.interfaces import IReadContainer
 
-from zope.app.apidoc.classregistry import safe_import
+from zope.app.apidoc.classregistry import safe_import, IGNORE_MODULES
 
 _remove_html_overhead = re.compile(
     r'(?sm)^<html.*<body.*?>\n(.*)</body>\n</html>\n')
+
+space_re = re.compile('\n^( *)\S', re.M)
 
 _marker = object()
 
@@ -114,14 +116,32 @@ def isReferencable(path):
     # Sometimes no path exists, so make a simple check first; example: None
     if path is None:
         return False
-    module_name, obj_name = path.rsplit('.', 1)
+
+    # There are certain paths that we do not want to reference, most often
+    # because they are outside the scope of this documentation
+    for exclude_name in IGNORE_MODULES:
+        if path.startswith(exclude_name):
+            return False
+    split_path = path.rsplit('.', 1)
+    if len(split_path) == 2:
+        module_name, obj_name = split_path
+    else:
+        module_name, obj_name = split_path[0], None
+
     # Do not allow private attributes to be accessible
-    if (obj_name.startswith('_') and
+    if (obj_name is not None and
+        obj_name.startswith('_') and
         not (obj_name.startswith('__') and obj_name.endswith('__'))):
         return False
     module = safe_import(module_name)
     if module is None:
         return False
+
+    # If the module imported correctly and no name is provided, then we are
+    # all good.
+    if obj_name is None:
+        return True
+
     obj = getattr(module, obj_name, _marker)
     if obj is _marker:
         return False
@@ -271,25 +291,15 @@ def getDocFormat(module):
     """Convert a module's __docformat__ specification to a renderer source
     id"""
     format = getattr(module, '__docformat__', 'structuredtext').lower()
+    # The format can also contain the language, so just get the first part
+    format = format.split(' ')[0]
     return _format_dict.get(format, 'zope.source.stx')
 
 
 def dedentString(text):
     """Dedent the docstring, so that docutils can correctly render it."""
-    dedent = 0
-    lines = text.split('\n')
-    for line in lines[1:]:
-        if line != '':
-            for char in line:
-                if char == ' ':
-                    dedent += 1
-                else:
-                    break
-            break
-
-    for index in range(1, len(lines)):
-        lines[index] = lines[index][dedent:]
-    return '\n'.join(lines)
+    dedent = min([len(match) for match in space_re.findall(text)] or [0])
+    return re.compile('\n {%i}' % dedent, re.M).sub('\n', text)
 
 
 def renderText(text, module=None, format=None, dedent=True):

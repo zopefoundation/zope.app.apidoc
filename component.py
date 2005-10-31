@@ -231,8 +231,16 @@ def getUtilityInfoDictionary(reg):
     # provided interface id
     iface_id = '%s.%s' % (reg.provided.__module__, reg.provided.getName())
 
+    # Determine the URL
+    if isinstance(component, InterfaceClass):
+        url = 'Interface/%s' %path
+    else:
+        url = None
+        if isReferencable(path):
+            url = 'Code/%s' % path.replace('.', '/')
+
     return {'name': reg.name or _('<i>no name</i>'),
             'url_name': utilitymodule.encodeName(reg.name or '__noname__'),
             'iface_id': iface_id,
             'path': path,
-            'url': isReferencable(path) and path.replace('.', '/') or None}
+            'url': url}

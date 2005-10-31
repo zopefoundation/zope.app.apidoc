@@ -16,6 +16,7 @@
 $Id$
 """
 __docformat__ = 'restructuredtext'
+import inspect
 from zope.interface import Interface
 
 from zope.publisher.interfaces import IRequest
@@ -78,8 +79,8 @@ class InterfaceDetails(BrowserView):
         # We must remove all proxies here, so that we get the context's
         # __module__ attribute. If we only remove security proxies, the
         # location proxy's module will be returned.
-        return renderText(self.context.__doc__,
-                          removeSecurityProxy(self.context).__module__)
+        iface = removeAllProxies(self.context)
+        return renderText(iface.__doc__, inspect.getmodule(iface))
 
     def getBases(self):
         """Get all bases of this class
@@ -91,7 +92,10 @@ class InterfaceDetails(BrowserView):
           >>> details.getBases()
           ['zope.interface.Interface']
         """
-        return [getPythonPath(base) for base in self.context.__bases__]
+        # Persistent interfaces are security proxied, so we need to strip the
+        # security proxies off
+        iface = removeSecurityProxy(self.context)
+        return [getPythonPath(base) for base in iface.__bases__]
 
     def getTypes(self):
         """Return a list of interface types that are specified for this

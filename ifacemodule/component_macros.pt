@@ -90,7 +90,7 @@
     <span i18n:translate="">Component:</span>
     <code style="font-size: 100%">
       <a href=""
-         tal:attributes="href string:$rootURL/Code/${utility/url}/index.html"
+         tal:attributes="href string:$rootURL/${utility/url}/index.html"
          tal:content="utility/path"
          tal:condition="utility/url" />
       <span tal:condition="not: utility/url" tal:replace="utility/path" />

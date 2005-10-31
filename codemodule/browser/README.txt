@@ -22,7 +22,7 @@ Module Details
 The module details are easily created, since we can just use the traversal
 process to get a module documentation object:
 
-  >>> details = browser.module.ModuleDetails()
+  >>> details = browser.module.ModuleDetails(None, None)
   >>> details.context = zapi.traverse(cm,
   ...     'zope/app/apidoc/codemodule/codemodule')
   >>> from zope.publisher.browser import TestRequest
@@ -51,6 +51,7 @@ Return info objects for all modules and classes in this module.
     'istextfile': False,
     'iszcmlfile': False,
     'name': 'CodeModule',
+    'path': 'zope.app.apidoc.codemodule.class_.CodeModule',
     'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/codemodule/CodeModule'}]
 
 `getBreadCrumbs()`
@@ -139,10 +140,14 @@ we have not setup all path elements.
 Get all implemented interfaces (as paths) of this class.
 
   >>> pprint(details.getInterfaces())
-  ['zope.app.apidoc.interfaces.IDocumentationModule',
-   'zope.app.location.interfaces.ILocation',
-   'zope.app.apidoc.codemodule.interfaces.IModuleDocumentation',
-   'zope.app.container.interfaces.IReadContainer']
+  [{'path': 'zope.app.apidoc.interfaces.IDocumentationModule',
+    'url': 'zope.app.apidoc.interfaces.IDocumentationModule'},
+   {'path': 'zope.app.location.interfaces.ILocation',
+    'url': 'zope.app.location.interfaces.ILocation'},
+   {'path': 'zope.app.apidoc.codemodule.interfaces.IModuleDocumentation',
+    'url': 'zope.app.apidoc.codemodule.interfaces.IModuleDocumentation'},
+   {'path': 'zope.app.container.interfaces.IReadContainer',
+    'url': 'zope.app.container.interfaces.IReadContainer'}]
 
 `getAttributes()`
 ~~~~~~~~~~~~~~~~~
@@ -150,7 +155,8 @@ Get all implemented interfaces (as paths) of this class.
 Get all attributes of this class.
 
   >>> pprint(details.getAttributes()[1])
-  {'interface': 'zope.app.apidoc.interfaces.IDocumentationModule',
+  {'interface': {'path': 'zope.app.apidoc.interfaces.IDocumentationModule',
+                 'url': 'zope.app.apidoc.interfaces.IDocumentationModule'},
    'name': 'title',
    'read_perm': None,
    'type': 'Message',
@@ -170,7 +176,8 @@ Get all methods of this class.
     'signature': '()',
     'write_perm': None},
    {'doc': u'',
-    'interface': 'zope.interface.common.mapping.IEnumerableMapping',
+    'interface': {'path': 'zope.interface.common.mapping.IEnumerableMapping',
+                  'url': 'zope.interface.common.mapping.IEnumerableMapping'},
     'name': 'values',
     'read_perm': None,
     'signature': '()',

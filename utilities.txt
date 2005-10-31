@@ -213,6 +213,17 @@ browser module. Initially you might think that all objects that have paths can
 be referenced somehow. But that's not true, partially by design of apidoc, but
 also due to limitations of the Python language itself.
 
+First, here are some cases that work:
+
+  >>> utilities.isReferencable('zope')
+  True
+  >>> utilities.isReferencable('zope.app')
+  True
+  >>> utilities.isReferencable('zope.app.apidoc.apidoc.APIDocumentation')
+  True
+  >>> utilities.isReferencable('zope.app.apidoc.apidoc.handleNamespace')
+  True
+
 The first case is ``None``. When you ask for the python path of ``None``, you
 get ``None``, so that result should not be referencable:
 
@@ -249,7 +260,7 @@ Note that this case is also used for types that are generated using the
   >>> utilities.isReferencable(path)
   False
 
-Finally, since API doc does not allow the documentation of instances yet, it
+Next, since API doc does not allow the documentation of instances yet, it
 is not possible to document singletons, so they are not referencable:
 
   >>> class Singelton(object):
@@ -262,6 +273,25 @@ is not possible to document singletons, so they are not referencable:
 
   >>> utilities.isReferencable('zope.app.apidoc.doctest.Singelton')
   False
+
+Finally, the global ``IGNORE_MODULES`` list from the class registry is also
+used to give a negative answer. If a module is listed in ``IGNORE_MODULES``,
+then ``False`` is returned.
+
+  >>> import classregistry
+  >>> classregistry.IGNORE_MODULES.append('zope.app.apidoc')
+
+  >>> utilities.isReferencable('zope.app')
+  True
+  >>> utilities.isReferencable('zope.app.apidoc')
+  False
+  >>> utilities.isReferencable('zope.app.apidoc.apidoc.APIDocumentation')
+  False
+
+  >>> classregistry.IGNORE_MODULES.pop()
+  'zope.app.apidoc'
+  >>> utilities.isReferencable('zope.app.apidoc')
+  True
 
 
 `getPermissionIds(name, checker=_marker, klass=_marker)`
@@ -609,6 +639,16 @@ This is a sensible default, since we only decided later in development to
 endorse restructured text, so that many files are still in the structured text
 format. All converted and new modules will have the `__docformat__` attribute.
 
+The `__docformat__` attribute can also optionally specify a language field. We
+simply ignore it:
+
+  >>> class Module(object):
+  ...     pass
+  >>> module = Module()
+  >>> module.__docformat__ = 'restructuredtext en'
+  >>> utilities.getDocFormat(module)
+  'zope.source.rest'
+
 
 `dendentString(text)`
 ---------------------
@@ -655,7 +695,8 @@ newline character. Let's now try a simple multi-line docstring:
 
 Again, the whitespace was removed only after the first line. Also note that
 the function determines the indentation level correctly. So what happens if
-there are multiple indentation levels? Well, the first occurrence wins:
+there are multiple indentation levels? The smallest amount of indentation is
+chosen:
 
   >>> def func():
   ...     '''Short description
@@ -671,6 +712,24 @@ there are multiple indentation levels? Well, the first occurrence wins:
   Root Level
   <BLANKLINE>
     Second Level
+  <BLANKLINE>
+
+  >>> def func():
+  ...     '''Short description
+  ...
+  ...       $$$ print 'example'
+  ...       example
+  ...
+  ...     And now the description.
+  ...     '''
+
+  >>> print utilities.dedentString(func.__doc__)
+  Short description
+  <BLANKLINE>
+    $$$ print 'example'
+    example
+  <BLANKLINE>
+  And now the description.
   <BLANKLINE>
 
 

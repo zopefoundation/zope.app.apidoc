@@ -13,7 +13,7 @@
 ##############################################################################
 """Zope 3 API Documentation
 
-$Id: __init__.py 26777 2004-07-27 08:12:32Z hdima $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 
@@ -22,6 +22,7 @@ from zope.interface import implements
 from zope.app import zapi
 from zope.app.location import locate
 from zope.app.location.interfaces import ILocation
+from zope.app.publisher.browser import applySkin
 
 from interfaces import IDocumentationModule
 from utilities import ReadContainerBase
@@ -38,7 +39,7 @@ class APIDocumentation(ReadContainerBase):
     def __init__(self, parent, name):
         self.__parent__ = parent
         self.__name__ = name
-    
+
     def get(self, key, default=None):
         """See zope.app.container.interfaces.IReadContainer"""
         utility = zapi.queryUtility(IDocumentationModule, key, default)
@@ -55,17 +56,19 @@ class APIDocumentation(ReadContainerBase):
             locate(value, self, key)
             utils.append((key, value))
         return utils
-        
+
 
 class apidocNamespace(object):
     """Used to traverse to an API Documentation."""
     def __init__(self, ob, request=None):
+        if request:
+            from zope.app.apidoc.browser.skin import APIDOC
+            applySkin(request, APIDOC)
         self.context = ob
-        
+
     def traverse(self, name, ignore):
         return handleNamespace(self.context, name)
 
 def handleNamespace(ob, name):
     """Used to traverse to an API Documentation."""
     return APIDocumentation(ob, '++apidoc++'+name)
-    

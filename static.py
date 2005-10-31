@@ -22,18 +22,18 @@ import os
 import sys
 import time
 import urllib2
+import warnings
 import HTMLParser
 
 import zope.testbrowser
 import mechanize
 
 from zope.app.testing import functional
-from zope.deprecation import __show__
 
 from zope.app.apidoc import classregistry
 
 # Setup the user feedback detail level.
-VERBOSITY = 4
+VERBOSITY = 5
 
 VERBOSITY_MAP = {1: 'ERROR', 2: 'WARNING', 3: 'INFO'}
 
@@ -47,6 +47,8 @@ BASE_DIR = 'apidoc'
 
 USERNAME = 'mgr'
 PASSWORD = 'mgrpw'
+
+DEBUG = False
 
 # A mapping of HTML elements that can contain links to the attribute that
 # actually contains the link
@@ -196,11 +198,14 @@ class StaticAPIDocGenerator(object):
     def start(self):
         """Start the retrieval of the apidoc."""
         t0 = time.time()
-        __show__.off()
 
         self.visited = []
         self.counter = 0
-        self.errors = 0
+        self.linkErrors = 0
+        self.htmlErrors = 0
+
+        # Turn off deprecation warnings
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
 
         if not os.path.exists(self.rootDir):
             os.mkdir(self.rootDir)
@@ -212,9 +217,12 @@ class StaticAPIDocGenerator(object):
 
         self.browser.setUserAndPassword(USERNAME, PASSWORD)
         self.browser.urltags = urltags
-        #self.browser.addheaders.append(('X-zope-handle-errors', False))
 
-        classregistry.IGNORE_MODULES = ['twisted']
+        if DEBUG:
+            self.browser.addheaders.append(('X-zope-handle-errors', False))
+
+        classregistry.IGNORE_MODULES = ['twisted',
+                                        'zope.app.twisted.ftp.test']
 
         # Work through all links until there are no more to work on.
         self.sendMessage('Starting retrieval.')
@@ -227,16 +235,16 @@ class StaticAPIDocGenerator(object):
                 self.showStatistics(link)
                 self.processLink(link)
 
-        __show__.on()
         t1 = time.time()
 
-        self.sendMessage("Run time: %.3f sec real" % (t1-t0))
+        self.sendMessage("Run time: %.3f sec" % (t1-t0))
         self.sendMessage("Links: %i" %self.counter)
-        self.sendMessage("Errors: %i" %self.errors)
+        self.sendMessage("Link Retrieval Errors: %i" %self.linkErrors)
+        self.sendMessage("HTML ParsingErrors: %i" %self.htmlErrors)
 
     def showStatistics(self, link):
         self.counter += 1
-        if VERBOSITY >= 3:
+        if VERBOSITY >= 5:
             url = link.absoluteURL[-(self.maxWidth):]
             sys.stdout.write('\r' + ' '*(self.maxWidth+13))
             sys.stdout.write('\rLink %5d: %s' % (self.counter, url))
@@ -265,20 +273,28 @@ class StaticAPIDocGenerator(object):
             self.browser.open(link.callableURL)
         except urllib2.HTTPError, error:
             # Something went wrong with retrieving the page.
-            self.errors += 1
+            self.linkErrors += 1
             self.sendMessage(
                 '%s (%i): %s' % (error.msg, error.code, link.callableURL), 2)
             self.sendMessage('+-> Reference: ' + link.referenceURL, 2)
-            return
+            # Now set the error page as the response
+            from ClientCookie._Util import response_seek_wrapper
+            self.browser._response = response_seek_wrapper(error)
         except (urllib2.URLError, ValueError):
             # We had a bad URL running the publisher browser
-            self.errors += 1
+            self.linkErrors += 1
             self.sendMessage('Bad URL: ' + link.callableURL, 2)
             self.sendMessage('+-> Reference: ' + link.referenceURL, 2)
             return
-        #except Exception, error:
-        #    import pdb; pdb.set_trace()
-        #    return
+        except Exception, error:
+            # This should never happen outside the debug mode. We really want
+            # to catch all exceptions, so that we can investigate them.
+            if DEBUG:
+                import pdb; pdb.set_trace()
+            return
+
+        # Get the response content
+        contents = self.browser.contents
 
         # Make sure the directory exists and get a file path.
         relativeURL = url.replace(URL, '')
@@ -293,16 +309,16 @@ class StaticAPIDocGenerator(object):
 
         filepath = os.path.join(dir, filename)
 
-        # Get the response content
-        contents = self.browser.contents
-
         # Now retrieve all links
         if self.browser.viewing_html():
 
             try:
                 links = self.browser.links()
-            except HTMLParser.HTMLParseError:
+            except HTMLParser.HTMLParseError, error:
+                self.htmlErrors += 1
                 self.sendMessage('Failed to parse HTML: ' + url, 1)
+                self.sendMessage('+-> %s: line %i, column %s' % (
+                    error.msg, error.lineno, error.offset), 1)
                 links = []
 
             links = [Link(mech_link, url) for mech_link in links]
@@ -322,9 +338,15 @@ class StaticAPIDocGenerator(object):
                 contents = contents.replace(link.originalURL, '/'.join(parts))
 
         # Write the data into the file
-        file = open(filepath, 'w')
-        file.write(contents)
-        file.close()
+        try:
+            file = open(filepath, 'w')
+            file.write(contents)
+            file.close()
+        except IOError:
+            # The file already exists, so it is a duplicate and a bad one,
+            # since the URL misses `index.hml`. ReST can produce strange URLs
+            # that produce this problem, and we have little control over it.
+            pass
 
         # Cleanup; this is very important, otherwise we are opening too many
         # files.
