@@ -27,6 +27,17 @@ from zope.app.testing import placelesssetup
 def setUp(test):
     placelesssetup.setUp()
 
+    meta = '''
+    <configure
+        xmlns:meta="http://namespaces.zope.org/meta"
+        i18n_domain="zope">
+      <meta:provides feature="devmode" />
+      <include package="zope.app" file="meta.zcml" />
+      <include package="zope.app" file="menus.zcml" />
+    </configure>
+    '''
+    xmlconfig.string(meta)
+
     meta = os.path.join(os.path.dirname(zope.app.__file__), 'meta.zcml')
     context = xmlconfig.file(meta, zope.app)
     context.provideFeature('devmode')
