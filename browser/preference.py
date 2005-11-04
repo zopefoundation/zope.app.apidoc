@@ -18,8 +18,11 @@ $Id$
 __docformat__ = "reStructuredText"
 
 from zope.app import zapi
+from zope.app.apidoc.browser.skin import APIDOC
 from zope.app.tree.browser.cookie import CookieTreeView
 from zope.app.preference.browser import PreferenceGroupFilter
+from zope.app.preference.browser import EditPreferenceGroup
+from zope.app.publisher.browser import applySkin
 
 class APIDocPreferencesTree(CookieTreeView):
     """Preferences Tree using the stateful cookie tree."""
@@ -30,3 +33,9 @@ class APIDocPreferencesTree(CookieTreeView):
         return self.cookieTree(root, filter)
 
 
+class ApidocEditPreferenceGroup(EditPreferenceGroup):
+
+    def __init__(self, context, request):
+        # Make sure we enter APIDOC territory.
+        applySkin(request, APIDOC)
+        super(ApidocEditPreferenceGroup, self).__init__(context, request)

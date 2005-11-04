@@ -148,8 +148,7 @@
       permission="zope.Public"
       name="apidocIndex.html"
       template="prefIndex.pt"
-      class="zope.app.preference.browser.EditPreferenceGroup"
-      layer=".skin.apidoc"
+      class=".preference.ApidocEditPreferenceGroup"
       />
 
 </configure>

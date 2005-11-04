@@ -5,7 +5,7 @@
           tal:attributes="href context/++resource++favicon.png|default" />
   </head>
   <frameset cols="20%, *">
-    <frameset rows="140, *"> 
+    <frameset rows="140, *">
       <frame name="modules" src="staticmodulelist.html">
       <frame name="menu" src="staticmenu.html">
     </frameset>
