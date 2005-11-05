@@ -3,30 +3,30 @@
     xmlns:zcml="http://namespaces.zope.org/zcml">
 
   <!-- Interfaces -->
-  <bookchapter 
+  <bookchapter
       id="ifaceschema"
       title="Interfaces and Schemas"
       />
   <configure package="zope.interface">
-    <bookchapter 
+    <bookchapter
         id="interface"
         title="Interfaces"
         doc_path="README.txt"
         parent="ifaceschema"
         />
-    <bookchapter 
+    <bookchapter
         id="adapter"
         title="Adapter Registry"
         doc_path="adapter.txt"
         parent="ifaceschema"
         />
-    <bookchapter 
+    <bookchapter
         id="human"
         title="Adapters (light version)"
         doc_path="human.txt"
         parent="ifaceschema"
         />
-    <bookchapter 
+    <bookchapter
         id="foodforthought"
         title="Food For Thought"
         doc_path="tests/foodforthought.txt"
@@ -34,13 +34,13 @@
         />
   </configure>
   <configure package="zope.schema">
-    <bookchapter 
+    <bookchapter
         id="schemas"
         title="Schemas"
         doc_path="README.txt"
         parent="ifaceschema"
         />
-    <bookchapter 
+    <bookchapter
         id="fields"
         title="Schema Fields"
         doc_path="fields.txt"
@@ -53,28 +53,28 @@
       id="ca"
       title="Component Architecture"
       />
-  
+
   <configure package="zope.component">
-    <bookchapter 
+    <bookchapter
         id="global"
         title="Global Component Architecture"
         parent="ca"
         doc_path="README.txt"
         />
-    <bookchapter 
+    <bookchapter
         id="socket"
         title="Global CA (Socket Example)"
         parent="ca"
         doc_path="socketexample.txt"
         />
-    <bookchapter 
+    <bookchapter
         id="factory"
         title="Factories"
         parent="ca"
         doc_path="factory.txt"
         />
   </configure>
-  
+
   <configure package="zope.app.component">
     <bookchapter
         id="local"
@@ -233,11 +233,44 @@
         />
   </configure>
 
+  <!-- Transactions -->
+  <configure package="transaction">
+    <bookchapter
+        id="transaction"
+        title="Transactions"
+        doc_path="README.txt"
+        />
+    <bookchapter
+        id="savepoints"
+        title="Savepoints"
+        parent="transaction"
+        doc_path="savepoint.txt"
+        />
+  </configure>
+
   <!-- ZODB -->
   <configure package="ZODB">
     <bookchapter
         id="zodb"
         title="Zope Object Database (ZODB)"
+        />
+    <bookchapter
+        id="multidb"
+        title="Multiple Databases"
+        parent="zodb"
+        doc_path="tests/multidb.txt"
+        />
+    <bookchapter
+        id="crossref"
+        title="Cross-Database References"
+        parent="zodb"
+        doc_path="cross-database-references.txt"
+        />
+    <bookchapter
+        id="collaboration"
+        title="Collaboration Diagrams"
+        parent="zodb"
+        doc_path="collaborations.txt"
         />
     <bookchapter
         id="dbopen"
@@ -246,10 +279,37 @@
         doc_path="tests/dbopen.txt"
         />
     <bookchapter
+        id="persistentclass"
+        title="Persistent Classes"
+        parent="zodb"
+        doc_path="persistentclass.txt"
+        />
+    <bookchapter
+        id="savepoints"
+        title="Savepoints"
+        parent="zodb"
+        doc_path="tests/testConnectionSavepoint.txt"
+        />
+    <bookchapter
         id="subtransactions"
         title="Sub-Transactions"
         parent="zodb"
         doc_path="subtransactions.txt"
+        />
+    <bookchapter
+        id="synchronizers"
+        title="Synchronizers"
+        parent="zodb"
+        doc_path="tests/synchronizers.txt"
+        />
+  </configure>
+
+  <!-- BTrees -->
+  <configure package="BTrees">
+    <bookchapter
+        id="btrees"
+        title="BTree Developer Information"
+        doc_path="Development.txt"
         />
   </configure>
 
