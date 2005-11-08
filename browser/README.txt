@@ -27,10 +27,7 @@ feel better and does not have all the O-wrap clutter:
   ...     pass
 
   >>> print error.read()
-  Status: 404 Not Found
-  Content-Length: ...
-  Content-Type: text/html;charset=utf-8
-  ...
+  <...
   <h1 class="details-header">
     Page Not Found
   </h1>
