@@ -49,9 +49,6 @@
       layer="zope.app.apidoc.browser.skin.apidoc"
       />
 
-  <!-- The name for the interface content cannot be 'index.html', since -->
-  <!-- the introspector uses this name already. -->
-
   <browser:page
       for="zope.interface.interfaces.IInterface"
       permission="zope.app.apidoc.UseAPIDoc"
