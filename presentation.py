@@ -44,6 +44,13 @@ def getViewFactoryData(factory):
     info = {'path': None, 'url': None, 'template': None, 'resource': None,
             'referencable': True}
 
+    # Always determine the most basic factory
+    # Commonly, factories are wrapped to provide security or location, for
+    # example. If those wrappers play nice, then they provide a `factory`
+    # attribute, that points to the original factory.
+    while hasattr(factory, 'factory'):
+        factory = factory.factory
+
     if hasattr(factory, '__name__') and \
        factory.__name__.startswith('SimpleViewClass'):
         # In the case of a SimpleView, the base is really what we are
@@ -67,13 +74,6 @@ def getViewFactoryData(factory):
         # Those factories are method publisher and security wrapped
         info['path'] = getPythonPath(factory.__bases__[0].__bases__[0])
 
-    # Special for views registered with the zope:view directive; the proxy
-    # view implements the security wrapping
-    elif hasattr(factory, '__class__') and \
-             factory.__class__.__name__ == 'ProxyView':
-        factory = factory.factory
-        info['path'] = factory.__module__ + '.' + factory.__name__
-
     # A factory that is a class instance; since we cannot reference instances,
     # reference the class.
     elif not hasattr(factory, '__name__'):
@@ -82,13 +82,6 @@ def getViewFactoryData(factory):
     # A simple class-based factory
     elif type(factory) in (type, ClassType):
         info['path'] = getPythonPath(factory)
-
-    # Sometimes factories are functions; there are two cases: (1) the factory
-    # itself is a function, and (2) the original factory was wrapped by a
-    # function; in the latter case the function must have a `factory`
-    # attribute that references the original factory
-    elif isinstance(factory, FunctionType):
-        info['path'] = getPythonPath(getattr(factory, 'factory', factory))
 
     # We have tried our best; just get the Python path as good as you can.
     else:
@@ -124,7 +117,7 @@ def getViews(iface, type=IRequest):
             reg.required[-1].isOrExtends(type)):
 
             for required_iface in reg.required[:-1]:
-                if iface.isOrExtends(required_iface):
+                if required_iface is None or iface.isOrExtends(required_iface):
                     yield reg
 
 

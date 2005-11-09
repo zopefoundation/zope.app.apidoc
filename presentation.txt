@@ -161,6 +161,41 @@ wrapped twice:
    'template': None,
    'url': '__builtin__/Factory'}
 
+Finally, it sometimes happens that a factory is wrapped and the wrapper is
+wrapped in return:
+
+  >>> def wrapper1(*args):
+  ...     return Factory(*args)
+
+  >>> def wrapper2(*args):
+  ...     return wrapper1(*args)
+
+Initially, the documentation is not very helpful:
+
+  >>> info = presentation.getViewFactoryData(wrapper2)
+  >>> pprint(info)
+  {'path': 'None.wrapper2',
+   'referencable': True,
+   'resource': None,
+   'template': None,
+   'url': 'None/wrapper2'}
+
+However, if those wrappers play nicely, they provide a factory attribute each
+step of the way ...
+
+  >>> wrapper1.factory = Factory
+  >>> wrapper2.factory = wrapper1
+
+and the result is finally our original factory:
+
+  >>> info = presentation.getViewFactoryData(wrapper2)
+  >>> pprint(info)
+  {'path': '__builtin__.Factory',
+   'referencable': True,
+   'resource': None,
+   'template': None,
+   'url': '__builtin__/Factory'}
+
 
 `getPresentationType(iface)`
 ----------------------------
@@ -229,19 +264,27 @@ should be returned:
 
   >>> regs = list(presentation.getViews(IFoo))
   >>> regs.sort()
-  >>> regs
+  >>> regs #doctest:+ELLIPSIS
   [AdapterRegistration(('IFoo', 'IBrowserRequest'), 'Interface',
                        'blah', None, ''),
    AdapterRegistration(('IFoo', 'IHTTPRequest'), 'Interface',
                        'foo', None, ''),
    AdapterRegistration(('Interface', 'IHTTPRequest'), 'Interface',
-                       'bar', None, '')]
+                       'bar', None, ''),
+   AdapterRegistration((None, 'IDefaultBrowserLayer'), 'IAbsoluteURL',
+                       '', <class '...browser.absoluteurl.AbsoluteURL'>, ''),
+   AdapterRegistration((None, 'IDefaultBrowserLayer'), 'Interface',
+                       'absolute_url', <class ...absoluteurl.AbsoluteURL'>, '')]
 
   >>> regs = list(presentation.getViews(Interface, IHTTPRequest))
   >>> regs.sort()
-  >>> regs
+  >>> regs #doctest:+ELLIPSIS
   [AdapterRegistration(('Interface', 'IHTTPRequest'), 'Interface',
-   'bar', None, '')]
+                       'bar', None, ''),
+   AdapterRegistration((None, 'IDefaultBrowserLayer'), 'IAbsoluteURL',
+                       '', <class '...browser.absoluteurl.AbsoluteURL'>, ''),
+   AdapterRegistration((None, 'IDefaultBrowserLayer'), 'Interface',
+                       'absolute_url', <class ...absoluteurl.AbsoluteURL'>, '')]
 
 
 `filterViewRegistrations(regs, iface, level=SPECIFC_INTERFACE_LEVEL)`
