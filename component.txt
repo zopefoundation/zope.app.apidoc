@@ -208,6 +208,61 @@ Now let's have a look what we have:
                        <zope.app.apidoc.doctest.MyFooBar object at ...>, '')]
 
 
+`getRealFactory(factory)`
+-------------------------
+
+During registration, factories are commonly masked by wrapper functions. Also,
+factories are sometimes also `IFactory` instances, which are not referencable,
+so that we would like to return the class. If the wrapper objects/functions
+play nice, then they provide a `factory` attribute that points to the next
+wrapper or the original factory.
+
+The task of this function is to remove all the factory wrappers and make sure
+that the returned factory is referencable.
+
+  >>> class Factory(object):
+  ...     pass
+
+  >>> def wrapper1(*args):
+  ...     return Factory(*args)
+  >>> wrapper1.factory = Factory
+
+  >>> def wrapper2(*args):
+  ...     return wrapper1(*args)
+  >>> wrapper2.factory = wrapper1
+
+So whether we pass in `Factory`,
+
+  >>> component.getRealFactory(Factory)
+  <class 'zope.app.apidoc.doctest.Factory'>
+
+`wrapper1`,
+
+  >>> component.getRealFactory(wrapper1)
+  <class 'zope.app.apidoc.doctest.Factory'>
+
+or `wrapper2`,
+
+  >>> component.getRealFactory(wrapper2)
+  <class 'zope.app.apidoc.doctest.Factory'>
+
+the answer should always be the `Factory` class. Next we are going to pass in
+an instance, and again we should get our class aas a result:
+
+  >>> factory = Factory()
+  >>> component.getRealFactory(factory)
+  <class 'zope.app.apidoc.doctest.Factory'>
+
+Even, if the factory instance is wrapped, we should get the factory class:
+
+  >>> def wrapper3(*args):
+  ...     return factory(*args)
+  >>> wrapper3.factory = factory
+
+  >>> component.getRealFactory(wrapper3)
+  <class 'zope.app.apidoc.doctest.Factory'>
+
+
 `getInterfaceInfoDictionary(iface)`
 -----------------------------------
 

@@ -140,11 +140,14 @@ def getRealFactory(factory):
     Sometimes the original factory is masked by functions. If the function
     keeps track of the original factory, use it.
     """
-    if isinstance(factory, types.FunctionType) and hasattr(factory, 'factory'):
-        return factory.factory
-    elif not hasattr(factory, '__name__'):
-        # We have an instance
+    # Remove all wrappers until none are found anymore.
+    while hasattr(factory, 'factory'):
+        factory = factory.factory
+
+    # If we have an instance, return its class
+    if not hasattr(factory, '__name__'):
         return factory.__class__
+
     return factory
 
 
