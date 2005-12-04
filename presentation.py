@@ -38,6 +38,7 @@ GENERIC_INTERFACE_LEVEL = 4
 
 BROWSER_DIRECTIVES_MODULE = 'zope.app.publisher.browser.viewmeta'
 XMLRPC_DIRECTIVES_MODULE = 'zope.app.publisher.xmlrpc.metaconfigure'
+JSONRPC_DIRECTIVES_MODULE = 'jsonserver.metaconfigure'
 
 def getViewFactoryData(factory):
     """Squeeze some useful information out of the view factory"""
@@ -70,6 +71,15 @@ def getViewFactoryData(factory):
     # XML-RPC view factory, generated during registration
     elif factory.__module__ is not None and \
              factory.__module__.startswith(XMLRPC_DIRECTIVES_MODULE):
+
+        # Those factories are method publisher and security wrapped
+        info['path'] = getPythonPath(factory.__bases__[0].__bases__[0])
+
+    # JSON-RPC view factory, generated during registration
+    # This is needed for the 3rd party jsonserver implementation
+    # TODO: See issue http://www.zope.org/Collectors/Zope3-dev/504, ri
+    elif factory.__module__ is not None and \
+             factory.__module__.startswith(JSONRPC_DIRECTIVES_MODULE):
 
         # Those factories are method publisher and security wrapped
         info['path'] = getPythonPath(factory.__bases__[0].__bases__[0])
