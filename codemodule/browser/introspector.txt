@@ -134,8 +134,8 @@ sequences. Their data then is often hard to see in the attributes section, so
 they are provided in a aseparate section. To see anything useful, we have to
 add an object to the folder first:
 
-    >>> link = 'http://localhost/@@+/action.html?type_name=zope.app.file.File'
-    >>> browser.getLink(url=link).click()
+    >>> import re
+    >>> browser.getLink(re.compile('^File$')).click()
     >>> import cStringIO
     >>> browser.getControl('Data').value = cStringIO.StringIO('content')
     >>> browser.getControl(name='add_input_name').value = 'file.txt'
