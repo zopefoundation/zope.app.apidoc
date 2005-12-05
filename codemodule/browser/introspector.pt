@@ -1,4 +1,5 @@
-<html metal:use-macro="context/@@standard_macros/view">
+<html metal:use-macro="context/@@standard_macros/view"
+  i18n:domain="zope">
 <head>
   <metal:block fill-slot="extrahead">
     <link type="text/css" rel="stylesheet" href="apidoc.css"
@@ -18,18 +19,22 @@
            tal:condition="context/zope:name"
            i18n:name="object-name"/>
      <i tal:condition="not: context/zope:name"
-        i18n:name="object-name">&lt;no name&gt;</i>
+        i18n:name="object-name"
+        i18n:translate="">&lt;no name&gt;</i>
     )
   </h1>
   <em tal:define="parent view/parent"
-      tal:condition="parent">
+      tal:condition="parent"
+      i18n:translate="">
     Parent:
     <a href=""
+       i18n:name="parent"
        tal:attributes="
            href string: ${parent/@@absolute_url}/@@introspector.html">
       <span tal:replace="parent/zope:name"
             tal:condition="parent/zope:name" />
-      <span tal:condition="not: parent/zope:name">&lt;No Name&gt;</span>
+      <span tal:condition="not: parent/zope:name"
+            i18n:translate="">&lt;No Name&gt;</span>
     </a>
   </em>
 
