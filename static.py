@@ -197,7 +197,7 @@ class StaticAPIDocGenerator(object):
 
         self.browser.setUserAndPassword(self.options.username,
                                         self.options.password)
-        self.browser.urltags = urltags
+        self.browser._links_factory.urltags = urltags
 
         if self.options.debug:
             self.browser.addheaders.append(('X-zope-handle-errors', False))
