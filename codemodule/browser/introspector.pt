@@ -15,12 +15,12 @@
        tal:content="view/klassView/context/getPath"
        i18n:name="class-name" />
     (
-     <span tal:replace="context/zope:name"
-           tal:condition="context/zope:name"
-           i18n:name="object-name"/>
-     <i tal:condition="not: context/zope:name"
-        i18n:name="object-name"
-        i18n:translate="">&lt;no name&gt;</i>
+     <tal:block i18n:name="object-name">
+       <span tal:replace="context/zope:name"
+         tal:condition="context/zope:name"/>
+       <i tal:condition="not: context/zope:name"
+         i18n:translate="">&lt;no name&gt;</i>
+     </tal:block>
     )
   </h1>
   <em tal:define="parent view/parent"
