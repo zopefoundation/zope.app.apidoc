@@ -15,7 +15,9 @@
 
 $Id$
 """
+
 __docformat__ = 'restructuredtext'
+
 import inspect
 from zope.interface import Interface
 
@@ -29,12 +31,14 @@ from zope.security.proxy import removeSecurityProxy
 from zope.proxy import removeAllProxies
 
 from zope.app import zapi
+from zope.app.i18n import ZopeMessageFactory as _
 from zope.app.publisher.browser import BrowserView
 
 from zope.app.apidoc.utilities import getPythonPath, renderText
 from zope.app.apidoc.apidoc import APIDocumentation
 from zope.app.apidoc import classregistry
 from zope.app.apidoc import interface, component, presentation
+
 
 def findAPIDocumentationRoot(obj, request):
     if zapi.isinstance(obj, APIDocumentation):
@@ -257,3 +261,19 @@ class InterfaceDetails(BrowserView):
                          for reg in regs]
                 infos.sort()
                 setattr(self, level+type_map[type]+'Views', infos)
+
+    def getViewClassTitles(self):
+        return {
+            "specific": _("Specific views"),
+            "extended": _("Extended views"),
+            "generic": _("Generic views"),
+            }
+
+    def getViewTypeTitles(self):
+        return {
+            "browser": _("Browser"),
+            "xmlrpc": _("XML-RPC"),
+            "http": _("HTTP"),
+            "ftp": _("FTP"),
+            "other": _("Other"),
+            }

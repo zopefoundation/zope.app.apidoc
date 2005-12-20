@@ -167,10 +167,12 @@
 
     <h2 class="details-section" i18n:translate="">Views</h2>
 
-    <div class="indent">
+    <div class="indent"
+      tal:define="titles view/getViewTypeTitles">
 
       <tal:block define="
         type string:Browser;
+        title titles/browser;
         specific_views view/specificBrowserViews;
         extended_views view/extendedBrowserViews;
         generic_views view/genericBrowserViews;
@@ -190,6 +192,7 @@
 
       <tal:block define="
         type string:XML-RPC;
+        title titles/xmlrpc;
         specific_views view/specificXMLRPCViews;
         extended_views view/extendedXMLRPCViews;
         generic_views view/genericXMLRPCViews;
@@ -209,6 +212,7 @@
 
       <tal:block define="
           type string:HTTP;
+          title titles/http;
           specific_views view/specificHTTPViews;
           extended_views view/extendedHTTPViews;
           generic_views view/genericHTTPViews;
@@ -228,6 +232,7 @@
 
       <tal:block define="
           type string:FTP;
+          title titles/ftp;
           specific_views view/specificFTPViews;
           extended_views view/extendedFTPViews;
           generic_views view/genericFTPViews;
@@ -247,6 +252,7 @@
 
       <tal:block define="
           type string:Other;
+          title titles/other;
           specific_views view/specificOtherViews;
           extended_views view/extendedOtherViews;
           generic_views view/genericOtherViews;

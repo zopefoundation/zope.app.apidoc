@@ -105,8 +105,7 @@
 
   <h4>
     <metal:block use-macro="context/@@apidoc_macros/displaySwitch" />
-    <span i18n:translate=""><span i18n:name="name" tal:replace="name"
-        /> Views</span>
+    <span i18n:translate="" tal:content="title">View title</span>
   </h4>
   <metal:block use-macro="context/@@apidoc_macros/display" >
   <div metal:fill-slot="content">
@@ -123,25 +122,29 @@
 
   <h3 class="details-section">
     <metal:block use-macro="context/@@apidoc_macros/displaySwitch" />
-    <span i18n:translate="" tal:content="type">Browser</span>
+    <span i18n:translate="" tal:content="title">Browser</span>
   </h3>
   <metal:block use-macro="context/@@apidoc_macros/display" >
-  <div class="indent" metal:fill-slot="content">
+  <div class="indent" metal:fill-slot="content"
+    tal:define="titles view/getViewClassTitles">
 
     <tal:block define="Views specific_views;
                        name string:Specific;
+                       title titles/specific;
                        show show_specific">
       <metal:block use-macro="context/@@interface_macros/viewcategory" />
     </tal:block>
 
     <tal:block define="Views extended_views;
                        name string:Extended;
+                       title titles/extended;
                        show show_extended">
       <metal:block use-macro="context/@@interface_macros/viewcategory" />
     </tal:block>
 
     <tal:block define="Views generic_views;
                        name string:Generic;
+                       title titles/generic;
                        show show_generic">
       <metal:block use-macro="context/@@interface_macros/viewcategory" />
     </tal:block>
