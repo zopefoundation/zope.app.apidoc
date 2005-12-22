@@ -280,6 +280,18 @@ sometimes pass in `None`. In these cases we want to return `None`:
   >>> component.getInterfaceInfoDictionary(None) is None
   True
 
+It's also possible for this function to be passed a 
+zope.interface.declarations.Implements instance.  For instance, this function
+is sometimes used to analyze the required elements of an adapter registration:
+if an adapter or subscriber is registered against a class, then the required
+element will be an Implements instance.  In this case, we currently believe
+that we want to return the module and name of the object that the Implements
+object references.  This may change.
+
+  >>> from zope.interface import implementedBy
+  >>> pprint(component.getInterfaceInfoDictionary(implementedBy(MyFoo)))
+  {'module': 'zope.app.apidoc.doctest', 'name': 'MyFoo'}
+
 
 `getAdapterInfoDictionary(reg)`
 -------------------------------

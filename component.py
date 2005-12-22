@@ -23,6 +23,7 @@ from zope.component.site import AdapterRegistration, SubscriptionRegistration
 from zope.component.site import UtilityRegistration
 from zope.interface import Interface
 from zope.interface.interface import InterfaceClass
+import zope.interface.declarations
 from zope.publisher.interfaces import IRequest
 
 from zope.app import zapi
@@ -163,9 +164,12 @@ def getParserInfoInfoDictionary(info):
 
 def getInterfaceInfoDictionary(iface):
     """Return a PT-friendly info dictionary for an interface."""
+    if isinstance(iface, zope.interface.declarations.Implements):
+        iface = iface.inherit
     if iface is None:
         return None
-    return {'module': iface.__module__, 'name': iface.getName()}
+    return {'module': getattr(iface, '__module__', '<unknown>'),
+            'name': getattr(iface, '__name__', '<unknown>')}
 
 
 def getAdapterInfoDictionary(reg):
