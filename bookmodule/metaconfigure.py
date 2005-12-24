@@ -36,4 +36,5 @@ def bookchapter(_context, id, title, doc_path=EMPTYPATH,
         discriminator = ('apidoc:bookchapter', parent, id),
         callable = book.registerHelpTopic,
         args = (parent, id, title, doc_path),
-        kw = {'resources': resources, 'class_': RESTOnlineHelpTopic})
+        kw = {'resources': resources, 'class_': RESTOnlineHelpTopic},
+        order=999999)
