@@ -47,7 +47,7 @@
       name="introspector.html"
       for="*"
       class=".introspector.Introspector"
-      permission="zope.ManageContent"
+      permission="zope.app.introspector.Introspect"
       menu="zmi_views" title="Introspector"
       template="introspector.pt"
       />
