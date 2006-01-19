@@ -340,7 +340,7 @@ class StaticAPIDocGenerator(object):
 ###############################################################################
 # Command-line UI
 
-parser = optparse.OptionParser("Usage: %prog [options] TARGET_DIR")
+parser = optparse.OptionParser("%prog [options] TARGET_DIR")
 
 ######################################################################
 # Retrieval
@@ -488,6 +488,8 @@ def get_options(args=None, defaults=None):
     merge_options(options, defaults)
     options.original_testrunner_args = original_testrunner_args
 
+    if not positional:
+        parser.error("No target directory specified.")
     options.target_dir = positional.pop()
 
     return options
