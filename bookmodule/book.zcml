@@ -157,6 +157,22 @@
       id="test"
       title="Testing"
       />
+  <configure package="zope.testbrowser">
+    <bookchapter
+        id="testbrowser"
+        title="The Test Browser"
+        doc_path="README.txt"
+        parent="test"
+        />
+  </configure>
+  <configure package="zope.testbrowser">
+    <bookchapter
+        id="overthewire"
+        title="Using testbrowser On the Internet"
+        doc_path="over_the_wire.txt"
+        parent="test"
+        />
+  </configure>
   <configure package="zope.app.ftests">
     <bookchapter
         id="fdoctest"
