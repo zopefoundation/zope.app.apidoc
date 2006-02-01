@@ -164,8 +164,6 @@
         doc_path="README.txt"
         parent="test"
         />
-  </configure>
-  <configure package="zope.testbrowser">
     <bookchapter
         id="overthewire"
         title="Using testbrowser On the Internet"
