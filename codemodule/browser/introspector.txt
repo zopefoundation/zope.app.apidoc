@@ -6,7 +6,7 @@ The "Introspector" view provides access to information about the current
 obejct, the context of the introspector view. When in `devmode`, the
 introspector is simply available as follows:
 
-    >>> from zope.testbrowser import Browser
+    >>> from zope.testbrowser.testing import Browser
     >>> browser = Browser()
     >>> browser.addHeader('Authorization', 'Basic mgr:mgrpw')
     >>> browser.handleErrors = False
