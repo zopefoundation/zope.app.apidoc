@@ -22,7 +22,6 @@ import inspect
 from zope.interface import Interface
 
 from zope.publisher.interfaces import IRequest
-from zope.publisher.interfaces.browser import ILayer
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.publisher.interfaces.xmlrpc import IXMLRPCRequest
 from zope.publisher.interfaces.http import IHTTPRequest

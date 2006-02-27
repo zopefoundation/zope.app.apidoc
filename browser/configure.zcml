@@ -1,14 +1,20 @@
 <configure
   xmlns="http://namespaces.zope.org/browser"
+  xmlns:zope="http://namespaces.zope.org/zope"
   i18n_domain="zope">
 
+  <!-- BBB 2006/02/18, to be removed after 12 months -->
   <layer
       name="apidoc"
-      interface=".skin.apidoc" />
+      interface=".skin.apidoc"
+      bbb_aware="true"
+      />
 
-  <skin
+  <zope:interface
+      interface=".skin.APIDOC"
+      type="zope.publisher.interfaces.browser.IBrowserSkinType"
       name="APIDOC"
-      interface=".skin.APIDOC" />
+      />
 
   <resource
       name="apidoc.css"

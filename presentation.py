@@ -26,7 +26,7 @@ from zope.app.apidoc.component import getParserInfoInfoDictionary
 from zope.app.apidoc.component import getInterfaceInfoDictionary
 from zope.app.publisher.browser.icon import IconViewFactory
 
-from zope.publisher.interfaces import IRequest, ILayer
+from zope.publisher.interfaces import IRequest
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.publisher.interfaces.xmlrpc import IXMLRPCRequest
 from zope.publisher.interfaces.http import IHTTPRequest
@@ -164,19 +164,12 @@ def getViewInfoDictionary(reg):
         doc = None
         zcml = getParserInfoInfoDictionary(reg.doc)
 
-    # get layer
-    layer = None
-    if ILayer.providedBy(reg.required[-1]):
-        layer = getInterfaceInfoDictionary(reg.required[-1])
-
-
     info = {'name' : reg.name or '<i>no name</i>',
             'type' : getPythonPath(getPresentationType(reg.required[-1])),
             'factory' : getViewFactoryData(reg.value),
             'required': [getInterfaceInfoDictionary(iface)
                          for iface in reg.required],
             'provided' : getInterfaceInfoDictionary(reg.provided),
-            'layer': layer,
             'doc': doc,
             'zcml': zcml
             }

@@ -21,10 +21,10 @@
       </a>
     </div>
 
-    <div tal:define="ifaces python:View['required'][:-1]">
+    <div tal:define="ifaces python:View['required']">
       <i i18n:translate="">requires:</i>
       <tal:block repeat="iface ifaces">
-        <a href=""
+        <tal:block condition="not:iface">*</tal:block><a href=""
             tal:condition="iface"
             tal:attributes="
        href string:$rootURL/Interface/${iface/module}.${iface/name}/index.html">
@@ -42,16 +42,6 @@
       <a href=""
          tal:attributes="
        href string:$rootURL/Interface/${iface/module}.${iface/name}/index.html">
-        <metal:block use-macro="context/@@interface_macros/ifacename" />
-      </a>
-    </div>
-
-    <div tal:define="iface View/layer"
-         tal:condition="iface">
-      <i i18n:translate="">layer:</i>
-      <a href=""
-         tal:attributes="
-      href string:$rootURL/Interface/${iface/module}.${iface/name}/index.html">
         <metal:block use-macro="context/@@interface_macros/ifacename" />
       </a>
     </div>

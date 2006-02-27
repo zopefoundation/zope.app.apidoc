@@ -402,7 +402,6 @@ Let's first create a registration:
                'resource': None,
                'template': None,
                'url': '__builtin__/Factory'},
-   'layer': None,
    'name': 'view.html',
    'provided': {'module': 'zope.interface',
                 'name': 'Interface'},
