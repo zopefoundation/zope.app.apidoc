@@ -32,6 +32,7 @@ the template path:
    'referencable': True,
    'resource': None,
    'template': 'zope/app/apidoc/browser/index.pt',
+   'template_obj': <BoundPageTemplateFile of None>,
    'url': 'zope/app/pagetemplate/simpleviewclass/simple'}
 
 So in the result above we see what the function returns. It is a dictionary
