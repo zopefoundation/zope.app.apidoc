@@ -305,7 +305,7 @@ Get adapters where this interface is required.
   [{'doc': '',
     'factory': 'None.append',
     'factory_url': None,
-    'name': u'<subscription>',
+    'name': u'',
     'provided': None,
     'required': [{'module': 'zope.interface',
                   'name': 'Interface'}],

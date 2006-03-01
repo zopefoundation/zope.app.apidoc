@@ -19,7 +19,12 @@ __docformat__ = 'restructuredtext'
 import types
 
 from zope.component.interfaces import IFactory
-from zope.component.site import AdapterRegistration, SubscriptionRegistration
+from zope.component.components import (
+    AdapterRegistration,
+    SubscriptionRegistration,
+    HandlerRegistration,
+    )
+    
 from zope.component.site import UtilityRegistration
 from zope.interface import Interface
 from zope.interface.interface import InterfaceClass
@@ -42,7 +47,10 @@ def getRequiredAdapters(iface, withViews=False):
     gsm = zapi.getGlobalSiteManager()
     for reg in gsm.registrations():
         # Only get adapters
-        if not isinstance(reg, (AdapterRegistration, SubscriptionRegistration)):
+        if not isinstance(reg, (AdapterRegistration,
+                                SubscriptionRegistration,
+                                HandlerRegistration),
+                          ):
             continue
         # Ignore adapters that have no required interfaces
         if len(reg.required) == 0:
@@ -193,7 +201,7 @@ def getAdapterInfoDictionary(reg):
         'required': [getInterfaceInfoDictionary(iface)
                      for iface in reg.required
                      if iface is not None],
-        'name': getattr(reg, 'name', _('<subscription>')),
+        'name': getattr(reg, 'name', ''),
         'factory': path,
         'factory_url': url,
         'doc': doc,
