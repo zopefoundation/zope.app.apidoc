@@ -19,7 +19,7 @@ __docformat__ = 'restructuredtext'
 
 import base64, binascii
 
-from zope.component.site import UtilityRegistration
+from zope.component.components import UtilityRegistration
 from zope.interface import implements
 
 from zope.app import zapi

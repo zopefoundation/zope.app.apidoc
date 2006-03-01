@@ -25,7 +25,7 @@ from zope.component.components import (
     HandlerRegistration,
     )
     
-from zope.component.site import UtilityRegistration
+from zope.component.components import UtilityRegistration
 from zope.interface import Interface
 from zope.interface.interface import InterfaceClass
 import zope.interface.declarations

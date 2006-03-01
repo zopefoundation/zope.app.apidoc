@@ -304,7 +304,7 @@ Let's first create an adapter registration:
   >>> class MyResult(object):
   ...     implements(IResult)
 
-  >>> from zope.component.site import AdapterRegistration
+  >>> from zope.component.components import AdapterRegistration
   >>> reg = AdapterRegistration((IFoo, IBar), IResult, 'FooToResult',
   ...                            MyResult, 'doc info')
 
