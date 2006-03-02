@@ -118,10 +118,10 @@ def getPresentationType(iface):
     return iface
 
 
-def getViews(iface, type=IRequest):
+def getViews(iface, type=IRequest, context=None):
     """Get all view registrations for a particular interface."""
-    gsm = zapi.getGlobalSiteManager()
-    for reg in gsm.registrations():
+    sm = zapi.getSiteManager(context)
+    for reg in sm.registrations():
         if (isinstance(reg, AdapterRegistration) and
             len(reg.required) > 0 and
             reg.required[-1] is not None and
