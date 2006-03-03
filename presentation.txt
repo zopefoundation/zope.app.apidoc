@@ -240,8 +240,8 @@ Note that more specific presentation types are considered first. For example,
 presentation type to be an `IBrowserRequest`.
 
 
-`getViews(iface, type=IRequest, context=None)`
-----------------------------------------------
+`getViews(iface, type=IRequest)`
+--------------------------------
 
 This function retrieves all available view registrations for a given interface
 and presentation type. The default argument for the presentation type is
@@ -279,42 +279,9 @@ should be returned:
   [AdapterRegistration(('Interface', 'IHTTPRequest'), 'Interface',
                        'bar', None, '')]
 
-We can also pass a ``context`` parameter to get registration objects
-from a local site manager.  First we create a fake context object:
 
-  >>> class MyContext(object):
-  ...     pass
-  >>> context = MyContext()
-
-Now we create a local component registration (a.k.a. site manager) and
-register an adapter that finds it:
-
-  >>> import zope.interface
-  >>> import zope.component.globalregistry
-  >>> import zope.component.interfaces
-  >>> sm = zope.component.globalregistry.BaseGlobalComponents()
-
-  >>> @zope.component.adapter(MyContext)
-  ... @zope.interface.implementer(zope.component.interfaces.IComponentLookup)
-  ... def contextToComponentLookup(context):
-  ...     return sm
-  >>> zope.component.provideAdapter(contextToComponentLookup)
-
-Now we register a local view and see that ``getViews()`` with the
-appropriate context gives us an according AdapterRegistration:
-
-  >>> class LocalView(object):
-  ...     pass
-  >>> sm.registerAdapter(LocalView, (Interface, IBrowserRequest),
-  ...                    Interface, name=u'localview.html')
-
-  >>> list(presentation.getViews(Interface, IBrowserRequest, context))
-  [AdapterRegistration(('Interface', 'IBrowserRequest'), 'Interface',
-                       u'localview.html', 'LocalView', u'')]
-
-
-`filterViewRegistrations(regs, iface, level=SPECIFIC_INTERFACE_LEVEL)`
-----------------------------------------------------------------------
+`filterViewRegistrations(regs, iface, level=SPECIFC_INTERFACE_LEVEL)`
+---------------------------------------------------------------------
 
 Oftentimes the amount of views that are being returned for a particular
 interface are too much to show at once. It is then good to split the view into
