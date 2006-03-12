@@ -19,13 +19,13 @@ __docformat__ = 'restructuredtext'
 import types
 
 from zope.component.interfaces import IFactory
-from zope.component.components import (
+from zope.component.registry import (
     AdapterRegistration,
     SubscriptionRegistration,
     HandlerRegistration,
     )
     
-from zope.component.components import UtilityRegistration
+from zope.component.registry import UtilityRegistration
 from zope.interface import Interface
 from zope.interface.interface import InterfaceClass
 import zope.interface.declarations

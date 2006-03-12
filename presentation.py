@@ -16,7 +16,7 @@
 $Id$
 """
 from types import ClassType, FunctionType
-from zope.component.components import AdapterRegistration
+from zope.component.registry import AdapterRegistration
 from zope.interface import Interface
 
 from zope.app import zapi
