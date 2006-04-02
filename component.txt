@@ -44,9 +44,15 @@ specified interface. So let's create some adapter registrations:
   >>> regs = list(component.getRequiredAdapters(IFoo))
   >>> regs.sort()
   >>> regs
-  [AdapterRegistration(('IFoo', 'IBar'), 'ISpecialResult', '', None, ''),
-   AdapterRegistration(('IFoo',), 'IResult', '', None, ''),
-   HandlerRegistration(('IFoo',), u'', 'stubFactory', '')]
+  [AdapterRegistration(<BaseGlobalComponents base>, 
+                       [IFoo, IBar], ISpecialResult, '', None, u''), 
+   AdapterRegistration(<BaseGlobalComponents base>, 
+                       [IFoo], IResult, '', None, u''), 
+   HandlerRegistration(<BaseGlobalComponents base>, 
+                       [IFoo], u'', 'stubFactory', u'')]
+
+
+
 
 Note how the adapter requiring an `IRequest` at the end of the required
 interfaces is neglected. This is because it is recognized as a view and views
@@ -55,10 +61,16 @@ are not returned by default. But you can simply turn this flag on:
   >>> regs = list(component.getRequiredAdapters(IFoo, withViews=True))
   >>> regs.sort()
   >>> regs
-  [AdapterRegistration(('IFoo', 'IBar'), 'ISpecialResult', '', None, ''),
-   AdapterRegistration(('IFoo', 'IRequest'), 'ISpecialResult', '', None, ''),
-   AdapterRegistration(('IFoo',), 'IResult', '', None, ''),
-   HandlerRegistration(('IFoo',), u'', 'stubFactory', '')]
+  [AdapterRegistration(<BaseGlobalComponents base>, 
+                       [IFoo, IBar], ISpecialResult, '', None, u''), 
+   AdapterRegistration(<BaseGlobalComponents base>, 
+                       [IFoo, IRequest], ISpecialResult, '', None, u''), 
+   AdapterRegistration(<BaseGlobalComponents base>, 
+                       [IFoo], IResult, '', None, u''), 
+   HandlerRegistration(<BaseGlobalComponents base>, 
+                       [IFoo], u'', 'stubFactory', u'')]
+
+
 
 The function will also pick up registrations that have required interfaces the
 specified interface extends:
@@ -66,16 +78,20 @@ specified interface extends:
   >>> regs = list(component.getRequiredAdapters(IFoo))
   >>> regs.sort()
   >>> regs
-  [AdapterRegistration(('IFoo', 'IBar'), 'ISpecialResult', '', None, ''),
-   AdapterRegistration(('IFoo',), 'IResult', '', None, ''),
-   HandlerRegistration(('IFoo',), u'', 'stubFactory', '')]
+  [AdapterRegistration(<BaseGlobalComponents base>, 
+                       [IFoo, IBar], ISpecialResult, '', None, u''),
+   AdapterRegistration(<BaseGlobalComponents base>,
+                       [IFoo], IResult, '', None, u''), 
+   HandlerRegistration(<BaseGlobalComponents base>,
+                       [IFoo], u'', 'stubFactory', u'')]
 
 And all of the required interfaces are considered, of course:
 
   >>> regs = list(component.getRequiredAdapters(IBar))
   >>> regs.sort()
   >>> regs
-  [AdapterRegistration(('IFoo', 'IBar'), 'ISpecialResult', '', None, '')]
+  [AdapterRegistration(<BaseGlobalComponents base>, 
+                       [IFoo, IBar], ISpecialResult, '', None, u'')]
 
 
 `getProvidedAdapters(iface, withViews=False)`
@@ -88,24 +104,30 @@ views by default.
   >>> regs = list(component.getProvidedAdapters(ISpecialResult))
   >>> regs.sort()
   >>> regs
-  [AdapterRegistration(('IFoo', 'IBar'), 'ISpecialResult', '', None, '')]
+  [AdapterRegistration(<BaseGlobalComponents base>, 
+                       [IFoo, IBar], ISpecialResult, '', None, u'')]
 
 And by specifying the `withView` flag, we get views as well:
 
   >>> regs = list(component.getProvidedAdapters(ISpecialResult, withViews=True))
   >>> regs.sort()
   >>> regs
-  [AdapterRegistration(('IFoo', 'IBar'), 'ISpecialResult', '', None, ''),
-   AdapterRegistration(('IFoo', 'IRequest'), 'ISpecialResult', '', None, '')]
+  [AdapterRegistration(<BaseGlobalComponents base>, 
+                       [IFoo, IBar], ISpecialResult, '', None, u''), 
+   AdapterRegistration(<BaseGlobalComponents base>, 
+                       [IFoo, IRequest], ISpecialResult, '', None, u'')]
 
 We can of course also ask for adapters specifying `IResult`:
 
   >>> regs = list(component.getProvidedAdapters(IResult, withViews=True))
   >>> regs.sort()
   >>> regs
-  [AdapterRegistration(('IFoo', 'IBar'), 'ISpecialResult', '', None, ''),
-   AdapterRegistration(('IFoo', 'IRequest'), 'ISpecialResult', '', None, ''),
-   AdapterRegistration(('IFoo',), 'IResult', '', None, '')]
+  [AdapterRegistration(<BaseGlobalComponents base>, 
+                       [IFoo, IBar], ISpecialResult, '', None, u''),
+   AdapterRegistration(<BaseGlobalComponents base>,
+                       [IFoo, IRequest], ISpecialResult, '', None, u''),
+   AdapterRegistration(<BaseGlobalComponents base>,
+                       [IFoo], IResult, '', None, u'')]
 
 
 `getClasses(iface)`
@@ -167,16 +189,17 @@ Let's see whether we will be able to get them:
   >>> regs = list(component.getFactories(IFooBar))
   >>> regs.sort()
   >>> regs
-  [UtilityRegistration('IFactory', 'MyFooBar',
-      <Factory for <class 'zope.app.apidoc.doctest.MyFooBar'>>, '')]
+  [UtilityRegistration(<BaseGlobalComponents base>, 
+      IFactory, 'MyFooBar',
+      <Factory for <class 'zope.app.apidoc.doctest.MyFooBar'>>, u'')]
 
   >>> regs = list(component.getFactories(IFoo))
   >>> regs.sort()
   >>> regs
-  [UtilityRegistration('IFactory', 'MyFoo',
-      <Factory for <class 'zope.app.apidoc.doctest.MyFoo'>>, ''),
-   UtilityRegistration('IFactory', 'MyFooBar',
-      <Factory for <class 'zope.app.apidoc.doctest.MyFooBar'>>, '')]
+  [UtilityRegistration(<BaseGlobalComponents base>, IFactory, 'MyFoo', 
+               <Factory for <class 'zope.app.apidoc.doctest.MyFoo'>>, u''),
+   UtilityRegistration(<BaseGlobalComponents base>, IFactory, 'MyFooBar',
+            <Factory for <class 'zope.app.apidoc.doctest.MyFooBar'>>, u'')]
 
 
 `getUtilities(iface)`
@@ -196,16 +219,16 @@ Now let's have a look what we have:
   >>> regs = list(component.getUtilities(IFooBar))
   >>> regs.sort()
   >>> regs #doctest:+ELLIPSIS
-  [UtilityRegistration('IFooBar', '',
-                       <zope.app.apidoc.doctest.MyFooBar object at ...>, '')]
+  [UtilityRegistration(<BaseGlobalComponents base>, IFooBar, '', 
+                       <zope.app.apidoc.doctest.MyFooBar object at ...>, u'')]
 
   >>> regs = list(component.getUtilities(IFoo))
   >>> regs.sort()
   >>> regs #doctest:+ELLIPSIS
-  [UtilityRegistration('IFoo', '',
-                       <zope.app.apidoc.doctest.MyFoo object at ...>, ''),
-   UtilityRegistration('IFooBar', '',
-                       <zope.app.apidoc.doctest.MyFooBar object at ...>, '')]
+  [UtilityRegistration(<BaseGlobalComponents base>, IFoo, '', 
+                       <zope.app.apidoc.doctest.MyFoo object at ...>, u''),
+   UtilityRegistration(<BaseGlobalComponents base>, IFooBar, '', 
+                       <zope.app.apidoc.doctest.MyFooBar object at ...>, u'')]
 
 
 `getRealFactory(factory)`
@@ -305,7 +328,7 @@ Let's first create an adapter registration:
   ...     implements(IResult)
 
   >>> from zope.component.registry import AdapterRegistration
-  >>> reg = AdapterRegistration((IFoo, IBar), IResult, 'FooToResult',
+  >>> reg = AdapterRegistration(None, (IFoo, IBar), IResult, 'FooToResult',
   ...                            MyResult, 'doc info')
 
 And now get the info dictionary:
@@ -328,7 +351,7 @@ will be ``None``:
   >>> from zope.interface import classImplements
   >>> classImplements(MyResultType, IResult)
 
-  >>> reg = AdapterRegistration((IFoo, IBar), IResult, 'FooToResult',
+  >>> reg = AdapterRegistration(None, (IFoo, IBar), IResult, 'FooToResult',
   ...                            MyResultType, 'doc info')
   >>> pprint(component.getAdapterInfoDictionary(reg))
   {'doc': 'doc info',
@@ -345,7 +368,7 @@ much like adapter registrations, except that they do not have a name. So let's
 see how the function handles subscriptions:
 
   >>> from zope.component.registry import HandlerRegistration
-  >>> reg = HandlerRegistration((IFoo, IBar), '', MyResult, 'doc info')
+  >>> reg = HandlerRegistration(None, (IFoo, IBar), '', MyResult, 'doc info')
 
   >>> pprint(component.getAdapterInfoDictionary(reg))
   {'doc': 'doc info',

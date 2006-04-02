@@ -266,18 +266,18 @@ should be returned:
   >>> regs = list(presentation.getViews(IFoo))
   >>> regs.sort()
   >>> regs #doctest:+ELLIPSIS
-  [AdapterRegistration(('IFoo', 'IBrowserRequest'), 'Interface',
-                       'blah', None, ''),
-   AdapterRegistration(('IFoo', 'IHTTPRequest'), 'Interface',
-                       'foo', None, ''),
-   AdapterRegistration(('Interface', 'IHTTPRequest'), 'Interface',
-                       'bar', None, '')]
+  [AdapterRegistration(<BaseGlobalComponents base>, 
+                       [IFoo, IBrowserRequest], Interface, 'blah', None, u''),
+   AdapterRegistration(<BaseGlobalComponents base>,
+                       [IFoo, IHTTPRequest], Interface, 'foo', None, u''),
+   AdapterRegistration(<BaseGlobalComponents base>,
+                       [Interface, IHTTPRequest], Interface, 'bar', None, u'')]
 
   >>> regs = list(presentation.getViews(Interface, IHTTPRequest))
   >>> regs.sort()
   >>> regs #doctest:+ELLIPSIS
-  [AdapterRegistration(('Interface', 'IHTTPRequest'), 'Interface',
-                       'bar', None, '')]
+  [AdapterRegistration(<BaseGlobalComponents base>, 
+                       [Interface, IHTTPRequest], Interface, 'bar', None, u'')]
 
 
 `filterViewRegistrations(regs, iface, level=SPECIFC_INTERFACE_LEVEL)`
@@ -329,24 +329,24 @@ Let's now filter those registrations:
   ...     regs, IFile, level=presentation.SPECIFIC_INTERFACE_LEVEL))
   >>> result.sort()
   >>> result
-  [AdapterRegistration(('IFile', 'IHTTPRequest'), 'Interface',
-                       'view.html', None, '')]
+  [AdapterRegistration(<BaseGlobalComponents base>, 
+                     [IFile, IHTTPRequest], Interface, 'view.html', None, u'')]
 
   >>> result = list(presentation.filterViewRegistrations(
   ...     regs, IFile, level=presentation.EXTENDED_INTERFACE_LEVEL))
   >>> result.sort()
   >>> result
-  [AdapterRegistration(('IContent', 'IHTTPRequest'), 'Interface', 'edit.html',
-                       None, ''),
-   AdapterRegistration(('IContent', 'IHTTPRequest'), 'Interface', 'view.html',
-                       None, '')]
+  [AdapterRegistration(<BaseGlobalComponents base>,
+                  [IContent, IHTTPRequest], Interface, 'edit.html', None, u''),
+   AdapterRegistration(<BaseGlobalComponents base>,
+                  [IContent, IHTTPRequest], Interface, 'view.html', None, u'')]
 
   >>> result = list(presentation.filterViewRegistrations(
   ...     regs, IFile, level=presentation.GENERIC_INTERFACE_LEVEL))
   >>> result.sort()
   >>> result
-  [AdapterRegistration(('Interface', 'IHTTPRequest'), 'Interface', 'view.html',
-                       None, '')]
+  [AdapterRegistration(<BaseGlobalComponents base>,
+                 [Interface, IHTTPRequest], Interface, 'view.html', None, u'')]
 
 You can also specify multiple levels at once using the Boolean OR operator,
 since all three levels are mutually exclusive.
@@ -356,22 +356,22 @@ since all three levels are mutually exclusive.
   ...                        presentation.EXTENDED_INTERFACE_LEVEL))
   >>> result.sort()
   >>> result
-  [AdapterRegistration(('IContent', 'IHTTPRequest'), 'Interface',
-                       'edit.html', None, ''),
-   AdapterRegistration(('IContent', 'IHTTPRequest'), 'Interface',
-                       'view.html', None, ''),
-   AdapterRegistration(('IFile', 'IHTTPRequest'), 'Interface',
-                       'view.html', None, '')]
+  [AdapterRegistration(<BaseGlobalComponents base>, 
+                  [IContent, IHTTPRequest], Interface, 'edit.html', None, u''),
+   AdapterRegistration(<BaseGlobalComponents base>,
+                  [IContent, IHTTPRequest], Interface, 'view.html', None, u''),
+   AdapterRegistration(<BaseGlobalComponents base>,
+                  [IFile, IHTTPRequest], Interface, 'view.html', None, u'')]
 
   >>> result = list(presentation.filterViewRegistrations(
   ...     regs, IFile, level=presentation.SPECIFIC_INTERFACE_LEVEL |
   ...                        presentation.GENERIC_INTERFACE_LEVEL))
   >>> result.sort()
   >>> result
-  [AdapterRegistration(('IFile', 'IHTTPRequest'), 'Interface',
-                       'view.html', None, ''),
-   AdapterRegistration(('Interface', 'IHTTPRequest'), 'Interface',
-                       'view.html', None, '')]
+  [AdapterRegistration(<BaseGlobalComponents base>,
+                [IFile, IHTTPRequest], Interface, 'view.html', None, u''),
+   AdapterRegistration(<BaseGlobalComponents base>,
+                [Interface, IHTTPRequest], Interface, 'view.html', None, u'')]
 
 
 `getViewInfoDictionary(reg)`
@@ -385,7 +385,7 @@ dictionary for the specified registration.
 Let's first create a registration:
 
   >>> from zope.component.registry import AdapterRegistration
-  >>> reg = AdapterRegistration((IFile, Interface, IHTTPRequest),
+  >>> reg = AdapterRegistration(None, (IFile, Interface, IHTTPRequest),
   ...                           Interface, 'view.html', Factory, 'reg info')
 
   >>> pprint(presentation.getViewInfoDictionary(reg))
