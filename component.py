@@ -45,24 +45,21 @@ GENERIC_INTERFACE_LEVEL = 4
 def getRequiredAdapters(iface, withViews=False):
     """Get adapter registrations where the specified interface is required."""
     gsm = zapi.getGlobalSiteManager()
-    for reg in gsm.registrations():
-        # Only get adapters
-        if not isinstance(reg, (AdapterRegistration,
-                                SubscriptionRegistration,
-                                HandlerRegistration),
-                          ):
-            continue
-        # Ignore adapters that have no required interfaces
-        if len(reg.required) == 0:
-            continue
-        # Ignore views
-        if not withViews and reg.required[-1] and \
-               reg.required[-1].isOrExtends(IRequest):
-            continue
-        # Only get the adapters for which this interface is required
-        for required_iface in reg.required:
-            if iface.isOrExtends(required_iface):
-                yield reg
+    for meth in ('registeredAdapters',
+                 'registeredSubscriptionAdapters',
+                 'registeredHandlers'):
+
+        for reg in getattr(gsm, meth)():
+            # Ignore adapters that have no required interfaces
+            if len(reg.required) == 0:
+                continue
+            # Ignore views
+            if not withViews and reg.required[-1].isOrExtends(IRequest):
+                continue
+            # Only get the adapters for which this interface is required
+            for required_iface in reg.required:
+                if iface.isOrExtends(required_iface):
+                    yield reg
 
 
 def getProvidedAdapters(iface, withViews=False):
