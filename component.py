@@ -114,9 +114,7 @@ def getFactories(iface):
     """Return the factory registrations, who will return objects providing this
     interface."""
     gsm = zapi.getGlobalSiteManager()
-    for reg in gsm.registrations():
-        if not isinstance(reg, UtilityRegistration):
-            continue
+    for reg in gsm.registeredUtilities():
         if reg.provided is not IFactory:
             continue
         interfaces = reg.component.getInterfaces()
@@ -133,9 +131,7 @@ def getFactories(iface):
 def getUtilities(iface):
     """Return all utility registrations that provide the interface."""
     gsm = zapi.getGlobalSiteManager()
-    for reg in gsm.registrations():
-        if not isinstance(reg, UtilityRegistration):
-            continue
+    for reg in gsm.registeredUtilities():
         if reg.provided.isOrExtends(iface):
             yield reg
 
