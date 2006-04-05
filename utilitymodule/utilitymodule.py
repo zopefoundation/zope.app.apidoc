@@ -19,13 +19,13 @@ __docformat__ = 'restructuredtext'
 
 import base64, binascii
 
+import zope.component
 from zope.component.registry import UtilityRegistration
 from zope.interface import implements
+from zope.location.interfaces import ILocation
 
-from zope.app import zapi
 from zope.app.i18n import ZopeMessageFactory as _
 from zope.app.component import queryNextSiteManager
-from zope.app.location.interfaces import ILocation
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase, getPythonPath
 
@@ -68,7 +68,7 @@ class UtilityInterface(ReadContainerBase):
 
     def get(self, key, default=None):
         """See zope.app.container.interfaces.IReadContainer"""
-        sm = zapi.getGlobalSiteManager()
+        sm = zope.component.getGlobalSiteManager()
         key = decodeName(key)
         if key == NONAME:
             key = ''
@@ -79,7 +79,7 @@ class UtilityInterface(ReadContainerBase):
 
     def items(self):
         """See zope.app.container.interfaces.IReadContainer"""
-        sm = zapi.getGlobalSiteManager()
+        sm = zope.component.getGlobalSiteManager()
         items = [(encodeName(reg.name or NONAME), Utility(self, reg))
                  for reg in sm.registeredUtilities()
                  if self.interface == reg.provided]
@@ -120,7 +120,7 @@ class UtilityModule(ReadContainerBase):
             return UtilityInterface(self, key, getattr(mod, parts[-1], default))
 
     def items(self):
-        sm = zapi.getSiteManager()
+        sm = zope.component.getSiteManager()
         ifaces = {}
         while sm is not None:
             for reg in sm.registrations():

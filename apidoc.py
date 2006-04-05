@@ -17,12 +17,11 @@ $Id$
 """
 __docformat__ = 'restructuredtext'
 
+import zope.component
 from zope.interface import implements
 from zope.publisher.browser import applySkin
-
-from zope.app import zapi
-from zope.app.location import locate
-from zope.app.location.interfaces import ILocation
+from zope.location import locate
+from zope.location.interfaces import ILocation
 
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase
@@ -42,14 +41,14 @@ class APIDocumentation(ReadContainerBase):
 
     def get(self, key, default=None):
         """See zope.app.container.interfaces.IReadContainer"""
-        utility = zapi.queryUtility(IDocumentationModule, key, default)
+        utility = zope.component.queryUtility(IDocumentationModule, key, default)
         if utility != default:
             locate(utility, self, key)
         return utility
 
     def items(self):
         """See zope.app.container.interfaces.IReadContainer"""
-        items = list(zapi.getUtilitiesFor(IDocumentationModule))
+        items = list(zope.component.getUtilitiesFor(IDocumentationModule))
         items.sort()
         utils = []
         for key, value in items:

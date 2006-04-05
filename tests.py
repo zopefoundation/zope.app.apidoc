@@ -19,15 +19,13 @@ from pprint import PrettyPrinter
 import unittest
 
 import zope.component.testing
-
 from zope.component.interfaces import IFactory
 from zope.interface import implements
 from zope.testing import doctest, doctestunit
 from zope.traversing.interfaces import IContainmentRoot
+from zope.location import LocationProxy
 
-from zope.app.location import LocationProxy
 from zope.app.testing import placelesssetup, ztapi, setup
-
 from zope.app.renderer.rest import ReStructuredTextSourceFactory
 from zope.app.renderer.rest import IReStructuredTextSource
 from zope.app.renderer.rest import ReStructuredTextToHTMLRenderer

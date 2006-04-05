@@ -160,7 +160,7 @@ in the interface documentation module
   >>> ifacemodule.__parent__ = Root()
   >>> ifacemodule.__name__ = 'Interfaces'
 
-  >>> from zope.app.location import LocationProxy
+  >>> from zope.location import LocationProxy
   >>> iface = LocationProxy(IFoo, ifacemodule, 'IFoo')
 
 and finally the details view:
@@ -311,8 +311,8 @@ Get adapters where this interface is required.
                   'name': 'Interface'}],
     'zcml': None},
    {'doc': u'',
-    'factory': 'zope.app.location.traversing.LocationPhysicallyLocatable',
-    'factory_url': 'zope/app/location/traversing/LocationPhysicallyLocatable',
+    'factory': 'zope.location.traversing.LocationPhysicallyLocatable',
+    'factory_url': 'zope/location/traversing/LocationPhysicallyLocatable',
     'name': '',
     'provided': {'module': 'zope.traversing.interfaces',
                  'name': 'IPhysicallyLocatable'},
