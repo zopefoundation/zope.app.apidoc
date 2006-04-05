@@ -23,8 +23,8 @@ import zope.component.testing
 from zope.component.interfaces import IFactory
 from zope.interface import implements
 from zope.testing import doctest, doctestunit
+from zope.traversing.interfaces import IContainmentRoot
 
-from zope.app.traversing.interfaces import IContainmentRoot
 from zope.app.location import LocationProxy
 from zope.app.testing import placelesssetup, ztapi, setup
 
