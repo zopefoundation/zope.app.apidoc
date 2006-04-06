@@ -109,9 +109,9 @@ def setUp(test):
         os.path.dirname(zope.app.__file__), 'meta.zcml')
 
     # Register the index.html view for codemodule.class_.Class
+    from zope.publisher.browser import BrowserView
     from zope.app.apidoc.codemodule.class_ import Class
     from zope.app.apidoc.codemodule.browser.class_ import ClassDetails
-    from zope.app.publisher.browser import BrowserView
     class Details(ClassDetails, BrowserView):
         pass
     ztapi.browserView(Class, 'index.html', Details)
