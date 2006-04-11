@@ -25,11 +25,11 @@ __docformat__ = 'restructuredtext'
 from zope.app import zapi
 from zope.interface import implements
 from zope.location import LocationProxy
+from zope.component.interface import queryInterface
+from zope.component.interface import searchInterfaceUtilities
 
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase
-from zope.app.component.interface import queryInterface
-from zope.app.component.interface import searchInterfaceUtilities
 from zope.app.i18n import ZopeMessageFactory as _
 
 class IInterfaceModule(IDocumentationModule):
