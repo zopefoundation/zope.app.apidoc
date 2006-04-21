@@ -61,14 +61,19 @@ def getRequiredAdapters(iface, withViews=False):
                 if iface.isOrExtends(required_iface):
                     yield reg
 
+def _adapterishRegistrations(registry):
+    for r in registry.registeredAdapters():
+        yield r
+    for r in registry.registeredSubscriptionAdapters():
+        yield r
+    for r in registry.registeredHandlers():
+        yield r
 
 def getProvidedAdapters(iface, withViews=False):
     """Get adapter registrations where this interface is provided."""
     gsm = zapi.getGlobalSiteManager()
-    for reg in gsm.registrations():
+    for reg in _adapterishRegistrations(gsm):
         # Only get adapters
-        if not isinstance(reg, (AdapterRegistration, SubscriptionRegistration)):
-            continue
         # Ignore adapters that have no required interfaces
         if len(reg.required) == 0:
             continue

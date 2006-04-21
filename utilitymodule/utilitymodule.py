@@ -123,10 +123,9 @@ class UtilityModule(ReadContainerBase):
         sm = zope.component.getSiteManager()
         ifaces = {}
         while sm is not None:
-            for reg in sm.registrations():
-                if isinstance(reg, UtilityRegistration):
-                    path = getPythonPath(reg.provided)
-                    ifaces[path] = UtilityInterface(self, path, reg.provided)
+            for reg in sm.registeredUtilities():
+                path = getPythonPath(reg.provided)
+                ifaces[path] = UtilityInterface(self, path, reg.provided)
             sm = queryNextSiteManager(sm)
 
         items = ifaces.items()
