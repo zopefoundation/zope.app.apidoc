@@ -15,6 +15,7 @@
 
 $Id$
 """
+import zope.deprecation
 import unittest
 from zope.app.testing.functional import BrowserTestCase
 
@@ -28,8 +29,15 @@ class UtilityModuleTests(BrowserTestCase):
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
         self.assert_(body.find('IDocumentationModule') > 0)
+
+        # BBB 2006/02/18, to be removed after 12 months
+        # this avoids the deprecation warning for the deprecated
+        # zope.publisher.interfaces.ILayer interface which get traversed
+        # as a utility in this test
+        zope.deprecation.__show__.off()
         self.checkForBrokenLinks(body, '/++apidoc++/Utility/menu.html',
                                  basic='mgr:mgrpw')
+        zope.deprecation.__show__.on()
 
     def testUtilityDetailsView(self):
         response = self.publish(
