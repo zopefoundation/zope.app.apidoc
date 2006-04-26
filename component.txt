@@ -49,9 +49,7 @@ specified interface. So let's create some adapter registrations:
    AdapterRegistration(<BaseGlobalComponents base>, 
                        [IFoo], IResult, '', None, u''), 
    HandlerRegistration(<BaseGlobalComponents base>, 
-                       [IFoo], u'', 'stubFactory', u''),
-   HandlerRegistration(<BaseGlobalComponents base>,
-                       [Interface], u'', append, u'')]
+                       [IFoo], u'', 'stubFactory', u'')]
 
 Note how the adapter requiring an `IRequest` at the end of the required
 interfaces is neglected. This is because it is recognized as a view and views
@@ -67,9 +65,7 @@ are not returned by default. But you can simply turn this flag on:
    AdapterRegistration(<BaseGlobalComponents base>, 
                        [IFoo], IResult, '', None, u''), 
    HandlerRegistration(<BaseGlobalComponents base>, 
-                       [IFoo], u'', 'stubFactory', u''),
-   HandlerRegistration(<BaseGlobalComponents base>,
-                       [Interface], u'', append, u'')]
+                       [IFoo], u'', 'stubFactory', u'')]
 
 The function will also pick up registrations that have required interfaces the
 specified interface extends:
@@ -82,9 +78,7 @@ specified interface extends:
    AdapterRegistration(<BaseGlobalComponents base>,
                        [IFoo], IResult, '', None, u''), 
    HandlerRegistration(<BaseGlobalComponents base>,
-                       [IFoo], u'', 'stubFactory', u''),
-   HandlerRegistration(<BaseGlobalComponents base>,
-                       [Interface], u'', append, u'')]
+                       [IFoo], u'', 'stubFactory', u'')]
 
 And all of the required interfaces are considered, of course:
 
@@ -92,9 +86,7 @@ And all of the required interfaces are considered, of course:
   >>> regs.sort()
   >>> regs
   [AdapterRegistration(<BaseGlobalComponents base>, 
-                       [IFoo, IBar], ISpecialResult, '', None, u''),
-   HandlerRegistration(<BaseGlobalComponents base>,
-                       [Interface], u'', append, u'')]
+                       [IFoo, IBar], ISpecialResult, '', None, u'')]
 
 
 `getProvidedAdapters(iface, withViews=False)`
