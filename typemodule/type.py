@@ -16,16 +16,16 @@
 $Id: __init__.py 29143 2005-02-14 22:43:16Z srichter $
 """
 __docformat__ = 'restructuredtext'
-from  zope.interface import implements
-from zope.interface.interfaces import IInterface
 
-from zope.app import zapi
+from zope.interface import implements
+from zope.component import queryUtility, getUtilitiesFor
+from zope.interface.interfaces import IInterface
+from zope.location import LocationProxy
+from zope.location.interfaces import ILocation
+
 from zope.app.i18n import ZopeMessageFactory as _
-from zope.app.location import LocationProxy
-from zope.app.location.interfaces import ILocation
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase
-
 
 class TypeInterface(ReadContainerBase):
     """Representation of the special type interface.
@@ -62,13 +62,13 @@ class TypeInterface(ReadContainerBase):
     def get(self, key, default=None):
         """See zope.app.container.interfaces.IReadContainer"""
         return LocationProxy(
-            zapi.queryUtility(self.interface, key, default=default),
+            queryUtility(self.interface, key, default=default),
             self, key)
 
     def items(self):
         """See zope.app.container.interfaces.IReadContainer"""
         results = [(name, LocationProxy(iface, self, name))
-                   for name, iface in zapi.getUtilitiesFor(self.interface)]
+                   for name, iface in getUtilitiesFor(self.interface)]
         results.sort(lambda x, y: cmp(x[1].getName(), y[1].getName()))
         return results
 
@@ -109,11 +109,11 @@ class TypeModule(ReadContainerBase):
 
     def get(self, key, default=None):
         return TypeInterface(
-            zapi.queryUtility(IInterface, key, default=default), self, key)
+            queryUtility(IInterface, key, default=default), self, key)
 
     def items(self):
         results = [(name, TypeInterface(iface, self, name))
-                   for name, iface in zapi.getUtilitiesFor(IInterface)
+                   for name, iface in getUtilitiesFor(IInterface)
                    if iface.extends(IInterface)]
         results.sort(lambda x, y: cmp(x[1].interface.getName(),
                                       y[1].interface.getName()))

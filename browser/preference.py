@@ -17,12 +17,13 @@ $Id$
 """
 __docformat__ = "reStructuredText"
 
+from zope.publisher.browser import applySkin
+
 from zope.app import zapi
 from zope.app.apidoc.browser.skin import APIDOC
 from zope.app.tree.browser.cookie import CookieTreeView
 from zope.app.preference.browser import PreferenceGroupFilter
 from zope.app.preference.browser import EditPreferenceGroup
-from zope.app.publisher.browser import applySkin
 
 class APIDocPreferencesTree(CookieTreeView):
     """Preferences Tree using the stateful cookie tree."""

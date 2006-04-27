@@ -26,12 +26,12 @@ from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.publisher.interfaces.xmlrpc import IXMLRPCRequest
 from zope.publisher.interfaces.http import IHTTPRequest
 from zope.publisher.interfaces.ftp import IFTPRequest
+from zope.publisher.browser import BrowserView
 from zope.security.proxy import removeSecurityProxy
 from zope.proxy import removeAllProxies
 
 from zope.app import zapi
 from zope.app.i18n import ZopeMessageFactory as _
-from zope.app.publisher.browser import BrowserView
 
 from zope.app.apidoc.utilities import getPythonPath, renderText
 from zope.app.apidoc.apidoc import APIDocumentation

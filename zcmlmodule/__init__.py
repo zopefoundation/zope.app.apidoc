@@ -24,10 +24,10 @@ __docformat__ = 'restructuredtext'
 
 from zope.configuration import docutils, xmlconfig
 from zope.interface import implements
+from zope.location.interfaces import ILocation
 
 import zope.app.appsetup.appsetup
 from zope.app.i18n import ZopeMessageFactory as _
-from zope.app.location.interfaces import ILocation
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase
 

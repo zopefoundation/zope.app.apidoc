@@ -17,13 +17,12 @@ $Id$
 """
 import unittest
 from zope.testing import doctest, doctestunit
+from zope.traversing.interfaces import IPhysicallyLocatable
+from zope.location.traversing import LocationPhysicallyLocatable
 
-from zope.app.location.traversing import LocationPhysicallyLocatable
 from zope.app.testing import placelesssetup, ztapi
-from zope.app.traversing.interfaces import IPhysicallyLocatable
 from zope.app.tree.interfaces import IUniqueId
 from zope.app.tree.adapters import LocationUniqueId 
-
 
 def setUp(test):
     placelesssetup.setUp()

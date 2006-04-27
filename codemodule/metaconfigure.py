@@ -17,7 +17,7 @@ $Id: metaconfigure.py 26889 2004-08-04 04:00:36Z pruggera $
 """
 __docformat__ = 'restructuredtext'
 from zope.interface import implements
-from zope.app.component.metaconfigure import utility
+from zope.component.zcml import utility
 
 from zope.app.apidoc import classregistry
 from zope.app.apidoc.codemodule.interfaces import IAPIDocRootModule

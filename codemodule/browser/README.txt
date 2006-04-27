@@ -142,8 +142,8 @@ Get all implemented interfaces (as paths) of this class.
   >>> pprint(details.getInterfaces())
   [{'path': 'zope.app.apidoc.interfaces.IDocumentationModule',
     'url': 'zope.app.apidoc.interfaces.IDocumentationModule'},
-   {'path': 'zope.app.location.interfaces.ILocation',
-    'url': 'zope.app.location.interfaces.ILocation'},
+   {'path': 'zope.location.interfaces.ILocation',
+    'url': 'zope.location.interfaces.ILocation'},
    {'path': 'zope.app.apidoc.codemodule.interfaces.IModuleDocumentation',
     'url': 'zope.app.apidoc.codemodule.interfaces.IModuleDocumentation'},
    {'path': 'zope.app.container.interfaces.IReadContainer',
@@ -408,7 +408,7 @@ This little helper function returns the path to the type class:
 This namespace is used to traverse into the annotations of an object.
 
   >>> import zope.interface
-  >>> from zope.app.annotation.interfaces import IAttributeAnnotatable
+  >>> from zope.annotation.interfaces import IAttributeAnnotatable
 
   >>> class Sample(object):
   ...    zope.interface.implements(IAttributeAnnotatable)

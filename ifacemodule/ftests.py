@@ -25,11 +25,11 @@ class InterfaceModuleTests(BrowserTestCase):
         response = self.publish(
             '/++apidoc++/Interface/menu.html',
             basic='mgr:mgrpw',
-            env = {'name_only': True, 'search_str': 'IComponent'})
+            env = {'name_only': True, 'search_str': 'IDoc'})
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
         self.assert_(body.find(
-            'zope.app.component.interfaces.registration.IComponent') > 0)
+            'zope.app.apidoc.interfaces.IDocumentationModule') > 0)
         self.checkForBrokenLinks(body, '/++apidoc++/Interface/menu.html',
                                  basic='mgr:mgrpw')
 

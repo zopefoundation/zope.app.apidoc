@@ -22,8 +22,8 @@ import types
 import zope
 from zope.interface import implements
 from zope.interface.interface import InterfaceClass
-from zope.app.location.interfaces import ILocation
-from zope.app.location import LocationProxy
+from zope.location.interfaces import ILocation
+from zope.location import LocationProxy
 
 from zope.app.apidoc.classregistry import safe_import
 from zope.app.apidoc.utilities import ReadContainerBase

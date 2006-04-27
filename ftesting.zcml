@@ -1,3 +1,0 @@
-<configure xmlns:apidoc="http://namespaces.zope.org/apidoc">
-  <apidoc:moduleImport allow="true" />
-</configure>

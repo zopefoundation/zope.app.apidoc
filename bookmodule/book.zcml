@@ -83,18 +83,6 @@
         doc_path="README.txt"
         />
     <bookchapter
-        id="registration"
-        title="Registration Framework"
-        parent="ca/local"
-        doc_path="registration.txt"
-        />
-    <bookchapter
-        id="adapterregistry"
-        title="Local Adapter Registry"
-        parent="ca/local"
-        doc_path="adapterregistry.txt"
-        />
-    <bookchapter
         id="site"
         title="Local Sites &amp; Site Managers"
         parent="ca/local"

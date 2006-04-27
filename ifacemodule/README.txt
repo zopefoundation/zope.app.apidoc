@@ -15,7 +15,7 @@ After registering an interface
   >>> class IFoo(Interface):
   ...     pass
 
-  >>> from zope.app.component.interface import provideInterface
+  >>> from zope.component.interface import provideInterface
   >>> provideInterface(None, IFoo)
   >>> provideInterface('IFoo', IFoo)
 

@@ -21,9 +21,9 @@ import keyword
 
 from zope.configuration.xmlconfig import ParserInfo
 from zope.security.proxy import removeSecurityProxy
+from zope.location import LocationProxy
 
 from zope.app import zapi
-from zope.app.location import LocationProxy
 from zope.app.apidoc.zcmlmodule import Directive, Namespace
 from zope.app.apidoc.ifacemodule.browser import InterfaceDetails
 from zope.app.apidoc.utilities import getPythonPath, isReferencable

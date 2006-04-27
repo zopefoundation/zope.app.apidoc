@@ -19,13 +19,13 @@ __docformat__ = 'restructuredtext'
 
 import base64, binascii
 
-from zope.component.site import UtilityRegistration
+import zope.component
+from zope.component.registry import UtilityRegistration
 from zope.interface import implements
+from zope.location.interfaces import ILocation
 
-from zope.app import zapi
 from zope.app.i18n import ZopeMessageFactory as _
 from zope.app.component import queryNextSiteManager
-from zope.app.location.interfaces import ILocation
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase, getPythonPath
 
@@ -54,7 +54,7 @@ class Utility(object):
         self.registration = reg
         self.interface = reg.provided
         self.component = reg.component
-        self.doc = reg.doc
+        self.doc = reg.info
 
 
 class UtilityInterface(ReadContainerBase):
@@ -68,23 +68,21 @@ class UtilityInterface(ReadContainerBase):
 
     def get(self, key, default=None):
         """See zope.app.container.interfaces.IReadContainer"""
-        sm = zapi.getGlobalSiteManager()
+        sm = zope.component.getGlobalSiteManager()
         key = decodeName(key)
         if key == NONAME:
             key = ''
         utils = [Utility(self, reg)
-                 for reg in sm.registrations()
-                 if zapi.isinstance(reg, UtilityRegistration) and \
-                     reg.name == key and reg.provided == self.interface]
+                 for reg in sm.registeredUtilities()
+                 if reg.name == key and reg.provided == self.interface]
         return utils and utils[0] or default
 
     def items(self):
         """See zope.app.container.interfaces.IReadContainer"""
-        sm = zapi.getGlobalSiteManager()
+        sm = zope.component.getGlobalSiteManager()
         items = [(encodeName(reg.name or NONAME), Utility(self, reg))
-                 for reg in sm.registrations()
-                 if zapi.isinstance(reg, UtilityRegistration) and \
-                     self.interface == reg.provided]
+                 for reg in sm.registeredUtilities()
+                 if self.interface == reg.provided]
         items.sort()
         return items
 
@@ -122,13 +120,12 @@ class UtilityModule(ReadContainerBase):
             return UtilityInterface(self, key, getattr(mod, parts[-1], default))
 
     def items(self):
-        sm = zapi.getSiteManager()
+        sm = zope.component.getSiteManager()
         ifaces = {}
         while sm is not None:
-            for reg in sm.registrations():
-                if isinstance(reg, UtilityRegistration):
-                    path = getPythonPath(reg.provided)
-                    ifaces[path] = UtilityInterface(self, path, reg.provided)
+            for reg in sm.registeredUtilities():
+                path = getPythonPath(reg.provided)
+                ifaces[path] = UtilityInterface(self, path, reg.provided)
             sm = queryNextSiteManager(sm)
 
         items = ifaces.items()

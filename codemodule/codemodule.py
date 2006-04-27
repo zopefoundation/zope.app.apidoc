@@ -19,11 +19,12 @@ documentation for it.
 $Id: __init__.py 29269 2005-02-23 22:22:48Z srichter $
 """
 __docformat__ = 'restructuredtext'
-from zope.interface import Interface, implements
-from zope.app import zapi
-from zope.app.i18n import ZopeMessageFactory as _
-from zope.app.location.interfaces import ILocation
 
+import zope.component
+from zope.interface import Interface, implements
+from zope.location.interfaces import ILocation
+
+from zope.app.i18n import ZopeMessageFactory as _
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.classregistry import safe_import
 from zope.app.apidoc.codemodule.interfaces import IAPIDocRootModule
@@ -68,7 +69,7 @@ class CodeModule(Module):
         """Setup module and class tree."""
         if self.__isSetup:
             return
-        for name, mod in zapi.getUtilitiesFor(IAPIDocRootModule):
+        for name, mod in zope.component.getUtilitiesFor(IAPIDocRootModule):
             module = safe_import(mod)
             if module is not None:
                 self._children[name] = Module(self, name, module)

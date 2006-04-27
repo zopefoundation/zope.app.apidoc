@@ -22,7 +22,7 @@ from inspect import ismethod, ismethoddescriptor
 
 from zope.interface import implements, implementedBy
 from zope.security.checker import getCheckerForInstancesOf
-from zope.app.location.interfaces import ILocation
+from zope.location.interfaces import ILocation
 
 from zope.app.apidoc.classregistry import classRegistry
 from zope.app.apidoc.utilities import getInterfaceForAttribute

@@ -21,13 +21,13 @@ import inspect
 import types
 from zope.proxy import removeAllProxies
 from zope.security.proxy import removeSecurityProxy
+from zope.traversing.interfaces import TraversalError
 
 from zope.app import zapi
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import getPythonPath, getPermissionIds
 from zope.app.apidoc.utilities import renderText, getFunctionSignature
 from zope.app.apidoc.utilities import isReferencable
-from zope.app.traversing.interfaces import TraversalError
 
 
 def getTypeLink(type):

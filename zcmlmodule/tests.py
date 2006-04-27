@@ -19,15 +19,15 @@ import os
 import unittest
 from zope.configuration import xmlconfig
 from zope.testing import doctest, doctestunit
-from zope.app.testing import placelesssetup, ztapi
-from zope.app.apidoc.tests import Root
+from zope.traversing.interfaces import IPhysicallyLocatable
+from zope.location.traversing import LocationPhysicallyLocatable
 
 import zope.app.appsetup.appsetup
-from zope.app.location.traversing import LocationPhysicallyLocatable
-from zope.app.traversing.interfaces import IPhysicallyLocatable
 from zope.app.tree.interfaces import IUniqueId
 from zope.app.tree.adapters import LocationUniqueId
+from zope.app.testing import placelesssetup, ztapi
 
+from zope.app.apidoc.tests import Root
 from zope.app.apidoc.zcmlmodule import Namespace, Directive
 from zope.app.apidoc.zcmlmodule import ZCMLModule
 from zope.app.apidoc.tests import Root

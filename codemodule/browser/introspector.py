@@ -22,13 +22,13 @@ import types
 
 import zope.interface
 import zope.security.proxy
+from zope import annotation
 from zope.interface import directlyProvidedBy, directlyProvides
-from zope.app import zapi, apidoc, annotation
-from zope.app.location import location
-from zope.app.publisher.browser import BrowserView
-from zope.app.traversing.interfaces import IPhysicallyLocatable
-from zope.app.traversing.interfaces import IContainmentRoot
+from zope.traversing.interfaces import IPhysicallyLocatable, IContainmentRoot
+from zope.location import location
+from zope.publisher.browser import BrowserView
 
+from zope.app import zapi, apidoc
 
 def getTypeLink(type):
     if type is types.NoneType:

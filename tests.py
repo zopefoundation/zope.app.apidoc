@@ -18,21 +18,21 @@ $Id$
 from pprint import PrettyPrinter
 import unittest
 
+import zope.component.testing
 from zope.component.interfaces import IFactory
 from zope.interface import implements
 from zope.testing import doctest, doctestunit
+from zope.traversing.interfaces import IContainmentRoot
+from zope.location import LocationProxy
 
-from zope.app.traversing.interfaces import IContainmentRoot
-from zope.app.location import LocationProxy
 from zope.app.testing import placelesssetup, ztapi, setup
-
 from zope.app.renderer.rest import ReStructuredTextSourceFactory
 from zope.app.renderer.rest import IReStructuredTextSource
 from zope.app.renderer.rest import ReStructuredTextToHTMLRenderer
 
 
 def setUp(test):
-    placelesssetup.setUp()
+    zope.component.testing.setUp()
     # Register Renderer Components
     ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
                          'zope.source.rest')
@@ -85,8 +85,8 @@ def test_suite():
                              globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE),
         doctest.DocFileSuite('presentation.txt',
-                             setUp=placelesssetup.setUp,
-                             tearDown=placelesssetup.tearDown,
+                             setUp=zope.component.testing.setUp,
+                             tearDown=zope.component.testing.tearDown,
                              globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE),
         doctest.DocFileSuite('utilities.txt',

@@ -40,7 +40,7 @@ have to create a utility registration
   >>> foobar_reg = type(
   ...     'RegistrationStub', (),
   ...     {'name': 'FooBar', 'provided': None,
-  ...      'component': None, 'doc': ''})()
+  ...      'component': None, 'info': ''})()
 
 which is then wrapped in a `Utility` documentation class and then in a node:
 
@@ -61,7 +61,7 @@ Finally, we get menu title and link for a utility without a name:
   >>> noname_reg = type(
   ...     'RegistrationStub', (),
   ...     {'name': NONAME, 'provided': None,
-  ...      'component': None, 'doc': ''})()
+  ...      'component': None, 'info': ''})()
 
   >>> util = Utility(uiface, noname_reg)
   >>> node = Node(util)
@@ -109,7 +109,7 @@ registration:
   >>> blah_reg = type(
   ...     'RegistrationStub', (),
   ...     {'name': 'Blah', 'provided': IBlah,
-  ...      'component': None, 'doc': ''})()
+  ...      'component': None, 'info': ''})()
 
 Then we wrap the registration in the utility documentation class and create
 the details view:
@@ -140,7 +140,7 @@ registration:
 
   >>> foo_reg = type(
   ...     'RegistrationStub', (),
-  ...     {'name': '', 'provided': Interface, 'component': Foo(), 'doc': ''})()
+  ...     {'name': '', 'provided': Interface, 'component': Foo(), 'info': ''})()
 
 Then we create a utility documentation class and its details view:
 

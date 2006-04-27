@@ -19,10 +19,10 @@ __docformat__ = 'restructuredtext'
 from zope.interface.interface import InterfaceClass
 from zope.security.proxy import removeSecurityProxy
 from zope.proxy import removeAllProxies
+from zope.publisher.browser import BrowserView
 
 from zope.app import zapi
 from zope.app.i18n import ZopeMessageFactory as _
-from zope.app.publisher.browser import BrowserView
 
 from zope.app.apidoc.apidoc import APIDocumentation
 from zope.app.apidoc.utilities import getPythonPath, renderText, columnize

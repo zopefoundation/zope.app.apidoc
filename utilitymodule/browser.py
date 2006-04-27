@@ -18,9 +18,9 @@ $Id$
 __docformat__ = 'restructuredtext'
 
 from zope.security.proxy import removeSecurityProxy
+from zope.location import LocationProxy
 
 from zope.app import zapi
-from zope.app.location import LocationProxy
 from zope.app.apidoc.ifacemodule.browser import InterfaceDetails
 from zope.app.apidoc.component import getUtilityInfoDictionary
 from zope.app.apidoc.utilities import getPythonPath
