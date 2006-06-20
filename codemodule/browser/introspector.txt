@@ -12,7 +12,7 @@ introspector is simply available as follows:
     >>> browser.handleErrors = False
 
     >>> browser.open('http://localhost/manage')
-    >>> browser.getLink('Introspector').click() # XXX error here
+    >>> browser.getLink('Introspector').click()
 
 The page starts with telling you the class/type
 
