@@ -395,7 +395,7 @@ Let's first create a registration:
                'resource': None,
                'template': None,
                'url': '__builtin__/Factory'},
-   'name': 'view.html',
+   'name': u'view.html',
    'provided': {'module': 'zope.interface',
                 'name': 'Interface'},
    'read_perm': None,

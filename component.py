@@ -24,7 +24,7 @@ from zope.component.registry import (
     SubscriptionRegistration,
     HandlerRegistration,
     )
-    
+
 from zope.component.registry import UtilityRegistration
 from zope.interface import Interface
 from zope.interface.interface import InterfaceClass
@@ -37,6 +37,7 @@ from zope.app.apidoc.classregistry import classRegistry
 from zope.app.apidoc.utilities import relativizePath, truncateSysPath
 from zope.app.apidoc.utilities import getPythonPath, isReferencable, renderText
 from zope.app.apidoc.utilitymodule import utilitymodule
+
 
 SPECIFIC_INTERFACE_LEVEL = 1
 EXTENDED_INTERFACE_LEVEL = 2
@@ -174,8 +175,8 @@ def getInterfaceInfoDictionary(iface):
         iface = iface.inherit
     if iface is None:
         return None
-    return {'module': getattr(iface, '__module__', '<unknown>'),
-            'name': getattr(iface, '__name__', '<unknown>')}
+    return {'module': getattr(iface, '__module__', _('<unknown>')),
+            'name': getattr(iface, '__name__', _('<unknown>'))}
 
 
 def getAdapterInfoDictionary(reg):
@@ -199,7 +200,7 @@ def getAdapterInfoDictionary(reg):
         'required': [getInterfaceInfoDictionary(iface)
                      for iface in reg.required
                      if iface is not None],
-        'name': getattr(reg, 'name', ''),
+        'name': unicode(getattr(reg, 'name', u'')),
         'factory': path,
         'factory_url': url,
         'doc': doc,
@@ -219,7 +220,7 @@ def getFactoryInfoDictionary(reg):
 
     path = getPythonPath(callable)
 
-    return {'name': reg.name or _('<i>no name</i>'),
+    return {'name': unicode(reg.name) or _('<i>no name</i>'),
             'title': getattr(factory, 'title', u''),
             'description': renderText(getattr(factory, 'description', u''),
                                       module=callable.__module__),
@@ -252,7 +253,7 @@ def getUtilityInfoDictionary(reg):
         if isReferencable(path):
             url = 'Code/%s' % path.replace('.', '/')
 
-    return {'name': reg.name or _('<i>no name</i>'),
+    return {'name': unicode(reg.name) or _('<i>no name</i>'),
             'url_name': utilitymodule.encodeName(reg.name or '__noname__'),
             'iface_id': iface_id,
             'path': path,

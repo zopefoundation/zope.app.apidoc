@@ -332,7 +332,7 @@ And now get the info dictionary:
   {'doc': 'doc info',
    'factory': 'zope.app.apidoc.doctest.MyResult',
    'factory_url': 'zope/app/apidoc/doctest/MyResult',
-   'name': 'FooToResult',
+   'name': u'FooToResult',
    'provided': {'module': 'zope.app.apidoc.doctest', 'name': 'IResult'},
    'required': [{'module': 'zope.app.apidoc.doctest', 'name': 'IFoo'},
                 {'module': 'zope.app.apidoc.doctest', 'name': 'IBar'}],
@@ -352,7 +352,7 @@ will be ``None``:
   {'doc': 'doc info',
    'factory': 'zope.app.apidoc.doctest.MyResult2',
    'factory_url': None,
-   'name': 'FooToResult',
+   'name': u'FooToResult',
    'provided': {'module': 'zope.app.apidoc.doctest', 'name': 'IResult'},
    'required': [{'module': 'zope.app.apidoc.doctest', 'name': 'IFoo'},
                 {'module': 'zope.app.apidoc.doctest', 'name': 'IBar'}],
@@ -369,7 +369,7 @@ see how the function handles subscriptions:
   {'doc': 'doc info',
    'factory': 'zope.app.apidoc.doctest.MyResult',
    'factory_url': 'zope/app/apidoc/doctest/MyResult',
-   'name': '',
+   'name': u'',
    'provided': None,
    'required': [{'module': 'zope.app.apidoc.doctest', 'name': 'IFoo'},
                 {'module': 'zope.app.apidoc.doctest', 'name': 'IBar'}],
@@ -388,7 +388,7 @@ registrations:
   >>> pprint(component.getFactoryInfoDictionary(
   ...     component.getFactories(IFooBar).next()))
   {'description': u'<p>My Foo Bar</p>\n',
-   'name': 'MyFooBar',
+   'name': u'MyFooBar',
    'title': 'MyFooBar',
    'url': 'zope/app/apidoc/doctest/MyFooBar'}
 
@@ -410,7 +410,7 @@ will be ``None``:
   >>> pprint(component.getFactoryInfoDictionary(
   ...     component.getFactories(IMine).next()))
   {'description': u'',
-   'name': 'MyFactory',
+   'name': u'MyFactory',
    'title': u'',
    'url': None}
 

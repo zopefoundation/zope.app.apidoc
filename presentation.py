@@ -20,6 +20,7 @@ from zope.component.registry import AdapterRegistration
 from zope.interface import Interface
 
 from zope.app import zapi
+from zope.app.i18n import ZopeMessageFactory as _
 from zope.app.apidoc.utilities import getPythonPath, relativizePath
 from zope.app.apidoc.utilities import getPermissionIds
 from zope.app.apidoc.component import getParserInfoInfoDictionary
@@ -31,6 +32,7 @@ from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.publisher.interfaces.xmlrpc import IXMLRPCRequest
 from zope.publisher.interfaces.http import IHTTPRequest
 from zope.publisher.interfaces.ftp import IFTPRequest
+
 
 SPECIFIC_INTERFACE_LEVEL = 1
 EXTENDED_INTERFACE_LEVEL = 2
@@ -164,7 +166,7 @@ def getViewInfoDictionary(reg):
         doc = None
         zcml = getParserInfoInfoDictionary(reg.info)
 
-    info = {'name' : reg.name or '<i>no name</i>',
+    info = {'name' : unicode(reg.name) or _('<i>no name</i>'),
             'type' : getPythonPath(getPresentationType(reg.required[-1])),
             'factory' : getViewFactoryData(reg.factory),
             'required': [getInterfaceInfoDictionary(iface)
