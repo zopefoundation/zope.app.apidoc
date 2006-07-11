@@ -66,7 +66,9 @@ class Menu(object):
           [{'path': 'zope.app.apidoc.codemodule.browser.Foo',
             'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Foo/'},
            {'path': 'zope.app.apidoc.codemodule.browser.Foo2',
-            'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Foo2/'}]
+            'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Foo2/'},
+           {'path': 'zope.testing.doctest.UnusedFootnoteWarning',
+            'url': 'http://127.0.0.1/zope/testing/doctest/UnusedFootnoteWarning/'}]
 
           >>> menu.request = TestRequest(form={'path': 'o2'})
           >>> info = menu.findClasses()
