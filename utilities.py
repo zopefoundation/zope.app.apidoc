@@ -227,8 +227,14 @@ def getPublicAttributes(obj):
     for attr in dir(obj):
         if attr.startswith('_'):
             continue
-        else:
-            attrs.append(attr)
+        
+        try:
+            getattr(obj, attr)
+        except AttributeError:
+            continue
+
+        attrs.append(attr)
+
     return attrs
 
 def getInterfaceForAttribute(name, interfaces=_marker, klass=_marker,

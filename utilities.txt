@@ -477,6 +477,10 @@ here includes methods and properties.
 
 First we need to create a class with some attributes, properties and methods:
 
+  >>> class Nonattr(object):
+  ...     def __get__(*a):
+  ...         raise AttributeError('nonattr')
+
   >>> class Sample(object):
   ...     attr = None
   ...     def __str__(self):
@@ -486,6 +490,8 @@ First we need to create a class with some attributes, properties and methods:
   ...     def _getAttr(self):
   ...         return self.attr
   ...     attr2 = property(_getAttr)
+  ...
+  ...     nonattr = Nonattr() # Should not show up in public attrs
 
 We can simply pass in the class and get the public attributes:
 
@@ -493,6 +499,9 @@ We can simply pass in the class and get the public attributes:
   >>> attrs.sort()
   >>> attrs
   ['attr', 'attr2', 'func']
+
+Note that we exclude attributes that would raise attribute errors,
+like our silly Nonattr.
 
 But an instance of that class will work as well.
 
