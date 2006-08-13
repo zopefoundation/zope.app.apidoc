@@ -23,7 +23,7 @@ import types
 import inspect
 from os.path import dirname
 
-import zope
+import zope.app
 from zope.interface import implements, implementedBy
 from zope.publisher.browser import TestRequest
 from zope.security.checker import getCheckerForInstancesOf, Global
@@ -43,7 +43,7 @@ space_re = re.compile('\n^( *)\S', re.M)
 
 _marker = object()
 
-BASEDIR = dirname(dirname(dirname(zope.__file__)))
+BASEDIR = dirname(dirname(dirname(dirname(zope.app.__file__))))
 
 def relativizePath(path):
     return path.replace(BASEDIR, 'Zope3')
