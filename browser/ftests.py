@@ -16,9 +16,12 @@
 $Id$
 """
 import unittest
+
+import zope.app.testing.functional
 from zope.testing import doctest
 from zope.app.testing.functional import BrowserTestCase
 from zope.app.testing.functional import FunctionalDocFileSuite
+
 
 class APIDocTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
@@ -31,7 +34,6 @@ class APIDocTests(BrowserTestCase):
         self.assert_(body.find('Click on one of the Documentation') > 0)
         self.checkForBrokenLinks(body, '/++apidoc++/menu.html',
                                  basic='mgr:mgrpw')
-
 
     def testIndexView(self):
         response = self.publish('/++apidoc++/index.html',
@@ -62,13 +64,26 @@ class APIDocTests(BrowserTestCase):
                                  basic='mgr:mgrpw')
 
 
+NoDevModeLayer = zope.app.testing.functional.ZCMLLayer(
+    "ftesting-nodevmode.zcml",
+    __name__, 
+    "NoDevModeLayer")
+
+
 def test_suite():
-    return unittest.TestSuite((
-        unittest.makeSuite(APIDocTests),
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.makeSuite(APIDocTests))
+    suite.addTest(
         FunctionalDocFileSuite(
             "README.txt",
             optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE),
-        ))
+        )
+
+    nodevmode = FunctionalDocFileSuite("nodevmode.txt")
+    nodevmode.layer = NoDevModeLayer
+    suite.addTest(nodevmode)
+    return suite
+
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')
