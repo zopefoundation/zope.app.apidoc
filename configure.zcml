@@ -10,7 +10,7 @@
     />
 
   <include
-    zcml:condition="have nodevmode"
+    zcml:condition="not-have devmode"
     file="disabled.zcml"
     />
 

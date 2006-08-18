@@ -65,7 +65,7 @@ class APIDocTests(BrowserTestCase):
 
 
 NoDevModeLayer = zope.app.testing.functional.ZCMLLayer(
-    "ftesting-nodevmode.zcml",
+    "ftesting-base.zcml",
     __name__, 
     "NoDevModeLayer")
 
