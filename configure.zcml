@@ -5,13 +5,13 @@
   i18n_domain="zope">
 
   <include
-    zcml:condition="have devmode"
-    file="enabled.zcml"
-    />
+      zcml:condition="have devmode"
+      file="enabled.zcml"
+      />
 
   <include
-    zcml:condition="have nodevmode"
-    file="disabled.zcml"
-    />
+      zcml:condition="not-have devmode"
+      file="disabled.zcml"
+      />
 
 </configure>
