@@ -19,7 +19,7 @@ import unittest
 
 import zope.app.testing.functional
 from zope.testing import doctest
-from zope.app.testing.functional import BrowserTestCase
+from zope.app.testing.functional import BrowserTestCase, FunctionalNoDevMode
 from zope.app.testing.functional import FunctionalDocFileSuite
 
 
@@ -63,13 +63,6 @@ class APIDocTests(BrowserTestCase):
         self.checkForBrokenLinks(body, '/++apidoc++/modulelist.html',
                                  basic='mgr:mgrpw')
 
-
-NoDevModeLayer = zope.app.testing.functional.ZCMLLayer(
-    "ftesting-base.zcml",
-    __name__, 
-    "NoDevModeLayer")
-
-
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(APIDocTests))
@@ -80,7 +73,7 @@ def test_suite():
         )
 
     nodevmode = FunctionalDocFileSuite("nodevmode.txt")
-    nodevmode.layer = NoDevModeLayer
+    nodevmode.layer = FunctionalNoDevMode
     suite.addTest(nodevmode)
     return suite
 
