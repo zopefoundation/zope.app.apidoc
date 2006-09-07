@@ -17,12 +17,6 @@ $Id$
 """
 __docformat__ = 'restructuredtext'
 
-import zope.component
-from zope.interface import implements
-from zope.publisher.browser import applySkin
-from zope.location import locate
-from zope.location.interfaces import ILocation
-
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase
 
