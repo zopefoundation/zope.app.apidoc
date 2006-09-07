@@ -16,7 +16,10 @@
 $Id: browser.py 29143 2005-02-14 22:43:16Z srichter $
 """
 __docformat__ = 'restructuredtext'
-from zope.app import zapi
+from zope.component import getUtility
+from zope.traversing.api import getParent
+from zope.traversing.browser import absoluteURL
+
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import renderText
 
@@ -28,7 +31,7 @@ class FunctionDetails(object):
     def getDocString(self):
         """Get the doc string of the function in a rendered format."""
         return renderText(self.context.getDocString() or '',
-                          zapi.getParent(self.context).getPath())
+                          getParent(self.context).getPath())
 
 
     def getAttributes(self):
@@ -43,5 +46,5 @@ class FunctionDetails(object):
 
     def getBaseURL(self):
         """Return the URL for the API Documentation Tool."""
-        m = zapi.getUtility(IDocumentationModule, "Code")
-        return zapi.absoluteURL(zapi.getParent(m), self.request)
+        m = getUtility(IDocumentationModule, "Code")
+        return absoluteURL(getParent(m), self.request)

@@ -23,14 +23,14 @@ import types
 import inspect
 from os.path import dirname
 
-import zope.app
+from zope.component import createObject, getMultiAdapter
 from zope.interface import implements, implementedBy
 from zope.publisher.browser import TestRequest
 from zope.security.checker import getCheckerForInstancesOf, Global
 from zope.security.interfaces import INameBasedChecker
-from zope.security.proxy import removeSecurityProxy
+from zope.security.proxy import isinstance, removeSecurityProxy
 
-from zope.app import zapi
+import zope.app
 from zope.app.i18n import ZopeMessageFactory as _
 from zope.app.container.interfaces import IReadContainer
 
@@ -152,7 +152,7 @@ def isReferencable(path):
 
 
 def _evalId(id):
-    if zapi.isinstance(id, Global):
+    if isinstance(id, Global):
         id = id.__name__
         if id == 'CheckerPublic':
             id = 'zope.Public'
@@ -324,6 +324,6 @@ def renderText(text, module=None, format=None, dedent=True):
 
     text = dedentString(text)
 
-    source = zapi.createObject(format, text)
-    renderer = zapi.getMultiAdapter((source, TestRequest()))
+    source = createObject(format, text)
+    renderer = getMultiAdapter((source, TestRequest()))
     return renderer.render()

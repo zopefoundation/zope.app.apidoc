@@ -20,10 +20,10 @@ __docformat__ = 'restructuredtext'
 import keyword
 
 from zope.configuration.xmlconfig import ParserInfo
-from zope.security.proxy import removeSecurityProxy
+from zope.security.proxy import isinstance, removeSecurityProxy
 from zope.location import LocationProxy
+from zope.traversing.api import getName, getParent
 
-from zope.app import zapi
 from zope.app.apidoc.zcmlmodule import Directive, Namespace
 from zope.app.apidoc.ifacemodule.browser import InterfaceDetails
 from zope.app.apidoc.utilities import getPythonPath, isReferencable
@@ -35,19 +35,19 @@ class Menu(object):
     def getMenuTitle(self, node):
         """Return the title of the node that is displayed in the menu."""
         obj = node.context
-        if zapi.isinstance(obj, Namespace):
+        if isinstance(obj, Namespace):
             name = obj.getShortName()
             if name == 'ALL':
                 return 'All Namespaces'
             return name
-        return zapi.name(obj)
+        return getName(obj)
 
     def getMenuLink(self, node):
         """Return the HTML link of the node that is displayed in the menu."""
         obj = node.context
-        if zapi.isinstance(obj, Directive):
-            ns = zapi.getParent(obj)
-            return './'+zapi.name(ns) + '/' + zapi.name(obj) + '/index.html'
+        if isinstance(obj, Directive):
+            ns = getParent(obj)
+            return './'+getName(ns) + '/' + getName(obj) + '/index.html'
         return None
 
 
@@ -75,7 +75,7 @@ class DirectiveDetails(object):
 
     def getNamespaceName(self):
         """Return the name of the namespace."""
-        name = zapi.getParent(self.context).getFullName()
+        name = getParent(self.context).getFullName()
         if name == 'ALL':
             return '<i>all namespaces</i>'
         return name
@@ -86,7 +86,7 @@ class DirectiveDetails(object):
         # everything is forbidden by default. We need to remove the security
         # proxies in order to get to the data.
         info = removeSecurityProxy(self.context.info)
-        if zapi.isinstance(info, ParserInfo):
+        if isinstance(info, ParserInfo):
             return {'file': relativizePath(info.file),
                     'line': info.line,
                     'column': info.column,

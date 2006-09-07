@@ -16,15 +16,14 @@
 $Id$
 """
 __docformat__ = "reStructuredText"
+from zope.component import getUtility
 from zope.configuration.fields import GlobalObject, GlobalInterface, Tokens
-from zope.interface import implements
 from zope.interface.interfaces import IInterface
-from zope.schema import getFieldNamesInOrder, getFieldsInOrder
-from zope.schema.interfaces import IFromUnicode
-from zope.security.proxy import removeSecurityProxy
+from zope.schema import getFieldNamesInOrder
+from zope.security.proxy import isinstance, removeSecurityProxy
+from zope.traversing.api import getParent
+from zope.traversing.browser import absoluteURL
 
-from zope.app import zapi
-from zope.app.tree.interfaces import IUniqueId
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import getPythonPath, isReferencable
 
@@ -34,7 +33,7 @@ from zope.app.apidoc.codemodule.interfaces import IRootDirective
 def findDocModule(obj):
     if IDocumentationModule.providedBy(obj):
         return obj
-    return findDocModule(zapi.getParent(obj))
+    return findDocModule(getParent(obj))
 
 def _compareAttrs(x, y, nameOrder):
     if x['name'] in nameOrder:
@@ -72,7 +71,7 @@ class DirectiveDetails(object):
         directive = removeSecurityProxy(self.context)
         subDirective = None
         # Sub-directives are not directly documented, so use parent
-        parent = zapi.getParent(directive)
+        parent = getParent(directive)
         if not (IRootDirective.providedBy(parent) or
                 IRootDirective.providedBy(directive)):
             subDirective = directive
@@ -81,11 +80,11 @@ class DirectiveDetails(object):
         # Sometimes ns is `None`, especially in the slug files, where no
         # namespaces are used.
         ns = quoteNS(ns or 'ALL')
-        zcml = zapi.getUtility(IDocumentationModule, 'ZCML')
+        zcml = getUtility(IDocumentationModule, 'ZCML')
         if name not in zcml[ns]:
             ns = 'ALL'
         link = '%s/../ZCML/%s/%s/index.html' %(
-            zapi.absoluteURL(findDocModule(self), self.request), ns, name)
+            absoluteURL(findDocModule(self), self.request), ns, name)
         if subDirective:
             link += '#' + subDirective.name[1]
         return link
@@ -118,15 +117,15 @@ class DirectiveDetails(object):
                  for (ns, name), value in context.attrs.items()]
 
         names = context.schema.names(True)
-        rootURL = zapi.absoluteURL(findDocModule(self), self.request)
+        rootURL = absoluteURL(findDocModule(self), self.request)
         for attr in attrs:
             name = (attr['name'] in names) and attr['name'] or attr['name']+'_'
             field = context.schema.get(name)
 
-            if zapi.isinstance(field, (GlobalObject, GlobalInterface)):
+            if isinstance(field, (GlobalObject, GlobalInterface)):
                 attr['url'] = self.objectURL(attr['value'], field, rootURL)
 
-            elif zapi.isinstance(field, Tokens):
+            elif isinstance(field, Tokens):
                 field = field.value_type
                 values = attr['value'].strip().split()
                 if len(values) == 1:
@@ -134,7 +133,7 @@ class DirectiveDetails(object):
                     attr['url'] = self.objectURL(values[0], field, rootURL)
                 else:
                     for value in values:
-                        if zapi.isinstance(field,
+                        if isinstance(field,
                                            (GlobalObject, GlobalInterface)):
                             url = self.objectURL(value, field, rootURL)
                         else:

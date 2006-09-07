@@ -16,7 +16,10 @@
 $Id: browser.py 29143 2005-02-14 22:43:16Z srichter $
 """
 __docformat__ = 'restructuredtext'
-from zope.app import zapi
+from zope.component import getUtility
+from zope.traversing.api import traverse
+from zope.traversing.browser import absoluteURL
+
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.classregistry import classRegistry
 
@@ -31,11 +34,11 @@ class Menu(object):
         """Find the classes that match a partial path.
 
         Examples::
-          >>> from zope.app import zapi
+          >>> from zope.component import getUtility
           >>> from zope.app.apidoc.codemodule.class_ import Class
           >>> from zope.app.apidoc.interfaces import IDocumentationModule
 
-          >>> cm = zapi.getUtility(IDocumentationModule, 'Code')
+          >>> cm = getUtility(IDocumentationModule, 'Code')
           >>> mod = cm['zope']['app']['apidoc']['codemodule']['browser']
 
           Setup a couple of classes and register them.
@@ -87,14 +90,14 @@ class Menu(object):
         path = self.request.get('path', None)
         if path is None:
             return []
-        classModule = zapi.getUtility(IDocumentationModule, "Code")
+        classModule = getUtility(IDocumentationModule, "Code")
         results = []
         for p in classRegistry.keys():
             if p.find(path) >= 0:
-                klass = zapi.traverse(classModule, p.replace('.', '/'))
+                klass = traverse(classModule, p.replace('.', '/'))
                 results.append(
                     {'path': p,
-                     'url': zapi.absoluteURL(klass, self.request) + '/'
+                     'url': absoluteURL(klass, self.request) + '/'
                      })
         results.sort(lambda x, y: cmp(x['path'], y['path']))
         return results
@@ -104,12 +107,12 @@ class Menu(object):
         """Find all classes
 
         Examples::
-          >>> from zope.app import zapi
+          >>> from zope.component import getUtility
           >>> from zope.app.apidoc.codemodule.class_ import Class
           >>> from zope.app.apidoc.interfaces import IDocumentationModule
 
 
-          >>> cm = zapi.getUtility(IDocumentationModule, 'Code')
+          >>> cm = getUtility(IDocumentationModule, 'Code')
           >>> mod = cm['zope']['app']['apidoc']['codemodule']['browser']
 
           Setup a couple of classes and register them.
@@ -139,15 +142,15 @@ class Menu(object):
           >>> len(info) > 3
           True
         """
-        classModule = zapi.getUtility(IDocumentationModule, "Code")
+        classModule = getUtility(IDocumentationModule, "Code")
         classModule.setup() # run setup if not yet done
         results = []
         counter = 0
         for p in classRegistry.keys():
-            klass = zapi.traverse(classModule, p.replace('.', '/'))
+            klass = traverse(classModule, p.replace('.', '/'))
             results.append(
                 {'path': p,
-                 'url': zapi.absoluteURL(klass, self.request),
+                 'url': absoluteURL(klass, self.request),
                  'counter': counter
                  })
             counter += 1

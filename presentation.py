@@ -15,11 +15,11 @@
 
 $Id$
 """
-from types import ClassType, FunctionType
+from types import ClassType
+from zope.component import getGlobalSiteManager
 from zope.component.registry import AdapterRegistration
 from zope.interface import Interface
 
-from zope.app import zapi
 from zope.app.i18n import ZopeMessageFactory as _
 from zope.app.apidoc.utilities import getPythonPath, relativizePath
 from zope.app.apidoc.utilities import getPermissionIds
@@ -122,7 +122,7 @@ def getPresentationType(iface):
 
 def getViews(iface, type=IRequest):
     """Get all view registrations for a particular interface."""
-    gsm = zapi.getGlobalSiteManager()
+    gsm = getGlobalSiteManager()
     for reg in gsm.registeredAdapters():
         if (len(reg.required) > 0 and
             reg.required[-1] is not None and

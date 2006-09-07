@@ -19,11 +19,13 @@ __docformat__ = 'restructuredtext'
 
 import inspect
 import types
+from zope.component import getUtility
 from zope.proxy import removeAllProxies
 from zope.security.proxy import removeSecurityProxy
+from zope.traversing.api import getParent, traverse
+from zope.traversing.browser import absoluteURL
 from zope.traversing.interfaces import TraversalError
 
-from zope.app import zapi
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import getPythonPath, getPermissionIds
 from zope.app.apidoc.utilities import renderText, getFunctionSignature
@@ -61,7 +63,7 @@ class ClassDetails(object):
     def _listClasses(self, classes):
         """Prepare a list of classes for presentation."""
         info = []
-        codeModule = zapi.getUtility(IDocumentationModule, "Code")
+        codeModule = getUtility(IDocumentationModule, "Code")
         for cls in classes:
             # We need to removeAllProxies because the security checkers for
             # zope.app.container.contained.ContainedProxy and
@@ -71,8 +73,8 @@ class ClassDetails(object):
             path = getPythonPath(unwrapped_cls)
             url = None
             try:
-                klass = zapi.traverse(codeModule, path.replace('.', '/'))
-                url = zapi.absoluteURL(klass, self.request)
+                klass = traverse(codeModule, path.replace('.', '/'))
+                url = absoluteURL(klass, self.request)
             except TraversalError:
                 # If one of the classes is implemented in C, we will not
                 # be able to find it.
@@ -83,8 +85,8 @@ class ClassDetails(object):
 
     def getBaseURL(self):
         """Return the URL for the API Documentation Tool."""
-        m = zapi.getUtility(IDocumentationModule, "Code")
-        return zapi.absoluteURL(zapi.getParent(m), self.request)
+        m = getUtility(IDocumentationModule, "Code")
+        return absoluteURL(getParent(m), self.request)
 
 
     def getInterfaces(self):
@@ -145,5 +147,5 @@ class ClassDetails(object):
     def getDoc(self):
         """Get the doc string of the class STX formatted."""
         return renderText(self.context.getDocString() or '',
-                          zapi.getParent(self.context).getPath())
+                          getParent(self.context).getPath())
 

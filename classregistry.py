@@ -25,8 +25,6 @@ IGNORE_MODULES = ['twisted']
 
 import sys
 
-from zope.app import zapi
-
 class ClassRegistry(dict):
     """A simple registry for classes."""
 

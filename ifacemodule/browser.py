@@ -19,18 +19,17 @@ $Id$
 __docformat__ = 'restructuredtext'
 
 import inspect
-from zope.interface import Interface
 
-from zope.publisher.interfaces import IRequest
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.publisher.interfaces.xmlrpc import IXMLRPCRequest
 from zope.publisher.interfaces.http import IHTTPRequest
 from zope.publisher.interfaces.ftp import IFTPRequest
 from zope.publisher.browser import BrowserView
-from zope.security.proxy import removeSecurityProxy
+from zope.security.proxy import isinstance, removeSecurityProxy
 from zope.proxy import removeAllProxies
+from zope.traversing.api import getName, getParent
+from zope.traversing.browser import absoluteURL
 
-from zope.app import zapi
 from zope.app.i18n import ZopeMessageFactory as _
 
 from zope.app.apidoc.utilities import getPythonPath, renderText
@@ -40,9 +39,9 @@ from zope.app.apidoc import interface, component, presentation
 
 
 def findAPIDocumentationRoot(obj, request):
-    if zapi.isinstance(obj, APIDocumentation):
-        return zapi.absoluteURL(obj, request)
-    return findAPIDocumentationRoot(zapi.getParent(obj), request)
+    if isinstance(obj, APIDocumentation):
+        return absoluteURL(obj, request)
+    return findAPIDocumentationRoot(getParent(obj), request)
 
 class InterfaceDetails(BrowserView):
     """View class for an Interface."""
@@ -67,7 +66,7 @@ class InterfaceDetails(BrowserView):
           >>> details.getId()
           'IFoo'
         """
-        return zapi.name(self.context)
+        return getName(self.context)
 
     def getDoc(self):
         r"""Return the main documentation string of the interface.

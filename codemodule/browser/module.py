@@ -16,12 +16,14 @@
 $Id: browser.py 29143 2005-02-14 22:43:16Z srichter $
 """
 __docformat__ = 'restructuredtext'
+from zope.component import getMultiAdapter
 from zope.interface.interface import InterfaceClass
-from zope.security.proxy import removeSecurityProxy
 from zope.proxy import removeAllProxies
 from zope.publisher.browser import BrowserView
+from zope.security.proxy import isinstance, removeSecurityProxy
+from zope.traversing.api import getName, getParent
+from zope.traversing.browser import absoluteURL
 
-from zope.app import zapi
 from zope.app.i18n import ZopeMessageFactory as _
 
 from zope.app.apidoc.apidoc import APIDocumentation
@@ -33,9 +35,9 @@ from zope.app.apidoc.codemodule.text import TextFile
 from zope.app.apidoc.codemodule.zcml import ZCMLFile
 
 def findAPIDocumentationRoot(obj, request):
-    if zapi.isinstance(obj, APIDocumentation):
-        return zapi.absoluteURL(obj, request)
-    return findAPIDocumentationRoot(zapi.getParent(obj), request)
+    if isinstance(obj, APIDocumentation):
+        return absoluteURL(obj, request)
+    return findAPIDocumentationRoot(getParent(obj), request)
 
 
 class ModuleDetails(BrowserView):
@@ -64,14 +66,14 @@ class ModuleDetails(BrowserView):
         entries = [{'name': name,
                     # only for interfaces; should be done differently somewhen
                     'path': getPythonPath(removeAllProxies(obj)),
-                    'url': zapi.absoluteURL(obj, self.request),
-                    'ismodule': zapi.isinstance(obj, Module),
-                    'isinterface': zapi.isinstance(
+                    'url': absoluteURL(obj, self.request),
+                    'ismodule': isinstance(obj, Module),
+                    'isinterface': isinstance(
                          removeAllProxies(obj), InterfaceClass),
-                    'isclass': zapi.isinstance(obj, Class),
-                    'isfunction': zapi.isinstance(obj, Function),
-                    'istextfile': zapi.isinstance(obj, TextFile),
-                    'iszcmlfile': zapi.isinstance(obj, ZCMLFile)}
+                    'isclass': isinstance(obj, Class),
+                    'isfunction': isinstance(obj, Function),
+                    'istextfile': isinstance(obj, TextFile),
+                    'iszcmlfile': isinstance(obj, ZCMLFile)}
                    for name, obj in self.context.items()]
         entries.sort(lambda x, y: cmp(x['name'], y['name']))
         if columns:
@@ -89,14 +91,14 @@ class ModuleDetails(BrowserView):
         # I really need the class here, so remove the proxy.
         while removeSecurityProxy(module).__class__ is Module:
             crumbs.append(
-                {'name': zapi.name(module),
-                 'url': zapi.absoluteURL(module, self.request)}
+                {'name': getName(module),
+                 'url': absoluteURL(module, self.request)}
                 )
-            module = zapi.getParent(module)
+            module = getParent(module)
 
         crumbs.append(
             {'name': _('[top]'),
-             'url': zapi.getMultiAdapter(
+             'url': getMultiAdapter(
                       (module, self.request), name='absolute_url')()} )
 
         crumbs.reverse()

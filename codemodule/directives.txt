@@ -18,9 +18,9 @@ metaconfiguration:
 Now we can run the directive. First, let's make sure that no root modules have
 been registered yet:
 
-  >>> from zope.app import zapi
+  >>> from zope.component import getUtilitiesFor
   >>> from zope.app.apidoc.codemodule.interfaces import IAPIDocRootModule
-  >>> list(zapi.getUtilitiesFor(IAPIDocRootModule))
+  >>> list(getUtilitiesFor(IAPIDocRootModule))
   []
 
 Now run the registration code:
@@ -33,7 +33,7 @@ Now run the registration code:
 
 and the root module is available:
 
-  >>> list(zapi.getUtilitiesFor(IAPIDocRootModule))
+  >>> list(getUtilitiesFor(IAPIDocRootModule))
   [(u'zope', 'zope')]
 
 

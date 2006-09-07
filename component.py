@@ -18,20 +18,19 @@ $Id$
 __docformat__ = 'restructuredtext'
 import types
 
+from zope.component import getGlobalSiteManager
 from zope.component.interfaces import IFactory
 from zope.component.registry import (
     AdapterRegistration,
     SubscriptionRegistration,
     HandlerRegistration,
     )
-
 from zope.component.registry import UtilityRegistration
 from zope.interface import Interface
 from zope.interface.interface import InterfaceClass
 import zope.interface.declarations
 from zope.publisher.interfaces import IRequest
 
-from zope.app import zapi
 from zope.app.i18n import ZopeMessageFactory as _
 from zope.app.apidoc.classregistry import classRegistry
 from zope.app.apidoc.utilities import relativizePath, truncateSysPath
@@ -45,7 +44,7 @@ GENERIC_INTERFACE_LEVEL = 4
 
 def getRequiredAdapters(iface, withViews=False):
     """Get adapter registrations where the specified interface is required."""
-    gsm = zapi.getGlobalSiteManager()
+    gsm = getGlobalSiteManager()
     for meth in ('registeredAdapters',
                  'registeredSubscriptionAdapters',
                  'registeredHandlers'):
@@ -72,7 +71,7 @@ def _adapterishRegistrations(registry):
 
 def getProvidedAdapters(iface, withViews=False):
     """Get adapter registrations where this interface is provided."""
-    gsm = zapi.getGlobalSiteManager()
+    gsm = getGlobalSiteManager()
     for reg in _adapterishRegistrations(gsm):
         # Only get adapters
         # Ignore adapters that have no required interfaces
@@ -119,7 +118,7 @@ def getClasses(iface):
 def getFactories(iface):
     """Return the factory registrations, who will return objects providing this
     interface."""
-    gsm = zapi.getGlobalSiteManager()
+    gsm = getGlobalSiteManager()
     for reg in gsm.registeredUtilities():
         if reg.provided is not IFactory:
             continue
@@ -136,7 +135,7 @@ def getFactories(iface):
 
 def getUtilities(iface):
     """Return all utility registrations that provide the interface."""
-    gsm = zapi.getGlobalSiteManager()
+    gsm = getGlobalSiteManager()
     for reg in gsm.registeredUtilities():
         if reg.provided.isOrExtends(iface):
             yield reg

@@ -27,8 +27,9 @@ from zope.interface import directlyProvidedBy, directlyProvides
 from zope.traversing.interfaces import IPhysicallyLocatable, IContainmentRoot
 from zope.location import location
 from zope.publisher.browser import BrowserView
+from zope.traversing.api import getParent, traverse
 
-from zope.app import zapi, apidoc
+from zope.app import apidoc
 
 def getTypeLink(type):
     if type is types.NoneType:
@@ -104,14 +105,14 @@ class Introspector(BrowserView):
         # it back.
         direct = list(directlyProvidedBy(request))
 
-        self.klassView = zapi.traverse(
+        self.klassView = traverse(
             TraversalRoot(),
             '/++apidoc++/Code/%s/@@index.html' %path, request=request)
 
         directlyProvides(request, direct)
 
     def parent(self):
-        return zapi.getParent(self.context)
+        return getParent(self.context)
 
     def getBaseURL(self):
         return self.klassView.getBaseURL()
@@ -177,7 +178,7 @@ class Introspector(BrowserView):
                 'signature': signature,
                 'doc': apidoc.utilities.renderText(
                      val.__doc__ or '',
-                     zapi.getParent(self.klassView.context).getPath()),
+                     getParent(self.klassView.context).getPath()),
                 'interface': apidoc.utilities.getInterfaceForAttribute(
                      name, klass._Class__all_ifaces)}
 

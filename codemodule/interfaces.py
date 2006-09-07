@@ -19,7 +19,6 @@ __docformat__ = "reStructuredText"
 import zope.interface
 import zope.schema
 
-from zope.app.container.interfaces import IContainer
 from zope.app.container.interfaces import IReadContainer
 from zope.app.i18n import ZopeMessageFactory as _
 

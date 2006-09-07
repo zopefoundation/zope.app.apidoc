@@ -26,7 +26,6 @@ from zope.configuration import xmlconfig, config
 from zope.interface import implements, directlyProvides
 
 import zope.app.appsetup.appsetup
-from zope.app import zapi
 
 from interfaces import IDirective, IRootDirective, IZCMLFile
 

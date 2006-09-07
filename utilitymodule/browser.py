@@ -17,10 +17,10 @@ $Id$
 """
 __docformat__ = 'restructuredtext'
 
-from zope.security.proxy import removeSecurityProxy
+from zope.security.proxy import isinstance, removeSecurityProxy
 from zope.location import LocationProxy
+from zope.traversing.api import getName, getParent
 
-from zope.app import zapi
 from zope.app.apidoc.ifacemodule.browser import InterfaceDetails
 from zope.app.apidoc.component import getUtilityInfoDictionary
 from zope.app.apidoc.utilities import getPythonPath
@@ -59,8 +59,8 @@ class Menu(object):
     def getMenuTitle(self, node):
         """Return the title of the node that is displayed in the menu."""
         obj = node.context
-        if zapi.isinstance(obj, UtilityInterface):
-            return zapi.name(obj).split('.')[-1]
+        if isinstance(obj, UtilityInterface):
+            return getName(obj).split('.')[-1]
         if obj.name == NONAME:
             return 'no name'
         return obj.name
@@ -68,9 +68,9 @@ class Menu(object):
     def getMenuLink(self, node):
         """Return the HTML link of the node that is displayed in the menu."""
         obj = node.context
-        if zapi.isinstance(obj, Utility):
-            iface = zapi.getParent(obj)
-            return './'+zapi.name(iface) + '/' + zapi.name(obj) + '/index.html'
-        if zapi.isinstance(obj, UtilityInterface):
-            return '../Interface/'+zapi.name(obj) + '/index.html'
+        if isinstance(obj, Utility):
+            iface = getParent(obj)
+            return './'+getName(iface) + '/' + getName(obj) + '/index.html'
+        if isinstance(obj, UtilityInterface):
+            return '../Interface/'+getName(obj) + '/index.html'
         return None

@@ -16,16 +16,17 @@
 $Id$
 """
 __docformat__ = 'restructuredtext'
-from zope.app import zapi
 from type import TypeInterface
-from zope.security.proxy import removeSecurityProxy
+
+from zope.security.proxy import isinstance, removeSecurityProxy
+from zope.traversing.api import getName
 
 class Menu(object):
     """Menu View Helper Class"""
 
     def getMenuTitle(self, node):
         """Return the title of the node that is displayed in the menu."""
-        if zapi.isinstance(node.context, TypeInterface):
+        if isinstance(node.context, TypeInterface):
             iface = node.context.interface
         else:
             iface = node.context
@@ -34,4 +35,4 @@ class Menu(object):
 
     def getMenuLink(self, node):
         """Return the HTML link of the node that is displayed in the menu."""
-        return '../Interface/%s/index.html' %zapi.name(node.context)
+        return '../Interface/%s/index.html' % getName(node.context)

@@ -22,7 +22,6 @@ $Id: __init__.py 29143 2005-02-14 22:43:16Z srichter $
 """
 __docformat__ = 'restructuredtext'
 
-from zope.app import zapi
 from zope.interface import implements
 from zope.location import LocationProxy
 from zope.component.interface import queryInterface
