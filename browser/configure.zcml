@@ -1,14 +1,18 @@
 <configure
-  xmlns="http://namespaces.zope.org/browser"
-  xmlns:zope="http://namespaces.zope.org/zope"
-  i18n_domain="zope">
+    xmlns="http://namespaces.zope.org/browser"
+    xmlns:zope="http://namespaces.zope.org/zope"
+    i18n_domain="zope">
 
   <!-- BBB 2006/02/18, to be removed after 12 months -->
-  <layer
-      name="apidoc"
-      interface=".skin.apidoc"
-      bbb_aware="true"
-      />
+  <configure
+      xmlns:zcml="http://namespaces.zope.org/zcml"
+      zcml:condition="have deprecatedlayers">
+    <layer
+        name="apidoc"
+        interface=".skin.apidoc"
+        bbb_aware="true"
+        />
+  </configure>
 
   <zope:interface
       interface=".skin.APIDOC"
@@ -70,52 +74,52 @@
       />
 
   <pages
-    for="zope.app.apidoc.apidoc.APIDocumentation"
-    class=".apidoc.APIDocumentationView"
-    permission="zope.app.apidoc.UseAPIDoc"
-    layer=".skin.apidoc">
+      for="zope.app.apidoc.apidoc.APIDocumentation"
+      class=".apidoc.APIDocumentationView"
+      permission="zope.app.apidoc.UseAPIDoc"
+      layer=".skin.apidoc">
 
     <page
         name="index.html"
         template="index.pt" />
 
     <page
-      name="modulelist.html"
-      template="modules.pt" />
+        name="modulelist.html"
+        template="modules.pt" />
 
     <page
-      name="menu.html"
-      template="menu.pt" />
+        name="menu.html"
+        template="menu.pt" />
 
     <page
-      name="contents.html"
-      template="contents.pt" />
+        name="contents.html"
+        template="contents.pt" />
 
   </pages>
 
   <!-- Static apidoc -->
 
   <pages
-    for="zope.app.apidoc.apidoc.APIDocumentation"
-    class=".apidoc.APIDocumentationView"
-    permission="zope.app.apidoc.UseAPIDoc"
-    layer=".skin.apidoc">
+      for="zope.app.apidoc.apidoc.APIDocumentation"
+      class=".apidoc.APIDocumentationView"
+      permission="zope.app.apidoc.UseAPIDoc"
+      layer=".skin.apidoc">
 
     <page
         name="static.html"
         template="static_index.pt" />
 
     <page
-      name="staticmodulelist.html"
-      template="static_modules.pt" />
+        name="staticmodulelist.html"
+        template="static_modules.pt" />
 
     <page
-      name="staticmenu.html"
-      template="static_menu.pt" />
+        name="staticmenu.html"
+        template="static_menu.pt" />
 
     <page
-      name="staticcontents.html"
-      template="static_contents.pt" />
+        name="staticcontents.html"
+        template="static_contents.pt" />
 
   </pages>
 
@@ -158,4 +162,3 @@
       />
 
 </configure>
-
