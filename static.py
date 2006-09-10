@@ -188,16 +188,19 @@ class StaticAPIDocGenerator(object):
 
         if not os.path.exists(self.rootDir):
             os.mkdir(self.rootDir)
-
-        if self.options.use_publisher:
-            self.browser = PublisherBrowser()
-
+        
         if self.options.use_webserver:
             self.browser = OnlineBrowser()
-
+        elif self.options.use_publisher:
+            # PublisherBrowser does not work at the moment, so complain if is has been selected.
+            #self.browser = PublisherBrowser()
+            self.sendMessage("PublisherBrowser is broken. Please use OnlineBrowser instead.")
+            return
+            
         self.browser.setUserAndPassword(self.options.username,
                                         self.options.password)
-        self.browser._links_factory.urltags = urltags
+
+        self.browser._links_factory = mechanize.LinksFactory(urltags=urltags)
 
         if self.options.debug:
             self.browser.addheaders.append(('X-zope-handle-errors', False))
@@ -261,7 +264,7 @@ class StaticAPIDocGenerator(object):
                 '%s (%i): %s' % (error.msg, error.code, link.callableURL), 2)
             self.sendMessage('+-> Reference: ' + link.referenceURL, 2)
             # Now set the error page as the response
-            from ClientCookie._Util import response_seek_wrapper
+            from mechanize import response_seek_wrapper
             self.browser._response = response_seek_wrapper(error)
         except (urllib2.URLError, ValueError):
             # We had a bad URL running the publisher browser
