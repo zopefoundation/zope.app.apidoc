@@ -1,10 +1,12 @@
 <configure
     xmlns="http://namespaces.zope.org/browser"
     xmlns:zope="http://namespaces.zope.org/zope"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="zope">
 
   <!-- BBB 2006/02/18, to be removed after 12 months -->
   <layer
+      zcml:condition="have deprecatedlayers"
       name="apidoc"
       interface=".skin.apidoc"
       bbb_aware="true"
