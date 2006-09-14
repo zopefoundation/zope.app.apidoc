@@ -1,12 +1,23 @@
 <configure
-  xmlns="http://namespaces.zope.org/zope"
-  xmlns:apidoc="http://namespaces.zope.org/apidoc"
-  xmlns:zcml="http://namespaces.zope.org/zcml"
-  i18n_domain="zope">
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:apidoc="http://namespaces.zope.org/apidoc"
+    xmlns:meta="http://namespaces.zope.org/meta"
+    i18n_domain="zope">
 
   <permission
       id="zope.app.apidoc.UseAPIDoc"
       title="[zope.app.apidoc.UseAPIDoc] Access Online API documentation"
+      />
+
+  <permission
+      id="zope.app.introspector.Introspect"
+      title=
+  "[zope.app.introspector.Introspect] Introspect Object Classes and Interfaces"
+      />
+
+  <meta:redefinePermission
+      from="zope.app.introspector.Introspect"
+      to="zope.app.apidoc.UseAPIDoc"
       />
 
   <class class=".apidoc.APIDocumentation">

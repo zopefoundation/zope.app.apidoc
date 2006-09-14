@@ -9,6 +9,7 @@
       provides="zope.traversing.interfaces.ITraversable" for="*"
       factory=".introspector.annotationsNamespace"
       />
+
   <zope:adapter
       name="annotations"
       provides="zope.traversing.interfaces.ITraversable" for="*"
@@ -22,6 +23,7 @@
       for="zope.interface.common.sequence.IMinimalSequence"
       factory=".introspector.sequenceItemsNamespace"
       />
+
   <zope:adapter
       name="items"
       provides="zope.traversing.interfaces.ITraversable"
@@ -36,6 +38,7 @@
       for="zope.interface.common.mapping.IItemMapping"
       factory=".introspector.mappingItemsNamespace"
       />
+
   <zope:adapter
       name="items"
       provides="zope.traversing.interfaces.ITraversable"
@@ -47,7 +50,7 @@
       name="introspector.html"
       for="*"
       class=".introspector.Introspector"
-      permission="zope.app.introspector.Introspect"
+      permission="zope.app.apidoc.UseAPIDoc"
       menu="zmi_views" title="Introspector"
       template="introspector.pt"
       />
