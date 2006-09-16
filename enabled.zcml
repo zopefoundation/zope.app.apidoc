@@ -9,12 +9,14 @@
       title="[zope.app.apidoc.UseAPIDoc] Access Online API documentation"
       />
 
+  <!-- BBB 2006/09/14, to be removed after 12 months -->
   <permission
       id="zope.app.introspector.Introspect"
       title=
   "[zope.app.introspector.Introspect] Introspect Object Classes and Interfaces"
       />
 
+  <!-- BBB 2006/09/14, to be removed after 12 months -->
   <meta:redefinePermission
       from="zope.app.introspector.Introspect"
       to="zope.app.apidoc.UseAPIDoc"
