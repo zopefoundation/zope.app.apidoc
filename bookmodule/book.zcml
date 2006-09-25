@@ -207,16 +207,6 @@
         />
   </configure>
 
-  <!-- BForest -->
-  <configure package="zope.bforest"
-             zcml:condition="installed zope.bforest">
-    <bookchapter
-        id="bforest"
-        title="BForest API"
-        doc_path="bforest.txt"
-        />
-  </configure>
-
   <!-- Deprecation API -->
   <configure package="zope.deprecation">
     <bookchapter
