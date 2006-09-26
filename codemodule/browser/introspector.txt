@@ -209,7 +209,9 @@ As you can see you can click on the annotation to discover it further:
               <code>dict</code></a>)
           <br />
           <i>Value:</i>
-          <code>{u'Date.Modified': (u'...',), u'Creator': (u'zope.mgr',)}</code>
+          <code>{u'Date.Created': (u'...',),
+                 u'Date.Modified': (u'...',),
+                 u'Creator': (u'zope.mgr',)}</code>
           <br />
         </li>
       </ul>
