@@ -120,13 +120,24 @@ class UtilityModule(ReadContainerBase):
             return UtilityInterface(self, key, getattr(mod, parts[-1], default))
 
     def items(self):
-        sm = zope.component.getSiteManager()
+        # Use a list of site managers, since we want to support multiple bases
+        smlist = [zope.component.getSiteManager()]
+        seen = []
         ifaces = {}
-        while sm is not None:
+        while smlist:
+            # Get the next site manager
+            sm = smlist.pop()
+            # If we have already looked at this site manager, then skip it
+            if sm in seen:
+                continue
+            # Add the current site manager to the list of seen ones
+            seen.append(sm)
+            # Add the bases of the current site manager to the list of site
+            # managers to be processed
+            smlist += list(sm.__bases__)
             for reg in sm.registeredUtilities():
                 path = getPythonPath(reg.provided)
                 ifaces[path] = UtilityInterface(self, path, reg.provided)
-            sm = queryNextSiteManager(sm)
 
         items = ifaces.items()
         items.sort(lambda x, y: cmp(x[0].split('.')[-1], y[0].split('.')[-1]))
