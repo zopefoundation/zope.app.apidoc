@@ -56,7 +56,7 @@
 
 <metal:block define-macro="display">
 
-  <div id="" style="display:;"
+  <div id="" style="display: block;"
        tal:condition="show"
        tal:attributes="id elementId">
     <metal:block define-slot="content" />
