@@ -194,7 +194,7 @@ class StaticAPIDocGenerator(object):
         elif self.options.use_publisher:
             # PublisherBrowser does not work at the moment, so complain if is has been selected.
             #self.browser = PublisherBrowser()
-            self.sendMessage("PublisherBrowser is broken. Please use OnlineBrowser instead.")
+            self.sendMessage("PublisherBrowser is broken. Please use OnlineBrowser instead (--webserver).")
             return
             
         self.browser.setUserAndPassword(self.options.username,
