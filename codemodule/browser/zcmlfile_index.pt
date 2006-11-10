@@ -1,6 +1,10 @@
-<html>
+<html metal:use-macro="views/apidoc_macros/details">
 <head>
-  <style type="text/css" media="all">
+  <base href=""
+        metal:fill-slot="headers"
+        tal:attributes="href request/URL/-1" />
+
+  <style metal:fill-slot="style_slot" type="text/css" media="all">
 
 .directive {
   font-family: monospace;
@@ -43,8 +47,17 @@ div.highlight {
 }
 
   </style>
+
 </head>
-<body>
+
+<body metal:fill-slot="contents">
+
+  <h1 class="details-header">
+    <span class="pre-header">ZCML File</span><br />
+    <span tal:replace="context/zope:name">configure.zcml</span>
+  </h1>
+
+  <p metal:use-macro="views/apidoc_macros/breadcrumbs" />
 
   <div tal:replace="structure context/rootElement/@@display" />
 

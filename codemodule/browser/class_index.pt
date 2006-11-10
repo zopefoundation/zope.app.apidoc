@@ -2,10 +2,12 @@
     i18n:domain="zope">
 <body metal:fill-slot="contents">
 
-  <h1 class="details-header"
-      tal:content="context/getPath">
-    zope.app.Klass
+  <h1 class="details-header">
+    <span class="pre-header">Class</span><br />
+    <span tal:replace="context/getPath">zope.app.Klass</span>
   </h1>
+
+  <p metal:use-macro="views/apidoc_macros/breadcrumbs" />
 
   <div class="indent">
     <div class="documentation" i18n:translate=""

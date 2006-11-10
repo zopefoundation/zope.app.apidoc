@@ -45,6 +45,9 @@ class IModuleDocumentation(IReadContainer):
     def getPath():
         """Return the Python path of the module."""
 
+    def isPackage():
+        """Return true if this module is a Python package."""
+
 
 class IClassDocumentation(zope.interface.Interface):
     """Representation of a class or type for documentation."""

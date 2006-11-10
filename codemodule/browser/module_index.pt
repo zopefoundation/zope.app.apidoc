@@ -2,16 +2,29 @@
     i18n:domain="zope">
 <body metal:fill-slot="contents">
 
-  <h1 class="details-header" i18n:translate="">Zope 3 Code Browser</h1>
+  <!-- Note: don't use path expressions of the form "context/*" in this
+       template, since module objects have items, and path expressions
+       prefer items over attributes. -->
 
-  <p class="breadcrumbs">
-    <span tal:repeat="entry view/getBreadCrumbs">
-      <a href=""
-         tal:attributes="href string:${entry/url}/index.html"
-         tal:content="entry/name" i18n:translate=""/>
-      <tal:omit-tag condition="not: repeat/entry/end">/</tal:omit-tag>
+  <h1 class="details-header">
+    <span tal:condition="view/getPath">
+      <span class="pre-header">
+        <span tal:condition="view/isPackage">
+            Package
+        </span>
+        <span tal:condition="not: view/isPackage">
+            Module
+        </span>
+      </span>
+      <br />
+      <span tal:replace="view/getPath">zope.app</span>
     </span>
-  </p>
+    <span tal:omit-tag="" tal:condition="not: view/getPath">
+      Zope 3 Code Browser
+    </span>
+  </h1>
+
+  <p metal:use-macro="views/apidoc_macros/breadcrumbs" />
 
   <div class="highlight documentation"
        tal:define="doc view/getDoc"

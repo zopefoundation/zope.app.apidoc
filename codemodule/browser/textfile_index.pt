@@ -7,6 +7,13 @@
 
 <body metal:fill-slot="contents">
 
+  <h1 class="details-header">
+    <span class="pre-header">Text File</span><br />
+    <span tal:replace="context/zope:name">README.txt</span>
+  </h1>
+
+  <p metal:use-macro="views/apidoc_macros/breadcrumbs" />
+
   <div class="documentation"
        tal:content="structure view/renderedContent">
     file content

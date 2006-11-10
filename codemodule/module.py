@@ -13,7 +13,7 @@
 ##############################################################################
 """Module representation for code browser
 
-$Id: __init__.py 29143 2005-02-14 22:43:16Z srichter $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 import os
@@ -49,6 +49,7 @@ class Module(ReadContainerBase):
         self.__name__ = name
         self._module = module
         self._children = {}
+        self._package = False
         if setup:
             self.__setup()
 
@@ -59,6 +60,7 @@ class Module(ReadContainerBase):
                (self._module.__file__.endswith('__init__.py') or
                 self._module.__file__.endswith('__init__.pyc')or
                 self._module.__file__.endswith('__init__.pyo')):
+            self._package = True
             for dir in self._module.__path__:
                 for file in os.listdir(dir):
                     if file in IGNORE_FILES or file in self._children:
@@ -122,6 +124,10 @@ class Module(ReadContainerBase):
     def getPath(self):
         """See IModule."""
         return self._module.__name__
+
+    def isPackage(self):
+        """See IModuleDocumentation."""
+        return self._package
 
     def get(self, key, default=None):
         """See zope.app.container.interfaces.IReadContainer."""

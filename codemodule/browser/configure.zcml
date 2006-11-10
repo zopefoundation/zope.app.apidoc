@@ -2,6 +2,14 @@
     xmlns="http://namespaces.zope.org/browser"
     i18n_domain="zope">
 
+  <view
+      for="*"
+      permission="zope.View"
+      name="code_breadcrumbs"
+      class=".utilities.CodeBreadCrumbs"
+      allowed_attributes="__call__"
+      />
+
   <page
       for="..codemodule.CodeModule"
       permission="zope.app.apidoc.UseAPIDoc"

@@ -13,7 +13,7 @@
 ##############################################################################
 """Module Views
 
-$Id: browser.py 29143 2005-02-14 22:43:16Z srichter $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 from zope.component import getMultiAdapter
@@ -21,7 +21,7 @@ from zope.interface.interface import InterfaceClass
 from zope.proxy import removeAllProxies
 from zope.publisher.browser import BrowserView
 from zope.security.proxy import isinstance, removeSecurityProxy
-from zope.traversing.api import getName, getParent
+from zope.traversing.api import getParent
 from zope.traversing.browser import absoluteURL
 
 from zope.app.i18n import ZopeMessageFactory as _
@@ -80,26 +80,10 @@ class ModuleDetails(BrowserView):
             entries = columnize(entries)
         return entries
 
-    def getBreadCrumbs(self):
-        """Create breadcrumbs for the module path.
+    def getPath(self):
+        """Return the path to the module"""
+        return self.context.getPath()
 
-        We cannot reuse the the system's bread crumbs, since they go all the
-        way up to the root, but we just want to go to the root module."""
-        names = self.context.getPath().split('.')
-        crumbs = []
-        module = self.context
-        # I really need the class here, so remove the proxy.
-        while removeSecurityProxy(module).__class__ is Module:
-            crumbs.append(
-                {'name': getName(module),
-                 'url': absoluteURL(module, self.request)}
-                )
-            module = getParent(module)
-
-        crumbs.append(
-            {'name': _('[top]'),
-             'url': getMultiAdapter(
-                      (module, self.request), name='absolute_url')()} )
-
-        crumbs.reverse()
-        return crumbs
+    def isPackage(self):
+        """Return true if this module is a package"""
+        return self.context.isPackage()

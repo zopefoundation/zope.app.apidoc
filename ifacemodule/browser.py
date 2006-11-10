@@ -20,6 +20,7 @@ __docformat__ = 'restructuredtext'
 
 import inspect
 
+from zope.component import getUtility
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.publisher.interfaces.xmlrpc import IXMLRPCRequest
 from zope.publisher.interfaces.http import IHTTPRequest
@@ -27,7 +28,7 @@ from zope.publisher.interfaces.ftp import IFTPRequest
 from zope.publisher.browser import BrowserView
 from zope.security.proxy import isinstance, removeSecurityProxy
 from zope.proxy import removeAllProxies
-from zope.traversing.api import getName, getParent
+from zope.traversing.api import getName, getParent, traverse
 from zope.traversing.browser import absoluteURL
 
 from zope.app.i18n import ZopeMessageFactory as _
@@ -275,3 +276,37 @@ class InterfaceDetails(BrowserView):
             "ftp": _("FTP"),
             "other": _("Other"),
             }
+
+
+class InterfaceBreadCrumbs(object):
+    """View that provides breadcrumbs for interface objects"""
+
+    def __call__(self):
+        """Create breadcrumbs for an interface object.
+
+        The breadcrumbs are rooted at the code browser.
+        """
+        docroot = self.context
+        while not isinstance(docroot, APIDocumentation):
+            docroot = getParent(docroot)
+        codeModule = traverse(docroot, "Code")
+        crumbs = [{
+            'name': _('[top]'),
+            'url': absoluteURL(codeModule, self.request)
+            }]
+        # We need the __module__ of the interface, not of a location proxy,
+        # so we have to remove all proxies.
+        iface = removeAllProxies(self.context)
+        mod_names = iface.__module__.split('.')
+        obj = codeModule
+        for name in mod_names:
+            obj = traverse(obj, name)
+            crumbs.append({
+                'name': name,
+                'url': absoluteURL(obj, self.request)
+                })
+        crumbs.append({
+            'name': iface.__name__,
+            'url': absoluteURL(self.context, self.request)
+            })
+        return crumbs

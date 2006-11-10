@@ -16,6 +16,14 @@
 
   <!-- Setup interface-related macros -->
 
+  <browser:view
+      for="zope.interface.interfaces.IInterface"
+      permission="zope.View"
+      name="code_breadcrumbs"
+      class=".browser.InterfaceBreadCrumbs"
+      allowed_attributes="__call__"
+      />
+
   <browser:page
       for="*"
       name="interface_macros"

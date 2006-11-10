@@ -16,7 +16,7 @@
 This module is able to take a dotted name of any class and display
 documentation for it.
 
-$Id: __init__.py 29269 2005-02-23 22:22:48Z srichter $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 
@@ -85,6 +85,10 @@ class CodeModule(Module):
     def getPath(self):
         """See Module class."""
         return ''
+
+    def isPackage(self):
+        """See Module class."""
+        return True
 
     def get(self, key, default=None):
         """See zope.app.container.interfaces.IReadContainer."""

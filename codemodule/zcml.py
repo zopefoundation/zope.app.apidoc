@@ -24,6 +24,7 @@ from xml.sax.handler import feature_namespaces
 from zope.cachedescriptors.property import Lazy
 from zope.configuration import xmlconfig, config
 from zope.interface import implements, directlyProvides
+from zope.location.interfaces import ILocation
 
 import zope.app.appsetup.appsetup
 
@@ -99,9 +100,9 @@ class Directive(object):
 
 class ZCMLFile(object):
     """Representation of an entire ZCML file."""
-    implements(IZCMLFile)
+    implements(ILocation, IZCMLFile)
 
-    def __init__(self, filename, package, parent=None, name=None):
+    def __init__(self, filename, package, parent, name):
         # Retrieve the directive registry
         self.filename = filename
         self.package = package

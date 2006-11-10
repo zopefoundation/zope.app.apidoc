@@ -23,6 +23,8 @@ different:
   ''
   >>> cm.getPath()
   ''
+  >>> cm.isPackage()
+  True
 
   >>> cm.keys()
   []
@@ -51,6 +53,12 @@ We can now get some of the common module attributes via accessor methods:
 
   >>> module.getPath()
   'zope.app.apidoc'
+  >>> module.isPackage()
+  True
+  >>> m2 = codemodule.module.Module(
+  ...     None, 'apidoc', zope.app.apidoc.apidoc)
+  >>> m2.isPackage()
+  False
 
 The setup for creating the sub module and class tree is automatically
 called during initialization, so that the sub-objects are available as
@@ -276,7 +284,7 @@ content to provide some advanced markup. The object is easily instantiated:
   >>> module = codemodule.module.Module(None, 'zope.app.apidoc.codemodule',
   ...                                   zope.app.apidoc.codemodule)
 
-  >>> zcml = codemodule.zcml.ZCMLFile(path, module)
+  >>> zcml = codemodule.zcml.ZCMLFile(path, module, module, 'configure.zcml')
 
 The interesting attribute of the object is the `rootElement`, since it
 contains the root XML element and thus the entire XML tree. The `rootElement`

@@ -63,7 +63,11 @@ Create breadcrumbs for the module path.
 We cannot reuse the the system's bread crumbs, since they go all the
 way up to the root, but we just want to go to the root module.
 
-  >>> pprint(details.getBreadCrumbs())
+  >>> from zope.app.apidoc.codemodule.browser import utilities
+  >>> bc = utilities.CodeBreadCrumbs()
+  >>> bc.context = details.context
+  >>> bc.request = details.request
+  >>> pprint(bc())
   [{'name': u'[top]',
     'url': 'http://127.0.0.1'},
    {'name': u'zope',

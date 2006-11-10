@@ -60,13 +60,18 @@ div.indent {
 h1.details-header {
     font-size: 220%;
     font-weight: normal;
-    margin-top: 0;
+    margin-top: 0px;
+}
+
+h1.details-header span.pre-header {
+    font-size: 60%;
+    font-weight: normal;
 }
 
 div.details-subheader {
     font-size: 125%;
     font-weight: normal;
-    margin-top: 0;
+    margin-top: 0px;
 }
 
 h2.details-section {
