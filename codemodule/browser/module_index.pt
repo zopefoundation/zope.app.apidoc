@@ -9,17 +9,17 @@
   <h1 class="details-header">
     <span tal:condition="view/getPath">
       <span class="pre-header">
-        <span tal:condition="view/isPackage">
+        <span tal:condition="view/isPackage" i18n:translate="">
             Package
         </span>
-        <span tal:condition="not: view/isPackage">
+        <span tal:condition="not: view/isPackage" i18n:translate="">
             Module
         </span>
       </span>
       <br />
       <span tal:replace="view/getPath">zope.app</span>
     </span>
-    <span tal:omit-tag="" tal:condition="not: view/getPath">
+    <span tal:omit-tag="" tal:condition="not: view/getPath" i18n:translate="">
       Zope 3 Code Browser
     </span>
   </h1>

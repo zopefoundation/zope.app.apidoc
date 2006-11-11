@@ -4,7 +4,7 @@
       tal:define="rootURL view/apidocRoot">
 
   <h1 class="details-header">
-    <span class="pre-header">Interface</span><br />
+    <span class="pre-header" i18n:translate="">Interface</span><br />
     <span tal:replace="view/getId">zope.app.interfaces.IInterface</span>
   </h1>
 

@@ -3,7 +3,7 @@
 <body metal:fill-slot="contents">
 
   <h1 class="details-header">
-    <span class="pre-header">Function</span><br />
+    <span class="pre-header" i18n:translate="">Function</span><br />
     <span tal:replace="context/getPath">zope.app.function</span>
   </h1>
 

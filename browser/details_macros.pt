@@ -78,7 +78,6 @@
       <a href=""
         tal:attributes="href string:${entry/url}/index.html"
         tal:content="entry/name"
-        i18n:translate=""
         tal:omit-tag="repeat/entry/end" />
       <span tal:omit-tag="" tal:condition="not: repeat/entry/end">/</span>
     </tal:block>

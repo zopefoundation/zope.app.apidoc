@@ -53,7 +53,7 @@ div.highlight {
 <body metal:fill-slot="contents">
 
   <h1 class="details-header">
-    <span class="pre-header">ZCML File</span><br />
+    <span class="pre-header" i18n:translate="">ZCML File</span><br />
     <span tal:replace="context/zope:name">configure.zcml</span>
   </h1>
 
