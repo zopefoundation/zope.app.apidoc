@@ -31,7 +31,7 @@ from zope.app.apidoc.tests import Root
 from zope.app.apidoc.zcmlmodule import Namespace, Directive
 from zope.app.apidoc.zcmlmodule import ZCMLModule
 from zope.app.apidoc.tests import Root
-
+import zope.app.zcmlfiles
 
 def setUp(test):
     placelesssetup.setUp()
@@ -40,13 +40,13 @@ def setUp(test):
     ztapi.provideAdapter(None, IPhysicallyLocatable,
                          LocationPhysicallyLocatable)
 
-    config_file = os.path.join(os.path.dirname(zope.app.__file__), 'meta.zcml')
+    config_file = os.path.join(os.path.dirname(zope.app.zcmlfiles.__file__), 'meta.zcml')
 
     # Fix up path for tests.
     global old_context
     old_context = zope.app.appsetup.appsetup.getConfigContext()
     zope.app.appsetup.appsetup.__config_context = xmlconfig.file(
-        config_file, execute=False)
+        config_file, zope.app.zcmlfiles, execute=False)
 
 def tearDown(test):
     placelesssetup.tearDown()

@@ -32,14 +32,14 @@ def setUp(test):
         xmlns:meta="http://namespaces.zope.org/meta"
         i18n_domain="zope">
       <meta:provides feature="devmode" />
-      <include package="zope.app" file="meta.zcml" />
-      <include package="zope.app" file="menus.zcml" />
+      <include package="zope.app.zcmlfiles" file="meta.zcml" />
+      <include package="zope.app.zcmlfiles" file="menus.zcml" />
     </configure>
     '''
     xmlconfig.string(meta)
 
-    meta = os.path.join(os.path.dirname(zope.app.__file__), 'meta.zcml')
-    context = xmlconfig.file(meta, zope.app)
+    meta = os.path.join(os.path.dirname(zope.app.zcmlfiles.__file__), 'meta.zcml')
+    context = xmlconfig.file(meta, zope.app.zcmlfiles)
     context.provideFeature('devmode')
     meta = os.path.join(os.path.dirname(zope.app.apidoc.__file__), 'meta.zcml')
     context = xmlconfig.file(meta, zope.app.apidoc, context)

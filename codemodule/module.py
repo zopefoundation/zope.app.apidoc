@@ -34,6 +34,9 @@ from zope.app.apidoc.codemodule.function import Function
 from zope.app.apidoc.codemodule.text import TextFile
 from zope.app.apidoc.codemodule.zcml import ZCMLFile
 
+# XXX This should be imported somewhere?
+import zope.app.zcmlfiles
+
 # Ignore these files, since they are not necessary or cannot be imported
 # correctly.
 IGNORE_FILES = ('tests', 'tests.py', 'ftests', 'ftests.py', 'CVS', 'gadfly',

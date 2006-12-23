@@ -13,7 +13,7 @@
 ##############################################################################
 """Tests for the Code Documentation Module
 
-$Id: tests.py 29269 2005-02-23 22:22:48Z srichter $
+$Id$
 """
 import os
 import unittest
@@ -51,9 +51,9 @@ meta = '''
     xmlns:meta="http://namespaces.zope.org/meta"
     i18n_domain="zope">
   <meta:provides feature="devmode" />
-  <include package="zope.app" file="meta.zcml" />
+  <include package="zope.app.zcmlfiles" file="meta.zcml" />
   <include package="zope.app.apidoc" file="meta.zcml" />
-  <include package="zope.app" file="menus.zcml" />
+  <include package="zope.app.zcmlfiles" file="menus.zcml" />
 </configure>
 '''
 
@@ -106,7 +106,7 @@ def setUp(test):
     global old_source_file
     old_source_file = zope.app.appsetup.appsetup.__config_source
     zope.app.appsetup.appsetup.__config_source = os.path.join(
-        os.path.dirname(zope.app.__file__), 'meta.zcml')
+        os.path.dirname(zope.app.zcmlfiles.__file__), 'meta.zcml')
 
     # Register the index.html view for codemodule.class_.Class
     from zope.publisher.browser import BrowserView
