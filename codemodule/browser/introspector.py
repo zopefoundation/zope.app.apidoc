@@ -46,7 +46,7 @@ class annotationsNamespace(object):
         self.context = ob
 
     def traverse(self, name, ignore):
-        # This is pretty unsafe, so this should really just be available in
+        # XXX This is pretty unsafe, so this should really just be available in
         # devmode.
         naked = zope.security.proxy.removeSecurityProxy(self.context)
         annotations = annotation.interfaces.IAnnotations(naked)
