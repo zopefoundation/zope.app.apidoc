@@ -46,8 +46,8 @@ class annotationsNamespace(object):
         self.context = ob
 
     def traverse(self, name, ignore):
-        # XXX This is pretty unsafe, so this should really just be available in
-        # devmode.
+        # This is pretty unsafe and one of the reasons why the introspector is
+        # only available in dev-mode.
         naked = zope.security.proxy.removeSecurityProxy(self.context)
         annotations = annotation.interfaces.IAnnotations(naked)
         obj = name and annotations[name] or annotations
