@@ -518,8 +518,8 @@ object's attributes:
     'name': 'data',
     'read_perm': None,
     'type': 'OOBTree',
-    'type_link': 'BTrees/_OOBTree/OOBTree',
-    'value': '<BTrees._OOBTree.OOBTree object at ...>',
+    'type_link': 'BTrees/OOBTree/OOBTree',
+    'value': '<BTrees.OOBTree.OOBTree object at ...>',
     'value_linkable': True,
     'write_perm': None}]
 

@@ -82,7 +82,7 @@ data attribute:
         ...
         <br />
         <i>Value:</i>
-        <code>&lt;BTrees._OOBTree.OOBTree object at ...&gt;</code>
+        <code>&lt;BTrees.OOBTree.OOBTree object at ...&gt;</code>
         <br />
         <span class="small">
           <i>Permissions:</i>
