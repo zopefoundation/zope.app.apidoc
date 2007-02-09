@@ -18,6 +18,7 @@ $Id$
 import zope.deprecation
 import unittest
 from zope.app.testing.functional import BrowserTestCase
+from zope.app.apidoc.testing import APIDocLayer
 
 class UtilityModuleTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
@@ -59,6 +60,7 @@ class UtilityModuleTests(BrowserTestCase):
 
 
 def test_suite():
+    UtilityModuleTests.layer = APIDocLayer
     return unittest.TestSuite((
         unittest.makeSuite(UtilityModuleTests),
         ))

@@ -17,6 +17,7 @@ $Id$
 """
 import unittest
 from zope.app.testing.functional import BrowserTestCase
+from zope.app.apidoc.testing import APIDocLayer
 
 class InterfaceModuleTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
@@ -52,6 +53,7 @@ class InterfaceModuleTests(BrowserTestCase):
 
 
 def test_suite():
+    InterfaceModuleTests.layer = APIDocLayer
     return unittest.TestSuite((
         unittest.makeSuite(InterfaceModuleTests),
         ))

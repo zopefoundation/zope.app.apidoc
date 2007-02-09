@@ -21,7 +21,7 @@ import zope.app.testing.functional
 from zope.testing import doctest
 from zope.app.testing.functional import BrowserTestCase, FunctionalNoDevMode
 from zope.app.testing.functional import FunctionalDocFileSuite
-
+from zope.app.apidoc.testing import APIDocLayer, APIDocNoDevModeLayer
 
 class APIDocTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
@@ -65,15 +65,18 @@ class APIDocTests(BrowserTestCase):
 
 def test_suite():
     suite = unittest.TestSuite()
+    APIDocTests.layer = APIDocLayer
     suite.addTest(unittest.makeSuite(APIDocTests))
+    apidoc_doctest = FunctionalDocFileSuite(
+        "README.txt",
+        optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
+    apidoc_doctest.layer = APIDocLayer
     suite.addTest(
-        FunctionalDocFileSuite(
-            "README.txt",
-            optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE),
+        apidoc_doctest,
         )
 
     nodevmode = FunctionalDocFileSuite("nodevmode.txt")
-    nodevmode.layer = FunctionalNoDevMode
+    nodevmode.layer = APIDocNoDevModeLayer
     suite.addTest(nodevmode)
     return suite
 

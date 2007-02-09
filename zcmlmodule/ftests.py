@@ -17,6 +17,7 @@ $Id$
 """
 import unittest
 from zope.app.testing.functional import BrowserTestCase
+from zope.app.apidoc.testing import APIDocLayer
 
 class ZCMLModuleTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
@@ -43,6 +44,7 @@ class ZCMLModuleTests(BrowserTestCase):
 
 
 def test_suite():
+    ZCMLModuleTests.layer = APIDocLayer
     return unittest.TestSuite((
         unittest.makeSuite(ZCMLModuleTests),
         ))

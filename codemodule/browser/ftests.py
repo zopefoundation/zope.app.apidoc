@@ -20,6 +20,7 @@ import unittest
 from zope.testing import doctest
 from zope.app.testing.functional import BrowserTestCase
 from zope.app.testing.functional import FunctionalDocFileSuite
+from zope.app.apidoc.testing import APIDocLayer
 
 class CodeModuleTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
@@ -97,11 +98,14 @@ class CodeModuleTests(BrowserTestCase):
 
 
 def test_suite():
+    CodeModuleTests.layer = APIDocLayer
+    introspector = FunctionalDocFileSuite(
+        "introspector.txt",
+        optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
+    introspector.layer = APIDocLayer
     return unittest.TestSuite((
         unittest.makeSuite(CodeModuleTests),
-        FunctionalDocFileSuite(
-            "introspector.txt",
-            optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE),
+        introspector,
         ))
 
 if __name__ == '__main__':
