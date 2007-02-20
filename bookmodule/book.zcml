@@ -159,15 +159,13 @@
         parent="test"
         />
   </configure>
-  <configure package="zope.app.ftests">
+  <configure package="zope.app.testing">
     <bookchapter
         id="fdoctest"
         title="Functional DocTest"
         doc_path="doctest.txt"
         parent="test"
         />
-  </configure>
-  <configure package="zope.app.testing">
     <bookchapter
         id="fdoctest-howto"
         title="FDocTest (How to)"
