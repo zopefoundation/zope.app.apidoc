@@ -84,7 +84,7 @@ This method returns all classes that implement the specified interface:
 `getSubclassesOf(klass)`
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-This method will find all classes that inherit the specified class: 
+This method will find all classes that inherit the specified class:
 
   >>> pprint(reg.getSubclassesOf(A))
   [('A2', <class 'A2'>)]
@@ -123,15 +123,17 @@ Here are some examples::
 For this example, we'll create a dummy module:
 
   >>> import os
-  >>> here = os.path.dirname(__file__)
-  >>> filename = os.path.join(here, 'testmodule.py')
+  >>> import tempfile
+  >>> dir = tempfile.mkdtemp()
+  >>> filename = os.path.join(dir, 'testmodule.py')
+  >>> sys.path.insert(0, dir)
   >>> f = open(filename, 'w')
   >>> f.write('# dummy module\n')
   >>> f.close()
 
 The temporary module is not already imported:
 
-  >>> module_name = 'zope.app.apidoc.testmodule'
+  >>> module_name = 'testmodule'
   >>> module_name in sys.modules
   False
 
@@ -153,28 +155,21 @@ should be imported:
 
 Now clean up the temporary module, just to play nice:
 
-  >>> os.unlink(filename)
-  >>> if os.path.exists(filename + 'c'):
-  ...     os.unlink(filename + 'c')
-  >>> if os.path.exists(filename + 'o'):
-  ...     os.unlink(filename + 'o')
-
-  >>> del sys.modules['zope.app.apidoc.testmodule']
+  >>> del sys.modules[module_name]
 
 Importing some code we cannot control, such as twisted, might raise errors
 when imported without having a certain environment. In those cases, the safe
 import should prevent the error from penetrating:
 
-  >>> import os, tempfile
-  >>> dir = tempfile.mkdtemp()
   >>> open(os.path.join(dir, 'alwaysfail.py'), 'w').write('raise ValueError\n')
   >>> sys.path.insert(0, dir)
 
   >>> safe_import('alwaysfail') is None
   True
 
-  >>> del sys.path[0]
+Let's clean up the python path and temporary files:
 
+  >>> del sys.path[0]
   >>> import shutil
   >>> shutil.rmtree(dir)
 
