@@ -18,35 +18,56 @@ $Id$
 
 import os
 
-try:
-    from setuptools import setup, Extension
-except ImportError, e:
-    from distutils.core import setup, Extension
+from setuptools import setup, find_packages
 
-setup(name='zope.app.apidoc',
-      version='3.4-dev',
-      url='http://svn.zope.org/zope.app.apidoc',
-      license='ZPL 2.1',
-      description='Zope apidoc',
-      author='Zope Corporation and Contributors',
-      author_email='zope3-dev@zope.org',
-      long_description="This Zope 3 package provides fully dynamic"
-                       "API documentation of Zope 3 and registered"
-                       "add-on components.",
+setup(name = 'zope.app.apidoc',
+      version = '3.4dev',
+      url = 'http://svn.zope.org/zope.app.apidoc',
+      license = 'ZPL 2.1',
+      description = 'Zope apidoc',
+      author = 'Zope Corporation and Contributors',
+      author_email = 'zope3-dev@zope.org',
+      long_description = "This Zope 3 package provides fully dynamic"
+                         "API documentation of Zope 3 and registered"
+                         "add-on components.",
 
-      packages=['zope', 'zope.app', 'zope.app.apidoc',
-                'zope.app.apidoc.bookmodule',
-                'zope.app.apidoc.browser',
-                'zope.app.apidoc.codemodule',
-                'zope.app.apidoc.codemodule.browser',
-                'zope.app.apidoc.typemodule',
-                'zope.app.apidoc.utilitymodule',
-                'zope.app.apidoc.zcmlmodule'],
+      packages = find_packages('src'),
       package_dir = {'': 'src'},
 
-      namespace_packages=['zope', 'zope.app'],
+      namespace_packages = ['zope', 'zope.app'],
       tests_require = ['zope.testing'],
-      install_requires=['zope.interface'],
+      install_requires = ['setuptools',
+                          'mechanize',
+                          'zope.annotation',
+                          'zope.app.appsetup',
+                          'zope.app.basicskin',
+                          'zope.app.component',
+                          'zope.app.container',
+                          'zope.app.onlinehelp',
+                          'zope.app.preference',
+                          'zope.app.publisher',
+                          'zope.app.renderer',
+                          'zope.app.skins',
+                          'zope.app.testing',
+                          'zope.app.tree',
+                          'zope.app.tree.browser',
+                          'zope.app.zcmlfiles',
+                          'zope.cachedescriptors',
+                          'zope.component',
+                          'zope.configuration',
+                          'zope.deprecation',
+                          'zope.i18n',
+                          'zope.interface',
+                          'zope.location',
+                          'zope.proxy',
+                          'zope.publisher',
+                          'zope.publisher.interfaces',
+                          'zope.schema',
+                          'zope.security',
+                          'zope.testbrowser',
+                          'zope.testing',
+                          'zope.traversing',
+                          ],
       include_package_data = True,
 
       zip_safe = False,
