@@ -17,10 +17,11 @@ $Id$
 """
 import os
 import unittest
+import re
 from zope.component.interfaces import IFactory
 from zope.configuration import xmlconfig
 from zope.interface import directlyProvides, implements
-from zope.testing import doctest, doctestunit
+from zope.testing import doctest, doctestunit, renormalizing
 from zope.traversing.interfaces import IContainmentRoot
 
 import zope.app
@@ -125,10 +126,15 @@ def tearDown(test):
 
 
 def test_suite():
+    checker = renormalizing.RENormalizing([
+        (re.compile(r" with base 10: 'text'"),
+                    r': text'),
+        ])
+    
     return unittest.TestSuite((
         doctest.DocFileSuite(
             'README.txt',
-            setUp=setUp, tearDown=tearDown,
+            setUp=setUp, tearDown=tearDown,checker=checker,
             globs={'pprint': doctestunit.pprint},
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS),
         doctest.DocTestSuite(
