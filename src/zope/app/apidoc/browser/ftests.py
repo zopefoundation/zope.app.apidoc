@@ -15,10 +15,12 @@
 
 $Id$
 """
+import re
 import unittest
 
 import zope.app.testing.functional
 from zope.testing import doctest
+from zope.testing import renormalizing
 from zope.app.testing.functional import BrowserTestCase, FunctionalNoDevMode
 from zope.app.testing.functional import FunctionalDocFileSuite
 from zope.app.apidoc.testing import APIDocLayer, APIDocNoDevModeLayer
@@ -63,13 +65,18 @@ class APIDocTests(BrowserTestCase):
         self.checkForBrokenLinks(body, '/++apidoc++/modulelist.html',
                                  basic='mgr:mgrpw')
 
+checker = renormalizing.RENormalizing([
+    (re.compile(r'httperror_seek_wrapper:', re.M), 'HTTPError:'),
+    ]) 
+
 def test_suite():
     suite = unittest.TestSuite()
     APIDocTests.layer = APIDocLayer
     suite.addTest(unittest.makeSuite(APIDocTests))
     apidoc_doctest = FunctionalDocFileSuite(
         "README.txt",
-        optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
+        optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE,
+        checker=checker)
     apidoc_doctest.layer = APIDocLayer
     suite.addTest(
         apidoc_doctest,
