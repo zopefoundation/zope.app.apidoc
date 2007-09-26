@@ -267,10 +267,8 @@ have a text file documentation object
 
 we can ask it for the content of the file:
 
-  >>> print readme.getContent()[:77]
-  =========================
+  >>> print readme.getContent()[26:51]
   Code Documentation Module
-  =========================
 
 
 ZCML File
