@@ -70,6 +70,9 @@ setup(name = 'zope.app.apidoc',
                             static=['mechanize'],
                             ),
       include_package_data = True,
-
+      entry_points = """
+        [console_scripts]
+        static-apidoc = zope.app.apidoc.static:main
+        """,
       zip_safe = False,
       )

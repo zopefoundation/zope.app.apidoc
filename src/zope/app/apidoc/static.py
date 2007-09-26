@@ -118,6 +118,11 @@ class Link(object):
 
 class OnlineBrowser(mechanize.Browser, object):
 
+    def __init__(self, factory=None, history=None, request_class=None):
+        if factory == None:
+            factory = ApiDocDefaultFactory()
+        mechanize.Browser.__init__(self, factory, history, request_class)
+
     def setUserAndPassword(self, user, pw):
         """Specify the username and password to use for the retrieval."""
         hash = base64.encodestring(user+':'+pw).strip()
@@ -339,6 +344,35 @@ class StaticAPIDocGenerator(object):
         # files.
         self.browser.close()
 
+class ApiDocDefaultFactory(mechanize._html.DefaultFactory):
+    """Based on sgmllib."""
+    def __init__(self, i_want_broken_xhtml_support=False):
+        mechanize._html.Factory.__init__(
+            self,
+            forms_factory=mechanize._html.FormsFactory(),
+            links_factory=ApiDocLinksFactory(),
+            title_factory=mechanize._html.TitleFactory(),
+            is_html_p=mechanize._html.make_is_html(allow_xhtml=i_want_broken_xhtml_support),
+            )
+
+class ApiDocLinksFactory(mechanize._html.LinksFactory):
+
+    def __init__(self,
+                 link_parser_class=None,
+                 link_class=Link,
+                 urltags=None,
+                 ):
+        if urltags is None:
+
+            urltags = {
+                "a": "href",
+                "area": "href",
+                "frame": "src",
+                "iframe": "src",
+                "link": "href",
+                "script": "src",
+                }
+        mechanize._html.LinksFactory.__init__(self, link_parser_class, link_class, urltags)
 
 ###############################################################################
 # Command-line UI

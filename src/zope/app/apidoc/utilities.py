@@ -17,6 +17,7 @@ $Id$
 """
 __docformat__ = 'restructuredtext'
 
+import cgi
 import re
 import sys
 import types
@@ -324,6 +325,11 @@ def renderText(text, module=None, format=None, dedent=True):
 
     text = dedentString(text)
 
+    if not isinstance(text, unicode):
+        text = text.decode('latin-1', 'replace')
+    # We need to escape all HTML
+    text = cgi.escape(text)
     source = createObject(format, text)
+
     renderer = getMultiAdapter((source, TestRequest()))
     return renderer.render()
