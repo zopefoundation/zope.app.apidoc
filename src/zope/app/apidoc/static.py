@@ -40,6 +40,7 @@ VERBOSITY_MAP = {1: 'ERROR', 2: 'WARNING', 3: 'INFO'}
 urltags = {
     "a": "href",
     "area": "href",
+    "base": "href",
     "frame": "src",
     "iframe": "src",
     "link": "href",
@@ -193,19 +194,20 @@ class StaticAPIDocGenerator(object):
 
         if not os.path.exists(self.rootDir):
             os.mkdir(self.rootDir)
-        
+
         if self.options.use_webserver:
             self.browser = OnlineBrowser()
         elif self.options.use_publisher:
-            # PublisherBrowser does not work at the moment, so complain if is has been selected.
+            # PublisherBrowser does not work at the moment, so complain if is
+            # has been selected.
             #self.browser = PublisherBrowser()
-            self.sendMessage("PublisherBrowser is broken. Please use OnlineBrowser instead (--webserver).")
+            self.sendMessage(
+                "PublisherBrowser is broken. Please use OnlineBrowser "
+                "instead (--webserver).")
             return
-            
+
         self.browser.setUserAndPassword(self.options.username,
                                         self.options.password)
-
-        self.browser._links_factory = mechanize.LinksFactory(urltags=urltags)
 
         if self.options.debug:
             self.browser.addheaders.append(('X-zope-handle-errors', False))
@@ -350,29 +352,56 @@ class ApiDocDefaultFactory(mechanize._html.DefaultFactory):
         mechanize._html.Factory.__init__(
             self,
             forms_factory=mechanize._html.FormsFactory(),
-            links_factory=ApiDocLinksFactory(),
+            links_factory=ApiDocLinksFactory(urltags=urltags),
             title_factory=mechanize._html.TitleFactory(),
-            is_html_p=mechanize._html.make_is_html(allow_xhtml=i_want_broken_xhtml_support),
+            is_html_p=mechanize._html.make_is_html(
+                allow_xhtml=i_want_broken_xhtml_support),
             )
 
 class ApiDocLinksFactory(mechanize._html.LinksFactory):
+    """Copy of mechanize link factory.
 
-    def __init__(self,
-                 link_parser_class=None,
-                 link_class=Link,
-                 urltags=None,
-                 ):
-        if urltags is None:
+    Unfortunately, the original implementation explicitely ignores base hrefs.
+    """
 
-            urltags = {
-                "a": "href",
-                "area": "href",
-                "frame": "src",
-                "iframe": "src",
-                "link": "href",
-                "script": "src",
-                }
-        mechanize._html.LinksFactory.__init__(self, link_parser_class, link_class, urltags)
+    def links(self):
+        """Return an iterator that provides links of the document."""
+        response = self._response
+        encoding = self._encoding
+        base_url = self._base_url
+        p = self.link_parser_class(response, encoding=encoding)
+
+        for token in p.tags(*(self.urltags.keys()+["base"])):
+            # NOTE: WE WANT THIS HERE NOT TO IGNORE IT!
+            #if token.data == "base":
+            #    base_url = dict(token.attrs).get("href")
+            #    continue
+            if token.type == "endtag":
+                continue
+            attrs = dict(token.attrs)
+            tag = token.data
+            name = attrs.get("name")
+            text = None
+            # XXX use attr_encoding for ref'd doc if that doc does not provide
+            #  one by other means
+            #attr_encoding = attrs.get("charset")
+            url = attrs.get(self.urltags[tag])  # XXX is "" a valid URL?
+            if not url:
+                # Probably an <A NAME="blah"> link or <AREA NOHREF...>.
+                # For our purposes a link is something with a URL, so ignore
+                # this.
+                continue
+
+            url = mechanize._html.clean_url(url, encoding)
+            if tag == "a":
+                if token.type != "startendtag":
+                    # hmm, this'd break if end tag is missing
+                    text = p.get_compressed_text(("endtag", tag))
+                # but this doesn't work for eg. <a href="blah"><b>Andy</b></a>
+                #text = p.get_compressed_text()
+
+            yield mechanize._html.Link(base_url, url, text, tag, token.attrs)
+
 
 ###############################################################################
 # Command-line UI
