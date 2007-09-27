@@ -44,11 +44,11 @@ specified interface. So let's create some adapter registrations:
   >>> regs = list(component.getRequiredAdapters(IFoo))
   >>> regs.sort()
   >>> regs
-  [AdapterRegistration(<BaseGlobalComponents base>, 
-                       [IFoo, IBar], ISpecialResult, '', None, u''), 
-   AdapterRegistration(<BaseGlobalComponents base>, 
-                       [IFoo], IResult, '', None, u''), 
-   HandlerRegistration(<BaseGlobalComponents base>, 
+  [AdapterRegistration(<BaseGlobalComponents base>,
+                       [IFoo, IBar], ISpecialResult, '', None, u''),
+   AdapterRegistration(<BaseGlobalComponents base>,
+                       [IFoo], IResult, '', None, u''),
+   HandlerRegistration(<BaseGlobalComponents base>,
                        [IFoo], u'', 'stubFactory', u'')]
 
 Note how the adapter requiring an `IRequest` at the end of the required
@@ -58,13 +58,13 @@ are not returned by default. But you can simply turn this flag on:
   >>> regs = list(component.getRequiredAdapters(IFoo, withViews=True))
   >>> regs.sort()
   >>> regs
-  [AdapterRegistration(<BaseGlobalComponents base>, 
-                       [IFoo, IBar], ISpecialResult, '', None, u''), 
-   AdapterRegistration(<BaseGlobalComponents base>, 
-                       [IFoo, IRequest], ISpecialResult, '', None, u''), 
-   AdapterRegistration(<BaseGlobalComponents base>, 
-                       [IFoo], IResult, '', None, u''), 
-   HandlerRegistration(<BaseGlobalComponents base>, 
+  [AdapterRegistration(<BaseGlobalComponents base>,
+                       [IFoo, IBar], ISpecialResult, '', None, u''),
+   AdapterRegistration(<BaseGlobalComponents base>,
+                       [IFoo, IRequest], ISpecialResult, '', None, u''),
+   AdapterRegistration(<BaseGlobalComponents base>,
+                       [IFoo], IResult, '', None, u''),
+   HandlerRegistration(<BaseGlobalComponents base>,
                        [IFoo], u'', 'stubFactory', u'')]
 
 The function will also pick up registrations that have required interfaces the
@@ -73,10 +73,10 @@ specified interface extends:
   >>> regs = list(component.getRequiredAdapters(IFoo))
   >>> regs.sort()
   >>> regs
-  [AdapterRegistration(<BaseGlobalComponents base>, 
+  [AdapterRegistration(<BaseGlobalComponents base>,
                        [IFoo, IBar], ISpecialResult, '', None, u''),
    AdapterRegistration(<BaseGlobalComponents base>,
-                       [IFoo], IResult, '', None, u''), 
+                       [IFoo], IResult, '', None, u''),
    HandlerRegistration(<BaseGlobalComponents base>,
                        [IFoo], u'', 'stubFactory', u'')]
 
@@ -85,7 +85,7 @@ And all of the required interfaces are considered, of course:
   >>> regs = list(component.getRequiredAdapters(IBar))
   >>> regs.sort()
   >>> regs
-  [AdapterRegistration(<BaseGlobalComponents base>, 
+  [AdapterRegistration(<BaseGlobalComponents base>,
                        [IFoo, IBar], ISpecialResult, '', None, u'')]
 
 
@@ -99,7 +99,7 @@ views by default.
   >>> regs = list(component.getProvidedAdapters(ISpecialResult))
   >>> regs.sort()
   >>> regs
-  [AdapterRegistration(<BaseGlobalComponents base>, 
+  [AdapterRegistration(<BaseGlobalComponents base>,
                        [IFoo, IBar], ISpecialResult, '', None, u'')]
 
 And by specifying the `withView` flag, we get views as well:
@@ -107,9 +107,9 @@ And by specifying the `withView` flag, we get views as well:
   >>> regs = list(component.getProvidedAdapters(ISpecialResult, withViews=True))
   >>> regs.sort()
   >>> regs
-  [AdapterRegistration(<BaseGlobalComponents base>, 
-                       [IFoo, IBar], ISpecialResult, '', None, u''), 
-   AdapterRegistration(<BaseGlobalComponents base>, 
+  [AdapterRegistration(<BaseGlobalComponents base>,
+                       [IFoo, IBar], ISpecialResult, '', None, u''),
+   AdapterRegistration(<BaseGlobalComponents base>,
                        [IFoo, IRequest], ISpecialResult, '', None, u'')]
 
 We can of course also ask for adapters specifying `IResult`:
@@ -117,7 +117,7 @@ We can of course also ask for adapters specifying `IResult`:
   >>> regs = list(component.getProvidedAdapters(IResult, withViews=True))
   >>> regs.sort()
   >>> regs
-  [AdapterRegistration(<BaseGlobalComponents base>, 
+  [AdapterRegistration(<BaseGlobalComponents base>,
                        [IFoo, IBar], ISpecialResult, '', None, u''),
    AdapterRegistration(<BaseGlobalComponents base>,
                        [IFoo, IRequest], ISpecialResult, '', None, u''),
@@ -184,14 +184,14 @@ Let's see whether we will be able to get them:
   >>> regs = list(component.getFactories(IFooBar))
   >>> regs.sort()
   >>> regs
-  [UtilityRegistration(<BaseGlobalComponents base>, 
+  [UtilityRegistration(<BaseGlobalComponents base>,
       IFactory, 'MyFooBar',
       <Factory for <class 'zope.app.apidoc.doctest.MyFooBar'>>, u'')]
 
   >>> regs = list(component.getFactories(IFoo))
   >>> regs.sort()
   >>> regs
-  [UtilityRegistration(<BaseGlobalComponents base>, IFactory, 'MyFoo', 
+  [UtilityRegistration(<BaseGlobalComponents base>, IFactory, 'MyFoo',
                <Factory for <class 'zope.app.apidoc.doctest.MyFoo'>>, u''),
    UtilityRegistration(<BaseGlobalComponents base>, IFactory, 'MyFooBar',
             <Factory for <class 'zope.app.apidoc.doctest.MyFooBar'>>, u'')]
@@ -214,15 +214,15 @@ Now let's have a look what we have:
   >>> regs = list(component.getUtilities(IFooBar))
   >>> regs.sort()
   >>> regs #doctest:+ELLIPSIS
-  [UtilityRegistration(<BaseGlobalComponents base>, IFooBar, '', 
+  [UtilityRegistration(<BaseGlobalComponents base>, IFooBar, '',
                        <zope.app.apidoc.doctest.MyFooBar object at ...>, u'')]
 
   >>> regs = list(component.getUtilities(IFoo))
   >>> regs.sort()
   >>> regs #doctest:+ELLIPSIS
-  [UtilityRegistration(<BaseGlobalComponents base>, IFoo, '', 
+  [UtilityRegistration(<BaseGlobalComponents base>, IFoo, '',
                        <zope.app.apidoc.doctest.MyFoo object at ...>, u''),
-   UtilityRegistration(<BaseGlobalComponents base>, IFooBar, '', 
+   UtilityRegistration(<BaseGlobalComponents base>, IFooBar, '',
                        <zope.app.apidoc.doctest.MyFooBar object at ...>, u'')]
 
 
@@ -298,7 +298,7 @@ sometimes pass in `None`. In these cases we want to return `None`:
   >>> component.getInterfaceInfoDictionary(None) is None
   True
 
-It's also possible for this function to be passed a 
+It's also possible for this function to be passed a
 zope.interface.declarations.Implements instance.  For instance, this function
 is sometimes used to analyze the required elements of an adapter registration:
 if an adapter or subscriber is registered against a class, then the required
@@ -309,6 +309,49 @@ object references.  This may change.
   >>> from zope.interface import implementedBy
   >>> pprint(component.getInterfaceInfoDictionary(implementedBy(MyFoo)))
   {'module': 'zope.app.apidoc.doctest', 'name': 'MyFoo'}
+
+
+`getTypeInfoDictionary(type)`
+-----------------------------
+
+This function returns the info dictionary of a type.
+
+  >>> pprint(component.getTypeInfoDictionary(tuple))
+  {'module': '__builtin__',
+   'name': 'tuple',
+   'url': '__builtin__/tuple'}
+
+
+`getSpecificationInfoDictionary(spec)`
+--------------------------------------
+
+Thsi function returns an info dictionary for the given specification. A
+specification can either be an interface or class. If it is an interface, it
+simply returns the interface dictionary:
+
+  >>> pprint(component.getSpecificationInfoDictionary(IFoo))
+  {'isInterface': True,
+   'isType': False,
+   'module': 'zope.app.apidoc.doctest',
+   'name': 'IFoo'}
+
+In addition to the usual interface infos, there are two flags indicating
+whether the specification was an interface or type. In our case it is an
+interface.
+
+Let's now look at the behavior when passing a type:
+
+  >>> import zope.interface
+  >>> tupleSpec = zope.interface.implementedBy(tuple)
+
+  >>> pprint(component.getSpecificationInfoDictionary(tupleSpec))
+  {'isInterface': False,
+   'isType': True,
+   'module': '__builtin__',
+   'name': 'tuple',
+   'url': '__builtin__/tuple'}
+
+For the type, we simply reuse the type info dictionary function.
 
 
 `getAdapterInfoDictionary(reg)`
@@ -333,9 +376,16 @@ And now get the info dictionary:
    'factory': 'zope.app.apidoc.doctest.MyResult',
    'factory_url': 'zope/app/apidoc/doctest/MyResult',
    'name': u'FooToResult',
-   'provided': {'module': 'zope.app.apidoc.doctest', 'name': 'IResult'},
-   'required': [{'module': 'zope.app.apidoc.doctest', 'name': 'IFoo'},
-                {'module': 'zope.app.apidoc.doctest', 'name': 'IBar'}],
+   'provided': {'module': 'zope.app.apidoc.doctest',
+                'name': 'IResult'},
+   'required': [{'isInterface': True,
+                 'isType': False,
+                 'module': 'zope.app.apidoc.doctest',
+                 'name': 'IFoo'},
+                {'isInterface': True,
+                 'isType': False,
+                 'module': 'zope.app.apidoc.doctest',
+                 'name': 'IBar'}],
    'zcml': None}
 
 If the factory's path cannot be referenced, for example if a type has been
@@ -353,9 +403,16 @@ will be ``None``:
    'factory': 'zope.app.apidoc.doctest.MyResult2',
    'factory_url': None,
    'name': u'FooToResult',
-   'provided': {'module': 'zope.app.apidoc.doctest', 'name': 'IResult'},
-   'required': [{'module': 'zope.app.apidoc.doctest', 'name': 'IFoo'},
-                {'module': 'zope.app.apidoc.doctest', 'name': 'IBar'}],
+   'provided': {'module': 'zope.app.apidoc.doctest',
+                'name': 'IResult'},
+   'required': [{'isInterface': True,
+                 'isType': False,
+                 'module': 'zope.app.apidoc.doctest',
+                 'name': 'IFoo'},
+                {'isInterface': True,
+                 'isType': False,
+                 'module': 'zope.app.apidoc.doctest',
+                 'name': 'IBar'}],
    'zcml': None}
 
 This function can also handle subscription registrations, which are pretty
@@ -371,8 +428,14 @@ see how the function handles subscriptions:
    'factory_url': 'zope/app/apidoc/doctest/MyResult',
    'name': u'',
    'provided': None,
-   'required': [{'module': 'zope.app.apidoc.doctest', 'name': 'IFoo'},
-                {'module': 'zope.app.apidoc.doctest', 'name': 'IBar'}],
+   'required': [{'isInterface': True,
+                 'isType': False,
+                 'module': 'zope.app.apidoc.doctest',
+                 'name': 'IFoo'},
+                {'isInterface': True,
+                 'isType': False,
+                 'module': 'zope.app.apidoc.doctest',
+                 'name': 'IBar'}],
    'zcml': None}
 
 

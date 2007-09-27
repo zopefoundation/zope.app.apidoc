@@ -2,6 +2,10 @@
   ><span tal:replace="iface/module" />.<u tal:content="iface/name"
 /></metal:block>
 
+<metal:block define-macro="typename">
+  <span tal:replace="type/module" />.<span tal:replace="type/name" />
+</metal:block>
+
 <metal:block define-macro="zcml" i18n:domain="zope">
   <a href=""
       tal:attributes="href
@@ -38,13 +42,22 @@
 
   <div>
     <i i18n:translate="">requires:</i>
-    <tal:block repeat="iface adapter/required">
+    <tal:block repeat="spec adapter/required">
       <a href=""
-          tal:condition="iface"
-          tal:attributes="href
-            string:$rootURL/Interface/${iface/module}.${iface/name}/index.html">
-        <metal:block use-macro="context/@@interface_macros/ifacename"
-        /></a><tal:block condition="not:repeat/iface/end">, </tal:block>
+         tal:condition="spec/isInterface"
+         tal:define="iface spec"
+         tal:attributes="href
+            string:$rootURL/Interface/${iface/module}.${spec/name}/index.html">
+          <metal:block use-macro="context/@@interface_macros/ifacename"
+        /></a>
+      <a href=""
+         tal:condition="spec/isType"
+         tal:define="type spec"
+         tal:attributes="href
+            string:$rootURL/Code/${type/url}/index.html">
+          <metal:block use-macro="context/@@interface_macros/typename"
+        /></a>
+        <tal:block condition="not:repeat/spec/end">, </tal:block>
     </tal:block>
     <span tal:condition="not:adapter/required" i18n:translate="">
       No interface required.

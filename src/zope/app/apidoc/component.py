@@ -177,6 +177,33 @@ def getInterfaceInfoDictionary(iface):
     return {'module': getattr(iface, '__module__', _('<unknown>')),
             'name': getattr(iface, '__name__', _('<unknown>'))}
 
+def getInterfaceInfoDictionary(iface):
+    """Return a PT-friendly info dictionary for an interface."""
+    if isinstance(iface, zope.interface.declarations.Implements):
+        iface = iface.inherit
+    if iface is None:
+        return None
+    return {'module': getattr(iface, '__module__', _('<unknown>')),
+            'name': getattr(iface, '__name__', _('<unknown>'))}
+
+
+def getTypeInfoDictionary(type):
+    """Return a PT-friendly info dictionary for a type."""
+    path = getPythonPath(type)
+    return {'name': type.__name__,
+            'module': type.__module__,
+            'url': isReferencable(path) and path.replace('.', '/') or None}
+
+def getSpecificationInfoDictionary(spec):
+    """Return an info dictionary for one specification."""
+    info = {'isInterface': False, 'isType': False}
+    if zope.interface.interfaces.IInterface.providedBy(spec):
+        info.update(getInterfaceInfoDictionary(spec))
+        info['isInterface'] = True
+    else:
+        info.update(getTypeInfoDictionary(spec.inherit))
+        info['isType'] = True
+    return info
 
 def getAdapterInfoDictionary(reg):
     """Return a PT-friendly info dictionary for an adapter registration."""
@@ -196,7 +223,7 @@ def getAdapterInfoDictionary(reg):
 
     return {
         'provided': getInterfaceInfoDictionary(reg.provided),
-        'required': [getInterfaceInfoDictionary(iface)
+        'required': [getSpecificationInfoDictionary(iface)
                      for iface in reg.required
                      if iface is not None],
         'name': unicode(getattr(reg, 'name', u'')),
