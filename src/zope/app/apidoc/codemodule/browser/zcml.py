@@ -97,7 +97,7 @@ class DirectiveDetails(object):
             return
         try:
             isInterface = IInterface.providedBy(obj)
-        except AttributeError:
+        except (AttributeError, TypeError):
             # probably an object that does not like to play nice with the CA
             isInterface = False
 

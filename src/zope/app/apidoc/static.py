@@ -19,10 +19,12 @@ __docformat__ = "reStructuredText"
 
 import base64
 import os
+import os.path
 import sys
 import time
 import optparse
 import urllib2
+import urlparse
 import warnings
 import HTMLParser
 
@@ -80,7 +82,10 @@ def completeURL(url):
     filename = url.split('/')[-1]
     if filename.startswith('@@'):
         url = url.replace(filename, filename[2:])
-    return url
+    # Now normalize the URL.
+    fragments = list(urlparse.urlparse(url))
+    fragments[2] = os.path.normpath(fragments[2])
+    return urlparse.urlunparse(fragments)
 
 
 class Link(object):
@@ -357,6 +362,7 @@ class ApiDocDefaultFactory(mechanize._html.DefaultFactory):
             is_html_p=mechanize._html.make_is_html(
                 allow_xhtml=i_want_broken_xhtml_support),
             )
+
 
 class ApiDocLinksFactory(mechanize._html.LinksFactory):
     """Copy of mechanize link factory.
