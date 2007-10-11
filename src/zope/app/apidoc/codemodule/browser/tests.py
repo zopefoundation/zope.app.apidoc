@@ -30,10 +30,13 @@ from zope.app.renderer.rest import ReStructuredTextSourceFactory
 from zope.app.renderer.rest import IReStructuredTextSource
 from zope.app.renderer.rest import ReStructuredTextToHTMLRenderer
 from zope.app.testing import placelesssetup, setup, ztapi
+from zope.app.testing.functional import BrowserTestCase
+from zope.app.testing.functional import FunctionalDocFileSuite
 
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.codemodule.interfaces import IAPIDocRootModule
 from zope.app.apidoc.codemodule.codemodule import CodeModule
+from zope.app.apidoc.testing import APIDocLayer
 from zope.app.apidoc.zcmlmodule import ZCMLModule
 
 # Just for loading purposes
@@ -42,6 +45,7 @@ import zope.app.apidoc.codemodule.browser.class_
 import zope.app.apidoc.codemodule.browser.function
 import zope.app.apidoc.codemodule.browser.text
 import zope.app.apidoc.codemodule.browser.zcml
+
 
 def foo(cls, bar=1, *args):
     """This is the foo function."""
@@ -125,10 +129,90 @@ def tearDown(test):
     zope.app.appsetup.appsetup.__config_source = old_source_file
 
 
+class CodeModuleTests(BrowserTestCase):
+    """Just a couple of tests ensuring that the templates render."""
+
+    def testMenu(self):
+        response = self.publish('/++apidoc++/Code/menu.html',
+                                basic='mgr:mgrpw')
+        self.assertEqual(response.getStatus(), 200)
+        body = response.getBody()
+        self.assert_(body.find('Zope Source') > 0)
+        self.checkForBrokenLinks(body, '/++apidoc++/Code/menu.html',
+                                 basic='mgr:mgrpw')
+
+    def testMenuCodeFinder(self):
+        response = self.publish('/++apidoc++/Code/menu.html',
+                                basic='mgr:mgrpw',
+                                form={'path': 'Code', 'SUBMIT': 'Find'})
+        self.assertEqual(response.getStatus(), 200)
+        body = response.getBody()
+        self.assert_(
+            body.find('zope.app.apidoc.codemodule.codemodule.CodeModule') > 0)
+        self.checkForBrokenLinks(body, '/++apidoc++/Code/menu.html',
+                                 basic='mgr:mgrpw')
+
+    def testModuleDetailsView(self):
+        response = self.publish('/++apidoc++/Code/zope/app/apidoc/apidoc',
+                                basic='mgr:mgrpw')
+        self.assertEqual(response.getStatus(), 200)
+        body = response.getBody()
+        self.assert_(body.find('Zope 3 API Documentation') > 0)
+        self.checkForBrokenLinks(
+            body, '/++apidoc++/Code/zope/app/apidoc/apidoc', basic='mgr:mgrpw')
+
+    def testClassDetailsView(self):
+        response = self.publish(
+            '/++apidoc++/Code/zope/app/apidoc/apidoc/APIDocumentation',
+            basic='mgr:mgrpw')
+        self.assertEqual(response.getStatus(), 200)
+        body = response.getBody()
+        self.assert_(body.find('Represent the complete API Documentation.') > 0)
+        self.checkForBrokenLinks(
+            body, '/++apidoc++/Code/zope/app/apidoc/apidoc/APIDocumentation',
+            basic='mgr:mgrpw')
+
+    def testFunctionDetailsView(self):
+        response = self.publish(
+            '/++apidoc++/Code/zope/app/apidoc/apidoc/handleNamespace',
+            basic='mgr:mgrpw')
+        self.assertEqual(response.getStatus(), 200)
+        body = response.getBody()
+        self.assert_(body.find('handleNamespace(ob, name)') > 0)
+        self.checkForBrokenLinks(
+            body, '/++apidoc++/Code/zope/app/apidoc/apidoc/handleNamesapce',
+            basic='mgr:mgrpw')
+
+    def testTextFileDetailsView(self):
+        response = self.publish(
+            '/++apidoc++/Code/zope/app/apidoc/README.txt/index.html',
+            basic='mgr:mgrpw')
+        self.assertEqual(response.getStatus(), 200)
+        body = response.getBody()
+        self.checkForBrokenLinks(
+            body, '/++apidoc++/Code/zope/app/apidoc/README.txt/index.html',
+            basic='mgr:mgrpw')
+
+    def testZCMLFileDetailsView(self):
+        response = self.publish(
+            '/++apidoc++/Code/zope/app/apidoc/configure.zcml/index.html',
+            basic='mgr:mgrpw')
+        self.assertEqual(response.getStatus(), 200)
+        body = response.getBody()
+        self.checkForBrokenLinks(
+            body, '/++apidoc++/Code/zope/app/apidoc/configure.zcml/index.html',
+            basic='mgr:mgrpw')
+
+
 def test_suite():
     checker = renormalizing.RENormalizing([
         (re.compile(r" with base 10: 'text'"), r': text'),
         ])
+    CodeModuleTests.layer = APIDocLayer
+    introspector = FunctionalDocFileSuite(
+        "introspector.txt",
+        optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
+    introspector.layer = APIDocLayer
     return unittest.TestSuite((
         doctest.DocFileSuite(
             'README.txt',
@@ -140,6 +224,8 @@ def test_suite():
             setUp=setUp, tearDown=tearDown,
             globs={'pprint': doctestunit.pprint},
             optionflags=doctest.NORMALIZE_WHITESPACE),
+        unittest.makeSuite(CodeModuleTests),
+        introspector,
         ))
 
 if __name__ == '__main__':

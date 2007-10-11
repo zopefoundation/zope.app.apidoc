@@ -26,12 +26,15 @@ import zope.app.appsetup.appsetup
 from zope.app.tree.interfaces import IUniqueId
 from zope.app.tree.adapters import LocationUniqueId
 from zope.app.testing import placelesssetup, ztapi
+from zope.app.testing.functional import BrowserTestCase
 
+from zope.app.apidoc.testing import APIDocLayer
 from zope.app.apidoc.tests import Root
 from zope.app.apidoc.zcmlmodule import Namespace, Directive
 from zope.app.apidoc.zcmlmodule import ZCMLModule
 from zope.app.apidoc.tests import Root
 import zope.app.zcmlfiles
+
 
 def setUp(test):
     placelesssetup.setUp()
@@ -40,7 +43,8 @@ def setUp(test):
     ztapi.provideAdapter(None, IPhysicallyLocatable,
                          LocationPhysicallyLocatable)
 
-    config_file = os.path.join(os.path.dirname(zope.app.zcmlfiles.__file__), 'meta.zcml')
+    config_file = os.path.join(
+        os.path.dirname(zope.app.zcmlfiles.__file__), 'meta.zcml')
 
     # Fix up path for tests.
     global old_context
@@ -66,7 +70,32 @@ def getDirective():
     return Directive(ns, 'page', None, foo, None, ())
 
 
+class ZCMLModuleTests(BrowserTestCase):
+    """Just a couple of tests ensuring that the templates render."""
+
+    def testMenu(self):
+        response = self.publish(
+            '/++apidoc++/ZCML/menu.html',
+            basic='mgr:mgrpw')
+        self.assertEqual(response.getStatus(), 200)
+        body = response.getBody()
+        self.assert_(body.find('All Namespaces') > 0)
+        self.checkForBrokenLinks(body, '/++apidoc++/ZCML/menu.html',
+                                 basic='mgr:mgrpw')
+
+    def testDirectiveDetailsView(self):
+        response = self.publish('/++apidoc++/ZCML/ALL/configure/index.html',
+                                basic='mgr:mgrpw')
+        self.assertEqual(response.getStatus(), 200)
+        body = response.getBody()
+        self.assert_(body.find('<i>all namespaces</i>') > 0)
+        self.checkForBrokenLinks(body,
+                                 '/++apidoc++/ZCML/ALL/configure/index.html',
+                                 basic='mgr:mgrpw')
+
+
 def test_suite():
+    ZCMLModuleTests.layer = APIDocLayer
     return unittest.TestSuite((
         doctest.DocFileSuite('README.txt',
                              setUp=setUp, tearDown=tearDown,
@@ -76,6 +105,7 @@ def test_suite():
                              setUp=setUp, tearDown=tearDown,
                              globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE),
+        unittest.makeSuite(ZCMLModuleTests),
         ))
 
 if __name__ == '__main__':

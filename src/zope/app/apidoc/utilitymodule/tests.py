@@ -16,13 +16,16 @@
 $Id$
 """
 import unittest
+import zope.deprecation
 from zope.testing import doctest, doctestunit
 from zope.traversing.interfaces import IPhysicallyLocatable
 from zope.location.traversing import LocationPhysicallyLocatable
 
+from zope.app.apidoc.testing import APIDocLayer
 from zope.app.testing import placelesssetup, ztapi
+from zope.app.testing.functional import BrowserTestCase
 from zope.app.tree.interfaces import IUniqueId
-from zope.app.tree.adapters import LocationUniqueId 
+from zope.app.tree.adapters import LocationUniqueId
 
 def setUp(test):
     placelesssetup.setUp()
@@ -32,7 +35,47 @@ def setUp(test):
                          LocationPhysicallyLocatable)
 
 
+class UtilityModuleTests(BrowserTestCase):
+    """Just a couple of tests ensuring that the templates render."""
+
+    def testMenu(self):
+        response = self.publish(
+            '/++apidoc++/Utility/menu.html',
+            basic='mgr:mgrpw')
+        self.assertEqual(response.getStatus(), 200)
+        body = response.getBody()
+        self.assert_(body.find('IDocumentationModule') > 0)
+
+        # BBB 2006/02/18, to be removed after 12 months
+        # this avoids the deprecation warning for the deprecated
+        # zope.publisher.interfaces.ILayer interface which get traversed
+        # as a utility in this test
+        zope.deprecation.__show__.off()
+        self.checkForBrokenLinks(body, '/++apidoc++/Utility/menu.html',
+                                 basic='mgr:mgrpw')
+        zope.deprecation.__show__.on()
+
+    def testUtilityDetailsView(self):
+        response = self.publish(
+            '/++apidoc++/Utility/'
+            'zope.app.apidoc.interfaces.IDocumentationModule/'
+            'Utility/index.html',
+            basic='mgr:mgrpw')
+        self.assertEqual(response.getStatus(), 200)
+        body = response.getBody()
+        self.assert_(
+            body.find(
+               'zope.app.apidoc.utilitymodule.utilitymodule.UtilityModule') > 0)
+        self.checkForBrokenLinks(
+            body,
+            '/++apidoc++/Utility/'
+            'zope.app.apidoc.interfaces.IDocumentationModule/'
+            'Utility/index.html',
+            basic='mgr:mgrpw')
+
+
 def test_suite():
+    UtilityModuleTests.layer = APIDocLayer
     return unittest.TestSuite((
         doctest.DocFileSuite('README.txt',
                              setUp=setUp,
@@ -45,6 +88,7 @@ def test_suite():
                              tearDown=placelesssetup.tearDown,
                              globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE),
+        unittest.makeSuite(UtilityModuleTests),
         ))
 
 if __name__ == '__main__':
