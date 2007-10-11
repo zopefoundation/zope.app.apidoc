@@ -61,7 +61,7 @@ are the names of the classes:
 There are two API methods specific to the class registry:
 
 `getClassesThatImplement(iface)`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------------
 
 This method returns all classes that implement the specified interface:
 
@@ -82,7 +82,7 @@ This method returns all classes that implement the specified interface:
   []
 
 `getSubclassesOf(klass)`
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------
 
 This method will find all classes that inherit the specified class:
 
