@@ -1,0 +1,17 @@
+=======
+CHANGES
+=======
+
+3.4.0 (2007-10-10)
+------------------
+
+- Improved package meta-data.
+
+- Fixed the code to at least gracefully ignore unzipped eggs. Eventually we
+  want to handle eggs well.
+
+
+3.4.0a1 (2007-??-??)
+--------------------
+
+- Initial release independent of the main Zope tree.

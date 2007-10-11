@@ -24,7 +24,7 @@ class ZCMLModuleTests(BrowserTestCase):
 
     def testMenu(self):
         response = self.publish(
-            '/++apidoc++/ZCML/menu.html', 
+            '/++apidoc++/ZCML/menu.html',
             basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()

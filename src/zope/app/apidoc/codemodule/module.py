@@ -34,9 +34,6 @@ from zope.app.apidoc.codemodule.function import Function
 from zope.app.apidoc.codemodule.text import TextFile
 from zope.app.apidoc.codemodule.zcml import ZCMLFile
 
-# XXX This should be imported somewhere?
-import zope.app.zcmlfiles
-
 # Ignore these files, since they are not necessary or cannot be imported
 # correctly.
 IGNORE_FILES = ('tests', 'tests.py', 'ftests', 'ftests.py', 'CVS', 'gadfly',
@@ -65,6 +62,11 @@ class Module(ReadContainerBase):
                 self._module.__file__.endswith('__init__.pyo')):
             self._package = True
             for dir in self._module.__path__:
+                # TODO: If we are dealing with eggs, we will not have a
+                # directory right away. For now we just ignore zipped eggs;
+                # later we want to unzip it.
+                if not os.path.isdir(dir):
+                    continue
                 for file in os.listdir(dir):
                     if file in IGNORE_FILES or file in self._children:
                         continue
