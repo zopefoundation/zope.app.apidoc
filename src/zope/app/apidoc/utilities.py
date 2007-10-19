@@ -31,10 +31,12 @@ from zope.security.interfaces import INameBasedChecker
 from zope.security.proxy import isinstance, removeSecurityProxy
 
 import zope.app
-from zope.app.i18n import ZopeMessageFactory as _
+import zope.i18nmessageid
 from zope.app.container.interfaces import IReadContainer
 
 from zope.app.apidoc.classregistry import safe_import, IGNORE_MODULES
+
+_ = zope.i18nmessageid.MessageFactory("zope")
 
 _remove_html_overhead = re.compile(
     r'(?sm)^<html.*<body.*?>\n(.*)</body>\n</html>\n')
