@@ -13,7 +13,7 @@
 ##############################################################################
 """Utility Documentation Module
 
-$Id: __init__.py 29199 2005-02-17 22:38:55Z srichter $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 
@@ -24,7 +24,7 @@ from zope.component.registry import UtilityRegistration
 from zope.interface import implements
 from zope.location.interfaces import ILocation
 
-from zope.app.i18n import ZopeMessageFactory as _
+from zope.i18nmessageid import ZopeMessageFactory as _
 from zope.app.component import queryNextSiteManager
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase, getPythonPath

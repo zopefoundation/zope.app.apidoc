@@ -17,21 +17,21 @@ $Id$
 """
 __docformat__ = 'restructuredtext'
 import types
+import zope.interface.declarations
 
 from zope.component import getGlobalSiteManager
 from zope.component.interfaces import IFactory
 from zope.component.registry import (
     AdapterRegistration,
-    SubscriptionRegistration,
     HandlerRegistration,
+    SubscriptionRegistration,
+    UtilityRegistration
     )
-from zope.component.registry import UtilityRegistration
+from zope.i18nmessageid import ZopeMessageFactory as _
 from zope.interface import Interface
 from zope.interface.interface import InterfaceClass
-import zope.interface.declarations
 from zope.publisher.interfaces import IRequest
 
-from zope.app.i18n import ZopeMessageFactory as _
 from zope.app.apidoc.classregistry import classRegistry
 from zope.app.apidoc.utilities import relativizePath, truncateSysPath
 from zope.app.apidoc.utilities import getPythonPath, isReferencable, renderText

@@ -17,14 +17,13 @@ $Id$
 """
 __docformat__ = 'restructuredtext'
 from zope.component import getMultiAdapter
+from zope.i18nmessageid import ZopeMessageFactory as _
 from zope.interface.interface import InterfaceClass
 from zope.proxy import removeAllProxies
 from zope.publisher.browser import BrowserView
 from zope.security.proxy import isinstance, removeSecurityProxy
 from zope.traversing.api import getParent
 from zope.traversing.browser import absoluteURL
-
-from zope.app.i18n import ZopeMessageFactory as _
 
 from zope.app.apidoc.apidoc import APIDocumentation
 from zope.app.apidoc.utilities import getPythonPath, renderText, columnize

@@ -20,7 +20,7 @@ from zope.component import getGlobalSiteManager
 from zope.component.registry import AdapterRegistration
 from zope.interface import Interface
 
-from zope.app.i18n import ZopeMessageFactory as _
+from zope.i18nmessageid import ZopeMessageFactory as _
 from zope.app.apidoc.utilities import getPythonPath, relativizePath
 from zope.app.apidoc.utilities import getPermissionIds
 from zope.app.apidoc.component import getParserInfoInfoDictionary

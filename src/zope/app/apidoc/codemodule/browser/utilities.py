@@ -17,10 +17,10 @@ $Id: utilities.py 70020 2006-09-07 09:08:16Z flox $
 """
 __docformat__ = 'restructuredtext'
 
+from zope.i18nmessageid import ZopeMessageFactory as _
 from zope.traversing.api import getName, getParent
 from zope.traversing.browser import absoluteURL
 from zope.app.apidoc.interfaces import IDocumentationModule
-from zope.app.i18n import ZopeMessageFactory as _
 
 
 class CodeBreadCrumbs(object):

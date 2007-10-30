@@ -21,6 +21,7 @@ __docformat__ = 'restructuredtext'
 import inspect
 
 from zope.component import getUtility
+from zope.i18nmessageid import ZopeMessageFactory as _
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.publisher.interfaces.xmlrpc import IXMLRPCRequest
 from zope.publisher.interfaces.http import IHTTPRequest
@@ -30,8 +31,6 @@ from zope.security.proxy import isinstance, removeSecurityProxy
 from zope.proxy import removeAllProxies
 from zope.traversing.api import getName, getParent, traverse
 from zope.traversing.browser import absoluteURL
-
-from zope.app.i18n import ZopeMessageFactory as _
 
 from zope.app.apidoc.utilities import getPythonPath, renderText
 from zope.app.apidoc.apidoc import APIDocumentation

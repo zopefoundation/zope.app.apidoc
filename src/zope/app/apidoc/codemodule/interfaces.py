@@ -18,9 +18,9 @@ $Id$
 __docformat__ = "reStructuredText"
 import zope.interface
 import zope.schema
+from zope.i18nmessageid import ZopeMessageFactory as _
 
 from zope.app.container.interfaces import IReadContainer
-from zope.app.i18n import ZopeMessageFactory as _
 
 
 class IAPIDocRootModule(zope.interface.Interface):

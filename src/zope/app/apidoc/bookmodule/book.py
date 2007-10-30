@@ -18,16 +18,16 @@ site manager. Therefore, currently there are no unregsitered interfaces
 listed in the documentation. This might be good, since unregistered interfaces
 are usually private and not of interest to a general developer.
 
-$Id: __init__.py 29143 2005-02-14 22:43:16Z srichter $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 import os.path
 
+from zope.i18nmessageid import ZopeMessageFactory as _
 from zope.interface import implements
 
 import zope.app.apidoc.bookmodule
 from zope.app.apidoc.interfaces import IDocumentationModule
-from zope.app.i18n import ZopeMessageFactory as _
 from zope.app.onlinehelp.onlinehelp import OnlineHelp
 
 

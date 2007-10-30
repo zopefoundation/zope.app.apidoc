@@ -21,7 +21,7 @@ __docformat__ = "reStructuredText"
 import zope.interface
 import zope.schema
 
-from zope.app.i18n import ZopeMessageFactory as _
+from zope.i18nmessageid import ZopeMessageFactory as _
 
 
 class IInterfaceDetailsPreferences(zope.interface.Interface):

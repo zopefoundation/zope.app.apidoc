@@ -13,17 +13,17 @@
 ##############################################################################
 """Interface Types Documentation Module
 
-$Id: __init__.py 29143 2005-02-14 22:43:16Z srichter $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 
 from zope.interface import implements
 from zope.component import queryUtility, getUtilitiesFor
+from zope.i18nmessageid import ZopeMessageFactory as _
 from zope.interface.interfaces import IInterface
 from zope.location import LocationProxy
 from zope.location.interfaces import ILocation
 
-from zope.app.i18n import ZopeMessageFactory as _
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase
 
@@ -43,13 +43,13 @@ class TypeInterface(ReadContainerBase):
       >>> typeiface = TypeInterface(IFoo, None, None)
       >>> typeiface.interface
       <InterfaceClass zope.app.apidoc.typemodule.type.IFoo>
-      
+
       >>> typeiface.get('Foo').__class__ == Foo
       True
 
       >>> typeiface.items() #doctest:+ELLIPSIS
       [(u'Foo', <zope.app.apidoc.typemodule.type.Foo instance at ...>)]
-      
+
     """
 
     implements(ILocation)
@@ -80,7 +80,7 @@ class TypeModule(ReadContainerBase):
 
       >>> class IFoo(IInterface):
       ...    pass
-      
+
       >>> from zope.app.testing import ztapi
       >>> ztapi.provideUtility(IInterface, IFoo, 'IFoo')
 
