@@ -8,6 +8,8 @@ CHANGES
 - Fix https://bugs.launchpad.net/zope3/+bug/161737: Misleading text in
   the interface viewer.
 
+- Fix https://bugs.launchpad.net/zope3/+bug/161190: The zope3-dev
+  mailinglist has been retired, point to zope-dev.
 
 3.4.2 (2007-10-30)
 ------------------
