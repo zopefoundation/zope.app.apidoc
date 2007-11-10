@@ -35,7 +35,7 @@ feel better and does not have all the O-wrap clutter:
   <p>
     While broken links occur occassionally, they are considered bugs. Please
     report any broken link to
-    <a href="mailto:zope3-dev@zope.org">zope3-dev@zope.org</a>.
+    <a href="mailto:zope-dev@zope.org">zope-dev@zope.org</a>.
   </p>
   ...
 
