@@ -2,7 +2,7 @@
 CHANGES
 =======
 
-3.4.3 (unreleased)
+3.4.3 (2007-11-10)
 ------------------
 
 - Fix https://bugs.launchpad.net/zope3/+bug/161737: Misleading text in
