@@ -69,7 +69,7 @@
     <div class="indent"
          tal:condition="python: specific_adapters or generic_adapters">
 
-      <h3 i18n:translate="">Adapters where this interface is required:</h3>
+      <h3 i18n:translate="">Adapters for objects providing this interface:</h3>
 
       <div tal:define="
   elementId string:adapters.required.specific;

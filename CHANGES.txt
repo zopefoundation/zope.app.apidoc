@@ -2,6 +2,16 @@
 CHANGES
 =======
 
+3.4.3 (2007-11-10)
+------------------
+
+- Fix https://bugs.launchpad.net/zope3/+bug/161737: Misleading text in
+  the interface viewer.
+
+- Fix https://bugs.launchpad.net/zope3/+bug/161190: The zope3-dev
+  mailinglist has been retired, point to zope-dev.
+
+
 3.4.2 (2007-10-30)
 ------------------
 
@@ -23,7 +33,7 @@ CHANGES
   want to handle eggs well.
 
 
-3.4.0a1 (2007-??-??)
+3.4.0a1 (2007-04-22)
 --------------------
 
 - Initial release independent of the main Zope tree.
