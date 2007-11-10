@@ -5,7 +5,9 @@ CHANGES
 3.4.3 (unreleased)
 ------------------
 
-- ...
+- Fix https://bugs.launchpad.net/zope3/+bug/161737: Misleading text in
+  the interface viewer.
+
 
 3.4.2 (2007-10-30)
 ------------------
