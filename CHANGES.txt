@@ -33,7 +33,7 @@ CHANGES
   want to handle eggs well.
 
 
-3.4.0a1 (2007-??-??)
+3.4.0a1 (2007-04-22)
 --------------------
 
 - Initial release independent of the main Zope tree.
