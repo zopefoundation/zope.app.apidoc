@@ -659,7 +659,7 @@ simply ignore it:
   'zope.source.rest'
 
 
-`dendentString(text)`
+`dedentString(text)`
 ---------------------
 
 Before doc strings can be processed using STX or ReST they must be dendented,
@@ -757,7 +757,7 @@ You specify the format as follows:
   u'<p>Hello!</p>\n'
 
 Note that the format string must be a valid source factory id; if the factory
-id is not a match, 'zope.source.stx' is used. Thus, specifying the module is
+id is not given, 'zope.source.stx' is used. Thus, specifying the module is
 often safer (if available):
 
   >>> utilities.renderText('Hello!\n', module=apidoc)
