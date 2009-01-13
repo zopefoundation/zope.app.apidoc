@@ -407,8 +407,8 @@ This little helper function returns the path to the type class:
   >>> introspector.getTypeLink(type(None)) is None
   True
 
-`++annootations++` Namespace
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`++annotations++` Namespace
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This namespace is used to traverse into the annotations of an object.
 
