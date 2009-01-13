@@ -186,15 +186,15 @@ Let's see whether we will be able to get them:
   >>> regs
   [UtilityRegistration(<BaseGlobalComponents base>,
       IFactory, 'MyFooBar',
-      <Factory for <class 'zope.app.apidoc.doctest.MyFooBar'>>, u'')]
+      <Factory for <class 'zope.app.apidoc.doctest.MyFooBar'>>, None, u'')]
 
   >>> regs = list(component.getFactories(IFoo))
   >>> regs.sort()
   >>> regs
   [UtilityRegistration(<BaseGlobalComponents base>, IFactory, 'MyFoo',
-               <Factory for <class 'zope.app.apidoc.doctest.MyFoo'>>, u''),
+               <Factory for <class 'zope.app.apidoc.doctest.MyFoo'>>, None, u''),
    UtilityRegistration(<BaseGlobalComponents base>, IFactory, 'MyFooBar',
-            <Factory for <class 'zope.app.apidoc.doctest.MyFooBar'>>, u'')]
+            <Factory for <class 'zope.app.apidoc.doctest.MyFooBar'>>, None, u'')]
 
 
 `getUtilities(iface)`
@@ -215,15 +215,15 @@ Now let's have a look what we have:
   >>> regs.sort()
   >>> regs #doctest:+ELLIPSIS
   [UtilityRegistration(<BaseGlobalComponents base>, IFooBar, '',
-                       <zope.app.apidoc.doctest.MyFooBar object at ...>, u'')]
+                       <zope.app.apidoc.doctest.MyFooBar object at ...>, None, u'')]
 
   >>> regs = list(component.getUtilities(IFoo))
   >>> regs.sort()
   >>> regs #doctest:+ELLIPSIS
   [UtilityRegistration(<BaseGlobalComponents base>, IFoo, '',
-                       <zope.app.apidoc.doctest.MyFoo object at ...>, u''),
+                       <zope.app.apidoc.doctest.MyFoo object at ...>, None, u''),
    UtilityRegistration(<BaseGlobalComponents base>, IFooBar, '',
-                       <zope.app.apidoc.doctest.MyFooBar object at ...>, u'')]
+                       <zope.app.apidoc.doctest.MyFooBar object at ...>, None, u'')]
 
 
 `getRealFactory(factory)`
