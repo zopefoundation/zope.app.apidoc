@@ -2,6 +2,18 @@
 CHANGES
 =======
 
+3.5.0 (unreleased)
+------------------
+
+- Adapted transaction book chapters for new transaction egg. The
+  README.txt was removed and savepoint.txt was moved. Also add chapter
+  about dooming transactions (doom.txt).
+
+- Changed mailing list address to zope-dev at zope.org, because zope3-dev
+  is retired now.
+
+- Cleaned up dependencies.
+
 3.4.3 (2007-11-10)
 ------------------
 

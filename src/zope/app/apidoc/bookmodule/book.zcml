@@ -228,13 +228,18 @@
     <bookchapter
         id="transaction"
         title="Transactions"
-        doc_path="README.txt"
         />
     <bookchapter
         id="savepoints"
         title="Savepoints"
         parent="transaction"
-        doc_path="savepoint.txt"
+        doc_path="tests/savepoint.txt"
+        />
+    <bookchapter
+        id="doom"
+        title="Dooming transactions"
+        parent="transaction"
+        doc_path="tests/doom.txt"
         />
   </configure>
 

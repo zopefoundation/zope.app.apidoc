@@ -23,9 +23,9 @@ def read(*rnames):
 
 setup(
     name = 'zope.app.apidoc',
-    version = '3.5.0',
+    version = '3.5.0dev',
     author = 'Zope Corporation and Contributors',
-    author_email = 'zope3-dev@zope.org',
+    author_email = 'zope-dev@zope.org',
     description = 'API Documentation and Component Inspection for Zope 3',
     long_description=(
         read('README.txt')
@@ -76,7 +76,6 @@ setup(
         'zope.app.preference',
         'zope.app.publisher',
         'zope.app.renderer',
-        'zope.app.skins',
         'zope.app.testing',
         'zope.app.tree',
         'zope.cachedescriptors',
