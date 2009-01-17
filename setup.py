@@ -59,7 +59,7 @@ setup(
         'Operating System :: OS Independent',
         'Topic :: Internet :: WWW/HTTP',
         'Framework :: Zope3'],
-    url = 'http://cheeseshop.python.org/pypi/zope.app.apidoc',
+    url = 'http://pypi.python.org/pypi/zope.app.apidoc',
     packages = find_packages('src'),
     include_package_data = True,
     package_dir = {'':'src'},
