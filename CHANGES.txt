@@ -2,7 +2,12 @@
 CHANGES
 =======
 
-3.5.0 (unreleased)
+3.5.1 (unreleased)
+------------------
+
+- ...
+
+3.5.0 (2009-01-17)
 ------------------
 
 - Adapted transaction book chapters for new transaction egg. The
