@@ -24,7 +24,7 @@
 
   <class class=".apidoc.APIDocumentation">
     <require
-        interface="zope.app.container.interfaces.IReadContainer"
+        interface="zope.container.interfaces.IReadContainer"
         permission="zope.ManageApplication"
         />
   </class>

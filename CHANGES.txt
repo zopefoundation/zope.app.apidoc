@@ -5,7 +5,7 @@ CHANGES
 3.5.1 (unreleased)
 ------------------
 
-- ...
+- Use zope.container instead of zope.app.container.
 
 3.5.0 (2009-01-17)
 ------------------

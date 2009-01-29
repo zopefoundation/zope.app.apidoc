@@ -91,11 +91,11 @@ class CodeModule(Module):
         return True
 
     def get(self, key, default=None):
-        """See zope.app.container.interfaces.IReadContainer."""
+        """See zope.container.interfaces.IReadContainer."""
         self.setup()
         return super(CodeModule, self).get(key, default)
 
     def items(self):
-        """See zope.app.container.interfaces.IReadContainer."""
+        """See zope.container.interfaces.IReadContainer."""
         self.setup()
         return super(CodeModule, self).items()

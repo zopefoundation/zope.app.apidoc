@@ -67,7 +67,7 @@ class UtilityInterface(ReadContainerBase):
         self.interface = interface
 
     def get(self, key, default=None):
-        """See zope.app.container.interfaces.IReadContainer"""
+        """See zope.container.interfaces.IReadContainer"""
         sm = zope.component.getGlobalSiteManager()
         key = decodeName(key)
         if key == NONAME:
@@ -78,7 +78,7 @@ class UtilityInterface(ReadContainerBase):
         return utils and utils[0] or default
 
     def items(self):
-        """See zope.app.container.interfaces.IReadContainer"""
+        """See zope.container.interfaces.IReadContainer"""
         sm = zope.component.getGlobalSiteManager()
         items = [(encodeName(reg.name or NONAME), Utility(self, reg))
                  for reg in sm.registeredUtilities()

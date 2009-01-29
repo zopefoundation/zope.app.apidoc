@@ -20,7 +20,7 @@ import zope.interface
 import zope.schema
 from zope.i18nmessageid import ZopeMessageFactory as _
 
-from zope.app.container.interfaces import IReadContainer
+from zope.container.interfaces import IReadContainer
 
 
 class IAPIDocRootModule(zope.interface.Interface):

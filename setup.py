@@ -80,6 +80,7 @@ setup(
         'zope.app.tree',
         'zope.cachedescriptors',
         'zope.component',
+        'zope.container',
         'zope.configuration',
         'zope.deprecation',
         'zope.i18n',

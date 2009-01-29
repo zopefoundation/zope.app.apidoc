@@ -32,7 +32,7 @@ from zope.security.proxy import isinstance, removeSecurityProxy
 
 import zope.app
 import zope.i18nmessageid
-from zope.app.container.interfaces import IReadContainer
+from zope.container.interfaces import IReadContainer
 
 from zope.app.apidoc.classregistry import safe_import, IGNORE_MODULES
 

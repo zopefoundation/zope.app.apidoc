@@ -40,14 +40,14 @@ class APIDocumentation(ReadContainerBase):
         self.__name__ = name
 
     def get(self, key, default=None):
-        """See zope.app.container.interfaces.IReadContainer"""
+        """See zope.container.interfaces.IReadContainer"""
         utility = zope.component.queryUtility(IDocumentationModule, key, default)
         if utility != default:
             locate(utility, self, key)
         return utility
 
     def items(self):
-        """See zope.app.container.interfaces.IReadContainer"""
+        """See zope.container.interfaces.IReadContainer"""
         items = list(zope.component.getUtilitiesFor(IDocumentationModule))
         items.sort()
         utils = []

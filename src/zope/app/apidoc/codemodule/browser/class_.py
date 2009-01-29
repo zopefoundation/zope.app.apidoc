@@ -13,7 +13,7 @@
 ##############################################################################
 """Class Views
 
-$Id: browser.py 29143 2005-02-14 22:43:16Z srichter $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 
@@ -66,7 +66,7 @@ class ClassDetails(object):
         codeModule = getUtility(IDocumentationModule, "Code")
         for cls in classes:
             # We need to removeAllProxies because the security checkers for
-            # zope.app.container.contained.ContainedProxy and
+            # zope.container.contained.ContainedProxy and
             # zope.app.i18n.messagecatalog.MessageCatalog prevent us from
             # accessing __name__ and __module__.
             unwrapped_cls = removeAllProxies(cls)

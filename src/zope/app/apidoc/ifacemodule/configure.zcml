@@ -4,7 +4,7 @@
 
   <class class=".ifacemodule.InterfaceModule">
     <allow interface=".ifacemodule.IInterfaceModule" />
-    <allow interface="zope.app.container.interfaces.IReadContainer" />
+    <allow interface="zope.container.interfaces.IReadContainer" />
   </class>
 
   <!-- Register the module with the API Documentation System -->

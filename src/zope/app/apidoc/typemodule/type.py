@@ -60,13 +60,13 @@ class TypeInterface(ReadContainerBase):
         self.interface = interface
 
     def get(self, key, default=None):
-        """See zope.app.container.interfaces.IReadContainer"""
+        """See zope.container.interfaces.IReadContainer"""
         return LocationProxy(
             queryUtility(self.interface, key, default=default),
             self, key)
 
     def items(self):
-        """See zope.app.container.interfaces.IReadContainer"""
+        """See zope.container.interfaces.IReadContainer"""
         results = [(name, LocationProxy(iface, self, name))
                    for name, iface in getUtilitiesFor(self.interface)]
         results.sort(lambda x, y: cmp(x[1].getName(), y[1].getName()))

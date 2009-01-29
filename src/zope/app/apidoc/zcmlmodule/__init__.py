@@ -76,7 +76,7 @@ class Namespace(ReadContainerBase):
         return name
 
     def get(self, key, default=None):
-        """See zope.app.container.interfaces.IReadContainer"""
+        """See zope.container.interfaces.IReadContainer"""
         ns = self.getFullName()
         if not namespaces[ns].has_key(key):
             return default
@@ -86,7 +86,7 @@ class Namespace(ReadContainerBase):
         return directive
 
     def items(self):
-        """See zope.app.container.interfaces.IReadContainer"""
+        """See zope.container.interfaces.IReadContainer"""
         list = []
         for key in namespaces[self.getFullName()].keys():
             list.append((key, self.get(key)))
@@ -147,7 +147,7 @@ class ZCMLModule(ReadContainerBase):
 
 
     def get(self, key, default=None):
-        """See zope.app.container.interfaces.IReadContainer
+        """See zope.container.interfaces.IReadContainer
 
         Get the namespace by name; long and abbreviated names work.
         """
@@ -166,7 +166,7 @@ class ZCMLModule(ReadContainerBase):
 
 
     def items(self):
-        """See zope.app.container.interfaces.IReadContainer"""
+        """See zope.container.interfaces.IReadContainer"""
         if namespaces is None or subdirs is None:
             self._makeDocStructure()
         list = []

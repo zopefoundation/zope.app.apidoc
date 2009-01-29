@@ -135,7 +135,7 @@ class Module(ReadContainerBase):
         return self._package
 
     def get(self, key, default=None):
-        """See zope.app.container.interfaces.IReadContainer."""
+        """See zope.container.interfaces.IReadContainer."""
         obj = self._children.get(key, default)
         if obj is not default:
             return obj
@@ -159,7 +159,7 @@ class Module(ReadContainerBase):
         return obj
 
     def items(self):
-        """See zope.app.container.interfaces.IReadContainer."""
+        """See zope.container.interfaces.IReadContainer."""
         # Only publicize public objects, even though we do keep track of
         # private ones
         return [(name, value)

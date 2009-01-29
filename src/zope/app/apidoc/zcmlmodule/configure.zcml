@@ -4,7 +4,7 @@
 
   <class class=".ZCMLModule">
     <allow interface="zope.app.apidoc.interfaces.IDocumentationModule" />
-    <allow interface="zope.app.container.interfaces.IReadContainer" />
+    <allow interface="zope.container.interfaces.IReadContainer" />
   </class>
 
   <class class=".Namespace">
