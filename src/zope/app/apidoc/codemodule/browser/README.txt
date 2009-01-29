@@ -151,8 +151,8 @@ Get all implemented interfaces (as paths) of this class.
     'url': 'zope.location.interfaces.ILocation'},
    {'path': 'zope.app.apidoc.codemodule.interfaces.IModuleDocumentation',
     'url': 'zope.app.apidoc.codemodule.interfaces.IModuleDocumentation'},
-   {'path': 'zope.app.container.interfaces.IReadContainer',
-    'url': 'zope.app.container.interfaces.IReadContainer'}]
+   {'path': 'zope.container.interfaces.IReadContainer',
+    'url': 'zope.container.interfaces.IReadContainer'}]
 
 `getAttributes()`
 ~~~~~~~~~~~~~~~~~
@@ -590,7 +590,7 @@ Now let's have a look:
     'key_string': "u'list'",
     'value': "['one', 'two']",
     'value_type': 'ContainedProxy',
-    'value_type_link': 'zope/app/container/contained/ContainedProxy'}]
+    'value_type_link': 'zope/container/contained/ContainedProxy'}]
 
 The final two methods doeal with the introspection of the annotations. If an
 object is annotatable,
