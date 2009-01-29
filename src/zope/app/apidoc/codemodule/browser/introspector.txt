@@ -51,8 +51,8 @@ interfaces:
     >>> browser.getLink('zope.location.interfaces.IPossibleSite').url
     '.../Interface/zope.location.interfaces.IPossibleSite/index.html'
 
-    >>> browser.getLink('zope.app.container.interfaces.IContained').url
-    '...doc++/Interface/zope.app.container.interfaces.IContained/index.html'
+    >>> browser.getLink('zope.container.interfaces.IContained').url
+    '...doc++/Interface/zope.container.interfaces.IContained/index.html'
 
 The base classes of the ``Folder`` are as follows:
 
@@ -62,8 +62,8 @@ The base classes of the ``Folder`` are as follows:
     >>> browser.getLink('zope.app.component.site.SiteManagerContainer').url
     '...apidoc++/Code/zope/app/component/site/SiteManagerContainer/index.html'
 
-    >>> browser.getLink('zope.app.container.contained.Contained').url
-    '.../++apidoc++/Code/zope/app/container/contained/Contained/index.html'
+    >>> browser.getLink('zope.container.contained.Contained').url
+    '.../++apidoc++/Code/zope/container/contained/Contained/index.html'
 
 Now that we described the component and class level of the object, the view
 dives into some details. First it lists the attributes/properties of the
@@ -159,7 +159,7 @@ Now the introspector will show the file and allow you to click on it:
             <code>&lt;zope.app.file.file.File object at ...&gt;</code>
           </a>
           (<span>type:</span>
-           <a href="...zope/app/container/contained/ContainedProxy/index.html">
+           <a href="...zope/container/contained/ContainedProxy/index.html">
             <code>ContainedProxy</code></a>)
         </li>
       </ul>

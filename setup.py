@@ -71,7 +71,7 @@ setup(
         'zope.app.appsetup',
         'zope.app.basicskin',
         'zope.app.component',
-        'zope.app.container',
+        'zope.app.container>=3.7dev',
         'zope.app.onlinehelp',
         'zope.app.preference',
         'zope.app.publisher',
@@ -91,7 +91,7 @@ setup(
         'zope.security',
         'zope.testbrowser',
         'zope.testing',
-        'zope.traversing',
+        'zope.traversing>=3.5a5dev',
         ],
       extras_require = dict(
           test=['zope.app.testing',

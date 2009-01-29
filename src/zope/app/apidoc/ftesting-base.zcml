@@ -19,6 +19,7 @@
   <include package="zope.app.tree"/>
   <include package="zope.app.authentication" />
   <include package="zope.app.securitypolicy" />
+  <include package="zope.location" />
 
   <securityPolicy
     component="zope.securitypolicy.zopepolicy.ZopeSecurityPolicy" />

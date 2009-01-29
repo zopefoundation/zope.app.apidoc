@@ -27,6 +27,7 @@ from zope.component.interface import searchInterfaceUtilities
 from zope.i18nmessageid import ZopeMessageFactory as _
 from zope.interface import implements
 from zope.location import LocationProxy
+from zope.location.interfaces import ILocation
 
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase
@@ -45,7 +46,10 @@ class InterfaceModule(ReadContainerBase):
     items of the container are all the interfaces listed in the global
     site manager."""
 
-    implements(IInterfaceModule)
+    implements(ILocation, IInterfaceModule)
+
+    __name__ = None
+    __parent__ = None
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
     title = _('Interfaces')
