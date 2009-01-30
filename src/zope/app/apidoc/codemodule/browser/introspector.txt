@@ -16,8 +16,8 @@ introspector is simply available as follows:
 
 The page starts with telling you the class/type
 
-    >>> browser.getLink('zope.app.folder.folder.Folder').url
-    'http://localhost/++apidoc++/Code/zope/app/folder/folder/Folder/index.html'
+    >>> browser.getLink('zope.site.folder.Folder').url
+    'http://localhost/++apidoc++/Code/zope/site/folder/Folder/index.html'
 
 and the name of the object:
 
@@ -34,16 +34,16 @@ see those:
     >>> browser.getLink('zope.location.interfaces.ISite').url
     '.../++apidoc++/Interface/zope.location.interfaces.ISite/index.html'
 
-    >>> browser.getLink('zope.app.folder.interfaces.IRootFolder').url
-    '...apidoc++/Interface/zope.app.folder.interfaces.IRootFolder/index.html'
+    >>> browser.getLink('zope.site.interfaces.IRootFolder').url
+    '...apidoc++/Interface/zope.site.interfaces.IRootFolder/index.html'
 
 The next two section, the implemented interfaces and the base classes, are not
 instance specific pieces of information, but they are still nice to see at
 this point. For example, a ``Folder`` instance provides the following
 interfaces:
 
-    >>> browser.getLink('zope.app.folder.interfaces.IFolder').url
-    '.../++apidoc++/Interface/zope.app.folder.interfaces.IFolder/index.html'
+    >>> browser.getLink('zope.site.interfaces.IFolder').url
+    '.../++apidoc++/Interface/zope.site.interfaces.IFolder/index.html'
 
     >>> browser.getLink('persistent.interfaces.IPersistent').url
     '.../++apidoc++/Interface/persistent.interfaces.IPersistent/index.html'
@@ -56,14 +56,8 @@ interfaces:
 
 The base classes of the ``Folder`` are as follows:
 
-    >>> browser.getLink('persistent.Persistent').url
-    'http://localhost/++apidoc++/Code/persistent/Persistent/index.html'
-
-    >>> browser.getLink('zope.app.component.site.SiteManagerContainer').url
-    '...apidoc++/Code/zope/app/component/site/SiteManagerContainer/index.html'
-
-    >>> browser.getLink('zope.container.contained.Contained').url
-    '.../++apidoc++/Code/zope/container/contained/Contained/index.html'
+    >>> browser.getLink('zope.site.site.SiteManagerContainer').url
+    '...apidoc++/Code/zope/site/site/SiteManagerContainer/index.html'
 
 Now that we described the component and class level of the object, the view
 dives into some details. First it lists the attributes/properties of the

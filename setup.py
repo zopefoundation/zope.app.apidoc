@@ -67,6 +67,7 @@ setup(
     tests_require = ['zope.testing'],
     install_requires = [
         'setuptools',
+        'ZODB3>=3.8.0',
         'zope.annotation',
         'zope.app.appsetup',
         'zope.app.basicskin',
