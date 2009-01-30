@@ -473,7 +473,7 @@ to collect the data. First we need to create an object though; let's use a
 root folder:
 
   >>> rootFolder
-  <zope.app.folder.folder.Folder object at ...>
+  <zope.site.folder.Folder object at ...>
 
 Now we instantiate the view
 
@@ -505,8 +505,7 @@ Next you can get a list of all directly provided interfaces:
   >>> ifaces = inspect.getDirectlyProvidedInterfaces()
   >>> ifaces.sort()
   >>> ifaces
-  ['zope.app.folder.interfaces.IRootFolder',
-   'zope.location.interfaces.ISite']
+  ['zope.location.interfaces.ISite', 'zope.site.interfaces.IRootFolder']
 
 The ``getProvidedInterfaces()`` and ``getBases()`` method simply forwards its
 request to the class documentation view. Thus the next method is

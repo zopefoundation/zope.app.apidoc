@@ -7,6 +7,9 @@ CHANGES
 
 - Use zope.container instead of zope.app.container.
 
+- Use zope.site instead of zope.app.component and zope.app.folder (in
+  at least a few places).
+
 3.5.0 (2009-01-17)
 ------------------
 

@@ -75,7 +75,7 @@
         />
   </configure>
 
-  <configure package="zope.app.component">
+  <configure package="zope.site">
     <bookchapter
         id="local"
         title="Local Component Architecture"

@@ -84,6 +84,7 @@ setup(
         'zope.configuration',
         'zope.deprecation',
         'zope.i18n',
+        'zope.site',
         'zope.interface',
         'zope.location',
         'zope.proxy',
