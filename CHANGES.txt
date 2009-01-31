@@ -2,13 +2,18 @@
 CHANGES
 =======
 
-3.6.0 (unreleased)
+3.6.0 (2009-01-31)
 ------------------
 
 - Use zope.container instead of zope.app.container.
 
 - Use zope.site instead of zope.app.component and zope.app.folder (in
   at least a few places).
+
+- `savepoint.txt` moved from ZODB's test directory a level up -- we
+  follow.
+
+- Make compatible with new zope.traversing and zope.location.
 
 3.5.0 (2009-01-17)
 ------------------
