@@ -13,15 +13,17 @@
 ##############################################################################
 """Function representation for code browser
 
-$Id: __init__.py 29143 2005-02-14 22:43:16Z srichter $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 from zope.interface import implements
 from zope.location.interfaces import ILocation
 
+from zope.app.apidoc.codemodule.interfaces import ITextFile
+
 class TextFile(object):
     """This class represents a function declared in the module."""
-    implements(ILocation)
+    implements(ILocation, ITextFile)
 
     def __init__(self, path, name, package):
         self.path = path

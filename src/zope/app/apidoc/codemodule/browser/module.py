@@ -18,29 +18,52 @@ $Id$
 __docformat__ = 'restructuredtext'
 from zope.component import getMultiAdapter
 from zope.i18nmessageid import ZopeMessageFactory as _
-from zope.interface.interface import InterfaceClass
+from zope.interface.interfaces import IInterface
 from zope.proxy import removeAllProxies
 from zope.publisher.browser import BrowserView
-from zope.security.proxy import isinstance, removeSecurityProxy
+from zope.security.proxy import isinstance
 from zope.traversing.api import getParent
 from zope.traversing.browser import absoluteURL
 
 from zope.app.apidoc.apidoc import APIDocumentation
-from zope.app.apidoc.utilities import getPythonPath, renderText, columnize
-from zope.app.apidoc.codemodule.module import Module
-from zope.app.apidoc.codemodule.class_ import Class
-from zope.app.apidoc.codemodule.function import Function
-from zope.app.apidoc.codemodule.text import TextFile
-from zope.app.apidoc.codemodule.zcml import ZCMLFile
+from zope.app.apidoc.utilities import getPythonPath, renderText
+from zope.app.apidoc.codemodule.interfaces import IModuleDocumentation
+from zope.app.apidoc.codemodule.interfaces import IClassDocumentation
+from zope.app.apidoc.codemodule.interfaces import IFunctionDocumentation
+from zope.app.apidoc.codemodule.interfaces import IZCMLFile
+from zope.app.apidoc.codemodule.interfaces import ITextFile
 
 def findAPIDocumentationRoot(obj, request):
     if isinstance(obj, APIDocumentation):
         return absoluteURL(obj, request)
     return findAPIDocumentationRoot(getParent(obj), request)
 
+def formatDocString(text, module=None, summary=False):
+    """Format a doc string for display.
+
+    module is either a Python module (from sys.modules) or the dotted name
+    of a module.
+
+    If summary is true, the result is plain text and includes only
+    the summary part of the doc string.
+    If summary is false, the result is HTML and includes the whole doc string.
+    """
+    if text is None:
+        return None
+    lines = text.strip().split('\n')
+    # Get rid of possible CVS id.
+    lines = [line for line in lines if not line.startswith('$Id')]
+    if summary:
+        for i in range(len(lines)):
+            if not lines[i].strip():
+                del lines[i:]
+                break
+        return '\n'.join(lines)
+    return renderText('\n'.join(lines), module)
+
 
 class ModuleDetails(BrowserView):
-    """Represents the details of the module."""
+    """Represents the details of a module or package."""
 
     def __init__(self, context, request):
         super(ModuleDetails, self).__init__(context, request)
@@ -50,34 +73,43 @@ class ModuleDetails(BrowserView):
             # Probably context without location; it's a test
             self.apidocRoot = ''
 
-    def getDoc(self):
-        """Get the doc string of the module STX formatted."""
-        text = self.context.getDocString()
-        if text is None:
-            return None
-        lines = text.strip().split('\n')
-        # Get rid of possible CVS id.
-        lines = [line for line in lines if not line.startswith('$Id')]
-        return renderText('\n'.join(lines), self.context.getPath())
+        items = list(self.context.items())
+        items.sort()
+        self.text_files = []
+        self.zcml_files = []
+        self.modules = []
+        self.interfaces = []
+        self.classes = []
+        self.functions = []
+        for name, obj in items:
+            entry = {'name': name, 'url': absoluteURL(obj, self.request)}
+            if IFunctionDocumentation.providedBy(obj):
+                entry['doc'] = formatDocString(
+                    obj.getDocString(), self.context.getPath())
+                entry['signature'] = obj.getSignature()
+                self.functions.append(entry)
+            elif IModuleDocumentation.providedBy(obj):
+                entry['doc'] = formatDocString(
+                    obj.getDocString(), obj.getPath(), True)
+                self.modules.append(entry)
+            elif IInterface.providedBy(obj):
+                entry['path'] = getPythonPath(removeAllProxies(obj))
+                entry['doc'] = formatDocString(
+                    obj.__doc__, obj.__module__, True)
+                self.interfaces.append(entry)
+            elif IClassDocumentation.providedBy(obj):
+                entry['doc'] = formatDocString(
+                    obj.getDocString(), self.context.getPath(), True)
+                self.classes.append(entry)
+            elif IZCMLFile.providedBy(obj):
+                self.zcml_files.append(entry)
+            elif ITextFile.providedBy(obj):
+                self.text_files.append(entry)
 
-    def getEntries(self, columns=True):
-        """Return info objects for all modules and classes in this module."""
-        entries = [{'name': name,
-                    # only for interfaces; should be done differently somewhen
-                    'path': getPythonPath(removeAllProxies(obj)),
-                    'url': absoluteURL(obj, self.request),
-                    'ismodule': isinstance(obj, Module),
-                    'isinterface': isinstance(
-                         removeAllProxies(obj), InterfaceClass),
-                    'isclass': isinstance(obj, Class),
-                    'isfunction': isinstance(obj, Function),
-                    'istextfile': isinstance(obj, TextFile),
-                    'iszcmlfile': isinstance(obj, ZCMLFile)}
-                   for name, obj in self.context.items()]
-        entries.sort(lambda x, y: cmp(x['name'], y['name']))
-        if columns:
-            entries = columnize(entries)
-        return entries
+    def getDoc(self):
+        """Get the doc string of the module, formatted as HTML."""
+        return formatDocString(
+            self.context.getDocString(), self.context.getPath())
 
     def getPath(self):
         """Return the path to the module"""
@@ -86,3 +118,37 @@ class ModuleDetails(BrowserView):
     def isPackage(self):
         """Return true if this module is a package"""
         return self.context.isPackage()
+
+    def getModuleInterfaces(self):
+        """Return entries about interfaces the module provides"""
+        entries = []
+        for iface in self.context.getDeclaration():
+            entries.append({
+                'name': iface.__name__,
+                'path': getPythonPath(removeAllProxies(iface))
+            })
+        return entries
+
+    def getModules(self):
+        """Return entries about contained modules and subpackages"""
+        return self.modules
+
+    def getInterfaces(self):
+        """Return entries about interfaces declared by the module"""
+        return self.interfaces
+
+    def getClasses(self):
+        """Return entries about classes declared by the module"""
+        return self.classes
+
+    def getTextFiles(self):
+        """Return entries about text files contained in the package"""
+        return self.text_files
+
+    def getZCMLFiles(self):
+        """Return entries about ZCML files contained in the package"""
+        return self.zcml_files
+
+    def getFunctions(self):
+        """Return entries about functions declared by the package"""
+        return self.functions

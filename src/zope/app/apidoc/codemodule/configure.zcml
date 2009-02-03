@@ -24,7 +24,7 @@
   </class>
 
   <class class=".text.TextFile">
-    <allow attributes="getContent path" />
+    <allow interface=".interfaces.ITextFile" />
   </class>
 
   <class class=".codemodule.CodeModule">

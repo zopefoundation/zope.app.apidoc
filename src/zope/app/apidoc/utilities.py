@@ -317,10 +317,11 @@ def renderText(text, module=None, format=None, dedent=True):
     if module is not None:
         if isinstance(module, (str, unicode)):
             module = sys.modules.get(module, None)
-        format = getDocFormat(module)
+        if format is None:
+            format = getDocFormat(module)
 
     if format is None:
-        format = 'zope.source.stx'
+        format = 'zope.source.rest'
 
     assert format in _format_dict.values()
 

@@ -2,7 +2,7 @@
 Code Browser Presentation Components
 ====================================
 
-This document describes the API of the views complementing the varius code
+This document describes the API of the views complementing the various code
 browser documentation components. The views can be found in
 
   >>> from zope.app.apidoc.codemodule import browser
@@ -23,11 +23,9 @@ The module details are easily created, since we can just use the traversal
 process to get a module documentation object:
 
   >>> from zope.traversing.api import traverse
-  >>> details = browser.module.ModuleDetails(None, None)
-  >>> details.context = traverse(cm,
-  ...     'zope/app/apidoc/codemodule/codemodule')
+  >>> _context = traverse(cm, 'zope/app/apidoc/codemodule/codemodule')
   >>> from zope.publisher.browser import TestRequest
-  >>> details.request = TestRequest()
+  >>> details = browser.module.ModuleDetails(_context, TestRequest())
 
 `getDoc()`
 ~~~~~~~~~~
@@ -39,21 +37,30 @@ Get the doc string of the module formatted in STX or ReST.
   <p>This module is able to take a dotted name of any class and display
   documentation for it.</p>
 
-`getEntries(columns=True)`
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Module data
+~~~~~~~~~~~
 
-Return info objects for all modules and classes in this module.
+Return info objects for all classes in this module.
 
-  >>> pprint(details.getEntries(False))
-  [{'isclass': True,
-    'isfunction': False,
-    'isinterface': False,
-    'ismodule': False,
-    'istextfile': False,
-    'iszcmlfile': False,
+  >>> pprint(details.getClasses())
+  [{'doc': 'Represent the code browser documentation root',
     'name': 'CodeModule',
-    'path': 'zope.app.apidoc.codemodule.class_.CodeModule',
     'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/codemodule/CodeModule'}]
+
+This module doesn't contain anything else.
+
+  >>> pprint(details.getInterfaces())
+  []
+  >>> pprint(details.getModules())
+  []
+  >>> pprint(details.getModuleInterfaces())
+  []
+  >>> pprint(details.getTextFiles())
+  []
+  >>> pprint(details.getZCMLFiles())
+  []
+  >>> pprint(details.getFunctions())
+  []
 
 `getBreadCrumbs()`
 ~~~~~~~~~~~~~~~~~~

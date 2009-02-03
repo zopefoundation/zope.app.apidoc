@@ -48,6 +48,13 @@ class IModuleDocumentation(IReadContainer):
     def isPackage():
         """Return true if this module is a Python package."""
 
+    def getDeclaration():
+        """Return the interfaces provided by the module.
+
+        The returned value provides zope.interface.interfaces.IDeclaration.
+        To get the list of interfaces, iterate over the returned value.
+        The list will be empty if the module does not provide any interfaces.
+        """
 
 class IClassDocumentation(zope.interface.Interface):
     """Representation of a class or type for documentation."""
@@ -200,3 +207,15 @@ class IZCMLFile(zope.interface.Interface):
         title=_("XML Root Element"),
         description=_("XML element representing the configuration root."),
         required=True)
+
+
+class ITextFile(zope.interface.Interface):
+    """Text file object"""
+
+    path = zope.schema.BytesLine(
+        title=_('Path'),
+        description=_('Path to the text file'),
+        required=True)
+
+    def getContent():
+        """Return the content of the text file, in unicode"""

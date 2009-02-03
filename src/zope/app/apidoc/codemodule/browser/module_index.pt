@@ -34,8 +34,98 @@
     Module Documentation
   </div>
 
+  <div tal:define="ifaces view/getModuleInterfaces" tal:condition="ifaces">
+  <p>Module Interfaces:
+    <b tal:repeat="iface ifaces">
+    <a href=""
+       tal:attributes="
+           href string:${view/apidocRoot}/Interface/${iface/path}/index.html"
+       tal:content="iface/name" /><span tal:condition="not:repeat/iface/end">,</span>
+    </b>
+  </p>
+  </div>
 
-  <table width="100%"><tr valign="top">
+  <div tal:define="files view/getTextFiles" tal:condition="files">
+  <p>Text Files:
+    <i tal:repeat="file files">
+    <a href=""
+         tal:attributes="href string:${file/url}/index.html"
+         tal:content="file/name"/><span tal:condition="not:repeat/file/end">,</span>
+    </i>
+  </p>
+  </div>
+
+  <div tal:define="files view/getZCMLFiles" tal:condition="files">
+  <p>ZCML Files:
+    <i tal:repeat="file files">
+    <a href=""
+         tal:attributes="href string:${file/url}/index.html"
+         tal:content="file/name"/><span tal:condition="not:repeat/file/end">,</span>
+    </i>
+  </p>
+  </div>
+
+  <div tal:define="entries view/getModules" tal:condition="entries">
+  <h2 class="details-section">Modules and Subpackages</h2>
+  <table width="100%">
+  <tr valign="top" tal:repeat="entry entries">
+    <td width="20%">
+      <a href=""
+         tal:attributes="href string:${entry/url}/index.html"
+         tal:content="entry/name"/>
+    </td>
+    <td width="80%" tal:content="entry/doc">
+    </td>
+  </tr>
+  </table>
+  </div>
+
+  <div tal:define="ifaces view/getInterfaces" tal:condition="ifaces">
+  <h2 class="details-section">Interfaces</h2>
+  <table width="100%">
+  <tr valign="top" tal:repeat="iface ifaces">
+    <td width="20%">
+      <a href=""
+        tal:attributes="
+           href string:${view/apidocRoot}/Interface/${iface/path}/index.html"
+        tal:content="iface/name" />
+    </td>
+    <td width="80%" tal:content="iface/doc">
+    </td>
+  </tr>
+  </table>
+  </div>
+
+  <div tal:define="classes view/getClasses" tal:condition="classes">
+  <h2 class="details-section">Classes</h2>
+  <table width="100%">
+  <tr valign="top" tal:repeat="entry classes">
+    <td width="20%">
+      <a href=""
+         tal:attributes="href string:${entry/url}/index.html"
+         tal:content="entry/name"/>
+    </td>
+    <td width="80%" tal:content="entry/doc">
+    </td>
+  </tr>
+  </table>
+  </div>
+
+  <div tal:define="functions view/getFunctions" tal:condition="functions">
+  <h2 class="details-section">Functions</h2>
+  <ul>
+    <li tal:repeat="function functions">
+      <b><code
+          tal:content="string:${function/name}${function/signature}" />
+      </b><br>
+      <div class="inline documentation" tal:content="structure function/doc">
+        function desc
+      </div>
+    </li>
+  </ul>
+  </div>
+
+  <!--table width="100%"><tr valign="top">
 
   <td tal:repeat="column view/getEntries"><ul>
     <li tal:repeat="entry column">
@@ -67,7 +157,7 @@
     </li>
   </ul></td>
 
-  </tr></table>
+  </tr></table-->
 
 </body>
 </html>

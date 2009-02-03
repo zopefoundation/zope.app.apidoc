@@ -12,6 +12,8 @@ CHANGES
   version of the transaction package puts savepoint.txt in the `tests`
   subpackage.
 
+- Expanded the presentation of module documentation.
+
 3.6.0 (2009-01-31)
 ------------------
 

@@ -99,7 +99,7 @@ class Module(ReadContainerBase):
 
         # List the classes and functions in module, if any are available.
         zope.deprecation.__show__.off()
-        module_decl = providedBy(self._module)
+        module_decl = self.getDeclaration()
         ifaces = list(module_decl)
         if ifaces:
             # The module has an interface declaration.  Yay!
@@ -145,20 +145,24 @@ class Module(ReadContainerBase):
 
 
     def getDocString(self):
-        """See IModule."""
+        """See IModuleDocumentation."""
         return self._module.__doc__
 
     def getFileName(self):
-        """See IModule."""
+        """See IModuleDocumentation."""
         return self._module.__file__
 
     def getPath(self):
-        """See IModule."""
+        """See IModuleDocumentation."""
         return self._module.__name__
 
     def isPackage(self):
         """See IModuleDocumentation."""
         return self._package
+
+    def getDeclaration(self):
+        """See IModuleDocumentation."""
+        return providedBy(self._module)
 
     def get(self, key, default=None):
         """See zope.container.interfaces.IReadContainer."""
