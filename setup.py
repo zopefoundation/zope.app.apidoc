@@ -86,6 +86,7 @@ setup(
         'zope.deprecation',
         'zope.i18n',
         'zope.site',
+        'zope.hookable',
         'zope.interface',
         'zope.location',
         'zope.proxy',

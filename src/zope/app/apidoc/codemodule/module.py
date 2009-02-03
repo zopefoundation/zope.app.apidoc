@@ -25,6 +25,7 @@ from zope.interface import providedBy
 from zope.interface.interface import InterfaceClass
 from zope.location.interfaces import ILocation
 from zope.location import LocationProxy
+from zope.hookable import hookable
 
 from zope.app.apidoc.classregistry import safe_import
 from zope.app.apidoc.utilities import ReadContainerBase
@@ -126,6 +127,9 @@ class Module(ReadContainerBase):
             attr = getattr(self._module, name, None)
             if attr is None:
                 continue
+
+	    if isinstance(attr, hookable):
+		attr = attr.implementation
 
             if isinstance(attr, (types.ClassType, types.TypeType)):
                 self._children[name] = Class(self, name, attr)
