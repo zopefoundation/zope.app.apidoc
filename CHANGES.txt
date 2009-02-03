@@ -5,7 +5,12 @@ CHANGES
 3.6.1 (unreleased)
 ------------------
 
-- ...
+- When a module provides an interface or has an __all__ attribute,
+  use one of those for the module documentation.  Fixes LP #323375.
+
+- Undid broken link to `savepoint.txt` caused in 3.6.0.  The latest
+  version of the transaction package puts savepoint.txt in the `tests`
+  subpackage.
 
 3.6.0 (2009-01-31)
 ------------------

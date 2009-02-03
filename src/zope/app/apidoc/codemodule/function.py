@@ -13,7 +13,7 @@
 ##############################################################################
 """Function representation for code browser 
 
-$Id: __init__.py 29143 2005-02-14 22:43:16Z srichter $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 
@@ -27,10 +27,14 @@ class Function(object):
     """This class represents a function declared in the module."""
     implements(ILocation, IFunctionDocumentation)
 
-    def __init__(self, module, name, func):
+    def __init__(self, module, name, func, doc=None):
         self.__parent__ = module
         self.__name__ = name
         self.__func = func
+        if doc is None:
+            self.__doc__ = func.__doc__
+        else:
+            self.__doc__ = doc
 
     def getPath(self):
         """See IFunctionDocumentation."""
@@ -38,7 +42,7 @@ class Function(object):
 
     def getDocString(self):
         """See IFunctionDocumentation."""
-        return self.__func.__doc__
+        return self.__doc__
 
     def getSignature(self):
         """See IFunctionDocumentation."""

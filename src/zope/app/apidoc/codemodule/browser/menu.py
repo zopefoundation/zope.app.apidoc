@@ -13,7 +13,7 @@
 ##############################################################################
 """Code Module Menu
 
-$Id: browser.py 29143 2005-02-14 22:43:16Z srichter $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 from zope.component import getUtility
@@ -69,9 +69,7 @@ class Menu(object):
           [{'path': 'zope.app.apidoc.codemodule.browser.Foo',
             'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Foo/'},
            {'path': 'zope.app.apidoc.codemodule.browser.Foo2',
-            'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Foo2/'},
-           {'path': 'zope.testing.doctest.UnusedFootnoteWarning',
-            'url': 'http://127.0.0.1/zope/testing/doctest/UnusedFootnoteWarning/'}]
+            'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Foo2/'}]
 
           >>> menu.request = TestRequest(form={'path': 'o2'})
           >>> info = menu.findClasses()

@@ -21,6 +21,7 @@ import types
 
 import zope
 from zope.interface import implements
+from zope.interface import providedBy
 from zope.interface.interface import InterfaceClass
 from zope.location.interfaces import ILocation
 from zope.location import LocationProxy
@@ -74,6 +75,7 @@ class Module(ReadContainerBase):
 
                     if (os.path.isdir(path) and
                         '__init__.py' in os.listdir(path)):
+                        # subpackage
                         fullname = self._module.__name__ + '.' + file
                         module = safe_import(fullname)
                         if module is not None:
@@ -81,6 +83,7 @@ class Module(ReadContainerBase):
 
                     elif os.path.isfile(path) and file.endswith('.py') and \
                              not file.startswith('__init__'):
+                        # module
                         name = file[:-3]
                         fullname = self._module.__name__ + '.' + name
                         module = safe_import(fullname)
@@ -94,26 +97,49 @@ class Module(ReadContainerBase):
                     elif os.path.isfile(path) and file.endswith('.txt'):
                         self._children[file] = TextFile(path, file, self)
 
-        # Setup classes in module, if any are available.
+        # List the classes and functions in module, if any are available.
         zope.deprecation.__show__.off()
-        for name in self._module.__dict__.keys():
-            attr = getattr(self._module, name)
-            # We do not want to register duplicates or instances
-            if hasattr(attr, '__module__') and \
-                   attr.__module__ == self._module.__name__:
+        module_decl = providedBy(self._module)
+        ifaces = list(module_decl)
+        if ifaces:
+            # The module has an interface declaration.  Yay!
+            names = set()
+            for iface in ifaces:
+                names.update(iface.names())
+        else:
+            names = getattr(self._module, '__all__', None)
+            if names is None:
+                # The module doesn't declare its interface.  Boo!
+                # Guess what names to document, avoiding aliases and names
+                # imported from other modules.
+                names = []
+                for name in self._module.__dict__.keys():
+                    attr = getattr(self._module, name, None)
+                    attr_module = getattr(attr, '__module__', None)
+                    if attr_module != self._module.__name__:
+                        continue
+                    if getattr(attr, '__name__', None) != name:
+                        continue
+                    names.append(name)
 
-                if not hasattr(attr, '__name__') or \
-                       attr.__name__ != name:
-                    continue
+        for name in names:
+            attr = getattr(self._module, name, None)
+            if attr is None:
+                continue
 
-                if isinstance(attr, (types.ClassType, types.TypeType)):
-                    self._children[name] = Class(self, name, attr)
+            if isinstance(attr, (types.ClassType, types.TypeType)):
+                self._children[name] = Class(self, name, attr)
 
-                if isinstance(attr, InterfaceClass):
-                    self._children[name] = LocationProxy(attr, self, name)
+            elif isinstance(attr, InterfaceClass):
+                self._children[name] = LocationProxy(attr, self, name)
 
-                elif type(attr) is types.FunctionType:
-                    self._children[name] = Function(self, name, attr)
+            elif isinstance(attr, types.FunctionType):
+                doc = attr.__doc__
+                if not doc:
+                    f = module_decl.get(name)
+                    if f is not None:
+                        doc = f.__doc__
+                self._children[name] = Function(self, name, attr, doc=doc)
 
         zope.deprecation.__show__.on()
 
