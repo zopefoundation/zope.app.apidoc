@@ -149,3 +149,13 @@ class ClassDetails(object):
         return renderText(self.context.getDocString() or '',
                           getParent(self.context).getPath())
 
+    def getConstructor(self):
+        """Get info about the constructor, or None if there isn't one."""
+        attr = self.context.getConstructor()
+        if attr is None:
+            return None
+        attr = removeSecurityProxy(attr)
+        return {
+            'signature': getFunctionSignature(attr),
+            'doc': renderText(attr.__doc__ or '', inspect.getmodule(attr)),
+            }

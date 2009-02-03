@@ -161,6 +161,15 @@ Get all implemented interfaces (as paths) of this class.
    {'path': 'zope.container.interfaces.IReadContainer',
     'url': 'zope.container.interfaces.IReadContainer'}]
 
+`getConstructor()`
+~~~~~~~~~~~~~~~~~~
+
+Get info about the class' __init__ method, which is its constructor.
+
+  >>> pprint(details.getConstructor())
+  {'doc': u'<p>Initialize object.</p>\n',
+   'signature': '()'}
+
 `getAttributes()`
 ~~~~~~~~~~~~~~~~~
 

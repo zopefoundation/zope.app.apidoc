@@ -145,6 +145,8 @@ and methods of this class::
   ('get', <unbound method APIDocumentation.get>,
    <InterfaceClass zope.interface.common.mapping.IReadMapping>)
 
+  >>> klass.getConstructor()
+  <unbound method APIDocumentation.__init__>
 
 Let's have a closer look at the `getAttributes()` method. First we create an
 interface called `IBlah` that is implemented by the class `Blah`:

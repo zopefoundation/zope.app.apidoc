@@ -13,7 +13,7 @@
 ##############################################################################
 """Class representation for code browser
 
-$Id: __init__.py 29143 2005-02-14 22:43:16Z srichter $
+$Id$
 """
 
 __docformat__ = 'restructuredtext'
@@ -94,3 +94,10 @@ class Class(object):
     def getSecurityChecker(self):
         """See IClassDocumentation."""
         return getCheckerForInstancesOf(self.__klass)
+
+    def getConstructor(self):
+        """See IClassDocumentation."""
+        init = getattr(self.__klass, '__init__', None)
+        if not ismethod(init):
+            return None
+        return init

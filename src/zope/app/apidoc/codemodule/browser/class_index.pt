@@ -63,6 +63,23 @@
     </div>
 
 
+  <h2 class="details-section" i18n:translate="">Constructor</h2>
+
+  <div class="indent" tal:define="init view/getConstructor">
+    <div tal:condition="init">
+      <b><code
+          tal:content="string:__init__${init/signature}" />
+      </b><br>
+      <div class="inline documentation" tal:content="structure init/doc">
+        method desc
+      </div>
+    </div>
+    <p tal:condition="not: init">
+      <em i18n:translate="">This class uses the default constructor.</em>
+    </p>
+  </div>
+
+
   <h2 class="details-section" i18n:translate="">Attributes/Properties</h2>
 
   <div class="indent"

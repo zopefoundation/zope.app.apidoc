@@ -115,6 +115,9 @@ class IClassDocumentation(zope.interface.Interface):
         particular class attribute/method.
         """
 
+    def getConstructor():
+        """Return the __init__ method, or None if there isn't one."""
+
 
 class IFunctionDocumentation(zope.interface.Interface):
     """Representation of a function for documentation."""
