@@ -13,7 +13,7 @@
 ##############################################################################
 """Browser Views for Book
 
-$Id: browser.py 28451 2004-11-13 23:21:47Z shane $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 from metaconfigure import EMPTYPATH

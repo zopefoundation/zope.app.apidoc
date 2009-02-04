@@ -13,7 +13,7 @@
 ##############################################################################
 """``apidoc`` ZCML namespace directive interfaces
 
-$Id: metadirectives.py 26613 2004-07-18 21:50:40Z srichter $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 import zope.interface

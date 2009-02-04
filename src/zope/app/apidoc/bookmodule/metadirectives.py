@@ -13,7 +13,7 @@
 ##############################################################################
 """Schema for the ``apidoc:bookchapter`` directive
 
-$Id: metadirectives.py 28450 2004-11-13 21:05:19Z shane $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 

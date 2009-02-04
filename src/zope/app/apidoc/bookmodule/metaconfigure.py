@@ -16,7 +16,7 @@
 These handlers process the `registerTopic()` directive of
 the "help" ZCML namespace.
 
-$Id: metaconfigure.py 26955 2004-08-09 04:06:35Z pruggera $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 import os.path

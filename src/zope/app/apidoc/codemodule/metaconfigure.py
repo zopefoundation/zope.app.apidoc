@@ -13,7 +13,7 @@
 ##############################################################################
 """This module handles the 'apidoc' namespace directives.
 
-$Id: metaconfigure.py 26889 2004-08-04 04:00:36Z pruggera $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 from zope.interface import implements

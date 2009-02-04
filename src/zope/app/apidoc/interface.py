@@ -13,7 +13,7 @@
 ##############################################################################
 """Interface Inspection Utilities
 
-$Id: browser.py 29199 2005-02-17 22:38:55Z srichter $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 
