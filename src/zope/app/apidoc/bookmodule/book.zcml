@@ -131,11 +131,11 @@
         parent="security/untrusted"
         />
   </configure>
-  <configure package="zope.app.security">
+  <configure package="zope.principalregistry">
     <bookchapter
         id="globalprincipals"
         title="Global Principals"
-        doc_path="globalprincipals.txt"
+        doc_path="README.txt"
         parent="security"
         />
   </configure>
