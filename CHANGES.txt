@@ -5,7 +5,10 @@ CHANGES
 3.6.2 (unreleased)
 ------------------
 
-- ...
+- Adapt principal registry book chapter to a new place, as it was moved
+  from zope.app.security to zope.principalregistry.
+
+- Remove zcml slugs and old zpkg-related files.
 
 3.6.1 (2009-02-04)
 ------------------
