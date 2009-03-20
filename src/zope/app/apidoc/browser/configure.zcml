@@ -95,6 +95,11 @@
 
   </pages>
 
+  <defaultView
+     name="index.html"
+     for="zope.app.apidoc.apidoc.APIDocumentation"
+     layer=".skin.apidoc" />
+
   <!-- Static apidoc -->
 
   <pages

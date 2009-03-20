@@ -10,5 +10,10 @@
       template="disabled.pt"
       />
 
+  <defaultView
+     name="index.html"
+     for="..disabled.APIDocStub"
+     />
+
 </configure>
 

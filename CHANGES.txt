@@ -5,7 +5,7 @@ CHANGES
 3.6.3 (unreleased)
 ------------------
 
-- ...
+- Explicitly defined default views.
 
 3.6.2 (2009-03-17)
 ------------------
