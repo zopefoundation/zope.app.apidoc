@@ -124,6 +124,11 @@ class Module(ReadContainerBase):
                     names.append(name)
 
         for name in names:
+            # If there is something the same name beneath, then module should
+            # have priority.
+            if name in self._children:
+                continue
+
             attr = getattr(self._module, name, None)
             if attr is None:
                 continue
