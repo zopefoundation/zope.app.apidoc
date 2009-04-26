@@ -89,7 +89,7 @@ class mappingItemsNamespace(object):
         return obj
 
 
-# Small hack to simulate a traversla root.
+# Small hack to simulate a traversal root.
 class TraversalRoot(object):
     zope.interface.implements(IContainmentRoot)
 
