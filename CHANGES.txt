@@ -7,6 +7,8 @@ CHANGES
 
 - Explicitly defined default views.
 
+- Replace relative url links with absolute ones.
+
 3.6.2 (2009-03-17)
 ------------------
 
