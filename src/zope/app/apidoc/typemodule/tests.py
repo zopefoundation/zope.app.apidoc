@@ -13,17 +13,36 @@
 ##############################################################################
 """Tests for the Book Documentation Module
 
-$Id: tests.py 29143 2005-02-14 22:43:16Z srichter $
+$Id$
 """
 import unittest
 from zope.testing.doctestunit import DocTestSuite
+from zope.app.testing.functional import BrowserTestCase
 from zope.app.testing import placelesssetup
+from zope.app.apidoc.testing import APIDocLayer
+
+
+class TypeModuleTests(BrowserTestCase):
+    """Just a couple of tests ensuring that the templates render."""
+
+    def testMenu(self):
+        response = self.publish(
+            '/++apidoc++/Type/@@menu.html',
+            basic='mgr:mgrpw')
+        self.assertEqual(response.getStatus(), 200)
+        body = response.getBody()
+        self.assert_(body.find('IBrowserSkinType') > 0)
+        self.checkForBrokenLinks(body, '/++apidoc++/Type/@@menu.html',
+                                 basic='mgr:mgrpw')
+
 
 def test_suite():
+    TypeModuleTests.layer = APIDocLayer
     return unittest.TestSuite((
         DocTestSuite('zope.app.apidoc.typemodule.type',
                      setUp=placelesssetup.setUp,
                      tearDown=placelesssetup.tearDown),
+        unittest.makeSuite(TypeModuleTests),
         ))
 
 if __name__ == '__main__':
