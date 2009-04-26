@@ -22,19 +22,27 @@ from zope.interface.interfaces import IInterface
 from zope.testing import doctest, doctestunit
 
 from zope.app.apidoc.testing import APIDocLayer
+from zope.app.apidoc.apidoc import APIDocumentation
+from zope.app.apidoc.interfaces import IDocumentationModule
+from zope.app.apidoc.ifacemodule.ifacemodule import InterfaceModule
 from zope.app.renderer.rest import ReStructuredTextSourceFactory
 from zope.app.renderer.rest import IReStructuredTextSource
 from zope.app.renderer.rest import ReStructuredTextToHTMLRenderer
-from zope.app.testing import placelesssetup, ztapi, setup
+from zope.app.testing import ztapi, setup
 from zope.app.testing.functional import BrowserTestCase
 from zope.app.tree.interfaces import IUniqueId
 from zope.app.tree.adapters import LocationUniqueId
 
 def setUp(test):
-    placelesssetup.setUp()
-    setup.setUpTraversal()
+    root_folder = setup.placefulSetUp(True)
 
     ztapi.provideAdapter(IInterface, IUniqueId, LocationUniqueId)
+
+    # Set up apidoc module
+    test.globs['apidoc'] = APIDocumentation(root_folder, '++apidoc++')
+
+    # Register InterfaceModule
+    ztapi.provideUtility(IDocumentationModule, InterfaceModule(), "Interface")
 
     # Register Renderer Components
     ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
@@ -44,6 +52,10 @@ def setUp(test):
     # Cheat and register the ReST factory for STX as well
     ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
                          'zope.source.stx')
+
+
+def tearDown(test):
+    setup.placefulTearDown()
 
 
 class InterfaceModuleTests(BrowserTestCase):
@@ -82,11 +94,11 @@ def test_suite():
     InterfaceModuleTests.layer = APIDocLayer
     return unittest.TestSuite((
         doctest.DocFileSuite('README.txt',
-                             setUp=setUp, tearDown=placelesssetup.tearDown,
+                             setUp=setUp, tearDown=tearDown,
                              globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE),
         doctest.DocFileSuite('browser.txt',
-                             setUp=setUp, tearDown=placelesssetup.tearDown,
+                             setUp=setUp, tearDown=tearDown,
                              globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE),
         unittest.makeSuite(InterfaceModuleTests),

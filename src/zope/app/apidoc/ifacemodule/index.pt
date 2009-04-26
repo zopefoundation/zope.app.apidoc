@@ -1,7 +1,7 @@
 <html metal:use-macro="context/@@apidoc_macros/details"
     i18n:domain="zope">
 <body metal:fill-slot="contents"
-      tal:define="rootURL view/apidocRoot">
+      tal:define="rootURL view/getAPIDocRootURL">
 
   <h1 class="details-header">
     <span class="pre-header" i18n:translate="">Interface</span><br />

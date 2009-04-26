@@ -25,11 +25,13 @@ from zope.location.traversing import LocationPhysicallyLocatable
 import zope.app.appsetup.appsetup
 from zope.app.tree.interfaces import IUniqueId
 from zope.app.tree.adapters import LocationUniqueId
-from zope.app.testing import placelesssetup, ztapi
+from zope.app.testing import setup, ztapi
 from zope.app.testing.functional import BrowserTestCase
 
 from zope.app.apidoc.testing import APIDocLayer
 from zope.app.apidoc.tests import Root
+from zope.app.apidoc.apidoc import APIDocumentation
+from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.zcmlmodule import Namespace, Directive
 from zope.app.apidoc.zcmlmodule import ZCMLModule
 from zope.app.apidoc.tests import Root
@@ -37,11 +39,17 @@ import zope.app.zcmlfiles
 
 
 def setUp(test):
-    placelesssetup.setUp()
+    root_folder = setup.placefulSetUp(True)
 
     ztapi.provideAdapter(None, IUniqueId, LocationUniqueId)
     ztapi.provideAdapter(None, IPhysicallyLocatable,
                          LocationPhysicallyLocatable)
+
+    # Set up apidoc module
+    test.globs['apidoc'] = APIDocumentation(root_folder, '++apidoc++')
+
+    # Register documentation modules
+    ztapi.provideUtility(IDocumentationModule, ZCMLModule(), 'ZCML')
 
     config_file = os.path.join(
         os.path.dirname(zope.app.zcmlfiles.__file__), 'meta.zcml')
@@ -53,7 +61,7 @@ def setUp(test):
         config_file, zope.app.zcmlfiles, execute=False)
 
 def tearDown(test):
-    placelesssetup.tearDown()
+    setup.placefulTearDown()
     zope.app.appsetup.appsetup.__config_context = old_context
     from zope.app.apidoc import zcmlmodule
     zcmlmodule.namespaces = None

@@ -26,6 +26,7 @@ from zope.traversing.browser import absoluteURL
 
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import getPythonPath, isReferencable
+from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
 
 from zope.app.apidoc.zcmlmodule import quoteNS
 from zope.app.apidoc.codemodule.interfaces import IRootDirective
@@ -83,8 +84,8 @@ class DirectiveDetails(object):
         zcml = getUtility(IDocumentationModule, 'ZCML')
         if name not in zcml[ns]:
             ns = 'ALL'
-        link = '%s/../ZCML/%s/%s/index.html' %(
-            absoluteURL(findDocModule(self), self.request), ns, name)
+        link = '%s/ZCML/%s/%s/index.html' % (
+            findAPIDocumentationRootURL(self.context, self.request), ns, name)
         if subDirective:
             link += '#' + subDirective.name[1]
         return link
@@ -101,12 +102,13 @@ class DirectiveDetails(object):
             # probably an object that does not like to play nice with the CA
             isInterface = False
 
-        # The object mught be an instance; in this case get a link to the class
+        # The object might be an instance; in this case get a link to the class
         if not hasattr(obj, '__name__'):
             obj = getattr(obj, '__class__')
         path = getPythonPath(obj)
         if isInterface:
-            return rootURL+'/../Interface/%s/index.html' % path
+            apidoc_url = findAPIDocumentationRootURL(self.context, self.request)
+            return '%s/Interface/%s/index.html' % (apidoc_url, path)
         if isReferencable(path):
             return rootURL + '/%s/index.html' %(path.replace('.', '/'))
 

@@ -32,11 +32,8 @@ from zope.app.apidoc.codemodule.interfaces import IClassDocumentation
 from zope.app.apidoc.codemodule.interfaces import IFunctionDocumentation
 from zope.app.apidoc.codemodule.interfaces import IZCMLFile
 from zope.app.apidoc.codemodule.interfaces import ITextFile
+from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
 
-def findAPIDocumentationRoot(obj, request):
-    if isinstance(obj, APIDocumentation):
-        return absoluteURL(obj, request)
-    return findAPIDocumentationRoot(getParent(obj), request)
 
 def formatDocString(text, module=None, summary=False):
     """Format a doc string for display.
@@ -67,12 +64,6 @@ class ModuleDetails(BrowserView):
 
     def __init__(self, context, request):
         super(ModuleDetails, self).__init__(context, request)
-        try:
-            self.apidocRoot = findAPIDocumentationRoot(context, request)
-        except TypeError:
-            # Probably context without location; it's a test
-            self.apidocRoot = ''
-
         items = list(self.context.items())
         items.sort()
         self.text_files = []
@@ -105,6 +96,9 @@ class ModuleDetails(BrowserView):
                 self.zcml_files.append(entry)
             elif ITextFile.providedBy(obj):
                 self.text_files.append(entry)
+
+    def getAPIDocRootURL(self):
+        return findAPIDocumentationRootURL(self.context, self.request)
 
     def getDoc(self):
         """Get the doc string of the module, formatted as HTML."""

@@ -9,9 +9,7 @@ browser documentation components. The views can be found in
 
 We will also need the code browser documentation module:
 
-  >>> from zope.component import getUtility
-  >>> from zope.app.apidoc.interfaces import IDocumentationModule
-  >>> cm = getUtility(IDocumentationModule, 'Code')
+  >>> cm = apidoc.get('Code')
 
 The `zope` package is already registered and available with the code module.
 
@@ -45,7 +43,7 @@ Return info objects for all classes in this module.
   >>> pprint(details.getClasses())
   [{'doc': 'Represent the code browser documentation root',
     'name': 'CodeModule',
-    'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/codemodule/CodeModule'}]
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/codemodule/CodeModule'}]
 
 This module doesn't contain anything else.
 
@@ -76,17 +74,17 @@ way up to the root, but we just want to go to the root module.
   >>> bc.request = details.request
   >>> pprint(bc())
   [{'name': u'[top]',
-    'url': 'http://127.0.0.1'},
+    'url': 'http://127.0.0.1/++apidoc++/Code'},
    {'name': u'zope',
-    'url': 'http://127.0.0.1/zope'},
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope'},
    {'name': 'app',
-    'url': 'http://127.0.0.1/zope/app'},
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app'},
    {'name': 'apidoc',
-    'url': 'http://127.0.0.1/zope/app/apidoc'},
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc'},
    {'name': 'codemodule',
-    'url': 'http://127.0.0.1/zope/app/apidoc/codemodule'},
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule'},
    {'name': 'codemodule',
-    'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/codemodule'}]
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/codemodule'}]
 
 
 Class Details
@@ -110,7 +108,7 @@ Get all bases of this class.
 
   >>> pprint(details.getBases())
   [{'path': 'zope.app.apidoc.codemodule.module.Module',
-    'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/module/Module'}]
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/module/Module'}]
 
 `getKnownSubclasses()`
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -131,9 +129,9 @@ Prepare a list of classes for presentation.
   ...       zope.app.apidoc.apidoc.APIDocumentation,
   ...       zope.app.apidoc.codemodule.codemodule.Module]))
   [{'path': 'zope.app.apidoc.apidoc.APIDocumentation',
-    'url': 'http://127.0.0.1/zope/app/apidoc/apidoc/APIDocumentation'},
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/apidoc/APIDocumentation'},
    {'path': 'zope.app.apidoc.codemodule.module.Module',
-    'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/module/Module'}]
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/module/Module'}]
 
 `getBaseURL()`
 ~~~~~~~~~~~~~~
@@ -144,7 +142,7 @@ Note that the following output is a bit different than usual, since
 we have not setup all path elements.
 
   >>> details.getBaseURL()
-  'http://127.0.0.1'
+  'http://127.0.0.1/++apidoc++'
 
 `getInterfaces()`
 ~~~~~~~~~~~~~~~~~
@@ -251,11 +249,8 @@ Get all attributes of this function.
 
 Return the URL for the API Documentation Tool.
 
-Note that the following output is a bit different than usual, since
-we have not setup all path elements.
-
   >>> details.getBaseURL()
-  'http://127.0.0.1'
+  'http://127.0.0.1/++apidoc++'
 
 
 Text File Details
@@ -334,10 +329,7 @@ Returns the URL of the directive docuemntation in the ZCML documentation
 module.
 
   >>> details.url()
-  u'http://127.0.0.1/../ZCML/ALL/configure/index.html'
-
-The result is a bit strange, since the ZCML Documentation module is the
-containment root.
+  u'http://127.0.0.1/++apidoc++/ZCML/ALL/configure/index.html'
 
 `objectURL(value, field, rootURL)`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -349,7 +341,7 @@ crafts a documentation URL for it:
   >>> field = GlobalObject()
 
   >>> details.objectURL('.interfaces.IZCMLFile', field, '')
-  '/../Interface/zope.app.apidoc.codemodule.interfaces.IZCMLFile/index.html'
+  'http://127.0.0.1/++apidoc++/Interface/zope.app.apidoc.codemodule.interfaces.IZCMLFile/index.html'
 
   >>> details.objectURL('.zcml.ZCMLFile', field, '')
   '/zope/app/apidoc/codemodule/zcml/ZCMLFile/index.html'
@@ -379,7 +371,7 @@ will be listed too.
   >>> pprint(details.attributes())
   [{'name': u'class',
     'url':
-        'http://127.0.0.1/zope/app/apidoc/codemodule/module/Module/index.html',
+        'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/module/Module/index.html',
     'value': u'.module.Module',
     'values': []}]
 
@@ -514,7 +506,7 @@ folder:
 You can also get the base URL of the request:
 
   >>> inspect.getBaseURL()
-  'http://127.0.0.1'
+  'http://127.0.0.1/++apidoc++'
 
 Next you can get a list of all directly provided interfaces:
 

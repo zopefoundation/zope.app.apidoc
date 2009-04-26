@@ -1,6 +1,7 @@
 <html metal:use-macro="views/apidoc_macros/details"
     i18n:domain="zope">
-<body metal:fill-slot="contents">
+<body metal:fill-slot="contents"
+      tal:define="rootURL view/getAPIDocRootURL">
 
   <!-- Note: don't use path expressions of the form "context/*" in this
        template, since module objects have items, and path expressions
@@ -39,7 +40,7 @@
     <b tal:repeat="iface ifaces">
     <a href=""
        tal:attributes="
-           href string:${view/apidocRoot}/Interface/${iface/path}/index.html"
+           href string:${rootURL}/Interface/${iface/path}/index.html"
        tal:content="iface/name" /><span tal:condition="not:repeat/iface/end">,</span>
     </b>
   </p>
@@ -87,7 +88,7 @@
     <td width="20%">
       <a href=""
         tal:attributes="
-           href string:${view/apidocRoot}/Interface/${iface/path}/index.html"
+           href string:${rootURL}/Interface/${iface/path}/index.html"
         tal:content="iface/name" />
     </td>
     <td width="80%" tal:content="iface/doc">

@@ -21,18 +21,31 @@ from zope.testing import doctest, doctestunit
 from zope.traversing.interfaces import IPhysicallyLocatable
 from zope.location.traversing import LocationPhysicallyLocatable
 
+from zope.app.apidoc.utilitymodule.utilitymodule import UtilityModule
+from zope.app.apidoc.interfaces import IDocumentationModule
+from zope.app.apidoc.apidoc import APIDocumentation
 from zope.app.apidoc.testing import APIDocLayer
-from zope.app.testing import placelesssetup, ztapi
+from zope.app.testing import setup, ztapi
 from zope.app.testing.functional import BrowserTestCase
 from zope.app.tree.interfaces import IUniqueId
 from zope.app.tree.adapters import LocationUniqueId
 
-def setUp(test):
-    placelesssetup.setUp()
 
+def setUp(test):
+    root_folder = setup.placefulSetUp(True)
     ztapi.provideAdapter(None, IUniqueId, LocationUniqueId)
     ztapi.provideAdapter(None, IPhysicallyLocatable,
                          LocationPhysicallyLocatable)
+
+    # Set up apidoc module
+    test.globs['apidoc'] = APIDocumentation(root_folder, '++apidoc++')
+
+    # Register documentation modules
+    ztapi.provideUtility(IDocumentationModule, UtilityModule(), 'Utility')
+
+
+def tearDown(test):
+    setup.placefulTearDown()
 
 
 class UtilityModuleTests(BrowserTestCase):
@@ -79,13 +92,13 @@ def test_suite():
     return unittest.TestSuite((
         doctest.DocFileSuite('README.txt',
                              setUp=setUp,
-                             tearDown=placelesssetup.tearDown,
+                             tearDown=tearDown,
                              globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE|
                                          doctest.ELLIPSIS),
         doctest.DocFileSuite('browser.txt',
                              setUp=setUp,
-                             tearDown=placelesssetup.tearDown,
+                             tearDown=tearDown,
                              globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE),
         unittest.makeSuite(UtilityModuleTests),

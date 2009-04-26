@@ -34,11 +34,9 @@ class Menu(object):
         """Find the classes that match a partial path.
 
         Examples::
-          >>> from zope.component import getUtility
           >>> from zope.app.apidoc.codemodule.class_ import Class
-          >>> from zope.app.apidoc.interfaces import IDocumentationModule
 
-          >>> cm = getUtility(IDocumentationModule, 'Code')
+          >>> cm = apidoc.get('Code')
           >>> mod = cm['zope']['app']['apidoc']['codemodule']['browser']
 
           Setup a couple of classes and register them.
@@ -58,7 +56,7 @@ class Menu(object):
           >>> from zope.app.apidoc.codemodule.browser.menu import Menu
           >>> from zope.publisher.browser import TestRequest
           >>> menu = Menu()
-          >>> menu.context = None
+          >>> menu.context = cm
 
           Testing the method with various inputs.
 
@@ -67,22 +65,22 @@ class Menu(object):
 
           >>> pprint(info)
           [{'path': 'zope.app.apidoc.codemodule.browser.Foo',
-            'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Foo/'},
+            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Foo/'},
            {'path': 'zope.app.apidoc.codemodule.browser.Foo2',
-            'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Foo2/'}]
+            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Foo2/'}]
 
           >>> menu.request = TestRequest(form={'path': 'o2'})
           >>> info = menu.findClasses()
           >>> pprint(info)
           [{'path': 'zope.app.apidoc.codemodule.browser.Foo2',
-            'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Foo2/'}]
+            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Foo2/'}]
 
 
           >>> menu.request = TestRequest(form={'path': 'Blah'})
           >>> info = menu.findClasses()
           >>> pprint(info)
           [{'path': 'zope.app.apidoc.codemodule.browser.Blah',
-            'url': 'http://127.0.0.1/zope/app/apidoc/codemodule/browser/Blah/'}]
+            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Blah/'}]
 
         """
         path = self.request.get('path', None)
@@ -105,12 +103,8 @@ class Menu(object):
         """Find all classes
 
         Examples::
-          >>> from zope.component import getUtility
           >>> from zope.app.apidoc.codemodule.class_ import Class
-          >>> from zope.app.apidoc.interfaces import IDocumentationModule
-
-
-          >>> cm = getUtility(IDocumentationModule, 'Code')
+          >>> cm = apidoc.get('Code')
           >>> mod = cm['zope']['app']['apidoc']['codemodule']['browser']
 
           Setup a couple of classes and register them.
@@ -130,7 +124,7 @@ class Menu(object):
           >>> from zope.app.apidoc.codemodule.browser.menu import Menu
           >>> from zope.publisher.browser import TestRequest
           >>> menu = Menu()
-          >>> menu.context = None
+          >>> menu.context = cm
 
           Testing the method with various inputs.
 

@@ -15,6 +15,14 @@ Let's start by creating the menu:
   >>> from zope.app.apidoc.utilitymodule.browser import Menu
   >>> menu = Menu()
 
+then we need a Utility module instance and add context and request to menu:
+
+  >>> from zope.publisher.browser import TestRequest
+  >>> module = apidoc.get('Utility')
+  >>> request = TestRequest()
+  >>> menu.context = module
+  >>> menu.request = request
+
 Now we want to get the menu title and link for a utility interface. To do that
 we first have to create a utility interface
 
@@ -32,7 +40,7 @@ You can now get the title and link from the menu:
   >>> menu.getMenuTitle(node)
   'iface'
   >>> menu.getMenuLink(node)
-  '../Interface/foo.bar.iface/index.html'
+  'http://127.0.0.1/++apidoc++/Interface/foo.bar.iface/index.html'
 
 Next, let's get the menu title and link for a utility with a name. We first
 have to create a utility registration
@@ -53,7 +61,7 @@ We can now ask the menu to give us the tile and link for the utility:
   >>> menu.getMenuTitle(node)
   'FooBar'
   >>> menu.getMenuLink(node)
-  './foo.bar.iface/Rm9vQmFy/index.html'
+  'http://127.0.0.1/++apidoc++/Utility/foo.bar.iface/Rm9vQmFy/index.html'
 
 Finally, we get menu title and link for a utility without a name:
 
@@ -68,7 +76,7 @@ Finally, we get menu title and link for a utility without a name:
   >>> menu.getMenuTitle(node)
   'no name'
   >>> menu.getMenuLink(node)
-  './foo.bar.iface/X19ub25hbWVfXw==/index.html'
+  'http://127.0.0.1/++apidoc++/Utility/foo.bar.iface/X19ub25hbWVfXw==/index.html'
 
 
 `UtilityDetails` class

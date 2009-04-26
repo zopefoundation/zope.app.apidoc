@@ -20,6 +20,8 @@ from type import TypeInterface
 
 from zope.security.proxy import isinstance, removeSecurityProxy
 from zope.traversing.api import getName
+from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
+
 
 class Menu(object):
     """Menu View Helper Class"""
@@ -35,4 +37,5 @@ class Menu(object):
 
     def getMenuLink(self, node):
         """Return the HTML link of the node that is displayed in the menu."""
-        return '../Interface/%s/index.html' % getName(node.context)
+        root_url = findAPIDocumentationRootURL(self.context, self.request)
+        return '%s/Interface/%s/index.html' % (root_url, getName(node.context))

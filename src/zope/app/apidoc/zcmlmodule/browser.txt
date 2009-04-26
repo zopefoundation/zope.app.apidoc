@@ -13,11 +13,10 @@ Let's start out by creating a menu. First we isntantiate the class:
 
 then we create a ZCML module instance:
 
-  >>> from zope.app.apidoc.zcmlmodule import ZCMLModule
-  >>> from zope.app.apidoc.tests import Root
-  >>> module = ZCMLModule()
-  >>> module.__parent__ = Root()
-  >>> module.__name__ = 'ZCML'
+  >>> from zope.publisher.browser import TestRequest
+  >>> module = apidoc.get('ZCML')
+  >>> menu.context = module
+  >>> menu.request = TestRequest()
 
 Now we create a namespace representing directives available in all namespaces
 
@@ -63,7 +62,7 @@ And we can get its menu title and link.
   >>> menu.getMenuTitle(node)
   'page'
   >>> menu.getMenuLink(node)
-  './http_co__sl__sl_namespaces.zope.org_sl_browser/page/index.html'
+  'http://127.0.0.1/++apidoc++/http_co__sl__sl_namespaces.zope.org_sl_browser/page/index.html'
 
 Note that the directive's namespace URL is encoded, so it can be used in a
 URL.
@@ -87,7 +86,6 @@ Let's create a directive that we can use as context for the details:
 
 Now we can isntantiate the view:
 
-  >>> from zope.publisher.browser import TestRequest
   >>> from zope.app.apidoc.zcmlmodule.browser import DirectiveDetails
 
   >>> details = DirectiveDetails()

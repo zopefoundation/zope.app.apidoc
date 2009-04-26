@@ -2,7 +2,7 @@
     i18n:domain="zope">
 <body metal:fill-slot="contents"
       tal:define="schema view/getSchema;
-                  rootURL string:../../..">
+                  rootURL view/getAPIDocRootURL">
 
   <h1 class="details-header">
     <span tal:replace="context/zope:name" />
@@ -39,7 +39,7 @@
     <i i18n:translate="">Handler:</i>
     <a href=""
        tal:attributes="href
-           string:../../../Code/${handler/url}/index.html"
+           string:${rootURL}/Code/${handler/url}/index.html"
        tal:content="handler/path">
     </a>
   </div>
@@ -48,7 +48,7 @@
 
   <div class="indent">
     <a href="" tal:attributes="href
-           string:../../../Interface/${schema/getId}/index.html">
+           string:${rootURL}/Interface/${schema/getId}/index.html">
       <h3 tal:content="schema/getId">zope.fields.Schema</h3>
     </a>
   </div>
@@ -97,7 +97,7 @@
     <i i18n:translate="">Handler:</i>
     <a href=""
        tal:attributes="href
-           string:../../../Code/${dir/handler/url}/index.html"
+           string:${rootURL}/Code/${dir/handler/url}/index.html"
        tal:content="dir/handler/path">
     </a>
   </div>
@@ -105,7 +105,7 @@
   <div class="indent">
     <a href=""
        tal:attributes="href
-           string:../../../Interface/${dir/schema/getId}/index.html">
+           string:${rootURL}/Interface/${dir/schema/getId}/index.html">
       <h3 tal:content="dir/schema/getId">zope.fields.Schema</h3>
     </a>
   </div>

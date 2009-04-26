@@ -36,12 +36,7 @@ from zope.app.apidoc.utilities import getPythonPath, renderText
 from zope.app.apidoc.apidoc import APIDocumentation
 from zope.app.apidoc import classregistry
 from zope.app.apidoc import interface, component, presentation
-
-
-def findAPIDocumentationRoot(obj, request):
-    if isinstance(obj, APIDocumentation):
-        return absoluteURL(obj, request)
-    return findAPIDocumentationRoot(getParent(obj), request)
+from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
 
 class InterfaceDetails(BrowserView):
     """View class for an Interface."""
@@ -49,11 +44,9 @@ class InterfaceDetails(BrowserView):
     def __init__(self, context, request):
         super(InterfaceDetails, self).__init__(context, request)
         self._prepareViews()
-        try:
-            self.apidocRoot = findAPIDocumentationRoot(context, request)
-        except TypeError:
-            # Probably context without location; it's a test
-            self.apidocRoot = ''
+
+    def getAPIDocRootURL(self):
+        return findAPIDocumentationRootURL(self.context, self.request)
 
     def getId(self):
         """Return the id of the field as it is defined for the interface

@@ -20,7 +20,7 @@ import unittest
 import re
 from zope.component.interfaces import IFactory
 from zope.configuration import xmlconfig
-from zope.interface import directlyProvides, implements
+from zope.interface import implements
 from zope.testing import doctest, doctestunit, renormalizing
 from zope.traversing.interfaces import IContainmentRoot
 
@@ -34,6 +34,7 @@ from zope.app.testing.functional import BrowserTestCase
 from zope.app.testing.functional import FunctionalDocFileSuite
 
 from zope.app.apidoc.interfaces import IDocumentationModule
+from zope.app.apidoc.apidoc import APIDocumentation
 from zope.app.apidoc.codemodule.interfaces import IAPIDocRootModule
 from zope.app.apidoc.codemodule.codemodule import CodeModule
 from zope.app.apidoc.testing import APIDocLayer
@@ -67,17 +68,17 @@ def setUp(test):
 
     class RootModule(str):
         implements(IAPIDocRootModule)
+
+    # Register zope package to apidoc
     ztapi.provideUtility(IAPIDocRootModule, RootModule('zope'), "zope")
 
-    module = CodeModule()
-    module.__name__ = ''
-    directlyProvides(module, IContainmentRoot)
-    ztapi.provideUtility(IDocumentationModule, module, "Code")
+    # Set up apidoc module
+    test.globs['apidoc'] = APIDocumentation(test.globs['rootFolder'],
+                                            '++apidoc++')
 
-    module = ZCMLModule()
-    module.__name__ = ''
-    directlyProvides(module, IContainmentRoot)
-    ztapi.provideUtility(IDocumentationModule, module, "ZCML")
+    # Register documentation modules
+    ztapi.provideUtility(IDocumentationModule, CodeModule(), "Code")
+    ztapi.provideUtility(IDocumentationModule, ZCMLModule(), "ZCML")
 
     # Register Renderer Components
     ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
