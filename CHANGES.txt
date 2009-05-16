@@ -11,6 +11,10 @@ CHANGES
 
 - Added ``z3c`` packages to the code browser.
 
+- Made `bin/static-apidoc` principially working (publisher and
+  webserver mode). There are still some files which are not correctly
+  fetched.
+
 
 3.6.2 (2009-03-17)
 ------------------
