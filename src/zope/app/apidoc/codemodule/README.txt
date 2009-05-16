@@ -325,8 +325,7 @@ the parser info object,
 
   >>> print info #doctest:+ELLIPSIS
   File
-  ".../zope/app/apidoc/codemodule/configure.zcml",
-  line 1.0-53.0
+  ".../zope/app/apidoc/codemodule/configure.zcml", line 1.0-54.0
 
 the sub-directives,
 

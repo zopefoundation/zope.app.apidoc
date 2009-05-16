@@ -9,6 +9,9 @@ CHANGES
 
 - Replace relative url links with absolute ones.
 
+- Added ``z3c`` packages to the code browser.
+
+
 3.6.2 (2009-03-17)
 ------------------
 

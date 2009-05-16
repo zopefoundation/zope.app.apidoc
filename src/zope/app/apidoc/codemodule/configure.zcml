@@ -42,6 +42,7 @@
   <apidoc:rootModule module="transaction" />
   <apidoc:rootModule module="zdaemon" />
   <apidoc:rootModule module="zope" />
+  <apidoc:rootModule module="z3c" />
 
   <utility
     provides="..interfaces.IDocumentationModule"
