@@ -28,7 +28,7 @@ import urlparse
 import warnings
 import HTMLParser
 
-import zope.testbrowser
+import zope.testbrowser.testing
 import mechanize
 
 from zope.app.testing import functional
@@ -149,7 +149,11 @@ class PublisherBrowser(zope.testbrowser.testing.PublisherMechanizeBrowser,
                        object):
 
     def __init__(self, *args, **kw):
-        functional.Functional.setUp()
+        functional.defineLayer(
+            'Functional',
+            zcml=os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                              'ftesting.zcml')))
+        Functional.setUp()
         super(PublisherBrowser, self).__init__(*args, **kw)
 
     def setUserAndPassword(self, user, pw):
@@ -162,9 +166,6 @@ class PublisherBrowser(zope.testbrowser.testing.PublisherMechanizeBrowser,
         response = self.response()
         old_location = response.tell()
         response.seek(0)
-        # Remove HTTP Headers
-        for line in iter(lambda: response.readline().strip(), ''):
-            pass
         contents = response.read()
         response.seek(old_location)
         return contents
@@ -203,13 +204,7 @@ class StaticAPIDocGenerator(object):
         if self.options.use_webserver:
             self.browser = OnlineBrowser()
         elif self.options.use_publisher:
-            # PublisherBrowser does not work at the moment, so complain if is
-            # has been selected.
-            #self.browser = PublisherBrowser()
-            self.sendMessage(
-                "PublisherBrowser is broken. Please use OnlineBrowser "
-                "instead (--webserver).")
-            return
+            self.browser = PublisherBrowser()
 
         self.browser.setUserAndPassword(self.options.username,
                                         self.options.password)
@@ -347,10 +342,6 @@ class StaticAPIDocGenerator(object):
             # that produce this problem, and we have little control over it.
             pass
 
-        # Cleanup; this is very important, otherwise we are opening too many
-        # files.
-        self.browser.close()
-
 class ApiDocDefaultFactory(mechanize._html.DefaultFactory):
     """Based on sgmllib."""
     def __init__(self, i_want_broken_xhtml_support=False):
@@ -359,7 +350,7 @@ class ApiDocDefaultFactory(mechanize._html.DefaultFactory):
             forms_factory=mechanize._html.FormsFactory(),
             links_factory=ApiDocLinksFactory(urltags=urltags),
             title_factory=mechanize._html.TitleFactory(),
-            is_html_p=mechanize._html.make_is_html(
+            response_type_finder=mechanize._html.ResponseTypeFinder(
                 allow_xhtml=i_want_broken_xhtml_support),
             )
 
@@ -398,7 +389,7 @@ class ApiDocLinksFactory(mechanize._html.LinksFactory):
                 # this.
                 continue
 
-            url = mechanize._html.clean_url(url, encoding)
+            url = mechanize._rfc3986.clean_url(url, encoding)
             if tag == "a":
                 if token.type != "startendtag":
                     # hmm, this'd break if end tag is missing
@@ -517,7 +508,7 @@ parser.add_option_group(reporting)
 
 # Default setup
 default_setup_args = [
-    '--verbosity', 5,
+    '--verbosity', '5',
     '--publisher',
     '--url', 'http://localhost:8080/',
     '--startpage', '++apidoc++/static.html',

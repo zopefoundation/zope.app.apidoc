@@ -102,7 +102,11 @@ setup(
                 'zope.app.securitypolicy',
                 'zope.app.zcmlfiles',
                 'zope.securitypolicy'],
-          static=['mechanize'],
+          static=['mechanize >= 0.1.8',
+                  'zope.securitypolicy',
+                  'zope.app.zcmlfiles',
+                  'zope.app.securitypolicy',
+                  ],
           ),
       entry_points = """
         [console_scripts]
