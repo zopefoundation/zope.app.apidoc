@@ -51,8 +51,8 @@ interfaces:
     >>> browser.getLink('zope.location.interfaces.IPossibleSite').url
     '.../Interface/zope.location.interfaces.IPossibleSite/index.html'
 
-    >>> browser.getLink('zope.container.interfaces.IContained').url
-    '...doc++/Interface/zope.container.interfaces.IContained/index.html'
+    >>> browser.getLink('zope.location.interfaces.IContained').url
+    '...doc++/Interface/zope.location.interfaces.IContained/index.html'
 
 The base classes of the ``Folder`` are as follows:
 
