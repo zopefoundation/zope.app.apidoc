@@ -80,7 +80,7 @@
         id="local"
         title="Local Component Architecture"
         parent="ca"
-        doc_path="README.txt"
+        doc_path="site.txt"
         />
     <bookchapter
         id="site"
