@@ -2,7 +2,7 @@
 CHANGES
 =======
 
-3.6.6 (unreleased)
+3.6.6 (2009-09-15)
 ------------------
 
 - Made the tests work again with the most recent Zope Toolkit KGS.
