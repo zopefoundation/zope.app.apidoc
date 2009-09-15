@@ -176,7 +176,7 @@ provides is the Dublin Core:
           </b>
           <br />
           <a href="++annotations++zope.app.dublincore.ZopeDublinCore/@@int...">
-            <code>&lt;...annotatableadapter.ZDCAnnotationData ...&gt;</code>
+            <code>...</code>
           </a>
           (<span>type:</span>
            <a href="...lincore/annotatableadapter/ZDCAnnotationData/index.html">
@@ -189,27 +189,18 @@ provides is the Dublin Core:
 
 As you can see you can click on the annotation to discover it further:
 
-    >>> browser.getLink('annotatableadapter.ZDCAnnotationData').click()
+    >>> browser.getLink('ZDCAnnotationData').click()
     >>> print browser.contents
     <!DOCTYPE...
     ...
-    <h2>Attributes/Properties</h2>
+    <h2...>Constructor</h2>
       <div class="indent">
-      <ul class="attr-list">
-        <li>
-          <b><code>data</code></b>
-            (<span>type:</span>
-            <a href=".../++apidoc++/Code/__builtin__/dict/index.html">
-              <code>dict</code></a>)
-          <br />
-          <i>Value:</i>
-          <code>{u'Date.Created': (u'...',),
-                 u'Date.Modified': (u'...',),
-                 u'Creator': (u'zope.mgr',)}</code>
-          <br />
-        </li>
-      </ul>
-    </div>
+        <div>
+          <b><code>__init__(dict=None, **kwargs)</code>
+          </b><br>
+          <div class="inline documentation"></div>
+        </div>
+      </div>
     ...
 
 That's it! The introspector view has a lot more potential, but that's for

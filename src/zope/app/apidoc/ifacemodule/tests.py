@@ -61,6 +61,8 @@ def tearDown(test):
 class InterfaceModuleTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
 
+    layer = APIDocLayer
+
     def testMenu(self):
         response = self.publish(
             '/++apidoc++/Interface/menu.html',
@@ -82,16 +84,11 @@ class InterfaceModuleTests(BrowserTestCase):
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
         self.assert_(body.find('Interface API Documentation Module') > 0)
-        self.checkForBrokenLinks(
-            body,
-            '/++apidoc++/Interface'
-            '/zope.app.apidoc.ifacemodule.IInterfaceModule'
-            '/index.html',
-            basic='mgr:mgrpw')
+        self.assert_(body.find('/++apidoc++/Code/zope/app/apidoc'
+                               '/ifacemodule/ifacemodule/index.html') > 0)
 
 
 def test_suite():
-    InterfaceModuleTests.layer = APIDocLayer
     return unittest.TestSuite((
         doctest.DocFileSuite('README.txt',
                              setUp=setUp, tearDown=tearDown,
