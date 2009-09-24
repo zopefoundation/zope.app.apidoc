@@ -90,7 +90,7 @@ setup(
         'zope.site',
         'zope.hookable',
         'zope.interface',
-        'zope.location',
+        'zope.location>=3.7.0dev',
         'zope.proxy',
         'zope.publisher',
         'zope.schema',
