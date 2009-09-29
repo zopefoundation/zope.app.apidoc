@@ -2,7 +2,7 @@
 CHANGES
 =======
 
-3.6.7 (unreleased)
+3.6.7 (2009-09-29)
 ------------------
 
 - Updated the tests after moving ITraverser back to zope.traversing.
