@@ -5,7 +5,7 @@ CHANGES
 3.6.8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Updated the tests after moving IPossibleSite and ISite to zope.component.
 
 
 3.6.7 (2009-09-29)

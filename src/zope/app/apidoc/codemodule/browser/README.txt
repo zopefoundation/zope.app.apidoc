@@ -513,7 +513,7 @@ Next you can get a list of all directly provided interfaces:
   >>> ifaces = inspect.getDirectlyProvidedInterfaces()
   >>> ifaces.sort()
   >>> ifaces
-  ['zope.location.interfaces.ISite', 'zope.site.interfaces.IRootFolder']
+  ['zope.component.interfaces.ISite', 'zope.site.interfaces.IRootFolder']
 
 The ``getProvidedInterfaces()`` and ``getBases()`` method simply forwards its
 request to the class documentation view. Thus the next method is
@@ -535,7 +535,7 @@ Of course, the methods are listed as well:
   >>> pprint(list(inspect.getMethods()))
     [...
      {'doc': u'',
-      'interface': 'zope.location.interfaces.IPossibleSite',
+      'interface': 'zope.component.interfaces.IPossibleSite',
       'name': 'getSiteManager',
       'read_perm': None,
       'signature': '()',
@@ -548,7 +548,7 @@ Of course, the methods are listed as well:
       'signature': '()',
       'write_perm': None},
      {'doc': u'',
-      'interface': 'zope.location.interfaces.IPossibleSite',
+      'interface': 'zope.component.interfaces.IPossibleSite',
       'name': 'setSiteManager',
       'read_perm': None,
       'signature': '(sm)',

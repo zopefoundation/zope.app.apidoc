@@ -31,8 +31,8 @@ The next section lists all directly provided interfaces. The root folder
 directly provides the ``ISite`` and ``IRootFolder`` interface, so we should
 see those:
 
-    >>> browser.getLink('zope.location.interfaces.ISite').url
-    '.../++apidoc++/Interface/zope.location.interfaces.ISite/index.html'
+    >>> browser.getLink('zope.component.interfaces.ISite').url
+    '.../++apidoc++/Interface/zope.component.interfaces.ISite/index.html'
 
     >>> browser.getLink('zope.site.interfaces.IRootFolder').url
     '...apidoc++/Interface/zope.site.interfaces.IRootFolder/index.html'
@@ -48,8 +48,8 @@ interfaces:
     >>> browser.getLink('persistent.interfaces.IPersistent').url
     '.../++apidoc++/Interface/persistent.interfaces.IPersistent/index.html'
 
-    >>> browser.getLink('zope.location.interfaces.IPossibleSite').url
-    '.../Interface/zope.location.interfaces.IPossibleSite/index.html'
+    >>> browser.getLink('zope.component.interfaces.IPossibleSite').url
+    '.../Interface/zope.component.interfaces.IPossibleSite/index.html'
 
     >>> browser.getLink('zope.location.interfaces.IContained').url
     '...doc++/Interface/zope.location.interfaces.IContained/index.html'

@@ -82,7 +82,7 @@ setup(
         'zope.app.testing',
         'zope.app.tree',
         'zope.cachedescriptors',
-        'zope.component',
+        'zope.component>=3.8.0dev',
         'zope.container',
         'zope.configuration',
         'zope.deprecation',
