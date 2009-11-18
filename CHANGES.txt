@@ -2,7 +2,7 @@
 CHANGES
 =======
 
-3.6.8 (unreleased)
+3.6.8 (2009-11-18)
 ------------------
 
 - Updated the tests after moving IPossibleSite and ISite to zope.component.
