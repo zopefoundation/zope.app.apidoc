@@ -2,7 +2,7 @@
 CHANGES
 =======
 
-3.7.0 (unreleased)
+3.7.0 (2009-12-22)
 ------------------
 
 - Updated tests to work with latest zope.testing and use zope.browserpage in
