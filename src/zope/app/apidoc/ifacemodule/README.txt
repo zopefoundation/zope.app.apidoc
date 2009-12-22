@@ -37,6 +37,7 @@ Finally, you can list all registered interfaces:
 
   >>> ifaces = module.items()
   >>> ifaces.sort()
+  >>> from pprint import pprint
   >>> pprint(ifaces)
   [(u'IFoo', <InterfaceClass __builtin__.IFoo>),
    (u'__builtin__.IFoo', <InterfaceClass __builtin__.IFoo>)]

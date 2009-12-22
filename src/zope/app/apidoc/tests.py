@@ -21,7 +21,7 @@ import unittest
 import zope.component.testing
 from zope.component.interfaces import IFactory
 from zope.interface import implements
-from zope.testing import doctest, doctestunit
+from zope.testing import doctest
 from zope.traversing.interfaces import IContainmentRoot
 from zope.location import LocationProxy
 
@@ -69,30 +69,24 @@ def test_suite():
         doctest.DocFileSuite('README.txt',
                              setUp=setUp,
                              tearDown=placelesssetup.tearDown,
-                             globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE),
         doctest.DocFileSuite('classregistry.txt',
-                             globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE),
         doctest.DocFileSuite('interface.txt',
                              setUp=setUp,
                              tearDown=placelesssetup.tearDown,
-                             globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE),
         doctest.DocFileSuite('component.txt',
                              setUp=setUp,
                              tearDown=placelesssetup.tearDown,
-                             globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE),
         doctest.DocFileSuite('presentation.txt',
                              setUp=zope.component.testing.setUp,
                              tearDown=zope.component.testing.tearDown,
-                             globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE),
         doctest.DocFileSuite('utilities.txt',
                              setUp=setUp,
                              tearDown=placelesssetup.tearDown,
-                             globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE),
         ))
 

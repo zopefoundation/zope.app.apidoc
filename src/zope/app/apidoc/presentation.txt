@@ -18,7 +18,7 @@ generated upon registration. Let's look at a couple examples.
 First, let's inspect a case where a simple browser page was configured without
 a special view class. In these cases the factory is a `SimpleViewClass`:
 
-  >>> from zope.app.pagetemplate.simpleviewclass import SimpleViewClass
+  >>> from zope.browserpage.simpleviewclass import SimpleViewClass
   >>> view = SimpleViewClass('browser/index.pt')
   >>> info = presentation.getViewFactoryData(view)
 
@@ -27,13 +27,14 @@ are converted to Unix-like paths. We also clip off instance-specific parts of
 the template path:
 
   >>> info['template'] = info['template'].replace('\\', '/')[-32:]
+  >>> from pprint import pprint
   >>> pprint(info)
-  {'path': 'zope.app.pagetemplate.simpleviewclass.simple',
+  {'path': 'zope.browserpage.simpleviewclass.simple',
    'referencable': True,
    'resource': None,
    'template': 'zope/app/apidoc/browser/index.pt',
    'template_obj': <BoundPageTemplateFile of None>,
-   'url': 'zope/app/pagetemplate/simpleviewclass/simple'}
+   'url': 'zope/browserpage/simpleviewclass/simple'}
 
 So in the result above we see what the function returns. It is a dictionary
 (converted to a list for test purposes) that contains the Python path of the

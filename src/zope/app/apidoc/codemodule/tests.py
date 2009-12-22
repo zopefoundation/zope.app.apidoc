@@ -18,7 +18,7 @@ $Id$
 import os
 import unittest
 from zope.configuration import xmlconfig
-from zope.testing import doctest, doctestunit
+from zope.testing import doctest
 
 import zope.app.appsetup.appsetup
 from zope.app.testing import placelesssetup
@@ -59,7 +59,6 @@ def test_suite():
     return unittest.TestSuite((
         doctest.DocFileSuite('README.txt',
                              setUp=setUp, tearDown=tearDown,
-                             globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE),
         doctest.DocFileSuite('directives.txt',
                              setUp=placelesssetup.setUp,

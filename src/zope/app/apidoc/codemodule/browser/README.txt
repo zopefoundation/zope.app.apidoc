@@ -40,6 +40,7 @@ Module data
 
 Return info objects for all classes in this module.
 
+  >>> from pprint import pprint
   >>> pprint(details.getClasses())
   [{'doc': 'Represent the code browser documentation root',
     'name': 'CodeModule',

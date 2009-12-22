@@ -17,7 +17,7 @@ $Id$
 """
 import unittest
 import zope.deprecation
-from zope.testing import doctest, doctestunit
+from zope.testing import doctest
 from zope.traversing.interfaces import IPhysicallyLocatable
 from zope.location.traversing import LocationPhysicallyLocatable
 
@@ -93,13 +93,11 @@ def test_suite():
         doctest.DocFileSuite('README.txt',
                              setUp=setUp,
                              tearDown=tearDown,
-                             globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE|
                                          doctest.ELLIPSIS),
         doctest.DocFileSuite('browser.txt',
                              setUp=setUp,
                              tearDown=tearDown,
-                             globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE),
         unittest.makeSuite(UtilityModuleTests),
         ))

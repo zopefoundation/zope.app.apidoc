@@ -21,7 +21,7 @@ import re
 from zope.component.interfaces import IFactory
 from zope.configuration import xmlconfig
 from zope.interface import implements
-from zope.testing import doctest, doctestunit, renormalizing
+from zope.testing import doctest, renormalizing
 from zope.traversing.interfaces import IContainmentRoot
 
 import zope.app
@@ -218,12 +218,10 @@ def test_suite():
         doctest.DocFileSuite(
             'README.txt',
             setUp=setUp, tearDown=tearDown,checker=checker,
-            globs={'pprint': doctestunit.pprint},
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS),
         doctest.DocTestSuite(
             'zope.app.apidoc.codemodule.browser.menu',
             setUp=setUp, tearDown=tearDown,
-            globs={'pprint': doctestunit.pprint},
             optionflags=doctest.NORMALIZE_WHITESPACE),
         unittest.makeSuite(CodeModuleTests),
         introspector,

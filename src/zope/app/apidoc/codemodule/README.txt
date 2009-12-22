@@ -170,6 +170,7 @@ listed in the interface. Now we create the class documentation wrapper:
 
   >>> klass = codemodule.class_.Class(module, 'Blah', Blah)
 
+  >>> from pprint import pprint
   >>> pprint(klass.getAttributes())
   [('bar', 'b', None),
    ('bli', 'i', <InterfaceClass __builtin__.IBlie>),

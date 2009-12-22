@@ -19,7 +19,7 @@ import unittest
 
 from zope.component.interfaces import IFactory
 from zope.interface.interfaces import IInterface
-from zope.testing import doctest, doctestunit
+from zope.testing import doctest
 
 from zope.app.apidoc.testing import APIDocLayer
 from zope.app.apidoc.apidoc import APIDocumentation
@@ -92,11 +92,9 @@ def test_suite():
     return unittest.TestSuite((
         doctest.DocFileSuite('README.txt',
                              setUp=setUp, tearDown=tearDown,
-                             globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE),
         doctest.DocFileSuite('browser.txt',
                              setUp=setUp, tearDown=tearDown,
-                             globs={'pprint': doctestunit.pprint},
                              optionflags=doctest.NORMALIZE_WHITESPACE),
         unittest.makeSuite(InterfaceModuleTests),
         ))

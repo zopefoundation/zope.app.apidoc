@@ -2,17 +2,16 @@
 CHANGES
 =======
 
-3.6.9 (unreleased)
+3.7.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Updated tests to work with latest zope.testing and use zope.browserpage in
+  favor of zope.app.pagetemplate.
 
 3.6.8 (2009-11-18)
 ------------------
 
 - Updated the tests after moving IPossibleSite and ISite to zope.component.
-
 
 3.6.7 (2009-09-29)
 ------------------
@@ -36,7 +35,6 @@ CHANGES
 - The ``IContained`` interface moved to ``zope.location.interfaces``. Make a
   test pass.
 
-
 3.6.3 (2009-05-16)
 ------------------
 
@@ -49,7 +47,6 @@ CHANGES
 - Made `bin/static-apidoc` principially working (publisher and
   webserver mode). There are still some files which are not correctly
   fetched.
-
 
 3.6.2 (2009-03-17)
 ------------------
@@ -113,12 +110,10 @@ CHANGES
 
 - Avoid deprecation warnings for ``ZopeMessageFactory``.
 
-
 3.4.1 (2007-10-23)
 ------------------
 
 - Avoid deprecation warnings.
-
 
 3.4.0 (2007-10-10)
 ------------------
@@ -127,7 +122,6 @@ CHANGES
 
 - Fixed the code to at least gracefully ignore unzipped eggs. Eventually we
   want to handle eggs well.
-
 
 3.4.0a1 (2007-04-22)
 --------------------

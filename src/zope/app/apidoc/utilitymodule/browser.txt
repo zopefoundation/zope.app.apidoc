@@ -157,5 +157,6 @@ Then we create a utility documentation class and its details view:
 
 Now we can get the component information:
 
+  >>> from pprint import pprint
   >>> pprint(details.getComponent())
   {'path': '__builtin__.Foo', 'url': None}

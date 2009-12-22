@@ -214,6 +214,7 @@ If the name matching method fails, it picks the first interface that extends
 This function returns a page-template-friendly dictionary for a simple
 attribute:
 
+  >>> from pprint import pprint
   >>> pprint(interface.getAttributeInfoDictionary(IFoo['baz']))
   {'doc': u'<p>This is the baz attribute</p>\n',
    'name': 'baz'}

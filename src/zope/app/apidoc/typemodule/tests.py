@@ -16,7 +16,7 @@
 $Id$
 """
 import unittest
-from zope.testing.doctestunit import DocTestSuite
+from zope.testing.doctest import DocTestSuite
 from zope.app.testing.functional import BrowserTestCase
 from zope.app.testing import placelesssetup
 from zope.app.apidoc.testing import APIDocLayer

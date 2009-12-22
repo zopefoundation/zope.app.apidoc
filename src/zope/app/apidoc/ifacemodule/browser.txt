@@ -62,6 +62,7 @@ Before we can test the method, let's create a `Menu` instance:
 Now let's see how successful our searches are:
 
   >>> menu.request['search_str'] = 'Elem'
+  >>> from pprint import pprint
   >>> pprint(menu.findInterfaces())
   [{'name': 'IElement',
     'url': './IElement/index.html'}]

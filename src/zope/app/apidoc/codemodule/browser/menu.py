@@ -63,6 +63,7 @@ class Menu(object):
           >>> menu.request = TestRequest(form={'path': 'Foo'})
           >>> info = menu.findClasses()
 
+          >>> from pprint import pprint
           >>> pprint(info)
           [{'path': 'zope.app.apidoc.codemodule.browser.Foo',
             'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Foo/'},

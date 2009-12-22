@@ -191,7 +191,7 @@ class InterfaceDetails(BrowserView):
 
         Example::
 
-          >>> from zope.app.apidoc.tests import pprint
+          >>> from pprint import pprint
           >>> from tests import getInterfaceDetails
           >>> details = getInterfaceDetails()
 

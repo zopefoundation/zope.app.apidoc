@@ -148,6 +148,7 @@ If the info attribute is a parser info, then return the details:
   >>> from zope.configuration.xmlconfig import ParserInfo
   >>> details.context.info = ParserInfo('foo.zcml', 2, 3)
   >>> info = details.getFileInfo()
+  >>> from pprint import pprint
   >>> pprint(info)
   {'column': 3,
    'ecolumn': 3,
