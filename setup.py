@@ -66,7 +66,6 @@ setup(
     include_package_data = True,
     package_dir = {'':'src'},
     namespace_packages = ['zope', 'zope.app'],
-    tests_require = ['zope.testing'],
     install_requires = [
         'setuptools',
         'ZODB3>=3.8.0',
@@ -104,7 +103,8 @@ setup(
                 'zope.app.securitypolicy',
                 'zope.app.zcmlfiles',
                 'zope.browserpage>=3.10.1',
-                'zope.securitypolicy'],
+                'zope.securitypolicy',
+                'zope.login',],
           static=['mechanize >= 0.1.8',
                   'zope.securitypolicy',
                   'zope.app.zcmlfiles',
