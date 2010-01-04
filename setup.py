@@ -28,7 +28,7 @@ def read(*rnames):
 
 setup(
     name = 'zope.app.apidoc',
-    version = '3.7.1dev',
+    version = '3.7.1',
     author = 'Zope Corporation and Contributors',
     author_email = 'zope-dev@zope.org',
     description = 'API Documentation and Component Inspection for Zope 3',
@@ -91,7 +91,7 @@ setup(
         'zope.interface',
         'zope.location>=3.7.0',
         'zope.proxy',
-        'zope.publisher',
+        'zope.publisher>=3.12.0',
         'zope.schema',
         'zope.security',
         'zope.testbrowser',

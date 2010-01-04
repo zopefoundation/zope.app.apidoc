@@ -2,9 +2,10 @@
 CHANGES
 =======
 
-3.7.1 (unreleased)
+3.7.1 (2010-01-05)
 ------------------
 
+- Updated tests to work with zope.publisher 3.12 (using zope.login).
 
 3.7.0 (2009-12-22)
 ------------------
