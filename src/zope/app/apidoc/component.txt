@@ -308,7 +308,7 @@ that we want to return the module and name of the object that the Implements
 object references.  This may change.
 
   >>> from zope.interface import implementedBy
-  >>> pprint(component.getInterfaceInfoDictionary(implementedBy(MyFoo)))
+  >>> pprint(component.getInterfaceInfoDictionary(implementedBy(MyFoo)), width=1)
   {'module': 'zope.app.apidoc.doctest', 'name': 'MyFoo'}
 
 
@@ -317,7 +317,7 @@ object references.  This may change.
 
 This function returns the info dictionary of a type.
 
-  >>> pprint(component.getTypeInfoDictionary(tuple))
+  >>> pprint(component.getTypeInfoDictionary(tuple), width=1)
   {'module': '__builtin__',
    'name': 'tuple',
    'url': '__builtin__/tuple'}
@@ -372,7 +372,7 @@ Let's first create an adapter registration:
 
 And now get the info dictionary:
 
-  >>> pprint(component.getAdapterInfoDictionary(reg))
+  >>> pprint(component.getAdapterInfoDictionary(reg), width=1)
   {'doc': 'doc info',
    'factory': 'zope.app.apidoc.doctest.MyResult',
    'factory_url': 'zope/app/apidoc/doctest/MyResult',
@@ -399,7 +399,7 @@ will be ``None``:
 
   >>> reg = AdapterRegistration(None, (IFoo, IBar), IResult, 'FooToResult',
   ...                            MyResultType, 'doc info')
-  >>> pprint(component.getAdapterInfoDictionary(reg))
+  >>> pprint(component.getAdapterInfoDictionary(reg), width=1)
   {'doc': 'doc info',
    'factory': 'zope.app.apidoc.doctest.MyResult2',
    'factory_url': None,
@@ -471,7 +471,7 @@ will be ``None``:
   >>> classImplements(MyFactoryType, IFactory)
   >>> ztapi.provideUtility(IFactory, MyFactoryType(), 'MyFactory')
 
-  >>> pprint(component.getFactoryInfoDictionary(
+  >>> pprint(component.getFactoryInfoDictionary, width=1)
   ...     component.getFactories(IMine).next()))
   {'description': u'',
    'name': u'MyFactory',

@@ -389,7 +389,7 @@ Let's first create a registration:
   >>> reg = AdapterRegistration(None, (IFile, Interface, IHTTPRequest),
   ...                           Interface, 'view.html', Factory, 'reg info')
 
-  >>> pprint(presentation.getViewInfoDictionary(reg))
+  >>> pprint(presentation.getViewInfoDictionary(reg), width=1)
   {'doc': 'reg info',
    'factory': {'path': '__builtin__.Factory',
                'referencable': True,

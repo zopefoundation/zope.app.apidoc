@@ -73,7 +73,7 @@ way up to the root, but we just want to go to the root module.
   >>> bc = utilities.CodeBreadCrumbs()
   >>> bc.context = details.context
   >>> bc.request = details.request
-  >>> pprint(bc())
+  >>> pprint(bc(), width=1)
   [{'name': u'[top]',
     'url': 'http://127.0.0.1/++apidoc++/Code'},
    {'name': u'zope',

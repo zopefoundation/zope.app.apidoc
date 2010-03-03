@@ -149,7 +149,7 @@ If the info attribute is a parser info, then return the details:
   >>> details.context.info = ParserInfo('foo.zcml', 2, 3)
   >>> info = details.getFileInfo()
   >>> from pprint import pprint
-  >>> pprint(info)
+  >>> pprint(info, width=1)
   {'column': 3,
    'ecolumn': 3,
    'eline': 2,
@@ -184,7 +184,7 @@ Return `None`, if the info attribute is a parser info:
 
 Return information about the directive handler object.
 
-  >>> pprint(details.getHandler())
+  >>> pprint(details.getHandler(), width=1)
   {'path': 'None.foo',
    'url': None}
 
@@ -208,7 +208,7 @@ but if we add one
 
 the result becomes more interesting:
 
-  >>> pprint(details.getSubdirectives()) #doctest:+ELLIPSIS
+  >>> pprint(details.getSubdirectives(), width=1) #doctest:+ELLIPSIS
   [{'handler': {'path': 'None.handler', 'url': None},
     'info': 'info',
     'name': 'foo',

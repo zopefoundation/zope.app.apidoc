@@ -63,12 +63,12 @@ Now let's see how successful our searches are:
 
   >>> menu.request['search_str'] = 'Elem'
   >>> from pprint import pprint
-  >>> pprint(menu.findInterfaces())
+  >>> pprint(menu.findInterfaces(), width=1)
   [{'name': 'IElement',
     'url': './IElement/index.html'}]
 
   >>> menu.request['search_str'] = 'I'
-  >>> pprint(menu.findInterfaces())
+  >>> pprint(menu.findInterfaces(), width=1)
   [{'name': 'IAttribute',
     'url': './IAttribute/index.html'},
    {'name': 'IElement',
@@ -79,14 +79,14 @@ Now using the full text search:
   >>> del menu.request['name_only']
 
   >>> menu.request['search_str'] = 'object'
-  >>> pprint(menu.findInterfaces())
+  >>> pprint(menu.findInterfaces(), width=1)
   [{'name': 'IAttribute',
     'url': './IAttribute/index.html'},
    {'name': 'IElement',
     'url': './IElement/index.html'}]
 
   >>> menu.request['search_str'] = 'Stores'
-  >>> pprint(menu.findInterfaces())
+  >>> pprint(menu.findInterfaces(), width=1)
   [{'name': 'IAttribute',
     'url': './IAttribute/index.html'}]
 
@@ -211,7 +211,7 @@ but when I create and assign a type to the interface
 
 we get a result:
 
-  >>> pprint(details.getTypes())
+  >>> pprint(details.getTypes(), width=1)
   [{'name': 'IMyType',
     'path': '__builtin__.IMyType'}]
 
@@ -249,7 +249,7 @@ Return a list of fields in required + alphabetical order.
 
 The required attributes are listed first, then the optional attributes.
 
-  >>> pprint(details.getFields())
+  >>> pprint(details.getFields(), width=1)
   [{'class': {'name': 'TextLine',
               'path': 'zope/schema/_bootstrapfields/TextLine'},
     'default': "u'Foo'",
@@ -296,7 +296,7 @@ interface.Interface.
 
 Get adapters where this interface is required.
 
-  >>> pprint(sorted(details.getGenericRequiredAdapters()))
+  >>> pprint(sorted(details.getGenericRequiredAdapters()), width=1)
   [{'doc': u'',
     'factory': 'None.append',
     'factory_url': None,
@@ -429,7 +429,7 @@ Get adapters where this interface is required.
 
 Get adapters where this interface is provided.
 
-  >>> pprint(details.getProvidedAdapters())
+  >>> pprint(details.getProvidedAdapters(), width=1)
   [{'doc': u'',
     'factory': '__builtin__.Foo',
     'factory_url': None,
@@ -449,7 +449,7 @@ Get adapters where this interface is provided.
 
 Get the classes that implement this interface.
 
-  >>> pprint(details.getClasses())
+  >>> pprint(details.getClasses(), width=1)
   [{'path': '__builtin__.Foo',
     'url': '__builtin__/Foo'}]
 
