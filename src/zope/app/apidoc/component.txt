@@ -290,7 +290,7 @@ list interfaces in the context of other components, like adapters and
 utilities.
 
   >>> from pprint import pprint
-  >>> pprint(component.getInterfaceInfoDictionary(IFoo))
+  >>> pprint(component.getInterfaceInfoDictionary(IFoo), width=1)
   {'module': 'zope.app.apidoc.doctest', 'name': 'IFoo'}
 
 The functions using this function use it with little care and can also
@@ -471,8 +471,8 @@ will be ``None``:
   >>> classImplements(MyFactoryType, IFactory)
   >>> ztapi.provideUtility(IFactory, MyFactoryType(), 'MyFactory')
 
-  >>> pprint(component.getFactoryInfoDictionary, width=1)
-  ...     component.getFactories(IMine).next()))
+  >>> pprint(component.getFactoryInfoDictionary(
+  ...     component.getFactories(IMine).next()), width=1)
   {'description': u'',
    'name': u'MyFactory',
    'title': u'',

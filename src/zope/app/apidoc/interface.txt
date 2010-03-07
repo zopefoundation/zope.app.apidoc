@@ -237,7 +237,7 @@ This function returns a page-template-friendly dictionary for a method:
 
 This function returns a page-template-friendly dictionary for a field:
 
-  >>> pprint(interface.getFieldInfoDictionary(IFoo['bar']))
+  >>> pprint(interface.getFieldInfoDictionary(IFoo['bar']), width=1)
   {'class': {'name': 'TextLine',
              'path': 'zope/schema/_bootstrapfields/TextLine'},
    'default': "u'My Bar'",
