@@ -25,8 +25,7 @@ from zope.component.registry import (
     AdapterRegistration,
     HandlerRegistration,
     SubscriptionRegistration,
-    UtilityRegistration
-    )
+    UtilityRegistration)
 from zope.i18nmessageid import ZopeMessageFactory as _
 from zope.interface import Interface
 from zope.interface.interface import InterfaceClass
@@ -41,6 +40,16 @@ from zope.app.apidoc.utilitymodule import utilitymodule
 SPECIFIC_INTERFACE_LEVEL = 1
 EXTENDED_INTERFACE_LEVEL = 2
 GENERIC_INTERFACE_LEVEL = 4
+
+
+def _adapterishRegistrations(registry):
+    for r in registry.registeredAdapters():
+        yield r
+    for r in registry.registeredSubscriptionAdapters():
+        yield r
+    for r in registry.registeredHandlers():
+        yield r
+
 
 def getRequiredAdapters(iface, withViews=False):
     """Get adapter registrations where the specified interface is required."""
@@ -61,13 +70,6 @@ def getRequiredAdapters(iface, withViews=False):
                 if iface.isOrExtends(required_iface):
                     yield reg
 
-def _adapterishRegistrations(registry):
-    for r in registry.registeredAdapters():
-        yield r
-    for r in registry.registeredSubscriptionAdapters():
-        yield r
-    for r in registry.registeredHandlers():
-        yield r
 
 def getProvidedAdapters(iface, withViews=False):
     """Get adapter registrations where this interface is provided."""
@@ -177,6 +179,7 @@ def getInterfaceInfoDictionary(iface):
     return {'module': getattr(iface, '__module__', _('<unknown>')),
             'name': getattr(iface, '__name__', _('<unknown>'))}
 
+
 def getInterfaceInfoDictionary(iface):
     """Return a PT-friendly info dictionary for an interface."""
     if isinstance(iface, zope.interface.declarations.Implements):
@@ -194,6 +197,7 @@ def getTypeInfoDictionary(type):
             'module': type.__module__,
             'url': isReferencable(path) and path.replace('.', '/') or None}
 
+
 def getSpecificationInfoDictionary(spec):
     """Return an info dictionary for one specification."""
     info = {'isInterface': False, 'isType': False}
@@ -204,6 +208,7 @@ def getSpecificationInfoDictionary(spec):
         info.update(getTypeInfoDictionary(spec.inherit))
         info['isType'] = True
     return info
+
 
 def getAdapterInfoDictionary(reg):
     """Return a PT-friendly info dictionary for an adapter registration."""
@@ -273,7 +278,7 @@ def getUtilityInfoDictionary(reg):
 
     # Determine the URL
     if isinstance(component, InterfaceClass):
-        url = 'Interface/%s' %path
+        url = 'Interface/%s' % path
     else:
         url = None
         if isReferencable(path):
