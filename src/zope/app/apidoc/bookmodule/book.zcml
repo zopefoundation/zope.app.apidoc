@@ -90,15 +90,6 @@
         />
   </configure>
 
-  <!-- Events -->
-  <configure package="zope.event">
-    <bookchapter
-        id="event"
-        title="Events"
-        doc_path="README.txt"
-        />
-  </configure>
-
   <!-- Security -->
  <configure package="zope.security">
     <bookchapter
