@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2004 Zope Corporation and Contributors.
+# Copyright (c) 2004 Zope Foundation and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -13,7 +13,7 @@
 ##############################################################################
 """``apidoc`` ZCML namespace directive interfaces
 
-$Id: metadirectives.py 26613 2004-07-18 21:50:40Z srichter $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 import zope.interface

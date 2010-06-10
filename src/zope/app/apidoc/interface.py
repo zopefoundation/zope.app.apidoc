@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2004 Zope Corporation and Contributors.
+# Copyright (c) 2004 Zope Foundation and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -13,7 +13,7 @@
 ##############################################################################
 """Interface Inspection Utilities
 
-$Id: browser.py 29199 2005-02-17 22:38:55Z srichter $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 

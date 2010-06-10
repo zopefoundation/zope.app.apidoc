@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2004 Zope Corporation and Contributors.
+# Copyright (c) 2004 Zope Foundation and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -13,7 +13,7 @@
 ##############################################################################
 """This module handles the 'apidoc' namespace directives.
 
-$Id: metaconfigure.py 26889 2004-08-04 04:00:36Z pruggera $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 from zope.interface import implements

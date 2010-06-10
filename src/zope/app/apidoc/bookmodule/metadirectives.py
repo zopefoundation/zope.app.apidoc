@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2001, 2002 Zope Corporation and Contributors.
+# Copyright (c) 2001, 2002 Zope Foundation and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -13,7 +13,7 @@
 ##############################################################################
 """Schema for the ``apidoc:bookchapter`` directive
 
-$Id: metadirectives.py 28450 2004-11-13 21:05:19Z shane $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 
