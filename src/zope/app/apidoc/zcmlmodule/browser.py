@@ -49,8 +49,8 @@ class Menu(object):
         if isinstance(obj, Directive):
             ns = getParent(obj)
             apidoc_url = findAPIDocumentationRootURL(self.context, self.request)
-            return '%s/%s/%s/index.html' % (apidoc_url, getName(ns),
-                                            getName(obj))
+            return '%s/ZCML/%s/%s/index.html' % (
+                apidoc_url, getName(ns), getName(obj))
         return None
 
 
