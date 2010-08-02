@@ -25,7 +25,6 @@ from zope.interface import implements
 from zope.location.interfaces import ILocation
 
 from zope.i18nmessageid import ZopeMessageFactory as _
-from zope.app.component import queryNextSiteManager
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase, getPythonPath
 

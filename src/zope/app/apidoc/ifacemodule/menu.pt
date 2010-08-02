@@ -26,7 +26,7 @@
         <a href="" target="main"
            tal:attributes="href info/url"
            tal:content="info/name">
-          zope.app.component.interfaces.ILocalSiteManager
+          zope.site.interfaces.ILocalSiteManager
         </a>
       </div>
     </div>

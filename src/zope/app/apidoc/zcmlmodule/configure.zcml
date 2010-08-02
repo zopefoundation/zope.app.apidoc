@@ -9,7 +9,7 @@
 
   <class class=".Namespace">
     <allow attributes="getShortName getFullName getQuotedName" />
-    <allow interface="zope.app.container.interfaces.IReadContainer" />
+    <allow interface="zope.container.interfaces.IReadContainer" />
   </class>
 
   <class class=".Directive">
