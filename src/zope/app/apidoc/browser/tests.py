@@ -17,9 +17,9 @@ $Id$
 """
 import re
 import unittest
+import doctest
 
 import zope.app.testing.functional
-from zope.testing import doctest
 from zope.testing import renormalizing
 from zope.app.testing.functional import BrowserTestCase, FunctionalNoDevMode
 from zope.app.testing.functional import FunctionalDocFileSuite

@@ -5,6 +5,8 @@ CHANGES
 3.7.4 (unreleased)
 ------------------
 
+- Prefer the standard libraries doctest module to the one from zope.testing.
+
 - Remove unneeded dependencies zope.app.component and zope.app.container
 
 3.7.3 (2010-07-14)

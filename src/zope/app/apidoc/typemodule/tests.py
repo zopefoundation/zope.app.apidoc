@@ -16,7 +16,8 @@
 $Id$
 """
 import unittest
-from zope.testing.doctest import DocTestSuite
+import doctest
+
 from zope.app.testing.functional import BrowserTestCase
 from zope.app.testing import placelesssetup
 from zope.app.apidoc.testing import APIDocLayer
@@ -39,9 +40,9 @@ class TypeModuleTests(BrowserTestCase):
 def test_suite():
     TypeModuleTests.layer = APIDocLayer
     return unittest.TestSuite((
-        DocTestSuite('zope.app.apidoc.typemodule.type',
-                     setUp=placelesssetup.setUp,
-                     tearDown=placelesssetup.tearDown),
+        doctest.DocTestSuite('zope.app.apidoc.typemodule.type',
+                             setUp=placelesssetup.setUp,
+                             tearDown=placelesssetup.tearDown),
         unittest.makeSuite(TypeModuleTests),
         ))
 

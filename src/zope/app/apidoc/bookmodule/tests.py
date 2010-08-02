@@ -16,11 +16,11 @@
 $Id$
 """
 import unittest
-from zope.testing.doctest import DocTestSuite
+import doctest
 
 def test_suite():
     return unittest.TestSuite((
-        DocTestSuite('zope.app.apidoc.bookmodule.browser'),
+        doctest.DocTestSuite('zope.app.apidoc.bookmodule.browser'),
         ))
 
 if __name__ == '__main__':

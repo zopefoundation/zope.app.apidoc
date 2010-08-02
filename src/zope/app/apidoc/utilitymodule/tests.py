@@ -16,8 +16,9 @@
 $Id$
 """
 import unittest
+import doctest
+
 import zope.deprecation
-from zope.testing import doctest
 from zope.traversing.interfaces import IPhysicallyLocatable
 from zope.location.traversing import LocationPhysicallyLocatable
 

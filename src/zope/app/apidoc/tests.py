@@ -17,11 +17,11 @@ $Id$
 """
 from pprint import PrettyPrinter
 import unittest
+import doctest
 
 import zope.component.testing
 from zope.component.interfaces import IFactory
 from zope.interface import implements
-from zope.testing import doctest
 from zope.traversing.interfaces import IContainmentRoot
 from zope.location import LocationProxy
 

@@ -16,10 +16,10 @@
 $Id$
 """
 import unittest
+import doctest
 
 from zope.component.interfaces import IFactory
 from zope.interface.interfaces import IInterface
-from zope.testing import doctest
 
 from zope.app.apidoc.testing import APIDocLayer
 from zope.app.apidoc.apidoc import APIDocumentation

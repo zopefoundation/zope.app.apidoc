@@ -17,8 +17,9 @@ $Id$
 """
 import os
 import unittest
+import doctest
+
 from zope.configuration import xmlconfig
-from zope.testing import doctest
 from zope.traversing.interfaces import IPhysicallyLocatable
 from zope.location.traversing import LocationPhysicallyLocatable
 

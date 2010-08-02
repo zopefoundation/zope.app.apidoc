@@ -17,9 +17,9 @@ $Id$
 """
 import os
 import unittest
-from zope.configuration import xmlconfig
-from zope.testing import doctest
+import doctest
 
+from zope.configuration import xmlconfig
 import zope.app.appsetup.appsetup
 from zope.app.testing import placelesssetup
 

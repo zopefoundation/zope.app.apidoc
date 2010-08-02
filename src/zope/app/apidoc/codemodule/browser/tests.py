@@ -17,11 +17,13 @@ $Id$
 """
 import os
 import unittest
+import doctest
 import re
+
 from zope.component.interfaces import IFactory
 from zope.configuration import xmlconfig
 from zope.interface import implements
-from zope.testing import doctest, renormalizing
+from zope.testing import renormalizing
 from zope.traversing.interfaces import IContainmentRoot
 
 import zope.app
