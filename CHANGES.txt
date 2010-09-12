@@ -2,7 +2,7 @@
 CHANGES
 =======
 
-3.7.5 (unreleased)
+3.7.5 (2010-09-12)
 ------------------
 
 - Define ``__file__`` in doctests to make them pass under Python 2.4.
