@@ -103,7 +103,7 @@ example:
     <ul class="attr-list">
       <li>
         <b><code>get(name, default=None)</code>
-        </b><br>
+        </b><br />
         <div class="inline documentation"><p>Return ... </div>
         <span class="small">
           <i>Interface:</i>
@@ -197,7 +197,7 @@ As you can see you can click on the annotation to discover it further:
       <div class="indent">
         <div>
           <b><code>__init__(dict=None, **kwargs)</code>
-          </b><br>
+          </b><br />
           <div class="inline documentation"></div>
         </div>
       </div>

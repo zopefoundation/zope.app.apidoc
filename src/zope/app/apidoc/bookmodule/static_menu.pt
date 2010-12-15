@@ -1,4 +1,4 @@
-<html metal:use-macro="views/apidoc_macros/static_menu">
+<html metal:use-macro="context/@@apidoc_macros/static_menu">
 <body>
 
 </body>

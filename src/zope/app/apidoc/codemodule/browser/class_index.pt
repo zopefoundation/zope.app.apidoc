@@ -1,4 +1,4 @@
-<html metal:use-macro="views/apidoc_macros/details"
+<html metal:use-macro="context/@@apidoc_macros/details"
     i18n:domain="zope">
 <body metal:fill-slot="contents">
 
@@ -7,7 +7,7 @@
     <span tal:replace="context/getPath">zope.app.Klass</span>
   </h1>
 
-  <p metal:use-macro="views/apidoc_macros/breadcrumbs" />
+  <p metal:use-macro="context/@@apidoc_macros/breadcrumbs" />
 
   <div class="indent">
     <div class="documentation" i18n:translate=""
@@ -69,7 +69,7 @@
     <div tal:condition="init">
       <b><code
           tal:content="string:__init__${init/signature}" />
-      </b><br>
+      </b><br />
       <div class="inline documentation" tal:content="structure init/doc">
         method desc
       </div>
@@ -143,7 +143,7 @@
     <li tal:repeat="method view/getMethods">
       <b><code
           tal:content="string:${method/name}${method/signature}" />
-      </b><br>
+      </b><br />
       <div class="inline documentation" tal:content="structure method/doc">
         method desc
       </div>

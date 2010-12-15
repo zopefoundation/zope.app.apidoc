@@ -1,4 +1,4 @@
-<html metal:use-macro="views/apidoc_macros/static_menu"
+<html metal:use-macro="context/@@apidoc_macros/static_menu"
     i18n:domain="zope">
 <body>
 
@@ -15,12 +15,12 @@
       <tal:block i18n:translate="">name only search</tal:block>
 		-->
       <br />
-      <input type="text" name="search_str" 
+      <input type="text" name="search_str"
              style="font-size: 80%; width=95%"
-             tal:attributes="value request/search_str|nothing" 
+             tal:attributes="value request/search_str|nothing"
 		     onKeyup="javascript:simplegetSearchResult(document.searchform.search_str.value)" />
-	  <!--	
-      <input type="button" name="Find" value="Find" 
+	  <!--
+      <input type="button" name="Find" value="Find"
 		  onClick="javascript:getSearchResult(document.searchform.search_str.value)"
              i18n:attributes="value find-button" style="font-size: 80%"/>
 	  -->
@@ -28,7 +28,7 @@
 
     <div>
       <span i18n:translate="">Search results:</span><br /><br />
-    </div>	  
+    </div>
     <div tal:define="ifaces view/findAllInterfaces"
          tal:condition="ifaces" id="resultlist">
 

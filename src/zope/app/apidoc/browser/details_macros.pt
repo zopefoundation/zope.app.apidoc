@@ -1,4 +1,4 @@
-<metal:block define-macro="details"><metal:block define-slot="doctype"><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"></metal:block>
+<metal:block define-macro="details"><metal:block define-slot="doctype"><tal:doctype tal:replace="structure string:&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;" /></metal:block>
 
 <html
   xmlns="http://www.w3.org/1999/xhtml"
@@ -24,8 +24,6 @@
           tal:attributes="href context/++resource++favicon.png|default" />
   </head>
 
-<head>
-
 <body metal:define-slot="contents">
 
 </body>
@@ -41,7 +39,7 @@
        tal:attributes="
            id string:${elementId}.arrow;
            src context/++resource++harrow.png;
-           onClick string:javascript:switchDisplay('${elementId}')">
+           onClick string:javascript:switchDisplay('${elementId}')" />
 
   <img src="/@@/varrow.png" border="0" id=".arrow" onClick=""
        style="vertical-align: middle"
@@ -49,7 +47,7 @@
        tal:attributes="
            id string:${elementId}.arrow;
            src context/++resource++varrow.png;
-           onClick string:javascript:switchDisplay('${elementId}')">
+           onClick string:javascript:switchDisplay('${elementId}')" />
 
 </metal:block>
 

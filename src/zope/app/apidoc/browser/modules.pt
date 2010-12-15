@@ -1,6 +1,6 @@
-<html metal:use-macro="views/apidoc_macros/details"
+<html metal:use-macro="context/@@apidoc_macros/details"
     i18n:domain="zope">
-<body metal:fill-slot="contents" 
+<body metal:fill-slot="contents"
       style="padding: 0; margin: 0">
 
   <div class="apihead">

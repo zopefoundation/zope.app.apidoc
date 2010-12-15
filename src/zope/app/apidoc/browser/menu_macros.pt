@@ -1,4 +1,4 @@
-<metal:block define-macro="menu"><metal:block define-slot="doctype"><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"></metal:block>
+<metal:block define-macro="menu"><metal:block define-slot="doctype"><tal:doctype tal:replace="structure string:&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;" /></metal:block>
 
 <html
   xmlns="http://www.w3.org/1999/xhtml"
@@ -19,8 +19,6 @@
     <link rel="icon" type="image/png"
           tal:attributes="href context/++resource++favicon.png|default" />
   </head>
-
-<head>
 
 <body class="menu">
 
@@ -48,7 +46,7 @@
 
   <td style="width:16px">
     <a href=""
-       tal:attributes="href 
+       tal:attributes="href
            string:${request/getURL}?tree-state=${nodeInfo/tree-state}"
        tal:condition="node/hasChildren">
       <tal:block condition="not:nodeInfo/last-level-node">

@@ -5,6 +5,7 @@ CHANGES
 3.7.6 (unreleased)
 ------------------
 
+- Modernize some of the templates.  An increment towards having zope.app.apidoc compatible with Chameleon.
 
 3.7.5 (2010-09-12)
 ------------------

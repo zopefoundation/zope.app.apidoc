@@ -164,7 +164,7 @@ string:${context/@@absolute_url}/++attribute++${attr/name}/@@introspector.html"
     <li tal:repeat="method view/getMethods">
       <b><code
           tal:content="string:${method/name}${method/signature}" />
-      </b><br>
+      </b><br />
       <div class="inline documentation" tal:content="structure method/doc">
         method desc
       </div>

@@ -8,7 +8,7 @@
     <span tal:replace="view/getId">zope.app.interfaces.IInterface</span>
   </h1>
 
-  <p metal:use-macro="views/apidoc_macros/breadcrumbs" />
+  <p metal:use-macro="context/@@apidoc_macros/breadcrumbs" />
 
   <h3 tal:condition="view/getTypes">
     Type:

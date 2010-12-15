@@ -1,4 +1,4 @@
-<html metal:use-macro="views/apidoc_macros/details"
+<html metal:use-macro="context/@@apidoc_macros/details"
     i18n:domain="zope">
 <body metal:fill-slot="contents"
       tal:define="rootURL view/getAPIDocRootURL">
@@ -25,7 +25,7 @@
     </span>
   </h1>
 
-  <p metal:use-macro="views/apidoc_macros/breadcrumbs" />
+  <p metal:use-macro="context/@@apidoc_macros/breadcrumbs" />
 
   <div class="highlight documentation"
        tal:define="doc view/getDoc"
@@ -118,7 +118,7 @@
     <li tal:repeat="function functions">
       <b><code
           tal:content="string:${function/name}${function/signature}" />
-      </b><br>
+      </b><br />
       <div class="inline documentation" tal:content="structure function/doc">
         function desc
       </div>

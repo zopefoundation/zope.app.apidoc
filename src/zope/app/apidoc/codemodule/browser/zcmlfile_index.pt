@@ -1,4 +1,4 @@
-<html metal:use-macro="views/apidoc_macros/details">
+<html metal:use-macro="context/@@apidoc_macros/details">
 <head>
   <base href=""
         metal:fill-slot="headers"
@@ -57,7 +57,7 @@ div.highlight {
     <span tal:replace="context/zope:name">configure.zcml</span>
   </h1>
 
-  <p metal:use-macro="views/apidoc_macros/breadcrumbs" />
+  <p metal:use-macro="context/@@apidoc_macros/breadcrumbs" />
 
   <div tal:replace="structure context/rootElement/@@display" />
 

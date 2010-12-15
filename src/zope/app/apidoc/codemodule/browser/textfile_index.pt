@@ -1,4 +1,4 @@
-<html metal:use-macro="views/apidoc_macros/details">
+<html metal:use-macro="context/@@apidoc_macros/details">
 <head>
   <base href=""
         metal:fill-slot="headers"
@@ -12,7 +12,7 @@
     <span tal:replace="context/zope:name">README.txt</span>
   </h1>
 
-  <p metal:use-macro="views/apidoc_macros/breadcrumbs" />
+  <p metal:use-macro="context/@@apidoc_macros/breadcrumbs" />
 
   <div class="documentation"
        tal:content="structure view/renderedContent">
