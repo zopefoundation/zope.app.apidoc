@@ -5,7 +5,10 @@ CHANGES
 3.7.6 (unreleased)
 ------------------
 
-- Modernize some of the templates.  An increment towards having zope.app.apidoc compatible with Chameleon.
+- Modernize some of the templates.  An increment towards having
+  zope.app.apidoc compatible with Chameleon.
+
+- Declared install dependency on ``zope.app.exception``.
 
 3.7.5 (2010-09-12)
 ------------------
@@ -34,23 +37,24 @@ CHANGES
 3.7.1 (2010-01-05)
 ------------------
 
-- Updated tests to work with zope.publisher 3.12 (using zope.login).
+- Updated tests to work with zope.publisher 3.12 (using `zope.login`).
 
 3.7.0 (2009-12-22)
 ------------------
 
-- Updated tests to work with latest zope.testing and use zope.browserpage in
-  favor of zope.app.pagetemplate.
+- Updated tests to work with latest `zope.testing` and use `zope.browserpage` in
+  favor of `zope.app.pagetemplate`.
 
 3.6.8 (2009-11-18)
 ------------------
 
-- Updated the tests after moving IPossibleSite and ISite to zope.component.
+- Updated the tests after moving ``IPossibleSite`` and ``ISite`` to
+  `zope.component`.
 
 3.6.7 (2009-09-29)
 ------------------
 
-- Updated the tests after moving ITraverser back to zope.traversing.
+- Updated the tests after moving ``ITraverser`` back `to zope.traversing`.
 
 3.6.6 (2009-09-15)
 ------------------
