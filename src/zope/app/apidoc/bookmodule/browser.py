@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2004 Zope Corporation and Contributors.
+# Copyright (c) 2004 Zope Foundation and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -13,7 +13,7 @@
 ##############################################################################
 """Browser Views for Book
 
-$Id: browser.py 28451 2004-11-13 23:21:47Z shane $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 from metaconfigure import EMPTYPATH

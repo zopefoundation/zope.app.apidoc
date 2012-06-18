@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2004 Zope Corporation and Contributors.
+# Copyright (c) 2004 Zope Foundation and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -13,7 +13,7 @@
 ##############################################################################
 """Tests for the Book Documentation Module
 
-$Id: tests.py 29143 2005-02-14 22:43:16Z srichter $
+$Id$
 """
 import unittest
 from zope.testing.doctestunit import DocTestSuite

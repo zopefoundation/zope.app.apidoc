@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2001, 2002 Zope Corporation and Contributors.
+# Copyright (c) 2001, 2002 Zope Foundation and Contributors.
 # All Rights Reserved.
 # 
 # This software is subject to the provisions of the Zope Public License,
@@ -16,7 +16,7 @@
 These handlers process the `registerTopic()` directive of
 the "help" ZCML namespace.
 
-$Id: metaconfigure.py 26955 2004-08-09 04:06:35Z pruggera $
+$Id$
 """
 __docformat__ = 'restructuredtext'
 import os.path
