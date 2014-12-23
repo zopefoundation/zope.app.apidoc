@@ -322,7 +322,7 @@ Get adapters where this interface is required.
     'factory': 'zope.site.site.SiteManagerAdapter',
     'factory_url': 'zope/site/site/SiteManagerAdapter',
     'name': u'',
-    'provided': {'module': 'zope.component.interfaces',
+    'provided': {'module': 'zope.interface.interfaces',
                  'name': 'IComponentLookup'},
     'required': [{'isInterface': True,
                   'isType': False,

@@ -11,25 +11,25 @@
     <bookchapter
         id="interface"
         title="Interfaces"
-        doc_path="README.txt"
+        doc_path="README.rst"
         parent="ifaceschema"
         />
     <bookchapter
         id="adapter"
         title="Adapter Registry"
-        doc_path="adapter.txt"
+        doc_path="adapter.rst"
         parent="ifaceschema"
         />
     <bookchapter
         id="human"
         title="Adapters (light version)"
-        doc_path="human.txt"
+        doc_path="human.rst"
         parent="ifaceschema"
         />
     <bookchapter
         id="foodforthought"
         title="Food For Thought"
-        doc_path="tests/foodforthought.txt"
+        doc_path="tests/foodforthought.rst"
         parent="ifaceschema"
         />
   </configure>
@@ -37,13 +37,13 @@
     <bookchapter
         id="schemas"
         title="Schemas"
-        doc_path="README.txt"
+        doc_path="README.rst"
         parent="ifaceschema"
         />
     <bookchapter
         id="fields"
         title="Schema Fields"
-        doc_path="fields.txt"
+        doc_path="fields.rst"
         parent="ifaceschema"
         />
   </configure>
@@ -59,19 +59,19 @@
         id="global"
         title="Global Component Architecture"
         parent="ca"
-        doc_path="README.txt"
+        doc_path="README.rst"
         />
     <bookchapter
         id="socket"
         title="Global CA (Socket Example)"
         parent="ca"
-        doc_path="socketexample.txt"
+        doc_path="socketexample.rst"
         />
     <bookchapter
         id="factory"
         title="Factories"
         parent="ca"
-        doc_path="factory.txt"
+        doc_path="factory.rst"
         />
   </configure>
 
@@ -80,13 +80,13 @@
         id="local"
         title="Local Component Architecture"
         parent="ca"
-        doc_path="site.txt"
+        doc_path="site.rst"
         />
     <bookchapter
         id="site"
         title="Local Sites &amp; Site Managers"
         parent="ca/local"
-        doc_path="site.txt"
+        doc_path="site.rst"
         />
   </configure>
 
@@ -95,30 +95,30 @@
     <bookchapter
         id="security"
         title="Security"
-        doc_path="README.txt"
+        doc_path="README.rst"
         />
     <bookchapter
         id="untrusted"
         title="Untrusted Interpreters"
-        doc_path="untrustedinterpreter.txt"
+        doc_path="untrustedinterpreter.rst"
         parent="security"
         />
     <bookchapter
         id="interpreter"
         title="Untrusted Python Interpreter"
-        doc_path="untrustedpython/interpreter.txt"
+        doc_path="untrustedpython/interpreter.rst"
         parent="security/untrusted"
         />
     <bookchapter
         id="rcompile"
         title="Restricted Python Code"
-        doc_path="untrustedpython/rcompile.txt"
+        doc_path="untrustedpython/rcompile.rst"
         parent="security/untrusted"
         />
     <bookchapter
         id="builtins"
         title="Safe Builtins"
-        doc_path="untrustedpython/builtins.txt"
+        doc_path="untrustedpython/builtins.rst"
         parent="security/untrusted"
         />
   </configure>
@@ -126,7 +126,7 @@
     <bookchapter
         id="globalprincipals"
         title="Global Principals"
-        doc_path="README.txt"
+        doc_path="README.rst"
         parent="security"
         />
   </configure>
@@ -140,13 +140,13 @@
     <bookchapter
         id="testbrowser"
         title="The Test Browser"
-        doc_path="README.txt"
+        doc_path="README.rst"
         parent="test"
         />
     <bookchapter
         id="overthewire"
         title="Using testbrowser On the Internet"
-        doc_path="over_the_wire.txt"
+        doc_path="over_the_wire.rst"
         parent="test"
         />
   </configure>
@@ -154,13 +154,13 @@
     <bookchapter
         id="fdoctest"
         title="Functional DocTest"
-        doc_path="doctest.txt"
+        doc_path="doctest.rst"
         parent="test"
         />
     <bookchapter
         id="fdoctest-howto"
         title="FDocTest (How to)"
-        doc_path="dochttp.txt"
+        doc_path="dochttp.rst"
         parent="test"
         />
   </configure>
@@ -168,7 +168,7 @@
     <bookchapter
         id="formparser"
         title="Form Parser"
-        doc_path="formparser.txt"
+        doc_path="formparser.rst"
         parent="test"
         />
   </configure>
@@ -182,7 +182,7 @@
     <bookchapter
         id="messageid"
         title="Messages"
-        doc_path="messages.txt"
+        doc_path="messages.rst"
         parent="i18nl10n"
         />
   </configure>
@@ -192,7 +192,7 @@
     <bookchapter
         id="cachedprops"
         title="Cached Properties"
-        doc_path="property.txt"
+        doc_path="property.rst"
         />
   </configure>
 
@@ -201,7 +201,7 @@
     <bookchapter
         id="deprecation"
         title="Deprecation API"
-        doc_path="README.txt"
+        doc_path="README.rst"
         />
   </configure>
 
@@ -210,7 +210,7 @@
     <bookchapter
         id="persistent"
         title="Persistent Framework"
-        doc_path="persistent.txt"
+        doc_path="persistent.rst"
         />
   </configure>
 
@@ -224,13 +224,13 @@
         id="savepoints"
         title="Savepoints"
         parent="transaction"
-        doc_path="tests/savepoint.txt"
+        doc_path="tests/savepoint.rst"
         />
     <bookchapter
         id="doom"
         title="Dooming transactions"
         parent="transaction"
-        doc_path="tests/doom.txt"
+        doc_path="tests/doom.rst"
         />
   </configure>
 
@@ -244,49 +244,49 @@
         id="multidb"
         title="Multiple Databases"
         parent="zodb"
-        doc_path="tests/multidb.txt"
+        doc_path="tests/multidb.rst"
         />
     <bookchapter
         id="crossref"
         title="Cross-Database References"
         parent="zodb"
-        doc_path="cross-database-references.txt"
+        doc_path="cross-database-references.rst"
         />
     <bookchapter
         id="collaboration"
         title="Collaboration Diagrams"
         parent="zodb"
-        doc_path="collaborations.txt"
+        doc_path="collaborations.rst"
         />
     <bookchapter
         id="dbopen"
         title="Connection Management"
         parent="zodb"
-        doc_path="tests/dbopen.txt"
+        doc_path="tests/dbopen.rst"
         />
     <bookchapter
         id="persistentclass"
         title="Persistent Classes"
         parent="zodb"
-        doc_path="persistentclass.txt"
+        doc_path="persistentclass.rst"
         />
     <bookchapter
         id="savepoints"
         title="Savepoints"
         parent="zodb"
-        doc_path="tests/testConnectionSavepoint.txt"
+        doc_path="tests/testConnectionSavepoint.rst"
         />
     <bookchapter
         id="subtransactions"
         title="Sub-Transactions"
         parent="zodb"
-        doc_path="subtransactions.txt"
+        doc_path="subtransactions.rst"
         />
     <bookchapter
         id="synchronizers"
         title="Synchronizers"
         parent="zodb"
-        doc_path="tests/synchronizers.txt"
+        doc_path="tests/synchronizers.rst"
         />
   </configure>
 
@@ -295,7 +295,7 @@
     <bookchapter
         id="btrees"
         title="BTree Developer Information"
-        doc_path="Development.txt"
+        doc_path="Development.rst"
         />
   </configure>
 

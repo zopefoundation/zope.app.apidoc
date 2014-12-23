@@ -534,27 +534,27 @@ object's attributes:
 Of course, the methods are listed as well:
 
   >>> pprint(list(inspect.getMethods()))
-    [...
-     {'doc': u'',
-      'interface': 'zope.component.interfaces.IPossibleSite',
-      'name': 'getSiteManager',
-      'read_perm': None,
-      'signature': '()',
-      'write_perm': None},
-     ...
-     {'doc': u'<p>Return a sequence-like...',
-      'interface': 'zope.interface.common.mapping.IEnumerableMapping',
-      'name': 'keys',
-      'read_perm': None,
-      'signature': '()',
-      'write_perm': None},
-     {'doc': u'',
-      'interface': 'zope.component.interfaces.IPossibleSite',
-      'name': 'setSiteManager',
-      'read_perm': None,
-      'signature': '(sm)',
-      'write_perm': None},
-     ...]
+  [...
+   {'doc': u'',
+    'interface': 'zope.component.interfaces.IPossibleSite',
+    'name': 'getSiteManager',
+    'read_perm': None,
+    'signature': '()',
+    'write_perm': None},
+   ...
+   {'doc': u'',
+    'interface': 'zope.container.interfaces.IBTreeContainer',
+    'name': 'keys',
+    'read_perm': None,
+    'signature': '(key=None)',
+    'write_perm': None},
+   {'doc': u'',
+    'interface': 'zope.component.interfaces.IPossibleSite',
+    'name': 'setSiteManager',
+    'read_perm': None,
+    'signature': '(sm)',
+    'write_perm': None},
+   ...]
 
 The final methods deal with inspecting the objects data further. For exmaple,
 if we inspect a sequence,
