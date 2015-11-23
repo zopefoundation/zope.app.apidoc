@@ -1,0 +1,4 @@
+include *.py
+include *.txt
+include buildout.cfg
+recursive-include src *.css *.js *.png *.pt *.txt *.zcml
