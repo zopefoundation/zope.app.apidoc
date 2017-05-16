@@ -14,10 +14,13 @@
 """Tests for the Book Documentation Module
 
 """
+import re
 import unittest
 import doctest
 
 from zope.component import testing
+from zope.testing import renormalizing
+
 from zope.app.apidoc.tests import BrowserTestCase
 
 from zope.app.apidoc.testing import APIDocLayer
@@ -34,18 +37,23 @@ class TypeModuleTests(BrowserTestCase):
             basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find('IBrowserSkinType') > 0)
+        self.assertIn('IBrowserSkinType', body)
         self.checkForBrokenLinks(body, '/++apidoc++/Type/@@menu.html',
                                  basic='mgr:mgrpw')
 
 
 def test_suite():
+    checker = renormalizing.RENormalizing([
+        (re.compile(r"u('[^']*')"), r"\1"),
+    ])
+
     return unittest.TestSuite((
         doctest.DocTestSuite('zope.app.apidoc.typemodule.type',
                              setUp=testing.setUp,
-                             tearDown=testing.tearDown),
+                             tearDown=testing.tearDown,
+                             checker=checker),
         unittest.defaultTestLoader.loadTestsFromName(__name__),
     ))
 
 if __name__ == '__main__':
-    unittest.main(default='test_suite')
+    unittest.main()

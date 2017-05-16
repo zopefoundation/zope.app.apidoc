@@ -17,7 +17,7 @@
 __docformat__ = 'restructuredtext'
 
 import inspect
-import types
+
 from zope.component import getUtility
 from zope.proxy import removeAllProxies
 from zope.security.proxy import removeSecurityProxy
@@ -32,10 +32,10 @@ from zope.app.apidoc.utilities import isReferencable
 
 
 def getTypeLink(type):
-    if type is types.NoneType:
+    if type is type(None):
         return None
     path = getPythonPath(type)
-    return isReferencable(path) and path.replace('.', '/') or None
+    return path.replace('.', '/') if isReferencable(path) else None
 
 def getInterfaceInfo(iface):
     if iface is None:
@@ -47,6 +47,9 @@ def getInterfaceInfo(iface):
 class ClassDetails(object):
     """Represents the details of the class."""
 
+    context = None
+    request = None
+
     def getBases(self):
         """Get all bases of this class."""
         return self._listClasses(self.context.getBases())
@@ -55,7 +58,7 @@ class ClassDetails(object):
     def getKnownSubclasses(self):
         """Get all known subclasses of this class."""
         entries = self._listClasses(self.context.getKnownSubclasses())
-        entries.sort(lambda x, y: cmp(x['path'], y['path']))
+        entries.sort(key=lambda x: x['path'])
         return entries
 
 
@@ -105,7 +108,7 @@ class ClassDetails(object):
         klass = removeSecurityProxy(self.context)
         for name, attr, iface in klass.getAttributes():
             entry = {'name': name,
-                     'value': `attr`,
+                     'value': repr(attr),
                      'type': type(attr).__name__,
                      'type_link': getTypeLink(type(attr)),
                      'interface': getInterfaceInfo(iface)}
@@ -134,7 +137,7 @@ class ClassDetails(object):
 
         for name, attr, iface in klass.getMethods():
             entry = {'name': name,
-                     'signature': getFunctionSignature(attr),
+                     'signature': getFunctionSignature(attr, ignore_self=True),
                      'doc': renderText(attr.__doc__ or '',
                                        inspect.getmodule(attr)),
                      'interface': getInterfaceInfo(iface)}
@@ -155,6 +158,6 @@ class ClassDetails(object):
             return None
         attr = removeSecurityProxy(attr)
         return {
-            'signature': getFunctionSignature(attr),
+            'signature': getFunctionSignature(attr, ignore_self=True),
             'doc': renderText(attr.__doc__ or '', inspect.getmodule(attr)),
             }

@@ -18,14 +18,13 @@ site manager. Therefore, currently there are no unregsitered interfaces
 listed in the documentation. This might be good, since unregistered interfaces
 are usually private and not of interest to a general developer.
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 
 from zope.component.interface import queryInterface
 from zope.component.interface import searchInterfaceUtilities
 from zope.i18nmessageid import ZopeMessageFactory as _
-from zope.interface import implements
+from zope.interface import implementer
 from zope.location import LocationProxy
 from zope.location.interfaces import ILocation
 
@@ -39,14 +38,13 @@ class IInterfaceModule(IDocumentationModule):
     implementing this interface.
     """
 
+@implementer(ILocation, IInterfaceModule)
 class InterfaceModule(ReadContainerBase):
     r"""Represent the Documentation of all Interfaces.
 
     This documentation is implemented using a simple `IReadContainer`. The
     items of the container are all the interfaces listed in the global
     site manager."""
-
-    implements(ILocation, IInterfaceModule)
 
     __name__ = None
     __parent__ = None
@@ -88,7 +86,6 @@ class InterfaceModule(ReadContainerBase):
 
     def items(self):
         """See zope.app.interfaces.container.IReadContainer"""
-        items = list(searchInterfaceUtilities(self))
-        items.sort()
+        items = sorted(searchInterfaceUtilities(self))
         items = [(i[0], LocationProxy(i[1], self, i[0])) for i in items]
         return items

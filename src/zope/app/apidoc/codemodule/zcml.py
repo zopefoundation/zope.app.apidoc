@@ -26,7 +26,9 @@ from zope.location.interfaces import ILocation
 
 import zope.app.appsetup.appsetup
 
-from interfaces import IDirective, IRootDirective, IZCMLFile
+from zope.app.apidoc.codemodule.interfaces import IDirective
+from zope.app.apidoc.codemodule.interfaces import IRootDirective
+from zope.app.apidoc.codemodule.interfaces import IZCMLFile
 
 
 class MyConfigHandler(xmlconfig.ConfigurationHandler, object):

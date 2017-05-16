@@ -13,11 +13,10 @@
 ##############################################################################
 """Interface Types Documentation Module
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 
-from zope.interface import implements
+from zope.interface import implementer
 from zope.component import queryUtility, getUtilitiesFor
 from zope.i18nmessageid import ZopeMessageFactory as _
 from zope.interface.interfaces import IInterface
@@ -27,6 +26,8 @@ from zope.location.interfaces import ILocation
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase
 
+
+@implementer(ILocation)
 class TypeInterface(ReadContainerBase):
     """Representation of the special type interface.
 
@@ -35,8 +36,9 @@ class TypeInterface(ReadContainerBase):
       >>> from zope.interface import Interface
       >>> class IFoo(Interface):
       ...    pass
-      >>> class Foo:
-      ...     implements(IFoo)
+      >>> @implementer(IFoo)
+      ... class Foo(object):
+      ...     pass
       >>> from zope.app.testing import ztapi
       >>> ztapi.provideUtility(IFoo, Foo(), 'Foo')
 
@@ -48,11 +50,9 @@ class TypeInterface(ReadContainerBase):
       True
 
       >>> typeiface.items() #doctest:+ELLIPSIS
-      [(u'Foo', <zope.app.apidoc.typemodule.type.Foo instance at ...>)]
+      [(u'Foo', <zope.app.apidoc.typemodule.type.Foo object at ...>)]
 
     """
-
-    implements(ILocation)
 
     def __init__(self, interface, parent, name):
         self.__parent__ = parent
@@ -69,10 +69,11 @@ class TypeInterface(ReadContainerBase):
         """See zope.container.interfaces.IReadContainer"""
         results = [(name, LocationProxy(iface, self, name))
                    for name, iface in getUtilitiesFor(self.interface)]
-        results.sort(lambda x, y: cmp(x[1].getName(), y[1].getName()))
+        results.sort(key=lambda x: x[1].__name__)
         return results
 
 
+@implementer(IDocumentationModule)
 class TypeModule(ReadContainerBase):
     r"""Represent the Documentation of all interface types.
 
@@ -94,8 +95,6 @@ class TypeModule(ReadContainerBase):
       [<InterfaceClass zope.app.apidoc.typemodule.type.IFoo>]
     """
 
-    implements(IDocumentationModule)
-
     # See zope.app.apidoc.interfaces.IDocumentationModule
     title = _('Interface Types')
 
@@ -115,6 +114,5 @@ class TypeModule(ReadContainerBase):
         results = [(name, TypeInterface(iface, self, name))
                    for name, iface in getUtilitiesFor(IInterface)
                    if iface.extends(IInterface)]
-        results.sort(lambda x, y: cmp(x[1].interface.getName(),
-                                      y[1].interface.getName()))
+        results.sort(key=lambda x: x[1].interface.getName())
         return results

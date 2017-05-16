@@ -14,7 +14,7 @@
 """Tests for the Code Documentation Module
 
 """
-import os
+import re
 import unittest
 import doctest
 
@@ -22,6 +22,7 @@ from zope.configuration import xmlconfig
 import zope.app.appsetup.appsetup
 from zope.component import testing
 
+from zope.testing import renormalizing
 
 def setUp(test):
     testing.setUp()
@@ -64,13 +65,26 @@ def tearDown(test):
 
 
 def test_suite():
+    checker = renormalizing.RENormalizing((
+        (re.compile(r"u('[^']*')"), r"\1"),
+        (re.compile(r"b('[^']*')"), r"\1"),
+    ))
+    def file_test(name, setUp=setUp, tearDown=tearDown, **kwargs):
+        return doctest.DocFileSuite(
+            name,
+            setUp=setUp,
+            tearDown=tearDown,
+            checker=checker,
+            optionflags=(doctest.NORMALIZE_WHITESPACE
+                         | doctest.ELLIPSIS
+                         | renormalizing.IGNORE_EXCEPTION_MODULE_IN_PYTHON2),
+            **kwargs)
+
+
     return unittest.TestSuite((
-        doctest.DocFileSuite('README.rst',
-                             setUp=setUp, tearDown=tearDown,
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
-        doctest.DocFileSuite('directives.rst',
-                             setUp=testing.setUp,
-                             tearDown=testing.tearDown),
+        file_test('README.rst'),
+        file_test('directives.rst',
+                  setUp=testing.setUp, tearDown=testing.tearDown),
     ))
 
 if __name__ == '__main__':

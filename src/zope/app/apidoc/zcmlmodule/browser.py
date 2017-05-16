@@ -13,10 +13,9 @@
 ##############################################################################
 """Browser Views for ZCML Reference
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
-
+import six
 import keyword
 
 from zope.configuration.xmlconfig import ParserInfo
@@ -32,6 +31,8 @@ from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
 
 class Menu(object):
     """Menu View Helper Class"""
+    context = None
+    request = None
 
     def getMenuTitle(self, node):
         """Return the title of the node that is displayed in the menu."""
@@ -63,6 +64,9 @@ def _getFieldName(field):
 
 class DirectiveDetails(object):
     """View class for a Directive."""
+
+    context = None
+    request = None
 
     def getAPIDocRootURL(self):
         return findAPIDocumentationRootURL(self.context, self.request)
@@ -102,7 +106,7 @@ class DirectiveDetails(object):
 
     def getInfo(self):
         """Get the file where the directive was declared."""
-        if isinstance(self.context.info, (str, unicode)):
+        if isinstance(self.context.info, six.string_types):
             return self.context.info
         return None
 

@@ -13,7 +13,6 @@
 ##############################################################################
 """Tests for the Book Documentation Module
 
-$Id$
 """
 import unittest
 import doctest

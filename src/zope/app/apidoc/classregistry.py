@@ -67,6 +67,6 @@ def safe_import(path, default=None):
             return default
         # Some software, we cannot control, might raise all sorts of errors;
         # thus catch all exceptions and return the default.
-        except Exception, error:
+        except Exception:
             return default
     return module

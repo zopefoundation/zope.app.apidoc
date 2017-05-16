@@ -13,10 +13,9 @@
 ##############################################################################
 """Browser Views for Interface Types
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
-from type import TypeInterface
+from zope.app.apidoc.typemodule.type import TypeInterface
 
 from zope.security.proxy import isinstance, removeSecurityProxy
 from zope.traversing.api import getName
@@ -25,6 +24,9 @@ from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
 
 class Menu(object):
     """Menu View Helper Class"""
+
+    context = None
+    request = None
 
     def getMenuTitle(self, node):
         """Return the title of the node that is displayed in the menu."""

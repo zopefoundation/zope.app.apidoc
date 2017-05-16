@@ -18,15 +18,14 @@ feel better and does not have all the O-wrap clutter:
   >>> browser.open('http://localhost/++apidoc++/non-existent/')
   Traceback (most recent call last):
   ...
-  HTTPError: HTTP Error 404: Not Found
+  urllib.error.HTTPError: HTTP Error 404: Not Found
 
-  >>> from urllib2 import HTTPError
   >>> try:
   ...     browser.open('http://localhost/++apidoc++/non-existent/')
-  ... except HTTPError, error:
+  ... except Exception:
   ...     pass
 
-  >>> print browser.contents
+  >>> print(browser.contents)
   <...
   <h1 class="details-header">
     Page Not Found

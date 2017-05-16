@@ -36,29 +36,25 @@ def findDocModule(obj):
         return obj
     return findDocModule(getParent(obj))
 
-def _compareAttrs(x, y, nameOrder):
+def _compareAttrs(x,nameOrder):
     if x['name'] in nameOrder:
         valueX = nameOrder.index(x['name'])
     else:
         valueX = 999999
-
-    if y['name'] in nameOrder:
-        valueY = nameOrder.index(y['name'])
-    else:
-        valueY = 999999
-
-    return cmp(valueX, valueY)
+    return valueX
 
 
 class DirectiveDetails(object):
+
+    context = None
+    request = None
 
     def fullTagName(self):
         context = removeSecurityProxy(self.context)
         ns, name = context.name
         if context.prefixes.get(ns):
             return '%s:%s' %(context.prefixes[ns], name)
-        else:
-            return name
+        return name
 
     def line(self):
         return str(removeSecurityProxy(self.context).info.line)
@@ -121,7 +117,7 @@ class DirectiveDetails(object):
         names = context.schema.names(True)
         rootURL = absoluteURL(findDocModule(self), self.request)
         for attr in attrs:
-            name = (attr['name'] in names) and attr['name'] or attr['name']+'_'
+            name = attr['name'] if attr['name'] in names else attr['name'] + '_'
             field = context.schema.get(name)
 
             if isinstance(field, (GlobalObject, GlobalInterface)):
@@ -147,20 +143,20 @@ class DirectiveDetails(object):
         fieldNames = getFieldNamesInOrder(context.schema)
         fieldNames = [name.endswith('_') and name[:-1] or name
                       for name in fieldNames]
-        attrs.sort(lambda x, y: _compareAttrs(x, y, fieldNames))
+        attrs.sort(key=lambda x: _compareAttrs(x, fieldNames))
 
         if not IRootDirective.providedBy(context):
             return attrs
 
         xmlns = []
         for uri, prefix in context.prefixes.items():
-            name = prefix and ':'+prefix or ''
-            xmlns.append({'name': 'xmlns'+name,
+            name = ':' + prefix if prefix else ''
+            xmlns.append({'name': 'xmlns' + name,
                           'value': uri,
                           'url': None,
                           'values': []})
 
-        xmlns.sort(lambda x, y: cmp(x['name'], y['name']))
+        xmlns.sort(key=lambda x: x['name'])
         return xmlns + attrs
 
     def hasSubDirectives(self):

@@ -135,19 +135,22 @@ that implement the specified interface.
 
 Let's start by creating and registering some classes:
 
-  >>> from zope.interface import implements
+  >>> from zope.interface import implementer
   >>> from zope.app.apidoc.classregistry import classRegistry
 
-  >>> class MyFoo(object):
-  ...     implements(IFoo)
+  >>> @implementer(IFoo)
+  ... class MyFoo(object):
+  ...    pass
   >>> classRegistry['MyFoo'] = MyFoo
 
-  >>> class MyBar(object):
-  ...     implements(IBar)
+  >>> @implementer(IBar)
+  ... class MyBar(object):
+  ...    pass
   >>> classRegistry['MyBar'] = MyBar
 
-  >>> class MyFooBar(object):
-  ...     implements(IFooBar)
+  >>> @implementer(IFooBar)
+  ... class MyFooBar(object):
+  ...    pass
   >>> classRegistry['MyFooBar'] = MyFooBar
 
 Let's now see whether what results we get:
@@ -318,9 +321,9 @@ object references.  This may change.
 This function returns the info dictionary of a type.
 
   >>> pprint(component.getTypeInfoDictionary(tuple), width=1)
-  {'module': '__builtin__',
+  {'module': '...builtin...',
    'name': 'tuple',
-   'url': '__builtin__/tuple'}
+   'url': '...builtin.../tuple'}
 
 
 `getSpecificationInfoDictionary(spec)`
@@ -348,9 +351,9 @@ Let's now look at the behavior when passing a type:
   >>> pprint(component.getSpecificationInfoDictionary(tupleSpec))
   {'isInterface': False,
    'isType': True,
-   'module': '__builtin__',
+   'module': '...builtin...',
    'name': 'tuple',
-   'url': '__builtin__/tuple'}
+   'url': '...builtin.../tuple'}
 
 For the type, we simply reuse the type info dictionary function.
 
@@ -363,8 +366,9 @@ data of an adapter registration in an output-friendly format.
 
 Let's first create an adapter registration:
 
-  >>> class MyResult(object):
-  ...     implements(IResult)
+  >>> @implementer(IResult)
+  ... class MyResult(object):
+  ...    pass
 
   >>> from zope.component.registry import AdapterRegistration
   >>> reg = AdapterRegistration(None, (IFoo, IBar), IResult, 'FooToResult',
@@ -372,7 +376,7 @@ Let's first create an adapter registration:
 
 And now get the info dictionary:
 
-  >>> pprint(component.getAdapterInfoDictionary(reg), width=1)
+  >>> pprint(component.getAdapterInfoDictionary(reg), width=50)
   {'doc': 'doc info',
    'factory': 'zope.app.apidoc.doctest.MyResult',
    'factory_url': 'zope/app/apidoc/doctest/MyResult',
@@ -399,7 +403,7 @@ will be ``None``:
 
   >>> reg = AdapterRegistration(None, (IFoo, IBar), IResult, 'FooToResult',
   ...                            MyResultType, 'doc info')
-  >>> pprint(component.getAdapterInfoDictionary(reg), width=1)
+  >>> pprint(component.getAdapterInfoDictionary(reg), width=50)
   {'doc': 'doc info',
    'factory': 'zope.app.apidoc.doctest.MyResult2',
    'factory_url': None,
@@ -450,7 +454,7 @@ Luckily we have already registered some factories, so we just reuse their
 registrations:
 
   >>> pprint(component.getFactoryInfoDictionary(
-  ...     component.getFactories(IFooBar).next()))
+  ...     next(component.getFactories(IFooBar))))
   {'description': u'<p>My Foo Bar</p>\n',
    'name': u'MyFooBar',
    'title': 'MyFooBar',
@@ -472,7 +476,7 @@ will be ``None``:
   >>> ztapi.provideUtility(IFactory, MyFactoryType(), 'MyFactory')
 
   >>> pprint(component.getFactoryInfoDictionary(
-  ...     component.getFactories(IMine).next()), width=1)
+  ...     next(component.getFactories(IMine))), width=50)
   {'description': u'',
    'name': u'MyFactory',
    'title': u'',
@@ -489,9 +493,9 @@ Luckily we have already registered some utilities, so we just reuse their
 registrations:
 
   >>> pprint(component.getUtilityInfoDictionary(
-  ...     component.getUtilities(IFooBar).next()))
+  ...     next(component.getUtilities(IFooBar))))
   {'iface_id': 'zope.app.apidoc.doctest.IFooBar',
    'name': u'<i>no name</i>',
    'path': 'zope.app.apidoc.doctest.MyFooBar',
    'url': 'Code/zope/app/apidoc/doctest/MyFooBar',
-   'url_name': 'X19ub25hbWVfXw=='}
+   'url_name': b'X19ub25hbWVfXw=='}

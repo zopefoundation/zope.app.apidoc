@@ -64,22 +64,22 @@ have a referencable name, so we lookup the class and use its name:
 
   >>> info = presentation.getViewFactoryData(Factory())
   >>> pprint(info)
-  {'path': '__builtin__.Factory',
+  {'path': 'zope.app.apidoc.doctest.Factory',
    'referencable': True,
    'resource': None,
    'template': None,
-   'url': '__builtin__/Factory'}
+   'url': 'zope/app/apidoc/doctest/Factory'}
 
 One of the more common cases, however, is that the factory is a class or
 type. In this case we can just retrieve the reference directly:
 
   >>> info = presentation.getViewFactoryData(Factory)
   >>> pprint(info)
-  {'path': '__builtin__.Factory',
+  {'path': 'zope.app.apidoc.doctest.Factory',
    'referencable': True,
    'resource': None,
    'template': None,
-   'url': '__builtin__/Factory'}
+   'url': 'zope/app/apidoc/doctest/Factory'}
 
 When factories are created by a directive, they can also be functions. In
 those cases we just simply return the function path:
@@ -88,15 +88,15 @@ those cases we just simply return the function path:
   ...     pass
 
   # The testing framework does not set the __module__ correctly
-  >>> factory.__module__ = '__builtin__'
+  >>> factory.__module__ = 'zope.app.apidoc.doctest'
 
   >>> info = presentation.getViewFactoryData(factory)
   >>> pprint(info)
-  {'path': '__builtin__.factory',
+  {'path': 'zope.app.apidoc.doctest.factory',
    'referencable': True,
    'resource': None,
    'template': None,
-   'url': '__builtin__/factory'}
+   'url': 'zope/app/apidoc/doctest/factory'}
 
 However, the function is rather unhelpful, since it will be the same for all
 views that use that code path. For this reason the function keeps track of the
@@ -106,11 +106,11 @@ original factory component in a function attribute called ``factory``:
 
   >>> info = presentation.getViewFactoryData(factory)
   >>> pprint(info)
-  {'path': '__builtin__.Factory',
+  {'path': 'zope.app.apidoc.doctest.Factory',
    'referencable': True,
    'resource': None,
    'template': None,
-   'url': '__builtin__/Factory'}
+   'url': 'zope/app/apidoc/doctest/Factory'}
 
 Let's now have a look at some extremly specific cases. If a view is registered
 using the ``zope:view`` directive and a permission is specified, a
@@ -124,11 +124,11 @@ using the ``zope:view`` directive and a permission is specified, a
 
   >>> info = presentation.getViewFactoryData(proxyView)
   >>> pprint(info)
-  {'path': '__builtin__.Factory',
+  {'path': 'zope.app.apidoc.doctest.Factory',
    'referencable': True,
    'resource': None,
    'template': None,
-   'url': '__builtin__/Factory'}
+   'url': 'zope/app/apidoc/doctest/Factory'}
 
 Another use case is when a new type is created by the ``browser:page`` or
 ``browser:view`` directive. In those cases the true/original factory is really
@@ -140,11 +140,11 @@ the first base class. Those cases are detected by inspecting the
 
   >>> info = presentation.getViewFactoryData(new_class)
   >>> pprint(info)
-  {'path': '__builtin__.Factory',
+  {'path': 'zope.app.apidoc.doctest.Factory',
    'referencable': True,
    'resource': None,
    'template': None,
-   'url': '__builtin__/Factory'}
+   'url': 'zope/app/apidoc/doctest/Factory'}
 
 The same sort of thing happens for XML-RPC views, except that those are
 wrapped twice:
@@ -157,11 +157,11 @@ wrapped twice:
 
   >>> info = presentation.getViewFactoryData(new_class2)
   >>> pprint(info)
-  {'path': '__builtin__.Factory',
+  {'path': 'zope.app.apidoc.doctest.Factory',
    'referencable': True,
    'resource': None,
    'template': None,
-   'url': '__builtin__/Factory'}
+   'url': 'zope/app/apidoc/doctest/Factory'}
 
 Finally, it sometimes happens that a factory is wrapped and the wrapper is
 wrapped in return:
@@ -176,11 +176,11 @@ Initially, the documentation is not very helpful:
 
   >>> info = presentation.getViewFactoryData(wrapper2)
   >>> pprint(info)
-  {'path': 'None.wrapper2',
+  {'path': 'zope.app.apidoc.doctest.wrapper2',
    'referencable': True,
    'resource': None,
    'template': None,
-   'url': 'None/wrapper2'}
+   'url': 'zope/app/apidoc/doctest/wrapper2'}
 
 However, if those wrappers play nicely, they provide a factory attribute each
 step of the way ...
@@ -192,11 +192,11 @@ and the result is finally our original factory:
 
   >>> info = presentation.getViewFactoryData(wrapper2)
   >>> pprint(info)
-  {'path': '__builtin__.Factory',
+  {'path': 'zope.app.apidoc.doctest.Factory',
    'referencable': True,
    'resource': None,
    'template': None,
-   'url': '__builtin__/Factory'}
+   'url': 'zope/app/apidoc/doctest/Factory'}
 
 
 `getPresentationType(iface)`
@@ -234,7 +234,7 @@ is returned:
   ...     pass
 
   >>> presentation.getPresentationType(ILayer3)
-  <InterfaceClass __builtin__.ILayer3>
+  <InterfaceClass zope.app.apidoc.doctest.ILayer3>
 
 Note that more specific presentation types are considered first. For example,
 `IBrowserRequest` extends `IHTTPRequest`, but it will always determine the
@@ -267,7 +267,7 @@ should be returned:
   >>> regs = list(presentation.getViews(IFoo))
   >>> regs.sort()
   >>> regs #doctest:+ELLIPSIS
-  [AdapterRegistration(<BaseGlobalComponents base>, 
+  [AdapterRegistration(<BaseGlobalComponents base>,
                        [IFoo, IBrowserRequest], Interface, 'blah', None, u''),
    AdapterRegistration(<BaseGlobalComponents base>,
                        [IFoo, IHTTPRequest], Interface, 'foo', None, u''),
@@ -277,7 +277,7 @@ should be returned:
   >>> regs = list(presentation.getViews(Interface, IHTTPRequest))
   >>> regs.sort()
   >>> regs #doctest:+ELLIPSIS
-  [AdapterRegistration(<BaseGlobalComponents base>, 
+  [AdapterRegistration(<BaseGlobalComponents base>,
                        [Interface, IHTTPRequest], Interface, 'bar', None, u'')]
 
 
@@ -330,7 +330,7 @@ Let's now filter those registrations:
   ...     regs, IFile, level=presentation.SPECIFIC_INTERFACE_LEVEL))
   >>> result.sort()
   >>> result
-  [AdapterRegistration(<BaseGlobalComponents base>, 
+  [AdapterRegistration(<BaseGlobalComponents base>,
                      [IFile, IHTTPRequest], Interface, 'view.html', None, u'')]
 
   >>> result = list(presentation.filterViewRegistrations(
@@ -357,7 +357,7 @@ since all three levels are mutually exclusive.
   ...                        presentation.EXTENDED_INTERFACE_LEVEL))
   >>> result.sort()
   >>> result
-  [AdapterRegistration(<BaseGlobalComponents base>, 
+  [AdapterRegistration(<BaseGlobalComponents base>,
                   [IContent, IHTTPRequest], Interface, 'edit.html', None, u''),
    AdapterRegistration(<BaseGlobalComponents base>,
                   [IContent, IHTTPRequest], Interface, 'view.html', None, u''),
@@ -389,18 +389,18 @@ Let's first create a registration:
   >>> reg = AdapterRegistration(None, (IFile, Interface, IHTTPRequest),
   ...                           Interface, 'view.html', Factory, 'reg info')
 
-  >>> pprint(presentation.getViewInfoDictionary(reg), width=1)
+  >>> pprint(presentation.getViewInfoDictionary(reg), width=50)
   {'doc': 'reg info',
-   'factory': {'path': '__builtin__.Factory',
+   'factory': {'path': 'zope.app.apidoc.doctest.Factory',
                'referencable': True,
                'resource': None,
                'template': None,
-               'url': '__builtin__/Factory'},
+               'url': 'zope/app/apidoc/doctest/Factory'},
    'name': u'view.html',
    'provided': {'module': 'zope.interface',
                 'name': 'Interface'},
    'read_perm': None,
-   'required': [{'module': '__builtin__',
+   'required': [{'module': 'zope.app.apidoc.doctest',
                  'name': 'IFile'},
                 {'module': 'zope.interface',
                  'name': 'Interface'},

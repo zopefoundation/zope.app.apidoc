@@ -13,7 +13,6 @@
 ##############################################################################
 """Function Views
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 from zope.component import getUtility
@@ -23,10 +22,13 @@ from zope.traversing.browser import absoluteURL
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import renderText
 
-from class_ import getTypeLink
+from zope.app.apidoc.codemodule.browser.class_ import getTypeLink
 
 class FunctionDetails(object):
     """Represents the details of the function."""
+
+    context = None
+    request = None
 
     def getDocString(self):
         """Get the doc string of the function in a rendered format."""
@@ -37,7 +39,7 @@ class FunctionDetails(object):
     def getAttributes(self):
         """Get all attributes of this function."""
         return [{'name': name,
-                 'value': `attr`,
+                 'value': repr(attr),
                  'type': type(attr).__name__,
                  'type_link': getTypeLink(type(attr))}
 

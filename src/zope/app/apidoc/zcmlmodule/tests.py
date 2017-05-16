@@ -14,14 +14,14 @@
 """Tests for the ZCML Documentation Module
 
 """
-from __future__ import absolute_import
+import re
 import os
 import unittest
 import doctest
 
 from zope.configuration import xmlconfig
 
-
+from zope.testing import renormalizing
 import zope.app.appsetup.appsetup
 
 from zope import component as ztapi
@@ -113,7 +113,7 @@ class ZCMLModuleTests(BrowserTestCase):
             basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find('All Namespaces') > 0)
+        self.assertIn('All Namespaces', body)
         self.checkForBrokenLinks(body, '/++apidoc++/ZCML/menu.html',
                                  basic='mgr:mgrpw')
 
@@ -122,21 +122,26 @@ class ZCMLModuleTests(BrowserTestCase):
                                 basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find('<i>all namespaces</i>') > 0)
+        self.assertIn('<i>all namespaces</i>', body)
         self.checkForBrokenLinks(body,
                                  '/++apidoc++/ZCML/ALL/configure/index.html',
                                  basic='mgr:mgrpw')
 
 
 def test_suite():
-
+    checker = renormalizing.RENormalizing([
+        (re.compile(r"u('[^']*')"), r"\1"),
+        (re.compile("__builtin__"), 'builtins'),
+    ])
     return unittest.TestSuite((
         doctest.DocFileSuite('README.rst',
                              setUp=setUp, tearDown=tearDown,
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
+                             optionflags=doctest.NORMALIZE_WHITESPACE,
+                             checker=checker),
         doctest.DocFileSuite('browser.rst',
                              setUp=setUp, tearDown=tearDown,
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
+                             optionflags=doctest.NORMALIZE_WHITESPACE,
+                             checker=checker),
         unittest.defaultTestLoader.loadTestsFromName(__name__),
     ))
 

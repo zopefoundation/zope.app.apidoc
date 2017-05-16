@@ -17,6 +17,7 @@
 __docformat__ = 'restructuredtext'
 import os
 import types
+import six
 
 import zope
 from zope.interface import implementer
@@ -28,7 +29,7 @@ from zope.hookable import hookable
 
 from zope.app.apidoc.classregistry import safe_import
 from zope.app.apidoc.utilities import ReadContainerBase
-from interfaces import IModuleDocumentation
+from zope.app.apidoc.codemodule.interfaces import IModuleDocumentation
 
 from zope.app.apidoc.codemodule.class_ import Class
 from zope.app.apidoc.codemodule.function import Function
@@ -145,9 +146,9 @@ class Module(ReadContainerBase):
                 continue
 
             if isinstance(attr, hookable):
-		        attr = attr.implementation
+                attr = attr.implementation
 
-            if isinstance(attr, (types.ClassType, types.TypeType)):
+            if isinstance(attr, six.class_types):
                 self._children[name] = Class(self, name, attr)
 
             elif isinstance(attr, InterfaceClass):

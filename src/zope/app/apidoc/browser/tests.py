@@ -65,16 +65,20 @@ class APIDocTests(BrowserTestCase):
         self.checkForBrokenLinks(body, '/++apidoc++/modulelist.html',
                                  basic='mgr:mgrpw')
 
-checker = renormalizing.RENormalizing([
-    (re.compile(r'httperror_seek_wrapper:', re.M), 'HTTPError:'),
-])
 
 def test_suite():
+    checker = renormalizing.RENormalizing([
+        (re.compile(r'httperror_seek_wrapper:', re.M), 'HTTPError:'),
+        (re.compile(r"u('[^']*')"), r"\1"),
+    ])
+
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(APIDocTests))
     apidoc_doctest = doctest.DocFileSuite(
         "README.rst",
-        optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE,
+        optionflags=(doctest.ELLIPSIS
+                     | doctest.NORMALIZE_WHITESPACE
+                     | renormalizing.IGNORE_EXCEPTION_MODULE_IN_PYTHON2),
         checker=checker)
     apidoc_doctest.layer = APIDocLayer
     suite.addTest(
@@ -85,6 +89,12 @@ def test_suite():
     nodevmode.layer = APIDocNoDevModeLayer
     suite.addTest(nodevmode)
     return suite
+
+# XXX: https://github.com/zopefoundation/zope.app.onlinehelp/pull/2/files#r116883323
+from collections import OrderedDict
+from zope.security import checker
+checker._default_checkers[type(OrderedDict().values())] = checker._iteratorChecker
+checker._default_checkers[type(iter(OrderedDict().values()))] = checker._iteratorChecker
 
 
 if __name__ == '__main__':

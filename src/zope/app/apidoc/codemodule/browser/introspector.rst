@@ -65,7 +65,7 @@ object, including the value of the attribute. This is information can be very
 useful when debugging an application. The only attribute of the folder is the
 data attribute:
 
-    >>> print browser.contents
+    >>> print(browser.contents)
     <!DOCTYPE...
     ...
     <h2>Attributes/Properties</h2>
@@ -95,7 +95,7 @@ implemented. Like for the class method documentation, the method's signature,
 doc string, permissions and the interface the method is declared in. Here an
 example:
 
-    >>> print browser.contents
+    >>> print(browser.contents)
     <!DOCTYPE...
     ...
     <h2>Methods</h2>
@@ -131,15 +131,15 @@ add an object to the folder first:
 
     >>> import re
     >>> browser.getLink(re.compile('^File$')).click()
-    >>> import cStringIO
-    >>> browser.getControl('Data').value = cStringIO.StringIO('content')
+    >>> from io import BytesIO
+    >>> browser.getControl('Data').value = BytesIO(b'content')
     >>> browser.getControl(name='add_input_name').value = 'file.txt'
     >>> browser.getControl('Add').click()
     >>> browser.getLink('Introspector').click()
 
 Now the introspector will show the file and allow you to click on it:
 
-    >>> print browser.contents
+    >>> print(browser.contents)
     <!DOCTYPE...
     ...
     <h2>Mapping Items</h2>
@@ -165,7 +165,7 @@ The final section of the introspector displays the annotations that are
 declared for the object. The standard annotation that almost every object
 provides is the Dublin Core:
 
-    >>> print browser.contents
+    >>> print(browser.contents)
     <!DOCTYPE...
     ...
     <h2>Annotations</h2>
@@ -202,7 +202,7 @@ provides is the Dublin Core:
 As you can see you can click on the annotation to discover it further:
 
     >>> browser.getLink('ZDCAnnotationData').click()
-    >>> print browser.contents
+    >>> print(browser.contents)
     <!DOCTYPE...
     ...
       <h2 ...>Constructor</h2>

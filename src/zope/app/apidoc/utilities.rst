@@ -128,11 +128,11 @@ Then naturally, all the other methods work as well:
   * `__iter__()`
 
     >>> iterator = iter(container)
-    >>> iterator.next()
+    >>> next(iterator)
     1
-    >>> iterator.next()
+    >>> next(iterator)
     2
-    >>> iterator.next()
+    >>> next(iterator)
     Traceback (most recent call last):
     ...
     StopIteration
@@ -166,13 +166,15 @@ For interfaces we simply get
   >>> utilities.getPythonPath(ISample)
   'zope.app.apidoc.doctest.ISample'
 
-and for classes
+and for classes (note that we must pass a "bound method", because the
+unbound method is no longer present in Python 2):
 
   >>> class Sample(object):
   ...     def sample(self):
   ...         pass
 
-  >>> utilities.getPythonPath(Sample.sample)
+  >>> PY3 = str is not bytes
+  >>> utilities.getPythonPath(Sample().sample if PY3 else Sample.sample)
   'zope.app.apidoc.doctest.Sample'
 
 One can also pass functions
@@ -185,7 +187,7 @@ One can also pass functions
 
 and even methods. If a method is passed in, its class path is returned.
 
-  >>> utilities.getPythonPath(Sample.sample)
+  >>> utilities.getPythonPath(Sample().sample)
   'zope.app.apidoc.doctest.Sample'
 
 Modules are another kind of objects that can return a python path:
@@ -278,7 +280,7 @@ Finally, the global ``IGNORE_MODULES`` list from the class registry is also
 used to give a negative answer. If a module is listed in ``IGNORE_MODULES``,
 then ``False`` is returned.
 
-  >>> import classregistry
+  >>> from zope.app.apidoc import classregistry
   >>> classregistry.IGNORE_MODULES.append('zope.app.apidoc')
 
   >>> utilities.isReferencable('zope.app')
@@ -339,9 +341,9 @@ Now let's see how this function works:
 The `Sample` class does not know about the `attr2` attribute:
 
   >>> entries = utilities.getPermissionIds('attr2', klass=Sample)
-  >>> print entries['read_perm']
+  >>> print(entries['read_perm'])
   n/a
-  >>> print entries['write_perm']
+  >>> print(entries['write_perm'])
   n/a
 
 The `Sample2` class does not have a checker:
@@ -349,15 +351,15 @@ The `Sample2` class does not have a checker:
   >>> entries = utilities.getPermissionIds('attr', klass=Sample2)
   >>> entries['read_perm'] is None
   True
-  >>> print entries['write_perm'] is None
+  >>> entries['write_perm'] is None
   True
 
 Finally, the `Sample` class' `attr3` attribute is public:
 
   >>> entries = utilities.getPermissionIds('attr3', klass=Sample)
-  >>> print entries['read_perm']
+  >>> print(entries['read_perm'])
   zope.Public
-  >>> print entries['write_perm']
+  >>> print(entries['write_perm'])
   zope.Public
 
 
@@ -406,14 +408,16 @@ any positional arguments:
 
 Next we test whether the signature is correctly determined for class
 methods. Note that the `self` argument is removed from the signature, since it
-is not essential for documentation.
+is not essential for documentation (this only happens on Python 2 when
+we pass an "unbound method"; Python 3 doesn't have such a concept, so
+we always pass bound methods).
 
 We start out with a simple positional argument:
 
   >>> class Klass(object):
   ...     def func(self, attr):
   ...         pass
-  >>> utilities.getFunctionSignature(Klass.func)
+  >>> utilities.getFunctionSignature(Klass().func)
   '(attr)'
 
 Next we have specific and unspecified positional arguments as well as
@@ -422,7 +426,7 @@ unspecified keyword arguments:
   >>> class Klass(object):
   ...     def func(self, attr, *args, **kw):
   ...         pass
-  >>> utilities.getFunctionSignature(Klass.func)
+  >>> utilities.getFunctionSignature(Klass().func)
   '(attr, *args, **kw)'
 
 If you do not pass a function or method to the function, it will fail:
@@ -432,19 +436,19 @@ If you do not pass a function or method to the function, it will fail:
   ...
   TypeError: func must be a function or method
 
-A very uncommon, but perfectly valid, case is that tuple arguments are
+A very uncommon, but perfectly valid (in Python 2), case is that tuple arguments are
 unpacked inside the argument list of the function. Here is an example:
 
-  >>> def func((arg1, arg2)):
-  ...     pass
-  >>> utilities.getFunctionSignature(func)
+  def func((arg1, arg2)):
+       pass
+  utilities.getFunctionSignature(func)
   '((arg1, arg2))'
 
 Even default assignment is allowed:
 
-  >>> def func((arg1, arg2)=(1, 2)):
-  ...     pass
-  >>> utilities.getFunctionSignature(func)
+  def func((arg1, arg2)=(1, 2)):
+       pass
+  utilities.getFunctionSignature(func)
   '((arg1, arg2)=(1, 2))'
 
 However, lists of this type are not allowed inside the argument list:
@@ -538,7 +542,7 @@ object is returned.
 
 First, we need to create some interfaces and a class that implements them:
 
-  >>> from zope.interface import Interface, Attribute, implements
+  >>> from zope.interface import Interface, Attribute, implementer
   >>> class I1(Interface):
   ...     attr = Attribute('attr')
 
@@ -546,8 +550,9 @@ First, we need to create some interfaces and a class that implements them:
   ...     def getAttr():
   ...         '''get attr'''
 
-  >>> class Sample(object):
-  ...     implements(I2)
+  >>> @implementer(I2)
+  ... class Sample(object):
+  ...    pass
 
 First we check whether an aatribute can be found in a list of interfaces:
 
@@ -695,7 +700,7 @@ newline character. Let's now try a simple multi-line docstring:
   ...     discuss some edge cases.
   ...     '''
 
-  >>> print utilities.dedentString(func.__doc__)
+  >>> print(utilities.dedentString(func.__doc__))
   Short description
   <BLANKLINE>
   Lengthy description, giving some more background information and
@@ -715,7 +720,7 @@ chosen:
   ...       Second Level
   ...     '''
 
-  >>> print utilities.dedentString(func.__doc__)
+  >>> print(utilities.dedentString(func.__doc__))
   Short description
   <BLANKLINE>
   Root Level
@@ -732,7 +737,7 @@ chosen:
   ...     And now the description.
   ...     '''
 
-  >>> print utilities.dedentString(func.__doc__)
+  >>> print(utilities.dedentString(func.__doc__))
   Short description
   <BLANKLINE>
     $$$ print 'example'

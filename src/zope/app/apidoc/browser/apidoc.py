@@ -13,7 +13,6 @@
 ##############################################################################
 """Main API Documentation View
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 
@@ -23,6 +22,9 @@ from zope.app.apidoc.utilities import renderText
 
 class APIDocumentationView(object):
     """View for the API Documentation"""
+
+    context = None
+    request = None
 
     def getModuleList(self):
         """Get a list of all available documentation modules."""
@@ -34,8 +36,8 @@ class APIDocumentationView(object):
             description = translate(description, context=self.request,
                                     default=description)
             description = renderText(description, module.__class__.__module__)
-            if not isinstance(description, unicode):
-                description = unicode(description, "utf-8")
+            if isinstance(description, bytes):
+                description = description.decode("utf-8")
             result.append({'name': name,
                            'title': module.title,
                            'description': description})

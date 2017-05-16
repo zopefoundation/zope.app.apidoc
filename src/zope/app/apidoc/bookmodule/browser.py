@@ -13,10 +13,9 @@
 ##############################################################################
 """Browser Views for Book
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
-from metaconfigure import EMPTYPATH
+from zope.app.apidoc.bookmodule.metaconfigure import EMPTYPATH
 
 class Menu(object):
     """Menu View Helper Class
@@ -27,7 +26,7 @@ class Menu(object):
     ...
     ...     def getTopicPath(self):
     ...         return self.path[:-4]
-    
+
     >>> class Node(object):
     ...     def __init__(self, context):
     ...         self.context = context

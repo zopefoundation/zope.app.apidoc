@@ -40,10 +40,9 @@ def getElements(iface, type=IElement):
 
 
 def getFieldsInOrder(iface,
-                     _itemsorter=lambda x, y: cmp(x[1].order, y[1].order)):
+                     _itemsorter=lambda x: x[1].order):
     """Return a list of (name, field) tuples in native interface order."""
-    items = getElements(iface, IField).items()
-    items.sort(_itemsorter)
+    items = sorted(getElements(iface, IField).items(), key=_itemsorter)
     return items
 
 

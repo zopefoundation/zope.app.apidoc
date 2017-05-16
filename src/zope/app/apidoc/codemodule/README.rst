@@ -71,7 +71,7 @@ soon as you have the object:
   True
 
   >>> import zope.app.apidoc.browser
-  >>> print module['browser'].getPath()
+  >>> print(module['browser'].getPath())
   zope.app.apidoc.browser
 
 Now, the ``get(key, default=None)`` is actually much smarter than you might
@@ -84,11 +84,10 @@ classes hierarchy (since they do not provide or implement any API), we can
 still get to them:
 
   >>> import zope.app.apidoc.tests
-  >>> print module['tests'].getPath()
+  >>> print(module['tests'].getPath())
   zope.app.apidoc.tests
 
-  >>> names = module['tests'].keys()
-  >>> names.sort()
+  >>> names = sorted(module['tests'].keys())
   >>> names
   ['BrowserTestCase', 'Root', 'rootLocation', 'setUp', 'tearDown', 'test_suite']
 
@@ -141,12 +140,12 @@ and methods of this class::
   >>> klass.getAttributes()
   []
 
-  >>> klass.getMethods()[0] #doctest:+NORMALIZE_WHITESPACE
-  ('get', <unbound method APIDocumentation.get>,
+  >>> klass.getMethods()[0]
+  ('get', <... APIDocumentation.get...>,
    <InterfaceClass zope.interface.common.mapping.IReadMapping>)
 
   >>> klass.getConstructor()
-  <unbound method APIDocumentation.__init__>
+  <... APIDocumentation.__init__...>
 
 Let's have a closer look at the `getAttributes()` method. First we create an
 interface called `IBlah` that is implemented by the class `Blah`:
@@ -158,8 +157,8 @@ interface called `IBlah` that is implemented by the class `Blah`:
   >>> class IBlah(IBlie):
   ...      foo = zope.interface.Attribute('Foo')
 
-  >>> class Blah(object):
-  ...      zope.interface.implements(IBlah)
+  >>> @zope.interface.implementer(IBlah)
+  ... class Blah(object):
   ...      foo = 'f'
   ...      bar = 'b'
   ...      bli = 'i'
@@ -173,8 +172,8 @@ listed in the interface. Now we create the class documentation wrapper:
   >>> from pprint import pprint
   >>> pprint(klass.getAttributes())
   [('bar', 'b', None),
-   ('bli', 'i', <InterfaceClass __builtin__.IBlie>),
-   ('foo', 'f', <InterfaceClass __builtin__.IBlah>)]
+   ('bli', 'i', <InterfaceClass ...builtin....IBlie>),
+   ('foo', 'f', <InterfaceClass ...builtin....IBlah>)]
 
 So, the function returns a list of tuples of the form (name, value,
 interface), where the interface is the interface in which the attribute was
@@ -189,8 +188,9 @@ implementation `Blah`, which has some other additional methods:
   >>> class IBlah(zope.interface.Interface):
   ...      def foo(): pass
 
-  >>> class Blah(object):
-  ...      zope.interface.implements(IBlah)
+  >>> @zope.interface.implementer(IBlah)
+  ... class Blah(object):
+  ...
   ...
   ...      def foo(self):
   ...          pass
@@ -203,11 +203,11 @@ Now we create the class documentation wrapper:
 
   >>> klass = codemodule.class_.Class(module, 'Blah', Blah)
 
-and get the method documenation:
+and get the method documentation:
 
   >>> pprint(klass.getMethods())
-  [('bar', <unbound method Blah.bar>, None),
-   ('foo', <unbound method Blah.foo>, <InterfaceClass __builtin__.IBlah>)]
+  [('bar', <... Blah.bar...>, None),
+   ('foo', <... Blah.foo...>, <InterfaceClass ...builtin....IBlah>)]
 
 
 Function
@@ -270,7 +270,7 @@ have a text file documentation object
 
 we can ask it for the content of the file:
 
-  >>> print readme.getContent()[26:51]
+  >>> print(readme.getContent()[26:51])
   Code Documentation Module
 
 
@@ -319,12 +319,12 @@ objects and/or generate absolute paths of files,
 
 the parser info object,
 
-  >>> info = `root.info`
+  >>> info = repr(root.info)
 
   # Windows fix
   >>> info = info.replace('\\', '/')
 
-  >>> print info #doctest:+ELLIPSIS
+  >>> print(info)
   File ".../zope/app/apidoc/codemodule/configure.zcml", ...
 
 the sub-directives,

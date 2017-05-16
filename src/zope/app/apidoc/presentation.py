@@ -13,11 +13,9 @@
 ##############################################################################
 """Views/Presentation Utilities
 
-$Id$
 """
-from types import ClassType
+import six
 from zope.component import getGlobalSiteManager
-from zope.component.registry import AdapterRegistration
 from zope.interface import Interface
 
 from zope.i18nmessageid import ZopeMessageFactory as _
@@ -25,7 +23,7 @@ from zope.app.apidoc.utilities import getPythonPath, relativizePath
 from zope.app.apidoc.utilities import getPermissionIds
 from zope.app.apidoc.component import getParserInfoInfoDictionary
 from zope.app.apidoc.component import getInterfaceInfoDictionary
-from zope.app.publisher.browser.icon import IconViewFactory
+from zope.browserresource.icon import IconViewFactory
 
 from zope.publisher.interfaces import IRequest
 from zope.publisher.interfaces.browser import IBrowserRequest
@@ -41,6 +39,7 @@ GENERIC_INTERFACE_LEVEL = 4
 BROWSER_DIRECTIVES_MODULE = 'zope.app.publisher.browser.viewmeta'
 XMLRPC_DIRECTIVES_MODULE = 'zope.app.publisher.xmlrpc.metaconfigure'
 JSONRPC_DIRECTIVES_MODULE = 'jsonserver.metaconfigure'
+
 
 def getViewFactoryData(factory):
     """Squeeze some useful information out of the view factory"""
@@ -64,7 +63,7 @@ def getViewFactoryData(factory):
         info['template_obj'] = factory.index
 
     # Basic Type is a factory
-    elif isinstance(factory, (str, unicode, float, int, list, tuple)):
+    elif isinstance(factory, (six.string_types, float, int, list, tuple)):
         info['referencable'] = False
 
     elif factory.__module__ is not None and \
@@ -93,7 +92,7 @@ def getViewFactoryData(factory):
         info['path'] = getPythonPath(factory.__class__)
 
     # A simple class-based factory
-    elif type(factory) in (type, ClassType):
+    elif isinstance(factory, six.class_types):
         info['path'] = getPythonPath(factory)
 
     # We have tried our best; just get the Python path as good as you can.
@@ -124,7 +123,7 @@ def getViews(iface, type=IRequest):
     """Get all view registrations for a particular interface."""
     gsm = getGlobalSiteManager()
     for reg in gsm.registeredAdapters():
-        if (len(reg.required) > 0 and
+        if (reg.required and
             reg.required[-1] is not None and
             reg.required[-1].isOrExtends(type)):
 
@@ -159,14 +158,14 @@ def filterViewRegistrations(regs, iface, level=SPECIFIC_INTERFACE_LEVEL):
 def getViewInfoDictionary(reg):
     """Build up an information dictionary for a view registration."""
     # get configuration info
-    if isinstance(reg.info, (str, unicode)):
+    if isinstance(reg.info, six.string_types):
         doc = reg.info
         zcml = None
     else:
         doc = None
         zcml = getParserInfoInfoDictionary(reg.info)
 
-    info = {'name' : unicode(reg.name) or _('<i>no name</i>'),
+    info = {'name' : six.text_type(reg.name) or _('<i>no name</i>'),
             'type' : getPythonPath(getPresentationType(reg.required[-1])),
             'factory' : getViewFactoryData(reg.factory),
             'required': [getInterfaceInfoDictionary(iface)

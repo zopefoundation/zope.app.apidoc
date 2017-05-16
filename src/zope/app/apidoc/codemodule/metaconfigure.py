@@ -13,18 +13,17 @@
 ##############################################################################
 """This module handles the 'apidoc' namespace directives.
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
-from zope.interface import implements
+from zope.interface import implementer
 from zope.component.zcml import utility
 
 from zope.app.apidoc import classregistry
 from zope.app.apidoc.codemodule.interfaces import IAPIDocRootModule
 
-
+@implementer(IAPIDocRootModule)
 class RootModule(str):
-    implements(IAPIDocRootModule)
+    pass
 
 def rootModule(_context, module):
     """Register a new module as a root module for the class browser."""

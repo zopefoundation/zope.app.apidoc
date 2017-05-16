@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """Generic API Documentation Interfaces
-
-$Id$
 """
 __docformat__ = 'restructuredtext'
 

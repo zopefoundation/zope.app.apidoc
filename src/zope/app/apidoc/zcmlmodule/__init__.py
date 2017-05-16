@@ -77,7 +77,7 @@ class Namespace(ReadContainerBase):
     def get(self, key, default=None):
         """See zope.container.interfaces.IReadContainer"""
         ns = self.getFullName()
-        if not namespaces[ns].has_key(key):
+        if key not in namespaces[ns]:
             return default
         schema, handler, info = namespaces[ns][key]
         sd = subdirs.get((ns, key), [])
@@ -138,7 +138,7 @@ class ZCMLModule(ReadContainerBase):
         namespaces, subdirs = docutils.makeDocStructures(context)
 
         # Empty keys are not so good for a container
-        if namespaces.has_key(''):
+        if '' in namespaces:
             namespaces['ALL'] = namespaces['']
             del namespaces['']
 
@@ -152,11 +152,11 @@ class ZCMLModule(ReadContainerBase):
             self._makeDocStructure()
 
         key = unquoteNS(key)
-        if namespaces.has_key(key):
+        if key in namespaces:
             return Namespace(self, key)
 
         full_key = 'http://namespaces.zope.org/' + key
-        if namespaces.has_key(full_key):
+        if full_key in namespaces:
             return Namespace(self, full_key)
 
         return default
@@ -167,7 +167,7 @@ class ZCMLModule(ReadContainerBase):
         if namespaces is None or subdirs is None:
             self._makeDocStructure()
         list = []
-        for key in namespaces.keys():
+        for key in namespaces:
             namespace = Namespace(self, key)
             # We need to make sure that we use the quoted URL as key
             list.append((namespace.getQuotedName(), namespace))

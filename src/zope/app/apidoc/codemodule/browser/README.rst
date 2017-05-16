@@ -30,7 +30,7 @@ process to get a module documentation object:
 
 Get the doc string of the module formatted in STX or ReST.
 
-  >>> print details.getDoc().strip()
+  >>> print(details.getDoc().strip())
   <p>Code Documentation Module</p>
   <p>This module is able to take a dotted name of any class and display
   documentation for it.</p>
@@ -208,7 +208,7 @@ Get all methods of this class.
 
 Get the doc string of the class STX formatted.
 
-  >>> print details.getDoc()[:-1]
+  >>> print(details.getDoc()[:-1])
   <p>Represent the code browser documentation root</p>
 
 
@@ -272,7 +272,7 @@ Here are the methods:
 
 Render the file content to HTML.
 
-  >>> print details.renderedContent()[:48]
+  >>> print(details.renderedContent()[:48])
   <h1 class="title">Code Documentation Module</h1>
 
 
@@ -423,8 +423,9 @@ This namespace is used to traverse into the annotations of an object.
   >>> import zope.interface
   >>> from zope.annotation.interfaces import IAttributeAnnotatable
 
-  >>> class Sample(object):
-  ...    zope.interface.implements(IAttributeAnnotatable)
+  >>> @zope.interface.implementer(IAttributeAnnotatable)
+  ... class Sample(object):
+  ...    pass
 
   >>> sample = Sample()
   >>> sample.__annotations__ = {'zope.my.namespace': 'Hello there!'}

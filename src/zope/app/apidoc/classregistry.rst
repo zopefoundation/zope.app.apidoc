@@ -17,7 +17,7 @@ any other dictionary:
 Let's now add a couple of classes to registry. The classes should implement
 some interfaces, so that we can test all methods on the class registry:
 
-  >>> from zope.interface import Interface, implements
+  >>> from zope.interface import Interface, implementer
 
   >>> class IA(Interface):
   ...      pass
@@ -28,20 +28,24 @@ some interfaces, so that we can test all methods on the class registry:
   >>> class ID(Interface):
   ...      pass
 
-  >>> class A(object):
-  ...    implements(IA)
+  >>> @implementer(IA)
+  ... class A(object):
+  ...    pass
   >>> reg['A'] = A
 
-  >>> class B:
-  ...    implements(IB)
+  >>> @implementer(IB)
+  ... class B: # Old style on Python 2
+  ...    pass
   >>> reg['B'] = B
 
-  >>> class B2(object):
-  ...    implements(IB)
+  >>> @implementer(IB)
+  ... class B2(object):
+  ...    pass
   >>> reg['B2'] = B2
 
-  >>> class C(object):
-  ...    implements(IC)
+  >>> @implementer(IC)
+  ... class C(object):
+  ...    pass
   >>> reg['C'] = C
   >>> class A2(A):
   ...    pass
@@ -50,8 +54,7 @@ some interfaces, so that we can test all methods on the class registry:
 Since the registry is just a dictionary, we can ask for all its keys, which
 are the names of the classes:
 
-  >>> names = reg.keys()
-  >>> names.sort()
+  >>> names = sorted(reg.keys())
   >>> names
   ['A', 'A2', 'B', 'B2', 'C']
 
@@ -67,17 +70,17 @@ This method returns all classes that implement the specified interface:
 
   >>> from pprint import pprint
   >>> pprint(reg.getClassesThatImplement(IA)) #doctest:+ELLIPSIS
-  [('A', <class 'A'>),
-   ('A2', <class 'A2'>),
-   ('B', <class __builtin__.B at ...>),
-   ('B2', <class 'B2'>)]
+  [('A', <class '...A'>),
+   ('A2', <class '...A2'>),
+   ('B', <class ...B...>),
+   ('B2', <class '...B2'>)]
 
   >>> pprint(reg.getClassesThatImplement(IB)) #doctest:+ELLIPSIS
-  [('B', <class __builtin__.B at ...>),
-   ('B2', <class 'B2'>)]
+  [('B', <class ...B...>),
+   ('B2', <class '...B2'>)]
 
   >>> pprint(reg.getClassesThatImplement(IC))
-  [('C', <class 'C'>)]
+  [('C', <class '...C'>)]
 
   >>> pprint(reg.getClassesThatImplement(ID))
   []
@@ -88,7 +91,7 @@ This method returns all classes that implement the specified interface:
 This method will find all classes that inherit the specified class:
 
   >>> pprint(reg.getSubclassesOf(A))
-  [('A2', <class 'A2'>)]
+  [('A2', <class '...A2'>)]
 
   >>> pprint(reg.getSubclassesOf(B))
   []
@@ -128,9 +131,8 @@ For this example, we'll create a dummy module:
   >>> dir = tempfile.mkdtemp()
   >>> filename = os.path.join(dir, 'testmodule.py')
   >>> sys.path.insert(0, dir)
-  >>> f = open(filename, 'w')
-  >>> f.write('# dummy module\n')
-  >>> f.close()
+  >>> with open(filename, 'w') as f:
+  ...     _ = f.write('# dummy module\n')
 
 The temporary module is not already imported:
 
@@ -162,7 +164,8 @@ Importing some code we cannot control, such as twisted, might raise errors
 when imported without having a certain environment. In those cases, the safe
 import should prevent the error from penetrating:
 
-  >>> open(os.path.join(dir, 'alwaysfail.py'), 'w').write('raise ValueError\n')
+  >>> with open(os.path.join(dir, 'alwaysfail.py'), 'w') as f:
+  ...     _ = f.write('raise ValueError\n')
   >>> sys.path.insert(0, dir)
 
   >>> safe_import('alwaysfail') is None

@@ -14,18 +14,18 @@
 """Tests for the Interface Documentation Module
 
 """
-from __future__ import absolute_import
+import re
 import os
 import unittest
 import doctest
 
 import zope.component.testing
 from zope.configuration import xmlconfig
-# from zope.component.interfaces import IFactory
 from zope.interface import implementer
 from zope.traversing.interfaces import IContainmentRoot
 from zope.location import LocationProxy
 
+from zope.testing import renormalizing
 
 # from zope.app.renderer.rest import ReStructuredTextSourceFactory
 # from zope.app.renderer.rest import IReStructuredTextSource
@@ -137,32 +137,32 @@ def rootLocation(obj, name):
 
 
 def test_suite():
+    checker = renormalizing.RENormalizing((
+        (re.compile(r"u('[^']*')"), r"\1"),
+        (re.compile(r"b('[^']*')"), r"\1"),
+    ))
+
+    def file_test(name, **kwargs):
+        return doctest.DocFileSuite(
+            name,
+            setUp=setUp,
+            tearDown=tearDown,
+            checker=checker,
+            optionflags=(doctest.NORMALIZE_WHITESPACE
+                         | doctest.ELLIPSIS
+                         | renormalizing.IGNORE_EXCEPTION_MODULE_IN_PYTHON2),
+            **kwargs)
+
     return unittest.TestSuite((
         doctest.DocTestSuite('zope.app.apidoc.browser.apidoc',
                              setUp=setUp, tearDown=tearDown),
-        doctest.DocFileSuite('README.rst',
-                             setUp=setUp,
-                             tearDown=tearDown,
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
-        doctest.DocFileSuite('classregistry.rst',
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
-        doctest.DocFileSuite('interface.rst',
-                             setUp=setUp,
-                             tearDown=tearDown,
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
-        doctest.DocFileSuite('component.rst',
-                             setUp=setUp,
-                             tearDown=tearDown,
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
-        doctest.DocFileSuite('presentation.rst',
-                             setUp=zope.component.testing.setUp,
-                             tearDown=zope.component.testing.tearDown,
-                             optionflags=doctest.NORMALIZE_WHITESPACE,
-                             globs={'__file__': __file__}),
-        doctest.DocFileSuite('utilities.rst',
-                             setUp=setUp,
-                             tearDown=tearDown,
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
+        file_test('README.rst'),
+        file_test('classregistry.rst'),
+        file_test('interface.rst'),
+        file_test('component.rst'),
+        file_test('presentation.rst',
+                  globs={'__file__': __file__}),
+        file_test('utilities.rst'),
     ))
 
 if __name__ == '__main__':

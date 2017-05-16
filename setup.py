@@ -27,7 +27,6 @@ def read(*rnames):
         return f.read()
 
 static_requires = [
-    'mechanize >= 0.1.8',
     'zope.securitypolicy',
     'zope.app.securitypolicy',
 ]

@@ -240,11 +240,13 @@ class CodeModuleTests(BrowserTestCase):
 def test_suite():
     checker = renormalizing.RENormalizing([
         (re.compile(r" with base 10: 'text'"), r': text'),
+        (re.compile(r"u('[^']*')"), r"\1"),
+        (re.compile("__builtin__"), 'builtins'),
     ])
     CodeModuleTests.layer = APIDocLayer
     introspector = doctest.DocFileSuite(
         "introspector.rst",
-        optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
+        optionflags=doctest.ELLIPSIS|doctest.NORMALIZE_WHITESPACE)
     introspector.layer = APIDocLayer
     return unittest.TestSuite((
         doctest.DocFileSuite(

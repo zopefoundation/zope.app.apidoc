@@ -135,8 +135,7 @@ class InterfaceDetails(BrowserView):
         # returned.
         iface = removeAllProxies(self.context)
         # Make sure that the required fields are shown first
-        sorter = lambda x, y: cmp((not x[1].required, x[0].lower()),
-                                  (not y[1].required, y[0].lower()))
+        sorter = lambda x: (not x[1].required, x[0].lower())
         return [interface.getFieldInfoDictionary(field)
                 for name, field in interface.getFieldsInOrder(iface, sorter)]
 
@@ -250,7 +249,7 @@ class InterfaceDetails(BrowserView):
                     sel_views, iface, level=qualifier))
                 infos = [presentation.getViewInfoDictionary(reg)
                          for reg in regs]
-                infos.sort()
+
                 setattr(self, level+type_map[type]+'Views', infos)
 
     def getViewClassTitles(self):

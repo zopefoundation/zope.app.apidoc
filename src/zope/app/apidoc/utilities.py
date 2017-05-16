@@ -14,7 +14,6 @@
 """Utilties to make the life of Documentation Modules easier.
 
 """
-from __future__ import absolute_import
 __docformat__ = 'restructuredtext'
 
 import re
@@ -22,6 +21,8 @@ import sys
 import types
 import inspect
 from os.path import dirname
+
+import six
 
 from zope.component import createObject, getMultiAdapter
 from zope.interface import implementer, implementedBy
@@ -111,6 +112,8 @@ def getPythonPath(obj):
     naked = removeSecurityProxy(obj)
     if hasattr(naked, "im_class"):
         naked = naked.im_class
+    if isinstance(naked, types.MethodType):
+        naked = type(naked.__self__)
     module = getattr(naked, '__module__', _marker)
     if module is _marker:
         return naked.__name__
@@ -184,7 +187,7 @@ def getPermissionIds(name, checker=_marker, klass=_marker):
     return entry
 
 
-def getFunctionSignature(func):
+def getFunctionSignature(func, ignore_self=False):
     """Return the signature of a function or method."""
     if not isinstance(func, (types.FunctionType, types.MethodType)):
         raise TypeError("func must be a function or method")
@@ -204,7 +207,7 @@ def getFunctionSignature(func):
     for name, default in zip(args, defaults):
         # Neglect self, since it is always there and not part of the signature.
         # This way the implementation and interface signatures should match.
-        if name == 'self' and type(func) == types.MethodType:
+        if name == 'self' and (isinstance(func, types.MethodType) or ignore_self):
             continue
 
         # Make sure the name is a string
@@ -271,17 +274,17 @@ def getInterfaceForAttribute(name, interfaces=_marker, klass=_marker,
 
 def columnize(entries, columns=3):
     """Place a list of entries into columns."""
-    if len(entries)%columns == 0:
-        per_col = len(entries)/columns
+    if len(entries) % columns == 0:
+        per_col = len(entries) // columns
         last_full_col = columns
     else:
-        per_col = len(entries)/columns + 1
-        last_full_col = len(entries)%columns
+        per_col = len(entries) // columns + 1
+        last_full_col = len(entries) % columns
     columns = []
     col = []
     in_col = 0
     for entry in entries:
-        if in_col < per_col - int(len(columns)+1 > last_full_col):
+        if in_col < per_col - int(len(columns) + 1 > last_full_col):
             col.append(entry)
             in_col += 1
         else:
@@ -319,7 +322,7 @@ def renderText(text, module=None, format=None, dedent=True):
         return u''
 
     if module is not None:
-        if isinstance(module, (str, unicode)):
+        if isinstance(module, six.string_types):
             module = sys.modules.get(module, None)
         if format is None:
             format = getDocFormat(module)
@@ -331,7 +334,7 @@ def renderText(text, module=None, format=None, dedent=True):
 
     text = dedentString(text)
 
-    if not isinstance(text, unicode):
+    if isinstance(text, bytes):
         text = text.decode('latin-1', 'replace')
     source = createObject(format, text)
 

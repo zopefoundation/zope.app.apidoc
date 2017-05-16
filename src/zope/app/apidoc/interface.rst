@@ -36,22 +36,20 @@ look at an example.
 First, let's get the methods of an interface:
 
   >>> from zope.interface.interfaces import IMethod
-  >>> interface.getElements(IFoo, type=IMethod).keys()
+  >>> sorted(interface.getElements(IFoo, type=IMethod).keys())
   ['blah']
 
 and now the fields:
 
   >>> from zope.schema.interfaces import IField
-  >>> names = interface.getElements(IFoo, type=IField).keys()
-  >>> names.sort()
+  >>> names = sorted(interface.getElements(IFoo, type=IField).keys())
   >>> names
   ['bar', 'foo']
 
 We can also get all attributes of course.
 
   >>> from zope.interface.interfaces import IAttribute
-  >>> names = interface.getElements(IFoo, type=IAttribute).keys()
-  >>> names.sort()
+  >>> names = sorted(interface.getElements(IFoo, type=IAttribute).keys())
   >>> names
   ['bar', 'baz', 'blah', 'foo']
 
@@ -64,8 +62,7 @@ attributes that does not include fields and methods, see the
 The default type is `IElement` which will simply return all elements of the
 interface:
 
-  >>> names = interface.getElements(IFoo).keys()
-  >>> names.sort()
+  >>> names = sorted(interface.getElements(IFoo).keys())
   >>> names
   ['bar', 'baz', 'blah', 'foo']
 
@@ -93,7 +90,7 @@ Reusing the interface created above, we check the output:
 By changing the sort method to sort by names, we get:
 
   >>> [n for n, a in interface.getFieldsInOrder(
-  ...       IFoo, _itemsorter=lambda x, y: cmp(x[0], y[0]))]
+  ...       IFoo, _itemsorter=lambda x: x[0])]
   ['bar', 'foo']
 
 
@@ -116,8 +113,7 @@ ignores methods and fields.
 This function returns a (name, method) tuple for every declared method in the
 interface.
 
-  >>> methods = interface.getMethods(IFoo)
-  >>> methods.sort()
+  >>> methods = sorted(interface.getMethods(IFoo))
   >>> methods #doctest: +ELLIPSIS
   [('blah', <zope.interface.interface.Method object at ...>)]
 
@@ -128,9 +124,9 @@ interface.
 This function returns a (name, field) tuple for every declared field in the
 interface.
 
-  >>> interface.getFields(IFoo) #doctest: +ELLIPSIS
-  [('foo', <zope.schema._bootstrapfields.Field object at ...>),
-   ('bar', <zope.schema._bootstrapfields.TextLine object at ...>)]
+  >>> sorted(interface.getFields(IFoo))
+  [('bar', <zope.schema._bootstrapfields.TextLine object at ...>),
+   ('foo', <zope.schema._bootstrapfields.Field object at ...>)]
 
 Note that this returns the same result as `getFieldsInOrder()` with the fields
 sorted by their `order` attribute, except that you cannot specify the sort
@@ -200,9 +196,10 @@ If the name matching method fails, it picks the first interface that extends
   >>> class ISomething(Interface):
   ...     pass
 
-  >>> from zope.interface import implements
-  >>> class MyField:
-  ...     implements(ISomething, ISpecialField)
+  >>> from zope.interface import implementer
+  >>> @implementer(ISomething, ISpecialField)
+  ... class MyField:
+  ...     pass
 
   >>> interface.getFieldInterface(MyField())
   <InterfaceClass zope.app.apidoc.doctest.ISpecialField>
@@ -237,7 +234,7 @@ This function returns a page-template-friendly dictionary for a method:
 
 This function returns a page-template-friendly dictionary for a field:
 
-  >>> pprint(interface.getFieldInfoDictionary(IFoo['bar']), width=1)
+  >>> pprint(interface.getFieldInfoDictionary(IFoo['bar']), width=50)
   {'class': {'name': 'TextLine',
              'path': 'zope/schema/_bootstrapfields/TextLine'},
    'default': "u'My Bar'",
