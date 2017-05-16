@@ -83,10 +83,10 @@ One can get a directive using the common mapping interface:
   >>> ns.get('foo') is None
   True
 
-  >>> print '\n'.join([name for name, dir in ns.items()][:3])
-  addMenuItem
-  addform
-  containerViews
+  >>> print('\n'.join([name for name, dir in ns.items()][:3]))
+  defaultSkin
+  defaultView
+  page
 
 
 `quoteNS(ns)`

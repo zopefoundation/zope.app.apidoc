@@ -13,18 +13,26 @@
 ##############################################################################
 """zope.app.apidoc common test related classes/functions/objects.
 
-$Id$
 """
 
 __docformat__ = "reStructuredText"
 
 import os
-from zope.app.testing.functional import ZCMLLayer
 
-APIDocNoDevModeLayer = ZCMLLayer(
-    os.path.join(os.path.split(__file__)[0], 'ftesting-base.zcml'),
-    __name__, 'APIDocNoDevModeLayer', allow_teardown=True)
+import zope.app.apidoc
+from zope.app.wsgi.testlayer import BrowserLayer
+from zope.testbrowser.wsgi import TestBrowserLayer
 
-APIDocLayer = ZCMLLayer(
-    os.path.join(os.path.split(__file__)[0], 'ftesting.zcml'),
-    __name__, 'APIDocLayer', allow_teardown=True)
+class _BrowserLayer(TestBrowserLayer, BrowserLayer):
+    pass
+
+APIDocNoDevModeLayer = _BrowserLayer(
+    zope.app.apidoc,
+    name="APIDocNoDevModeLayer",
+    zcml_file='ftesting-base.zcml',
+    allowTearDown=True)
+
+APIDocLayer = _BrowserLayer(
+    zope.app.apidoc,
+    name="APIDocLayer",
+    allowTearDown=True)

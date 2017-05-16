@@ -13,7 +13,6 @@
 ##############################################################################
 """Code Module Menu
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 from zope.component import getUtility
@@ -66,22 +65,22 @@ class Menu(object):
           >>> from pprint import pprint
           >>> pprint(info)
           [{'path': 'zope.app.apidoc.codemodule.browser.Foo',
-            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Foo/'},
+            'url': 'http://127.0.0.1/++etc++site/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Foo/'},
            {'path': 'zope.app.apidoc.codemodule.browser.Foo2',
-            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Foo2/'}]
+            'url': 'http://127.0.0.1/++etc++site/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Foo2/'}]
 
           >>> menu.request = TestRequest(form={'path': 'o2'})
           >>> info = menu.findClasses()
           >>> pprint(info)
           [{'path': 'zope.app.apidoc.codemodule.browser.Foo2',
-            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Foo2/'}]
+            'url': 'http://127.0.0.1/++etc++site/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Foo2/'}]
 
 
           >>> menu.request = TestRequest(form={'path': 'Blah'})
           >>> info = menu.findClasses()
           >>> pprint(info)
           [{'path': 'zope.app.apidoc.codemodule.browser.Blah',
-            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Blah/'}]
+            'url': 'http://127.0.0.1/++etc++site/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Blah/'}]
 
         """
         path = self.request.get('path', None)
@@ -96,7 +95,7 @@ class Menu(object):
                     {'path': p,
                      'url': absoluteURL(klass, self.request) + '/'
                      })
-        results.sort(lambda x, y: cmp(x['path'], y['path']))
+        results.sort(key=lambda x: x['path'])
         return results
 
     def findAllClasses(self):
@@ -139,6 +138,7 @@ class Menu(object):
         classModule.setup() # run setup if not yet done
         results = []
         counter = 0
+
         for p in classRegistry.keys():
             klass = traverse(classModule, p.replace('.', '/'))
             results.append(
@@ -148,5 +148,5 @@ class Menu(object):
                  })
             counter += 1
 
-        results.sort(lambda x, y: cmp(x['path'], y['path']))
+        results.sort(key=lambda x: x['path'])
         return results

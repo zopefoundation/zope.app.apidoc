@@ -13,18 +13,20 @@
 ##############################################################################
 """Tests for the Book Documentation Module
 
-$Id$
 """
 import unittest
 import doctest
 
-from zope.app.testing.functional import BrowserTestCase
-from zope.app.testing import placelesssetup
+from zope.component import testing
+from zope.app.apidoc.tests import BrowserTestCase
+
 from zope.app.apidoc.testing import APIDocLayer
 
 
 class TypeModuleTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
+
+    layer = APIDocLayer
 
     def testMenu(self):
         response = self.publish(
@@ -38,13 +40,12 @@ class TypeModuleTests(BrowserTestCase):
 
 
 def test_suite():
-    TypeModuleTests.layer = APIDocLayer
     return unittest.TestSuite((
         doctest.DocTestSuite('zope.app.apidoc.typemodule.type',
-                             setUp=placelesssetup.setUp,
-                             tearDown=placelesssetup.tearDown),
-        unittest.makeSuite(TypeModuleTests),
-        ))
+                             setUp=testing.setUp,
+                             tearDown=testing.tearDown),
+        unittest.defaultTestLoader.loadTestsFromName(__name__),
+    ))
 
 if __name__ == '__main__':
     unittest.main(default='test_suite')

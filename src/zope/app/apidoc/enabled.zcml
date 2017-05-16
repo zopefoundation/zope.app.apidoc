@@ -4,6 +4,11 @@
     xmlns:meta="http://namespaces.zope.org/meta"
     i18n_domain="zope">
 
+  <include package="zope.security" file="meta.zcml" />
+  <include package="zope.app.apidoc" file="meta.zcml" />
+  <include package="zope.app.apidoc.bookmodule" file="meta.zcml" />
+  <include package="zope.preference" file="meta.zcml" />
+
   <permission
       id="zope.app.apidoc.UseAPIDoc"
       title="[zope.app.apidoc.UseAPIDoc] Access Online API documentation"
@@ -49,31 +54,31 @@
   <apidoc:bookchapter
       id="interface"
       title="Interfaces"
-      doc_path="interface.txt"
+      doc_path="interface.rst"
       parent="inspect"
       />
   <apidoc:bookchapter
       id="component"
       title="Components"
-      doc_path="component.txt"
+      doc_path="component.rst"
       parent="inspect"
       />
   <apidoc:bookchapter
       id="presentation"
       title="Presentation"
-      doc_path="presentation.txt"
+      doc_path="presentation.rst"
       parent="inspect"
       />
   <apidoc:bookchapter
       id="misc"
       title="Miscellaneous"
-      doc_path="utilities.txt"
+      doc_path="utilities.rst"
       parent="inspect"
       />
   <apidoc:bookchapter
       id="classregistry"
       title="Class Registry"
-      doc_path="classregistry.txt"
+      doc_path="classregistry.rst"
       parent="inspect"
       />
 

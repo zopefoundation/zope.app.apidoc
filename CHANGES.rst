@@ -2,8 +2,10 @@
 CHANGES
 =======
 
-3.7.6 (unreleased)
+4.0.0 (unreleased)
 ------------------
+
+- Add support for Python 3.4, 3.5, 3.6 and PyPy.
 
 - Modernize some of the templates.  An increment towards having
   zope.app.apidoc compatible with Chameleon.

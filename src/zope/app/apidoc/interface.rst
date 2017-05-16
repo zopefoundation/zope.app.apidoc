@@ -227,7 +227,7 @@ This function returns a page-template-friendly dictionary for a method:
 
   >>> pprint(interface.getMethodInfoDictionary(IFoo['blah'])) #doc
   {'doc':
-     u'<p>This is the <cite>blah</cite> method.</p>\n',
+     u'<p>This is the `blah` method.</p>\n',
    'name': 'blah',
    'signature': '(one, two, three=None, *args, **kwargs)'}
 

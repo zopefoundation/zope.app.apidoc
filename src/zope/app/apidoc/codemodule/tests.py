@@ -13,7 +13,6 @@
 ##############################################################################
 """Tests for the Code Documentation Module
 
-$Id$
 """
 import os
 import unittest
@@ -21,28 +20,37 @@ import doctest
 
 from zope.configuration import xmlconfig
 import zope.app.appsetup.appsetup
-from zope.app.testing import placelesssetup
+from zope.component import testing
 
 
 def setUp(test):
-    placelesssetup.setUp()
+    testing.setUp()
 
     meta = '''
     <configure
         xmlns:meta="http://namespaces.zope.org/meta"
         i18n_domain="zope">
       <meta:provides feature="devmode" />
-      <include package="zope.app.zcmlfiles" file="meta.zcml" />
-      <include package="zope.app.zcmlfiles" file="menus.zcml" />
+      <include package="zope.app.apidoc" file="ftesting.zcml" />
     </configure>
     '''
-    xmlconfig.string(meta)
+    context = xmlconfig.string(meta)
 
-    meta = os.path.join(os.path.dirname(zope.app.zcmlfiles.__file__), 'meta.zcml')
-    context = xmlconfig.file(meta, zope.app.zcmlfiles)
-    context.provideFeature('devmode')
-    meta = os.path.join(os.path.dirname(zope.app.apidoc.__file__), 'meta.zcml')
-    context = xmlconfig.file(meta, zope.app.apidoc, context)
+    # ctx = xmlconfig.file('meta.zcml', zope.security)
+    # ctx = xmlconfig.file('meta.zcml', ztapi, context=ctx)
+    # ctx = xmlconfig.file('meta.zcml', zope.browserresource, context=ctx)
+    # ctx = xmlconfig.file('meta.zcml', zope.browserpage, context=ctx)
+    # ctx = xmlconfig.file('configure.zcml', zope.location, context=ctx)
+    # ctx = xmlconfig.file('configure.zcml', zope.traversing, context=ctx)
+    # ctx = xmlconfig.file('configure.zcml', zope.security, context=ctx)
+    # xmlconfig.file('configure.zcml', zope.app.tree, context=ctx)
+
+
+    # meta = os.path.join(os.path.dirname(zope.app.zcmlfiles.__file__), 'meta.zcml')
+    # context = xmlconfig.file(meta, zope.app.zcmlfiles)
+    # context.provideFeature('devmode')
+    # meta = os.path.join(os.path.dirname(zope.app.apidoc.__file__), 'meta.zcml')
+    # context = xmlconfig.file(meta, zope.app.apidoc, context)
 
     # Fix up path for tests.
     global old_context
@@ -50,20 +58,20 @@ def setUp(test):
     zope.app.appsetup.appsetup.__config_context = context
 
 def tearDown(test):
-    placelesssetup.tearDown()
+    testing.tearDown()
     global old_context
     zope.app.appsetup.appsetup.__config_context = old_context
 
 
 def test_suite():
     return unittest.TestSuite((
-        doctest.DocFileSuite('README.txt',
+        doctest.DocFileSuite('README.rst',
                              setUp=setUp, tearDown=tearDown,
                              optionflags=doctest.NORMALIZE_WHITESPACE),
-        doctest.DocFileSuite('directives.txt',
-                             setUp=placelesssetup.setUp,
-                             tearDown=placelesssetup.tearDown),
-        ))
+        doctest.DocFileSuite('directives.rst',
+                             setUp=testing.setUp,
+                             tearDown=testing.tearDown),
+    ))
 
 if __name__ == '__main__':
     unittest.main(default="test_suite")

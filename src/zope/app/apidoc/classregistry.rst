@@ -68,8 +68,8 @@ This method returns all classes that implement the specified interface:
   >>> from pprint import pprint
   >>> pprint(reg.getClassesThatImplement(IA)) #doctest:+ELLIPSIS
   [('A', <class 'A'>),
-   ('B', <class __builtin__.B at ...>),
    ('A2', <class 'A2'>),
+   ('B', <class __builtin__.B at ...>),
    ('B2', <class 'B2'>)]
 
   >>> pprint(reg.getClassesThatImplement(IB)) #doctest:+ELLIPSIS

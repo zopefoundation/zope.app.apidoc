@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """ZCML File Representation
-
-$Id$
 """
 __docformat__ = "reStructuredText"
 import copy
@@ -23,7 +21,7 @@ from xml.sax.handler import feature_namespaces
 
 from zope.cachedescriptors.property import Lazy
 from zope.configuration import xmlconfig, config
-from zope.interface import implements, directlyProvides
+from zope.interface import implementer, directlyProvides
 from zope.location.interfaces import ILocation
 
 import zope.app.appsetup.appsetup
@@ -80,9 +78,10 @@ class MyConfigHandler(xmlconfig.ConfigurationHandler, object):
         self.currentElement = self.currentElement.__parent__
 
 
+@implementer(IDirective)
 class Directive(object):
     """Representation of a ZCML directive."""
-    implements(IDirective)
+
 
     def __init__(self, name, schema, attrs, context, info, prefixes):
         self.name = name
@@ -98,9 +97,9 @@ class Directive(object):
         return '<Directive %s>' %str(self.name)
 
 
+@implementer(ILocation, IZCMLFile)
 class ZCMLFile(object):
     """Representation of an entire ZCML file."""
-    implements(ILocation, IZCMLFile)
 
     def __init__(self, filename, package, parent, name):
         # Retrieve the directive registry
@@ -109,6 +108,7 @@ class ZCMLFile(object):
         self.__parent__ = parent
         self.__name__ = name
 
+    @Lazy
     def rootElement(self):
         # Get the context that was originally generated during startup and
         # create a new context using its registrations
@@ -143,5 +143,3 @@ class ZCMLFile(object):
         directlyProvides(root, IRootDirective)
         root.__parent__ = self
         return root
-
-    rootElement = Lazy(rootElement)

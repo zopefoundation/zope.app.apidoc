@@ -13,57 +13,73 @@
 ##############################################################################
 """Tests for the ZCML Documentation Module
 
-$Id$
 """
+from __future__ import absolute_import
 import os
 import unittest
 import doctest
 
 from zope.configuration import xmlconfig
-from zope.traversing.interfaces import IPhysicallyLocatable
-from zope.location.traversing import LocationPhysicallyLocatable
+
 
 import zope.app.appsetup.appsetup
-from zope.app.tree.interfaces import IUniqueId
-from zope.app.tree.adapters import LocationUniqueId
-from zope.app.testing import setup, ztapi
-from zope.app.testing.functional import BrowserTestCase
 
+from zope import component as ztapi
+import zope.traversing
+import zope.app.tree
+import zope.security
+import zope.browserresource
+import zope.browserpage
+import zope.location
+
+
+from zope.app.component.testing import PlacefulSetup
+
+import zope.app.apidoc
 from zope.app.apidoc.testing import APIDocLayer
 from zope.app.apidoc.tests import Root
+from zope.app.apidoc.tests import BrowserTestCase
 from zope.app.apidoc.apidoc import APIDocumentation
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.zcmlmodule import Namespace, Directive
 from zope.app.apidoc.zcmlmodule import ZCMLModule
-from zope.app.apidoc.tests import Root
-import zope.app.zcmlfiles
 
+def _setUp_AppSetup():
+    config_file = os.path.join(
+        os.path.dirname(zope.app.apidoc.__file__), 'configure.zcml')
+
+    # # Fix up path for tests.
+    global old_context
+    old_context = zope.app.appsetup.appsetup.getConfigContext()
+    zope.app.appsetup.appsetup.__config_context = xmlconfig.file(
+        config_file, zope.app.apidoc, execute=False)
+
+def _tearDown_AppSetup():
+    zope.app.appsetup.appsetup.__config_context = old_context
 
 def setUp(test):
-    root_folder = setup.placefulSetUp(True)
+    root_folder = PlacefulSetup().setUp(True, True)
 
-    ztapi.provideAdapter(None, IUniqueId, LocationUniqueId)
-    ztapi.provideAdapter(None, IPhysicallyLocatable,
-                         LocationPhysicallyLocatable)
+    ctx = xmlconfig.file('meta.zcml', zope.security)
+    ctx = xmlconfig.file('meta.zcml', ztapi, context=ctx)
+    ctx = xmlconfig.file('meta.zcml', zope.browserresource, context=ctx)
+    ctx = xmlconfig.file('meta.zcml', zope.browserpage, context=ctx)
+    ctx = xmlconfig.file('configure.zcml', zope.location, context=ctx)
+    ctx = xmlconfig.file('configure.zcml', zope.traversing, context=ctx)
+    ctx = xmlconfig.file('configure.zcml', zope.security, context=ctx)
+    xmlconfig.file('configure.zcml', zope.app.tree, context=ctx)
 
     # Set up apidoc module
     test.globs['apidoc'] = APIDocumentation(root_folder, '++apidoc++')
 
     # Register documentation modules
-    ztapi.provideUtility(IDocumentationModule, ZCMLModule(), 'ZCML')
+    ztapi.provideUtility(ZCMLModule(), IDocumentationModule,'ZCML')
 
-    config_file = os.path.join(
-        os.path.dirname(zope.app.zcmlfiles.__file__), 'meta.zcml')
-
-    # Fix up path for tests.
-    global old_context
-    old_context = zope.app.appsetup.appsetup.getConfigContext()
-    zope.app.appsetup.appsetup.__config_context = xmlconfig.file(
-        config_file, zope.app.zcmlfiles, execute=False)
+    _setUp_AppSetup()
 
 def tearDown(test):
-    setup.placefulTearDown()
-    zope.app.appsetup.appsetup.__config_context = old_context
+    PlacefulSetup().tearDown()
+    _tearDown_AppSetup()
     from zope.app.apidoc import zcmlmodule
     zcmlmodule.namespaces = None
     zcmlmodule.subdirs = None
@@ -81,6 +97,15 @@ def getDirective():
 
 class ZCMLModuleTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
+    layer = APIDocLayer
+
+    def setUp(self):
+        super(ZCMLModuleTests, self).setUp()
+        _setUp_AppSetup()
+
+    def tearDown(self):
+        _tearDown_AppSetup()
+        super(ZCMLModuleTests, self).tearDown()
 
     def testMenu(self):
         response = self.publish(
@@ -104,16 +129,16 @@ class ZCMLModuleTests(BrowserTestCase):
 
 
 def test_suite():
-    ZCMLModuleTests.layer = APIDocLayer
+
     return unittest.TestSuite((
-        doctest.DocFileSuite('README.txt',
+        doctest.DocFileSuite('README.rst',
                              setUp=setUp, tearDown=tearDown,
                              optionflags=doctest.NORMALIZE_WHITESPACE),
-        doctest.DocFileSuite('browser.txt',
+        doctest.DocFileSuite('browser.rst',
                              setUp=setUp, tearDown=tearDown,
                              optionflags=doctest.NORMALIZE_WHITESPACE),
-        unittest.makeSuite(ZCMLModuleTests),
-        ))
+        unittest.defaultTestLoader.loadTestsFromName(__name__),
+    ))
 
 if __name__ == '__main__':
     unittest.main(default='test_suite')

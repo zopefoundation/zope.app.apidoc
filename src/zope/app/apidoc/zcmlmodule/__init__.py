@@ -18,13 +18,12 @@ execute them) and uses the collected data to generate the tree. The result of
 the evaluation is stored in thread-global variables, so that we have to parse
 the files only once.
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 
-from zope.configuration import docutils, xmlconfig
+from zope.configuration import docutils
 from zope.i18nmessageid import ZopeMessageFactory as _
-from zope.interface import implements
+from zope.interface import implementer
 from zope.location.interfaces import ILocation
 
 import zope.app.appsetup.appsetup
@@ -48,10 +47,10 @@ def unquoteNS(ns):
     return ns
 
 
+@implementer(ILocation)
 class Namespace(ReadContainerBase):
     """Simple namespace object for the ZCML Documentation Module."""
 
-    implements(ILocation)
 
     def __init__(self, parent, name):
         self.__parent__ = parent
@@ -94,10 +93,9 @@ class Namespace(ReadContainerBase):
         return list
 
 
+@implementer(ILocation)
 class Directive(object):
     """Represents a ZCML Directive."""
-
-    implements(ILocation)
 
     def __init__(self, ns, name, schema, handler, info, subdirs):
         self.__parent__ = ns
@@ -108,13 +106,12 @@ class Directive(object):
         self.subdirs = subdirs
 
 
+@implementer(IDocumentationModule)
 class ZCMLModule(ReadContainerBase):
     r"""Represent the Documentation of all ZCML namespaces.
 
     This documentation is implemented using a simple `IReadContainer`. The
     items of the container."""
-
-    implements(IDocumentationModule)
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
     title = _('ZCML Reference')

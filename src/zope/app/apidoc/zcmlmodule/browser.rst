@@ -62,7 +62,7 @@ And we can get its menu title and link.
   >>> menu.getMenuTitle(node)
   'page'
   >>> menu.getMenuLink(node)
-  'http://127.0.0.1/++apidoc++/ZCML/http_co__sl__sl_namespaces.zope.org_sl_browser/page/index.html'
+  'http://127.0.0.1/++etc++site/++apidoc++/ZCML/http_co__sl__sl_namespaces.zope.org_sl_browser/page/index.html'
 
 Note that the directive's namespace URL is encoded, so it can be used in a
 URL.

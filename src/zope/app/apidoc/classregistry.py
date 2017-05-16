@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """Class Registry
-
-$Id$
 """
 __docformat__ = 'restructuredtext'
 
@@ -33,8 +31,10 @@ class ClassRegistry(dict):
 
         Methods returns a list of 2-tuples of the form (path, class).
         """
-        return [(path, klass) for path, klass in self.items()
-                if iface.implementedBy(klass)]
+        result = [(path, klass) for path, klass in self.items()
+                  if iface.implementedBy(klass)]
+        result.sort(key=lambda x: x[0])
+        return result
 
     def getSubclassesOf(self, klass):
         """Return all class items that are proper subclasses of klass.

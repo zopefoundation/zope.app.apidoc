@@ -13,14 +13,13 @@
 ##############################################################################
 """Module representation for code browser
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 import os
 import types
 
 import zope
-from zope.interface import implements
+from zope.interface import implementer
 from zope.interface import providedBy
 from zope.interface.interface import InterfaceClass
 from zope.location.interfaces import ILocation
@@ -41,9 +40,9 @@ from zope.app.apidoc.codemodule.zcml import ZCMLFile
 IGNORE_FILES = ('tests', 'tests.py', 'ftests', 'ftests.py', 'CVS', 'gadfly',
                 'setup.py', 'introspection.py', 'Mount.py')
 
+@implementer(ILocation, IModuleDocumentation)
 class Module(ReadContainerBase):
     """This class represents a Python module."""
-    implements(ILocation, IModuleDocumentation)
 
     def __init__(self, parent, name, module, setup=True):
         """Initialize object."""
@@ -54,6 +53,18 @@ class Module(ReadContainerBase):
         self._package = False
         if setup:
             self.__setup()
+
+    def __XXXrepr__(self):
+        cls = self.__class__
+        path = []
+        i = self
+        while i is not None:
+            path.append(getattr(i, '__name__', '') or '')
+            i = i.__parent__
+        path.reverse()
+        path = '.'.join(path)
+        return "<%s.%s '%s' at %s>" % (cls.__module__, cls.__name__,
+                                       path, id(self))
 
     def __setup(self):
         """Setup the module sub-tree."""
@@ -95,7 +106,7 @@ class Module(ReadContainerBase):
                         self._children[file] = ZCMLFile(path, self._module,
                                                         self, file)
 
-                    elif os.path.isfile(path) and file.endswith('.txt'):
+                    elif os.path.isfile(path) and file.endswith(('.txt', '.rst')):
                         self._children[file] = TextFile(path, file, self)
 
         # List the classes and functions in module, if any are available.
@@ -133,8 +144,8 @@ class Module(ReadContainerBase):
             if attr is None:
                 continue
 
-	    if isinstance(attr, hookable):
-		attr = attr.implementation
+            if isinstance(attr, hookable):
+		        attr = attr.implementation
 
             if isinstance(attr, (types.ClassType, types.TypeType)):
                 self._children[name] = Class(self, name, attr)
@@ -187,7 +198,9 @@ class Module(ReadContainerBase):
         obj = safe_import(path)
 
         if obj is not None:
-            return Module(self, key, obj)
+            child = Module(self, key, obj)
+            self._children[key] = child
+            return child
 
         # Maybe it is a simple attribute of the module
         if obj is None:

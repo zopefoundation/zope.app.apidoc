@@ -13,49 +13,28 @@
 ##############################################################################
 """Tests for the Interface Documentation Module
 
-$Id$
 """
 import unittest
 import doctest
 
-from zope.component.interfaces import IFactory
-from zope.interface.interfaces import IInterface
+from zope.app.component.testing import PlacefulSetup, setUpTraversal
 
 from zope.app.apidoc.testing import APIDocLayer
 from zope.app.apidoc.apidoc import APIDocumentation
-from zope.app.apidoc.interfaces import IDocumentationModule
+
 from zope.app.apidoc.ifacemodule.ifacemodule import InterfaceModule
-from zope.app.renderer.rest import ReStructuredTextSourceFactory
-from zope.app.renderer.rest import IReStructuredTextSource
-from zope.app.renderer.rest import ReStructuredTextToHTMLRenderer
-from zope.app.testing import ztapi, setup
-from zope.app.testing.functional import BrowserTestCase
-from zope.app.tree.interfaces import IUniqueId
-from zope.app.tree.adapters import LocationUniqueId
+from zope.app.apidoc.tests import BrowserTestCase
 
 def setUp(test):
-    root_folder = setup.placefulSetUp(True)
-
-    ztapi.provideAdapter(IInterface, IUniqueId, LocationUniqueId)
+    root_folder = PlacefulSetup().buildFolders(True)
+    setUpTraversal()
 
     # Set up apidoc module
     test.globs['apidoc'] = APIDocumentation(root_folder, '++apidoc++')
 
-    # Register InterfaceModule
-    ztapi.provideUtility(IDocumentationModule, InterfaceModule(), "Interface")
-
-    # Register Renderer Components
-    ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
-                         'zope.source.rest')
-    ztapi.browserView(IReStructuredTextSource, '',
-                      ReStructuredTextToHTMLRenderer)
-    # Cheat and register the ReST factory for STX as well
-    ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
-                         'zope.source.stx')
-
 
 def tearDown(test):
-    setup.placefulTearDown()
+    pass
 
 
 class InterfaceModuleTests(BrowserTestCase):
@@ -67,7 +46,7 @@ class InterfaceModuleTests(BrowserTestCase):
         response = self.publish(
             '/++apidoc++/Interface/menu.html',
             basic='mgr:mgrpw',
-            env = {'name_only': True, 'search_str': 'IDoc'})
+            env={'name_only': 'True', 'search_str': 'IDoc'})
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
         self.assert_(body.find(
@@ -89,15 +68,19 @@ class InterfaceModuleTests(BrowserTestCase):
 
 
 def test_suite():
+    readme = doctest.DocFileSuite('README.rst',
+                                  setUp=setUp, tearDown=tearDown,
+                                  optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+    readme.layer = APIDocLayer
+    browser = doctest.DocFileSuite('browser.rst',
+                                   setUp=setUp, tearDown=tearDown,
+                                   optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+    browser.layer = APIDocLayer
     return unittest.TestSuite((
-        doctest.DocFileSuite('README.txt',
-                             setUp=setUp, tearDown=tearDown,
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
-        doctest.DocFileSuite('browser.txt',
-                             setUp=setUp, tearDown=tearDown,
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
-        unittest.makeSuite(InterfaceModuleTests),
-        ))
+        readme,
+        browser,
+        unittest.defaultTestLoader.loadTestsFromName(__name__)
+    ))
 
 if __name__ == '__main__':
     unittest.main(defaultTest="test_suite")

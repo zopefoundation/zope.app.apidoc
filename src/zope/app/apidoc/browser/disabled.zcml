@@ -3,6 +3,10 @@
   xmlns:zope="http://namespaces.zope.org/zope"
   i18n_domain="zope">
 
+  <include package="zope.browserpage" file="meta.zcml" />
+  <!-- defaultView directive -->
+  <include package="zope.publisher" file="meta.zcml" />
+
   <page
       for="..disabled.APIDocStub"
       name="index.html"
@@ -16,4 +20,3 @@
      />
 
 </configure>
-

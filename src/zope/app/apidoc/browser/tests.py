@@ -13,20 +13,20 @@
 ##############################################################################
 """Functional Tests for API Documentation.
 
-$Id$
 """
 import re
 import unittest
 import doctest
 
-import zope.app.testing.functional
 from zope.testing import renormalizing
-from zope.app.testing.functional import BrowserTestCase, FunctionalNoDevMode
-from zope.app.testing.functional import FunctionalDocFileSuite
 from zope.app.apidoc.testing import APIDocLayer, APIDocNoDevModeLayer
+
+from zope.app.apidoc.tests import BrowserTestCase
 
 class APIDocTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
+
+    layer = APIDocLayer
 
     def testMenu(self):
         response = self.publish('/++apidoc++/menu.html',
@@ -67,22 +67,21 @@ class APIDocTests(BrowserTestCase):
 
 checker = renormalizing.RENormalizing([
     (re.compile(r'httperror_seek_wrapper:', re.M), 'HTTPError:'),
-    ]) 
+])
 
 def test_suite():
     suite = unittest.TestSuite()
-    APIDocTests.layer = APIDocLayer
     suite.addTest(unittest.makeSuite(APIDocTests))
-    apidoc_doctest = FunctionalDocFileSuite(
-        "README.txt",
+    apidoc_doctest = doctest.DocFileSuite(
+        "README.rst",
         optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE,
         checker=checker)
     apidoc_doctest.layer = APIDocLayer
     suite.addTest(
         apidoc_doctest,
-        )
+    )
 
-    nodevmode = FunctionalDocFileSuite("nodevmode.txt")
+    nodevmode = doctest.DocFileSuite("nodevmode.rst")
     nodevmode.layer = APIDocNoDevModeLayer
     suite.addTest(nodevmode)
     return suite

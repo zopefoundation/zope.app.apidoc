@@ -4,7 +4,7 @@ Generic API Doc Views
 
 Get a browser started:
 
-  >>> from zope.testbrowser.testing import Browser
+  >>> from zope.testbrowser.wsgi import Browser
   >>> browser = Browser()
   >>> browser.addHeader('Authorization', 'Basic mgr:mgrpw')
 
@@ -38,4 +38,3 @@ feel better and does not have all the O-wrap clutter:
     <a href="mailto:zope-dev@zope.org">zope-dev@zope.org</a>.
   </p>
   ...
-

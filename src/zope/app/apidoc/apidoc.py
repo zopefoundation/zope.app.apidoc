@@ -13,12 +13,12 @@
 ##############################################################################
 """Zope 3 API Documentation
 
-$Id$
 """
+from __future__ import absolute_import
 __docformat__ = 'restructuredtext'
 
 import zope.component
-from zope.interface import implements
+from zope.interface import implementer
 from zope.publisher.browser import applySkin
 from zope.location import locate
 from zope.location.interfaces import ILocation
@@ -26,6 +26,7 @@ from zope.location.interfaces import ILocation
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase
 
+@implementer(ILocation)
 class APIDocumentation(ReadContainerBase):
     """Represent the complete API Documentation.
 
@@ -33,7 +34,6 @@ class APIDocumentation(ReadContainerBase):
     items of the container are all registered utilities for
     `IDocumentationModule`.
     """
-    implements(ILocation)
 
     def __init__(self, parent, name):
         self.__parent__ = parent

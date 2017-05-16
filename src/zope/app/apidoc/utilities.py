@@ -13,8 +13,8 @@
 ##############################################################################
 """Utilties to make the life of Documentation Modules easier.
 
-$Id$
 """
+from __future__ import absolute_import
 __docformat__ = 'restructuredtext'
 
 import re
@@ -24,7 +24,7 @@ import inspect
 from os.path import dirname
 
 from zope.component import createObject, getMultiAdapter
-from zope.interface import implements, implementedBy
+from zope.interface import implementer, implementedBy
 from zope.publisher.browser import TestRequest
 from zope.security.checker import getCheckerForInstancesOf, Global
 from zope.security.interfaces import INameBasedChecker
@@ -41,11 +41,16 @@ _ = zope.i18nmessageid.MessageFactory("zope")
 _remove_html_overhead = re.compile(
     r'(?sm)^<html.*<body.*?>\n(.*)</body>\n</html>\n')
 
-space_re = re.compile('\n^( *)\S', re.M)
+space_re = re.compile(r'\n^( *)\S', re.M)
 
 _marker = object()
 
-BASEDIR = dirname(dirname(dirname(dirname(zope.app.__file__))))
+try:
+    _path = zope.app.__file__
+except AttributeError:
+    _path = zope.app.__path__[0]
+BASEDIR = dirname(dirname(dirname(dirname(_path))))
+del _path
 
 def relativizePath(path):
     return path.replace(BASEDIR, 'Zope3')
@@ -58,16 +63,15 @@ def truncateSysPath(path):
             return path.replace(syspath, '')[1:]
     return path
 
-
+@implementer(IReadContainer)
 class ReadContainerBase(object):
     """Base for `IReadContainer` objects."""
-    implements(IReadContainer)
 
     def get(self, key, default=None):
-        raise NotImplemented
+        raise NotImplementedError()
 
     def items(self):
-        raise NotImplemented
+        raise NotImplementedError()
 
     def __getitem__(self, key):
         default = object()
@@ -80,13 +84,13 @@ class ReadContainerBase(object):
         return self.get(key) is not None
 
     def keys(self):
-        return map(lambda x: x[0], self.items())
+        return [x[0] for x in self.items()]
 
     def __iter__(self):
         return self.values().__iter__()
 
     def values(self):
-        return map(lambda x: x[1], self.items())
+        return [x[1] for x in self.items()]
 
     def __len__(self):
         return len(self.items())
@@ -229,7 +233,7 @@ def getPublicAttributes(obj):
     for attr in dir(obj):
         if attr.startswith('_'):
             continue
-        
+
         try:
             getattr(obj, attr)
         except AttributeError:
@@ -293,7 +297,7 @@ _format_dict = {
     'plaintext': 'zope.source.plaintext',
     'structuredtext': 'zope.source.stx',
     'restructuredtext': 'zope.source.rest'
-    }
+}
 
 def getDocFormat(module):
     """Convert a module's __docformat__ specification to a renderer source

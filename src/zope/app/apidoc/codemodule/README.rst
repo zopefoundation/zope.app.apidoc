@@ -26,8 +26,8 @@ different:
   >>> cm.isPackage()
   True
 
-  >>> cm.keys()
-  []
+  >>> sorted(cm.keys())
+  [u'BTrees', u'ZConfig', u'ZODB', u'persistent', u'transaction', u'zope']
 
 
 Module
@@ -90,7 +90,7 @@ still get to them:
   >>> names = module['tests'].keys()
   >>> names.sort()
   >>> names
-  ['Root', 'rootLocation', 'setUp', 'tearDown', 'test_suite']
+  ['BrowserTestCase', 'Root', 'rootLocation', 'setUp', 'tearDown', 'test_suite']
 
 
 Classes
@@ -265,8 +265,8 @@ Text files represent plain-text documentation files like this one. Once we
 have a text file documentation object
 
   >>> import os
-  >>> path = os.path.join(os.path.dirname(codemodule.__file__), 'README.txt')
-  >>> readme = codemodule.text.TextFile(path, 'README.txt', module)
+  >>> path = os.path.join(os.path.dirname(codemodule.__file__), 'README.rst')
+  >>> readme = codemodule.text.TextFile(path, 'README.rst', module)
 
 we can ask it for the content of the file:
 
@@ -325,8 +325,7 @@ the parser info object,
   >>> info = info.replace('\\', '/')
 
   >>> print info #doctest:+ELLIPSIS
-  File
-  ".../zope/app/apidoc/codemodule/configure.zcml", line 1.0-54.0
+  File ".../zope/app/apidoc/codemodule/configure.zcml", ...
 
 the sub-directives,
 
@@ -340,4 +339,3 @@ and finally a list of all prefixes.
   {u'http://namespaces.zope.org/apidoc': u'apidoc',
    u'http://namespaces.zope.org/browser': u'browser',
    u'http://namespaces.zope.org/zope': None}
-

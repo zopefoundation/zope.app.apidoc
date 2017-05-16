@@ -31,10 +31,13 @@ Now we can get a single utility interface by path:
 and list all available interfaces:
 
   >>> module.items()
-  [('zope.app.apidoc.interfaces.IDocumentationModule',
+  [...
+   ('zope.app.apidoc.interfaces.IDocumentationModule',
     <zope.app.apidoc.utilitymodule.utilitymodule.UtilityInterface ...>),
+   ...
    ('zope.security.interfaces.IPermission',
-    <zope.app.apidoc.utilitymodule.utilitymodule.UtilityInterface ...>)]
+    <zope.app.apidoc.utilitymodule.utilitymodule.UtilityInterface ...>),
+   ...]
 
 
 `UtilityInterface` class
@@ -74,7 +77,8 @@ If you try to get a non-existent utility, `None` is returned:
 You can get a list of available utilities as well, of course:
 
   >>> ut_iface.items()
-  [('VXRpbGl0eQ==', <...apidoc.utilitymodule.utilitymodule.Utility ...>),
+  [...
+   ('VXRpbGl0eQ==', <...apidoc.utilitymodule.utilitymodule.Utility ...>),
    ('X19ub25hbWVfXw==', <...apidoc.utilitymodule.utilitymodule.Utility ...>)]
 
 Bu what are those strange names? Since utility names can be any string, it is

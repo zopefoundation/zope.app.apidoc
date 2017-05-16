@@ -9,7 +9,7 @@ informing the user that the API docs are disabled. We do this as we changed
 the default during the release of Zope 3.3 and many developers will still
 assume that their instances are running in developer mode, while they aren't.
 
-  >>> from zope.testbrowser.testing import Browser
+  >>> from zope.testbrowser.wsgi import Browser
   >>> browser = Browser()
   >>> browser.handleErrors = False
   >>> browser.addHeader('Authorization', 'Basic mgr:mgrpw')

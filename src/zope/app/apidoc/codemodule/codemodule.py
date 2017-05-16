@@ -16,13 +16,12 @@
 This module is able to take a dotted name of any class and display
 documentation for it.
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 
 import zope.component
 from zope.i18nmessageid import ZopeMessageFactory as _
-from zope.interface import implements
+from zope.interface import implementer
 
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.classregistry import safe_import
@@ -30,9 +29,9 @@ from zope.app.apidoc.codemodule.interfaces import IAPIDocRootModule
 from zope.app.apidoc.codemodule.module import Module
 
 
+@implementer(IDocumentationModule)
 class CodeModule(Module):
     """Represent the code browser documentation root"""
-    implements(IDocumentationModule)
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
     title = _('Code Browser')

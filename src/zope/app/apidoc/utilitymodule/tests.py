@@ -13,7 +13,6 @@
 ##############################################################################
 """Tests for the Utility Documentation Module
 
-$Id$
 """
 import unittest
 import doctest
@@ -26,31 +25,47 @@ from zope.app.apidoc.utilitymodule.utilitymodule import UtilityModule
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.apidoc import APIDocumentation
 from zope.app.apidoc.testing import APIDocLayer
-from zope.app.testing import setup, ztapi
-from zope.app.testing.functional import BrowserTestCase
-from zope.app.tree.interfaces import IUniqueId
-from zope.app.tree.adapters import LocationUniqueId
 
+from zope.app.component.testing import PlacefulSetup, setUpTraversal
+
+from zope.app.apidoc.testing import APIDocLayer
+from zope.app.apidoc.apidoc import APIDocumentation
+
+from zope.app.apidoc.ifacemodule.ifacemodule import InterfaceModule
+from zope.app.apidoc.tests import BrowserTestCase
 
 def setUp(test):
-    root_folder = setup.placefulSetUp(True)
-    ztapi.provideAdapter(None, IUniqueId, LocationUniqueId)
-    ztapi.provideAdapter(None, IPhysicallyLocatable,
-                         LocationPhysicallyLocatable)
+    root_folder = PlacefulSetup().buildFolders(True)
+    setUpTraversal()
 
     # Set up apidoc module
     test.globs['apidoc'] = APIDocumentation(root_folder, '++apidoc++')
 
-    # Register documentation modules
-    ztapi.provideUtility(IDocumentationModule, UtilityModule(), 'Utility')
-
 
 def tearDown(test):
-    setup.placefulTearDown()
+    pass
+
+# def setUp(test):
+#     root_folder = setup.placefulSetUp(True)
+#     ztapi.provideAdapter(None, IUniqueId, LocationUniqueId)
+#     ztapi.provideAdapter(None, IPhysicallyLocatable,
+#                          LocationPhysicallyLocatable)
+
+#     # Set up apidoc module
+#     test.globs['apidoc'] = APIDocumentation(root_folder, '++apidoc++')
+
+#     # Register documentation modules
+#     ztapi.provideUtility(IDocumentationModule, UtilityModule(), 'Utility')
+
+
+# def tearDown(test):
+#     setup.placefulTearDown()
 
 
 class UtilityModuleTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
+
+    layer = APIDocLayer
 
     def testMenu(self):
         response = self.publish(
@@ -89,19 +104,22 @@ class UtilityModuleTests(BrowserTestCase):
 
 
 def test_suite():
-    UtilityModuleTests.layer = APIDocLayer
+
+    readme = doctest.DocFileSuite('README.rst',
+                                  setUp=setUp,
+                                  tearDown=tearDown,
+                                  optionflags=doctest.NORMALIZE_WHITESPACE| doctest.ELLIPSIS)
+    readme.layer = APIDocLayer
+    browser = doctest.DocFileSuite('browser.rst',
+                                   setUp=setUp,
+                                   tearDown=tearDown,
+                                   optionflags=doctest.NORMALIZE_WHITESPACE)
+    browser.layer = APIDocLayer
     return unittest.TestSuite((
-        doctest.DocFileSuite('README.txt',
-                             setUp=setUp,
-                             tearDown=tearDown,
-                             optionflags=doctest.NORMALIZE_WHITESPACE|
-                                         doctest.ELLIPSIS),
-        doctest.DocFileSuite('browser.txt',
-                             setUp=setUp,
-                             tearDown=tearDown,
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
-        unittest.makeSuite(UtilityModuleTests),
-        ))
+        readme,
+        browser,
+        unittest.defaultTestLoader.loadTestsFromName(__name__),
+    ))
 
 if __name__ == '__main__':
     unittest.main(default="test_suite")

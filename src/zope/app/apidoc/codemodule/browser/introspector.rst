@@ -6,7 +6,7 @@ The "Introspector" view provides access to information about the current
 obejct, the context of the introspector view. When in `devmode`, the
 introspector is simply available as follows:
 
-    >>> from zope.testbrowser.testing import Browser
+    >>> from zope.testbrowser.wsgi import Browser
     >>> browser = Browser()
     >>> browser.addHeader('Authorization', 'Basic mgr:mgrpw')
     >>> browser.handleErrors = False
@@ -169,22 +169,33 @@ provides is the Dublin Core:
     <!DOCTYPE...
     ...
     <h2>Annotations</h2>
-    <div class="indent">
-      <ul class="attr-list">
-        <li>
-          <b>
-            <code>'zope.app.dublincore.ZopeDublinCore'</code>
-          </b>
-          <br />
-          <a href="++annotations++zope.app.dublincore.ZopeDublinCore/@@int...">
-            <code>...</code>
-          </a>
-          (<span>type:</span>
-           <a href="...lincore/annotatableadapter/ZDCAnnotationData/index.html">
-           <code>ZDCAnnotationData</code></a>)
-        </li>
-        ...
-      </ul>
+    <BLANKLINE>
+        <div class="indent">
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+          <ul class="attr-list">
+            <li>
+    <BLANKLINE>
+              <b>
+                <code>'zope.app.dublincore.ZopeDublinCore'</code>
+              </b>
+              <br />
+              <a href="++annotations++zope.app.dublincore.ZopeDublinCore/@@introspector.html">
+                <code>...</code>
+              </a>
+    <BLANKLINE>
+    <BLANKLINE>
+                (<span>type:</span>
+                <a href="http://localhost/++apidoc++/Code/zope/dublincore/annotatableadapter/ZDCAnnotationData/index.html">
+                  <code>ZDCAnnotationData</code></a>)
+    <BLANKLINE>
+    <BLANKLINE>
+            </li>
+          </ul>
+        </div>
+      </div>
+    <BLANKLINE>
     </div>
     ...
 
@@ -194,14 +205,14 @@ As you can see you can click on the annotation to discover it further:
     >>> print browser.contents
     <!DOCTYPE...
     ...
-    <h2...>Constructor</h2>
+      <h2 ...>Constructor</h2>
+    <BLANKLINE>
       <div class="indent">
         <div>
-          <b><code>__init__(dict=None, **kwargs)</code>
+          <b><code>__init__(*args, **kwargs)</code>
           </b><br />
           <div class="inline documentation"></div>
         </div>
-      </div>
     ...
 
 That's it! The introspector view has a lot more potential, but that's for

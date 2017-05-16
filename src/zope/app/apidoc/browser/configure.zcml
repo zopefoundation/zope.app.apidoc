@@ -4,6 +4,8 @@
     xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="zope">
 
+  <include package="zope.browserresource" file="meta.zcml" />
+
   <!-- BBB 2006/02/18, to be removed after 12 months -->
   <layer
       zcml:condition="have deprecatedlayers"
@@ -141,7 +143,7 @@
 
   <page
       name="apidocTree"
-      for="zope.app.preference.interfaces.IPreferenceGroup"
+      for="zope.preference.interfaces.IPreferenceGroup"
       class=".preference.APIDocPreferencesTree"
       permission="zope.View"
       attribute="apidocTree"
@@ -149,7 +151,7 @@
       />
 
   <page
-      for="zope.app.preference.interfaces.IPreferenceGroup"
+      for="zope.preference.interfaces.IPreferenceGroup"
       permission="zope.Public"
       name="apidocMenu.html"
       template="prefmenu.pt"
@@ -157,7 +159,7 @@
       />
 
   <page
-      for="zope.app.preference.interfaces.IPreferenceGroup"
+      for="zope.preference.interfaces.IPreferenceGroup"
       permission="zope.Public"
       name="apidocIndex.html"
       template="prefIndex.pt"
