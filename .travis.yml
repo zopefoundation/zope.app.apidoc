@@ -17,6 +17,10 @@ notifications:
 install:
   - pip install -U pip setuptools
   - pip install -U coveralls coverage
+# XXX: Remove these when released
+  - pip install git+https://github.com/zopefoundation/zope.app.renderer@python3#egg=zope.app.renderer
+  - pip install git+https://github.com/zopefoundation/zope.app.preference@python3#egg=zope.app.preference
+  - pip install git+https://github.com/zopefoundation/zope.app.onlinehelp@python3#egg=zope.app.onlinehelp
   - pip install -U -e ".[test]"
 
 
