@@ -254,11 +254,11 @@ To see how this works, we first have to register some views:
   >>> class IFoo(Interface):
   ...     pass
 
-  >>> from zope.app.testing import ztapi
-  >>> ztapi.provideAdapter((IFoo, IHTTPRequest), Interface, None, name='foo')
-  >>> ztapi.provideAdapter((Interface, IHTTPRequest), Interface, None,
+  >>> from zope import component as ztapi
+  >>> ztapi.provideAdapter(adapts=(IFoo, IHTTPRequest), provides=Interface, factory=None, name='foo')
+  >>> ztapi.provideAdapter(adapts=(Interface, IHTTPRequest), provides=Interface, factory=None,
   ...                      name='bar')
-  >>> ztapi.provideAdapter((IFoo, IBrowserRequest), Interface, None,
+  >>> ztapi.provideAdapter(adapts=(IFoo, IBrowserRequest), provides=Interface, factory=None,
   ...                      name='blah')
 
 Now let's see what we've got. If we do not specify a type, all registrations
@@ -311,14 +311,14 @@ and register some views:
   >>> from zope.testing.cleanup import cleanUp
   >>> cleanUp()
 
-  >>> ztapi.provideAdapter((IContent, IHTTPRequest), Interface,
-  ...                      None, name='view.html')
-  >>> ztapi.provideAdapter((IContent, IHTTPRequest), Interface,
-  ...                      None, name='edit.html')
-  >>> ztapi.provideAdapter((IFile, IHTTPRequest), Interface,
-  ...                      None, name='view.html')
-  >>> ztapi.provideAdapter((Interface, IHTTPRequest), Interface,
-  ...                      None, name='view.html')
+  >>> ztapi.provideAdapter(adapts=(IContent, IHTTPRequest), provides=Interface,
+  ...                      factory=None, name='view.html')
+  >>> ztapi.provideAdapter(adapts=(IContent, IHTTPRequest), provides=Interface,
+  ...                      factory=None, name='edit.html')
+  >>> ztapi.provideAdapter(adapts=(IFile, IHTTPRequest), provides=Interface,
+  ...                      factory=None, name='view.html')
+  >>> ztapi.provideAdapter(adapts=(Interface, IHTTPRequest), provides=Interface,
+  ...                      factory=None, name='view.html')
 
 Now we get all the registrations:
 

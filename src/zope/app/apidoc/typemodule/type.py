@@ -39,8 +39,8 @@ class TypeInterface(ReadContainerBase):
       >>> @implementer(IFoo)
       ... class Foo(object):
       ...     pass
-      >>> from zope.app.testing import ztapi
-      >>> ztapi.provideUtility(IFoo, Foo(), 'Foo')
+      >>> from zope import component as ztapi
+      >>> ztapi.provideUtility(Foo(), IFoo, 'Foo')
 
       >>> typeiface = TypeInterface(IFoo, None, None)
       >>> typeiface.interface
@@ -82,8 +82,8 @@ class TypeModule(ReadContainerBase):
       >>> class IFoo(IInterface):
       ...    pass
 
-      >>> from zope.app.testing import ztapi
-      >>> ztapi.provideUtility(IInterface, IFoo, 'IFoo')
+      >>> from zope import component as ztapi
+      >>> ztapi.provideUtility(IFoo, IInterface, 'IFoo')
 
       >>> module = TypeModule()
       >>> type = module.get('IFoo')

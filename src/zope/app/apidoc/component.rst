@@ -35,11 +35,11 @@ This function returns adapter registrations for adapters that require the
 specified interface. So let's create some adapter registrations:
 
   >>> from zope.publisher.interfaces import IRequest
-  >>> from zope.app.testing import ztapi
-  >>> ztapi.provideAdapter((IFoo,), IResult, None)
-  >>> ztapi.provideAdapter((IFoo, IBar), ISpecialResult, None)
-  >>> ztapi.provideAdapter((IFoo, IRequest), ISpecialResult, None)
-  >>> ztapi.subscribe((IFoo,), None, 'stubFactory')
+  >>> from zope import component as ztapi
+  >>> ztapi.provideAdapter(adapts=(IFoo,), provides=IResult, factory=None)
+  >>> ztapi.provideAdapter(adapts=(IFoo, IBar), provides=ISpecialResult, factory=None)
+  >>> ztapi.provideAdapter(adapts=(IFoo, IRequest), provides=ISpecialResult, factory=None)
+  >>> ztapi.provideHandler(adapts=(IFoo,), factory='stubFactory')
 
   >>> regs = list(component.getRequiredAdapters(IFoo))
   >>> regs.sort()
@@ -177,10 +177,10 @@ Again, the first step is to create some factories:
 
   >>> from zope.component.factory import Factory
   >>> from zope.component.interfaces import IFactory
-  >>> ztapi.provideUtility(IFactory, Factory(MyFoo), 'MyFoo')
-  >>> ztapi.provideUtility(IFactory, Factory(MyBar), 'MyBar')
-  >>> ztapi.provideUtility(IFactory,
-  ...     Factory(MyFooBar, 'MyFooBar', 'My Foo Bar'), 'MyFooBar')
+  >>> ztapi.provideUtility(Factory(MyFoo), IFactory, 'MyFoo')
+  >>> ztapi.provideUtility(Factory(MyBar), IFactory, 'MyBar')
+  >>> ztapi.provideUtility(
+  ...     Factory(MyFooBar, 'MyFooBar', 'My Foo Bar'), IFactory, 'MyFooBar')
 
 Let's see whether we will be able to get them:
 
@@ -208,9 +208,9 @@ interface.
 
 As usual, we have to register some utilities first:
 
-  >>> ztapi.provideUtility(IFoo, MyFoo())
-  >>> ztapi.provideUtility(IBar, MyBar())
-  >>> ztapi.provideUtility(IFooBar, MyFooBar())
+  >>> ztapi.provideUtility(MyFoo(), IFoo)
+  >>> ztapi.provideUtility(MyBar(), IBar)
+  >>> ztapi.provideUtility(MyFooBar(), IFooBar)
 
 Now let's have a look what we have:
 
@@ -473,7 +473,7 @@ will be ``None``:
   >>> MyFactoryType = type('MyFactory', (FactoryBase,), {})
   >>> from zope.interface import classImplements
   >>> classImplements(MyFactoryType, IFactory)
-  >>> ztapi.provideUtility(IFactory, MyFactoryType(), 'MyFactory')
+  >>> ztapi.provideUtility(MyFactoryType(), IFactory, 'MyFactory')
 
   >>> pprint(component.getFactoryInfoDictionary(
   ...     next(component.getFactories(IMine))), width=50)

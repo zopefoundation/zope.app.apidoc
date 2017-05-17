@@ -135,8 +135,8 @@ Let's now create another interface `IBar` and make `Foo` an adapter from
   ... class Foo(object):
   ...     pass
 
-  >>> from zope.app.testing import ztapi
-  >>> ztapi.provideAdapter(IBar, IFoo, Foo)
+  >>> from zope import component as ztapi
+  >>> ztapi.provideAdapter(adapts=(IBar,), provides=IFoo, factory=Foo)
 
   >>> from zope.app.apidoc.classregistry import classRegistry
   >>> classRegistry['__builtin__.Foo'] = Foo
@@ -145,12 +145,12 @@ Let's also register a factory for `Foo`
 
   >>> from zope.component.interfaces import IFactory
   >>> from zope.component.factory import Factory
-  >>> ztapi.provideUtility(IFactory, Factory(Foo, title='Foo Factory'),
+  >>> ztapi.provideUtility(Factory(Foo, title='Foo Factory'), IFactory,
   ...                      'FooFactory')
 
 and a utility providing `IFoo`:
 
-  >>> ztapi.provideUtility(IFoo, Foo(), 'The Foo')
+  >>> ztapi.provideUtility(Foo(), IFoo, 'The Foo')
 
 Now that the initial setup is done, we can create an interface that is located
 in the interface documentation module

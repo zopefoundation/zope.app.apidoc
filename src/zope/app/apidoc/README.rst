@@ -32,14 +32,14 @@ The `APIDocumentation` class provides access to all available documentation
 modules. Documentation modules are utilities providing `IDocumentationModule`:
 
 
-  >>> from zope.app.testing import ztapi
+  >>> from zope import component as ztapi
   >>> from zope.app.apidoc.interfaces import IDocumentationModule
   >>> from zope.app.apidoc.ifacemodule.ifacemodule import InterfaceModule
   >>> from zope.app.apidoc.zcmlmodule import ZCMLModule
 
-  >>> ztapi.provideUtility(IDocumentationModule, InterfaceModule(),
+  >>> ztapi.provideUtility(InterfaceModule(), IDocumentationModule,
   ...                      'Interface')
-  >>> ztapi.provideUtility(IDocumentationModule, ZCMLModule(), 'ZCML')
+  >>> ztapi.provideUtility(ZCMLModule(), IDocumentationModule, 'ZCML')
 
 Now we can instantiate the class (which is usually done when traversing
 '++apidoc++') and get a list of available modules:
@@ -87,9 +87,6 @@ in them for some guidance.
 New Static APIDOC-Version
 -------------------------
 
-An alternative APIDOC-Version is available through ++apidoc++/static.html 
+An alternative APIDOC-Version is available through ++apidoc++/static.html
 Find and Tree is implemented in Javascript. So it should be possible to do a
 "wget" - Offline-Version of APIDOC
-
-
-

@@ -90,12 +90,6 @@ def test_suite():
     suite.addTest(nodevmode)
     return suite
 
-# XXX: https://github.com/zopefoundation/zope.app.onlinehelp/pull/2/files#r116883323
-from collections import OrderedDict
-from zope.security import checker
-checker._default_checkers[type(OrderedDict().values())] = checker._iteratorChecker
-checker._default_checkers[type(iter(OrderedDict().values()))] = checker._iteratorChecker
-
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

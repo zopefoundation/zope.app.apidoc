@@ -20,8 +20,8 @@ To make the documentation module useful, we have to register a utility, so why
 not the documentation module itself?
 
   >>> from zope.app.apidoc.interfaces import IDocumentationModule
-  >>> from zope.app.testing import ztapi
-  >>> ztapi.provideUtility(IDocumentationModule, module, 'Utility')
+  >>> from zope import component as ztapi
+  >>> ztapi.provideUtility(module, IDocumentationModule, 'Utility')
 
 Now we can get a single utility interface by path:
 
@@ -60,7 +60,7 @@ Now we can get the utility:
 
 Unnamed utilities are special, since they can be looked up in different ways:
 
-  >>> ztapi.provideUtility(IDocumentationModule, module, '')
+  >>> ztapi.provideUtility(module, IDocumentationModule, '')
 
   >>> ut_iface.get('').component
   <zope.app.apidoc.utilitymodule.utilitymodule.UtilityModule object at ...>
