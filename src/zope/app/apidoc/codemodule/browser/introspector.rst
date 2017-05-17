@@ -142,23 +142,29 @@ Now the introspector will show the file and allow you to click on it:
     >>> print(browser.contents)
     <!DOCTYPE...
     ...
-    <h2>Mapping Items</h2>
-    <div class="indent">
-      <ul class="attr-list">
-        <li>
-          <b>
-            <code>u'file.txt'</code>
-          </b>
-          <br />
-          <a href="++items++file.txt/@@introspector.html">
-            <code>&lt;zope.app.file.file.File object at ...&gt;</code>
-          </a>
-          (<span>type:</span>
-           <a href="...zope/container/contained/ContainedProxy/index.html">
-            <code>ContainedProxy</code></a>)
-        </li>
-      </ul>
-    </div>
+    <BLANKLINE>
+      <div>
+        <h2>Mapping Items</h2>
+    <BLANKLINE>
+        <div class="indent">
+    <BLANKLINE>
+    <BLANKLINE>
+    <BLANKLINE>
+          <ul class="attr-list">
+            <li>
+    <BLANKLINE>
+              <b>
+                <code>'file.txt'</code>
+              </b>
+              <br />
+              <a href="++items++file.txt/@@introspector.html">
+                <code>&lt;zope.app.file.file.File object at ...&gt;</code>
+              </a>
+    <BLANKLINE>
+    <BLANKLINE>
+                (<span>type:</span>
+                <a href="http://localhost/++apidoc++/Code/zope/container/contained/ContainedProxy/index.html">
+                  <code>ContainedProxy</code></a>)
     ...
 
 The final section of the introspector displays the annotations that are

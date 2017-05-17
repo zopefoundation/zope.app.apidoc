@@ -246,19 +246,22 @@ def test_suite():
     CodeModuleTests.layer = APIDocLayer
     introspector = doctest.DocFileSuite(
         "introspector.rst",
+        checker=checker,
         optionflags=doctest.ELLIPSIS|doctest.NORMALIZE_WHITESPACE)
     introspector.layer = APIDocLayer
     return unittest.TestSuite((
         doctest.DocFileSuite(
             'README.rst',
-            setUp=setUp, tearDown=tearDown,checker=checker,
+            setUp=setUp, tearDown=tearDown,
+            checker=checker,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS),
         doctest.DocTestSuite(
             'zope.app.apidoc.codemodule.browser.menu',
             setUp=setUp, tearDown=tearDown,
+            checker=checker,
             optionflags=doctest.NORMALIZE_WHITESPACE),
-        unittest.makeSuite(CodeModuleTests),
         introspector,
+        unittest.defaultTestLoader.loadTestsFromName(__name__),
     ))
 
 if __name__ == '__main__':

@@ -33,11 +33,18 @@ from zope.app.apidoc.utilities import ReadContainerBase, getPythonPath
 NONAME = '__noname__'
 
 def encodeName(name):
-    return base64.urlsafe_b64encode(name.encode('utf-8'))
+    name = base64.urlsafe_b64encode(name.encode('utf-8'))
+    if not isinstance(name, str):
+        name = name.decode('ascii')
+    return name
 
 def decodeName(name):
     try:
-        return base64.urlsafe_b64decode(str(name)).decode('utf-8')
+        to_decode = name
+        if not isinstance(to_decode, bytes):
+            to_decode = to_decode.encode("ascii")
+
+        return base64.urlsafe_b64decode(to_decode).decode('utf-8')
     except (binascii.Error, TypeError):
         # Someone probably passed a non-encoded name, so let's accept that.
         return name

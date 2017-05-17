@@ -49,7 +49,11 @@ _marker = object()
 try:
     _path = zope.app.__file__
 except AttributeError:
-    _path = zope.app.__path__[0]
+    try:
+        _path = zope.app.__path__[0]
+    except TypeError:
+        # "_NamespacePath" object does not support indexing
+        _path = list(zope.app.__path__)[0]
 BASEDIR = dirname(dirname(dirname(dirname(_path))))
 del _path
 
@@ -110,7 +114,7 @@ def getPythonPath(obj):
     # accessed (which is probably not a bad idea). So, we remove the security
     # proxies for this check.
     naked = removeSecurityProxy(obj)
-    if hasattr(naked, "im_class"):
+    if hasattr(naked, "im_class"): # Python 2 XXX Might be redundant with next clause
         naked = naked.im_class
     if isinstance(naked, types.MethodType):
         naked = type(naked.__self__)

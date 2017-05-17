@@ -14,6 +14,7 @@
 """Tests for the Utility Documentation Module
 
 """
+import re
 import unittest
 import doctest
 
@@ -33,6 +34,8 @@ from zope.app.apidoc.apidoc import APIDocumentation
 
 from zope.app.apidoc.ifacemodule.ifacemodule import InterfaceModule
 from zope.app.apidoc.tests import BrowserTestCase
+
+from zope.testing import renormalizing
 
 def setUp(test):
     root_folder = PlacefulSetup().buildFolders(True)
@@ -104,16 +107,29 @@ class UtilityModuleTests(BrowserTestCase):
 
 
 def test_suite():
+    checker = renormalizing.RENormalizing([
+        (re.compile(r"u('[^']*')"), r"\1"),
+        (re.compile("__builtin__"), 'builtins'),
+        (re.compile(r"b('[^']*')"), r"\1"),
+    ])
 
-    readme = doctest.DocFileSuite('README.rst',
-                                  setUp=setUp,
-                                  tearDown=tearDown,
-                                  optionflags=doctest.NORMALIZE_WHITESPACE| doctest.ELLIPSIS)
+    readme = doctest.DocFileSuite(
+        'README.rst',
+        setUp=setUp,
+        tearDown=tearDown,
+        checker=checker,
+        optionflags=(doctest.NORMALIZE_WHITESPACE
+                     | doctest.ELLIPSIS
+                     | renormalizing.IGNORE_EXCEPTION_MODULE_IN_PYTHON2))
     readme.layer = APIDocLayer
-    browser = doctest.DocFileSuite('browser.rst',
-                                   setUp=setUp,
-                                   tearDown=tearDown,
-                                   optionflags=doctest.NORMALIZE_WHITESPACE)
+    browser = doctest.DocFileSuite(
+        'browser.rst',
+        setUp=setUp,
+        tearDown=tearDown,
+        checker=checker,
+        optionflags=(doctest.NORMALIZE_WHITESPACE
+                     | doctest.ELLIPSIS
+                     | renormalizing.IGNORE_EXCEPTION_MODULE_IN_PYTHON2))
     browser.layer = APIDocLayer
     return unittest.TestSuite((
         readme,
@@ -122,4 +138,4 @@ def test_suite():
     ))
 
 if __name__ == '__main__':
-    unittest.main(default="test_suite")
+    unittest.main()

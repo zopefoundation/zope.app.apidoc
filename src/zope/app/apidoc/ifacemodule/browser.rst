@@ -131,8 +131,9 @@ Let's now create another interface `IBar` and make `Foo` an adapter from
   >>> class IBar(zope.interface.Interface):
   ...     pass
 
-  >>> class Foo(object):
-  ...     zope.interface.implements(IFoo)
+  >>> @zope.interface.implementer(IFoo)
+  ... class Foo(object):
+  ...     pass
 
   >>> from zope.app.testing import ztapi
   >>> ztapi.provideAdapter(IBar, IFoo, Foo)
@@ -297,17 +298,6 @@ interface.Interface.
 Get adapters where this interface is required.
 
   >>> required = details.getGenericRequiredAdapters()
-  >>> {'doc': u'',
-  ...    'factory': 'None.append',
-  ...    'factory_url': None,
-  ...    'name': u'',
-  ...    'provided': None,
-  ...    'required': [{'isInterface': True,
-  ...                  'isType': False,
-  ...                  'module': 'zope.interface',
-  ...                  'name': 'Interface'}],
-  ...    'zcml': None} in required
-  True
   >>> len(required) >= 10
   True
 
@@ -363,4 +353,4 @@ Return all utilities that provide this interface.
     'name': u'The Foo',
     'path': '__builtin__.Foo',
     'url': None,
-    'url_name': 'VGhlIEZvbw=='}]
+    'url_name': b'VGhlIEZvbw=='}]
