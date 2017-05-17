@@ -17,9 +17,6 @@ notifications:
 install:
   - pip install -U pip setuptools
   - pip install -U coveralls coverage
-# XXX: Remove these when released
-  - pip install git+https://github.com/zopefoundation/zope.security@fix-ordered-dict-checker#egg=zope.security
-  - pip install git+https://github.com/zopefoundation/zope.app.onlinehelp@python3#egg=zope.app.onlinehelp
   - pip install -U -e ".[test]"
 
 
