@@ -154,6 +154,12 @@ standard_checker_patterns = (
     (re.compile(r"u('[^']*')"), r"\1"),
     (re.compile(r"b('[^']*')"), r"\1"),
     (re.compile("__builtin__"), 'builtins'),
+    # repr of old style class is different on py2
+    (re.compile("<class zope.app.apidoc.doctest.B.*>"),
+     "<class 'zope.app.apidoc.doctest.B'>"),
+    # there are no unbound methods on python 3
+    (re.compile("<unbound method ([^>]*)>"),
+     r"<function \1 at 0xabc>")
 )
 
 def standard_checker(*extra_patterns):

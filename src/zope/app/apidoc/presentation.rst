@@ -266,7 +266,7 @@ should be returned:
 
   >>> regs = list(presentation.getViews(IFoo))
   >>> regs.sort()
-  >>> regs #doctest:+ELLIPSIS
+  >>> regs
   [AdapterRegistration(<BaseGlobalComponents base>,
                        [IFoo, IBrowserRequest], Interface, 'blah', None, u''),
    AdapterRegistration(<BaseGlobalComponents base>,
@@ -276,7 +276,7 @@ should be returned:
 
   >>> regs = list(presentation.getViews(Interface, IHTTPRequest))
   >>> regs.sort()
-  >>> regs #doctest:+ELLIPSIS
+  >>> regs
   [AdapterRegistration(<BaseGlobalComponents base>,
                        [Interface, IHTTPRequest], Interface, 'bar', None, u'')]
 

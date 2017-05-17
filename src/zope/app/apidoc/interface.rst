@@ -103,7 +103,7 @@ ignores methods and fields.
 
   >>> attrs = interface.getAttributes(IFoo)
   >>> attrs.sort()
-  >>> attrs #doctest: +ELLIPSIS
+  >>> attrs
   [('baz', <zope.interface.interface.Attribute object at ...>)]
 
 
@@ -114,7 +114,7 @@ This function returns a (name, method) tuple for every declared method in the
 interface.
 
   >>> methods = sorted(interface.getMethods(IFoo))
-  >>> methods #doctest: +ELLIPSIS
+  >>> methods
   [('blah', <zope.interface.interface.Method object at ...>)]
 
 

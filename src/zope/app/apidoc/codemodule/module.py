@@ -55,18 +55,6 @@ class Module(ReadContainerBase):
         if setup:
             self.__setup()
 
-    def __XXXrepr__(self):
-        cls = self.__class__
-        path = []
-        i = self
-        while i is not None:
-            path.append(getattr(i, '__name__', '') or '')
-            i = i.__parent__
-        path.reverse()
-        path = '.'.join(path)
-        return "<%s.%s '%s' at %s>" % (cls.__module__, cls.__name__,
-                                       path, id(self))
-
     def __setup(self):
         """Setup the module sub-tree."""
         # Detect packages

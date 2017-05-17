@@ -146,11 +146,11 @@ and methods of this class::
   []
 
   >>> klass.getMethods()[0]
-  ('get', <... APIDocumentation.get...>,
+  ('get', <function APIDocumentation.get at ...>,
    <InterfaceClass zope.interface.common.mapping.IReadMapping>)
 
   >>> klass.getConstructor()
-  <... APIDocumentation.__init__...>
+  <function APIDocumentation.__init__ at ...>
 
 Let's have a closer look at the `getAttributes()` method. First we create an
 interface called `IBlah` that is implemented by the class `Blah`:
@@ -177,8 +177,8 @@ listed in the interface. Now we create the class documentation wrapper:
   >>> from pprint import pprint
   >>> pprint(klass.getAttributes())
   [('bar', 'b', None),
-   ('bli', 'i', <InterfaceClass ...builtin....IBlie>),
-   ('foo', 'f', <InterfaceClass ...builtin....IBlah>)]
+   ('bli', 'i', <InterfaceClass __builtin__.IBlie>),
+   ('foo', 'f', <InterfaceClass __builtin__.IBlah>)]
 
 So, the function returns a list of tuples of the form (name, value,
 interface), where the interface is the interface in which the attribute was
@@ -211,8 +211,8 @@ Now we create the class documentation wrapper:
 and get the method documentation:
 
   >>> pprint(klass.getMethods())
-  [('bar', <... Blah.bar...>, None),
-   ('foo', <... Blah.foo...>, <InterfaceClass ...builtin....IBlah>)]
+  [('bar', <function Blah.bar at ...>, None),
+   ('foo', <function Blah.foo at ...>, <InterfaceClass __builtin__.IBlah>)]
 
 
 .. cleanup
@@ -324,7 +324,7 @@ the attributes of the XML element,
 the configuration context for the directive, which can be used to resolve
 objects and/or generate absolute paths of files,
 
-  >>> root.context #doctest:+ELLIPSIS
+  >>> root.context
   <zope.configuration.config.ConfigurationMachine object at ...>
 
 the parser info object,

@@ -14,5 +14,5 @@ assume that their instances are running in developer mode, while they aren't.
   >>> browser.handleErrors = False
   >>> browser.addHeader('Authorization', 'Basic mgr:mgrpw')
   >>> browser.open("http://localhost/++apidoc++")
-  >>> browser.contents      # doctest: +ELLIPSIS
+  >>> browser.contents
   '...API documentation is disabled...'

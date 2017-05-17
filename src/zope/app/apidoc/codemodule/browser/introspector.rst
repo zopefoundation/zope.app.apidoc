@@ -144,17 +144,11 @@ Now the introspector will show the file and allow you to click on it:
     >>> print(browser.contents)
     <!DOCTYPE...
     ...
-    <BLANKLINE>
       <div>
         <h2>Mapping Items</h2>
-    <BLANKLINE>
         <div class="indent">
-    <BLANKLINE>
-    <BLANKLINE>
-    <BLANKLINE>
           <ul class="attr-list">
             <li>
-    <BLANKLINE>
               <b>
                 <code>'file.txt'</code>
               </b>
@@ -162,8 +156,6 @@ Now the introspector will show the file and allow you to click on it:
               <a href="++items++file.txt/@@introspector.html">
                 <code>&lt;zope.app.file.file.File object at ...&gt;</code>
               </a>
-    <BLANKLINE>
-    <BLANKLINE>
                 (<span>type:</span>
                 <a href="http://localhost/++apidoc++/Code/zope/container/contained/ContainedProxy/index.html">
                   <code>ContainedProxy</code></a>)
@@ -177,14 +169,9 @@ provides is the Dublin Core:
     <!DOCTYPE...
     ...
     <h2>Annotations</h2>
-    <BLANKLINE>
         <div class="indent">
-    <BLANKLINE>
-    <BLANKLINE>
-    <BLANKLINE>
           <ul class="attr-list">
             <li>
-    <BLANKLINE>
               <b>
                 <code>'zope.app.dublincore.ZopeDublinCore'</code>
               </b>
@@ -192,13 +179,9 @@ provides is the Dublin Core:
               <a href="++annotations++zope.app.dublincore.ZopeDublinCore/@@introspector.html">
                 <code>...</code>
               </a>
-    <BLANKLINE>
-    <BLANKLINE>
                 (<span>type:</span>
                 <a href="http://localhost/++apidoc++/Code/zope/dublincore/annotatableadapter/ZDCAnnotationData/index.html">
                   <code>ZDCAnnotationData</code></a>)
-    <BLANKLINE>
-    <BLANKLINE>
             </li>
           </ul>
         </div>
@@ -217,7 +200,6 @@ the exact constructor signature varies depending on Python version
     <!DOCTYPE...
     ...
       <h2 ...>Constructor</h2>
-    <BLANKLINE>
       <div class="indent">
         <div>
           <b><code>__init__(..., **kwargs)</code>

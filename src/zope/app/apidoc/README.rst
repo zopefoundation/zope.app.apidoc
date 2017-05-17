@@ -52,7 +52,7 @@ Now we can instantiate the class (which is usually done when traversing
   >>> modules
   [u'Interface', u'ZCML']
 
-  >>> doc['ZCML'] #doctest:+ELLIPSIS
+  >>> doc['ZCML']
   <zope.app.apidoc.zcmlmodule.ZCMLModule object at ...>
 
 

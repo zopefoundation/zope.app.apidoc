@@ -69,18 +69,18 @@ There are two API methods specific to the class registry:
 This method returns all classes that implement the specified interface:
 
   >>> from pprint import pprint
-  >>> pprint(reg.getClassesThatImplement(IA)) #doctest:+ELLIPSIS
-  [('A', <class '...A'>),
-   ('A2', <class '...A2'>),
-   ('B', <class ...B...>),
-   ('B2', <class '...B2'>)]
+  >>> pprint(reg.getClassesThatImplement(IA))
+  [('A', <class 'zope.app.apidoc.doctest.A'>),
+   ('A2', <class 'zope.app.apidoc.doctest.A2'>),
+   ('B', <class 'zope.app.apidoc.doctest.B'>),
+   ('B2', <class 'zope.app.apidoc.doctest.B2'>)]
 
-  >>> pprint(reg.getClassesThatImplement(IB)) #doctest:+ELLIPSIS
-  [('B', <class ...B...>),
-   ('B2', <class '...B2'>)]
+  >>> pprint(reg.getClassesThatImplement(IB))
+  [('B', <class 'zope.app.apidoc.doctest.B'>),
+   ('B2', <class 'zope.app.apidoc.doctest.B2'>)]
 
   >>> pprint(reg.getClassesThatImplement(IC))
-  [('C', <class '...C'>)]
+  [('C', <class 'zope.app.apidoc.doctest.C'>)]
 
   >>> pprint(reg.getClassesThatImplement(ID))
   []

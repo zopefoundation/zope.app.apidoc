@@ -216,13 +216,13 @@ Now let's have a look what we have:
 
   >>> regs = list(component.getUtilities(IFooBar))
   >>> regs.sort()
-  >>> regs #doctest:+ELLIPSIS
+  >>> regs
   [UtilityRegistration(<BaseGlobalComponents base>, IFooBar, u'',
                        <zope.app.apidoc.doctest.MyFooBar object at ...>, None, u'')]
 
   >>> regs = list(component.getUtilities(IFoo))
   >>> regs.sort()
-  >>> regs #doctest:+ELLIPSIS
+  >>> regs
   [UtilityRegistration(<BaseGlobalComponents base>, IFoo, u'',
                        <zope.app.apidoc.doctest.MyFoo object at ...>, None, u''),
    UtilityRegistration(<BaseGlobalComponents base>, IFooBar, u'',
@@ -321,9 +321,9 @@ object references.  This may change.
 This function returns the info dictionary of a type.
 
   >>> pprint(component.getTypeInfoDictionary(tuple), width=1)
-  {'module': '...builtin...',
+  {'module': '__builtin__',
    'name': 'tuple',
-   'url': '...builtin.../tuple'}
+   'url': '__builtin__/tuple'}
 
 
 `getSpecificationInfoDictionary(spec)`
@@ -351,9 +351,9 @@ Let's now look at the behavior when passing a type:
   >>> pprint(component.getSpecificationInfoDictionary(tupleSpec))
   {'isInterface': False,
    'isType': True,
-   'module': '...builtin...',
+   'module': '__builtin__',
    'name': 'tuple',
-   'url': '...builtin.../tuple'}
+   'url': '__builtin__/tuple'}
 
 For the type, we simply reuse the type info dictionary function.
 

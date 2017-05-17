@@ -49,7 +49,7 @@ class TypeInterface(ReadContainerBase):
       >>> typeiface.get('Foo').__class__ == Foo
       True
 
-      >>> typeiface.items() #doctest:+ELLIPSIS
+      >>> typeiface.items()
       [(u'Foo', <zope.app.apidoc.typemodule.type.Foo object at ...>)]
 
     """
