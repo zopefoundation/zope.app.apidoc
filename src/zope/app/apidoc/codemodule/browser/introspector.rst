@@ -205,7 +205,10 @@ provides is the Dublin Core:
     </div>
     ...
 
-As you can see you can click on the annotation to discover it further:
+As you can see you can click on the annotation to discover it further;
+the exact constructor signature varies depending on Python version
+(some versions report ``*args, **kwargs``, others report ``dict=None,
+**kwargs``):
 
     >>> browser.getLink('ZDCAnnotationData').click()
     >>> print(browser.contents)
@@ -215,7 +218,7 @@ As you can see you can click on the annotation to discover it further:
     <BLANKLINE>
       <div class="indent">
         <div>
-          <b><code>__init__(*args, **kwargs)</code>
+          <b><code>__init__(..., **kwargs)</code>
           </b><br />
           <div class="inline documentation"></div>
         </div>

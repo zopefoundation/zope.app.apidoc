@@ -64,7 +64,7 @@ def relativizePath(path):
 def truncateSysPath(path):
     """Remove the system path prefix from the path."""
     for syspath in sys.path:
-        if path.startswith(syspath):
+        if syspath and path.startswith(syspath):
             return path.replace(syspath, '')[1:]
     return path
 
