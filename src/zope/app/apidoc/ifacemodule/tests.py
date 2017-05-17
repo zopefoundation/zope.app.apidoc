@@ -14,30 +14,14 @@
 """Tests for the Interface Documentation Module
 
 """
-import re
-import unittest
-import doctest
 
-from zope.app.component.testing import PlacefulSetup, setUpTraversal
+import unittest
+
+import zope.app.apidoc.ifacemodule
 
 from zope.app.apidoc.testing import APIDocLayer
-from zope.app.apidoc.apidoc import APIDocumentation
-
-from zope.app.apidoc.ifacemodule.ifacemodule import InterfaceModule
+from zope.app.apidoc.tests import LayerDocFileSuite
 from zope.app.apidoc.tests import BrowserTestCase
-
-from zope.testing import renormalizing
-
-def setUp(test):
-    root_folder = PlacefulSetup().buildFolders(True)
-    setUpTraversal()
-
-    # Set up apidoc module
-    test.globs['apidoc'] = APIDocumentation(root_folder, '++apidoc++')
-
-
-def tearDown(test):
-    pass
 
 
 class InterfaceModuleTests(BrowserTestCase):
@@ -71,30 +55,15 @@ class InterfaceModuleTests(BrowserTestCase):
 
 
 def test_suite():
-    checker = renormalizing.RENormalizing([
-        (re.compile(r"u('[^']*')"), r"\1"),
-        (re.compile("__builtin__"), 'builtins'),
-        (re.compile(r"b('[^']*')"), r"\1"),
-    ])
 
-    readme = doctest.DocFileSuite(
+    readme = LayerDocFileSuite(
         'README.rst',
-        setUp=setUp,
-        tearDown=tearDown,
-        checker=checker,
-        optionflags=(doctest.NORMALIZE_WHITESPACE
-                     | doctest.ELLIPSIS
-                     | renormalizing.IGNORE_EXCEPTION_MODULE_IN_PYTHON2))
-    readme.layer = APIDocLayer
-    browser = doctest.DocFileSuite(
+        zope.app.apidoc.ifacemodule)
+
+    browser = LayerDocFileSuite(
         'browser.rst',
-        setUp=setUp,
-        tearDown=tearDown,
-        checker=checker,
-        optionflags=(doctest.NORMALIZE_WHITESPACE
-                     | doctest.ELLIPSIS
-                     | renormalizing.IGNORE_EXCEPTION_MODULE_IN_PYTHON2))
-    browser.layer = APIDocLayer
+        zope.app.apidoc.ifacemodule)
+
     return unittest.TestSuite((
         readme,
         browser,

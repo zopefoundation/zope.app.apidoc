@@ -89,7 +89,7 @@ still get to them:
 
   >>> names = sorted(module['tests'].keys())
   >>> names
-  ['BrowserTestCase', 'Root', 'rootLocation', 'setUp', 'tearDown', 'test_suite']
+  ['BrowserTestCase', 'LayerDocFileSuite', 'LayerDocTestSuite', 'Root', 'rootLocation', 'setUp', 'standard_checker', 'tearDown', 'test_suite']
 
 
 Classes
@@ -133,6 +133,11 @@ only includes those subclasses that are registered with the global
 
   >>> klass.getKnownSubclasses()
   [<class 'APIDocSubclass'>]
+
+.. cleanup
+
+  >>> from zope.app.apidoc.classregistry import classRegistry
+  >>> del classRegistry[klass2.getPath()]
 
 For a more detailed analysis, you can also retrieve the public attributes
 and methods of this class::
@@ -209,6 +214,11 @@ and get the method documentation:
   [('bar', <... Blah.bar...>, None),
    ('foo', <... Blah.foo...>, <InterfaceClass ...builtin....IBlah>)]
 
+
+.. cleanup
+
+  >>> from zope.app.apidoc.classregistry import classRegistry
+  >>> del classRegistry[klass.getPath()]
 
 Function
 --------

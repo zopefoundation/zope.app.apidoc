@@ -76,7 +76,9 @@ data attribute:
         ...
         <br />
         <i>Value:</i>
+        <a href="http://localhost/++attribute++data/@@introspector.html">
         <code>&lt;BTrees.OOBTree.OOBTree object at ...&gt;</code>
+        </a>
         <br />
         <span class="small">
           <i>Permissions:</i>

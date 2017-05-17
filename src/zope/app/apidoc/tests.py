@@ -27,27 +27,52 @@ from zope.location import LocationProxy
 
 from zope.testing import renormalizing
 
-# from zope.app.renderer.rest import ReStructuredTextSourceFactory
-# from zope.app.renderer.rest import IReStructuredTextSource
-# from zope.app.renderer.rest import ReStructuredTextToHTMLRenderer
-
 import zope.testing.module
 
 from webtest import TestApp
 
+from zope.app.apidoc.apidoc import APIDocumentation
+from zope.app.apidoc.testing import APIDocLayer
 
-def _setUp_AppSetup():
+from zope.app.component.testing import PlacefulSetup, setUpTraversal
+
+_old_appsetup_context = None
+
+def _setUp_AppSetup(filename='configure.zcml', execute=False):
     config_file = os.path.join(
-        os.path.dirname(zope.app.apidoc.__file__), 'configure.zcml')
+        os.path.dirname(zope.app.apidoc.__file__), filename)
 
     # # Fix up path for tests.
-    global old_context
-    old_context = zope.app.appsetup.appsetup.getConfigContext()
+    global _old_appsetup_context
+    _old_appsetup_context = zope.app.appsetup.appsetup.getConfigContext()
     zope.app.appsetup.appsetup.__config_context = xmlconfig.file(
-        config_file, zope.app.apidoc, execute=False)
+        config_file, zope.app.apidoc, execute=execute)
 
 def _tearDown_AppSetup():
-    zope.app.appsetup.appsetup.__config_context = old_context
+    global _old_appsetup_context
+    zope.app.appsetup.appsetup.__config_context = _old_appsetup_context
+    _old_appsetup_context = None
+
+
+
+def _setUp_LayerPlace(test):
+    # We're in the layer, so we don't want to tear down zope.testing,
+    # which would tear down zope.component
+    root_folder = PlacefulSetup().buildFolders(True)
+    setUpTraversal()
+
+    global _old_appsetup_context
+    _old_appsetup_context = zope.app.appsetup.appsetup.getConfigContext()
+    zope.app.appsetup.appsetup.__config_context = APIDocLayer.context
+
+
+    # Set up apidoc module
+    test.globs['apidoc'] = APIDocumentation(root_folder, '++apidoc++')
+    test.globs['rootFolder'] = root_folder
+
+
+def _tearDown_LayerPlace(test):
+    _tearDown_AppSetup()
 
 
 class BrowserTestCase(unittest.TestCase):
@@ -106,17 +131,7 @@ class BrowserTestCase(unittest.TestCase):
 def setUp(test):
     import zope.app.renderer
     zope.component.testing.setUp()
-    # Register Renderer Components
     xmlconfig.file('configure.zcml', zope.app.renderer)
-    # ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
-    #                      'zope.source.rest')
-    # ztapi.browserView(IReStructuredTextSource, '',
-    #                   ReStructuredTextToHTMLRenderer)
-    # # Cheat and register the ReST renderer as the STX one as well.
-    # ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
-    #                      'zope.source.stx')
-    # ztapi.browserView(IReStructuredTextSource, '',
-    #                   ReStructuredTextToHTMLRenderer)
     zope.testing.module.setUp(test, 'zope.app.apidoc.doctest')
 
 
@@ -135,12 +150,42 @@ class Root(object):
 def rootLocation(obj, name):
     return LocationProxy(obj, Root(), name)
 
+standard_checker_patterns = (
+    (re.compile(r"u('[^']*')"), r"\1"),
+    (re.compile(r"b('[^']*')"), r"\1"),
+    (re.compile("__builtin__"), 'builtins'),
+)
+
+def standard_checker(*extra_patterns):
+    return renormalizing.RENormalizing(standard_checker_patterns + extra_patterns)
+
+standard_option_flags = (doctest.NORMALIZE_WHITESPACE
+                         | doctest.ELLIPSIS
+                         | renormalizing.IGNORE_EXCEPTION_MODULE_IN_PYTHON2)
+
+def LayerDocFileSuite(filename, package):
+    test = doctest.DocFileSuite(
+        filename,
+        package=package,
+        setUp=_setUp_LayerPlace,
+        tearDown=_tearDown_LayerPlace,
+        checker=standard_checker(),
+        optionflags=standard_option_flags)
+    test.layer = APIDocLayer
+    return test
+
+def LayerDocTestSuite(modulename):
+    test = doctest.DocTestSuite(
+        modulename,
+        setUp=_setUp_LayerPlace,
+        tearDown=_tearDown_LayerPlace,
+        checker=standard_checker(),
+        optionflags=standard_option_flags)
+    test.layer = APIDocLayer
+    return test
 
 def test_suite():
-    checker = renormalizing.RENormalizing((
-        (re.compile(r"u('[^']*')"), r"\1"),
-        (re.compile(r"b('[^']*')"), r"\1"),
-    ))
+    checker = standard_checker()
 
     def file_test(name, **kwargs):
         return doctest.DocFileSuite(
@@ -148,9 +193,7 @@ def test_suite():
             setUp=setUp,
             tearDown=tearDown,
             checker=checker,
-            optionflags=(doctest.NORMALIZE_WHITESPACE
-                         | doctest.ELLIPSIS
-                         | renormalizing.IGNORE_EXCEPTION_MODULE_IN_PYTHON2),
+            optionflags=standard_option_flags,
             **kwargs)
 
     return unittest.TestSuite((

@@ -84,10 +84,9 @@ One can get a directive using the common mapping interface:
   True
 
   >>> print('\n'.join([name for name, dir in ns.items()][:3]))
-  defaultSkin
-  defaultView
-  page
-
+  addMenuItem
+  addform
+  containerViews
 
 `quoteNS(ns)`
 -------------

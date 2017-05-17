@@ -14,56 +14,16 @@
 """Tests for the Utility Documentation Module
 
 """
-import re
+
 import unittest
-import doctest
 
 import zope.deprecation
-from zope.traversing.interfaces import IPhysicallyLocatable
-from zope.location.traversing import LocationPhysicallyLocatable
-
-from zope.app.apidoc.utilitymodule.utilitymodule import UtilityModule
-from zope.app.apidoc.interfaces import IDocumentationModule
-from zope.app.apidoc.apidoc import APIDocumentation
-from zope.app.apidoc.testing import APIDocLayer
-
-from zope.app.component.testing import PlacefulSetup, setUpTraversal
 
 from zope.app.apidoc.testing import APIDocLayer
-from zope.app.apidoc.apidoc import APIDocumentation
 
-from zope.app.apidoc.ifacemodule.ifacemodule import InterfaceModule
 from zope.app.apidoc.tests import BrowserTestCase
-
-from zope.testing import renormalizing
-
-def setUp(test):
-    root_folder = PlacefulSetup().buildFolders(True)
-    setUpTraversal()
-
-    # Set up apidoc module
-    test.globs['apidoc'] = APIDocumentation(root_folder, '++apidoc++')
-
-
-def tearDown(test):
-    pass
-
-# def setUp(test):
-#     root_folder = setup.placefulSetUp(True)
-#     ztapi.provideAdapter(None, IUniqueId, LocationUniqueId)
-#     ztapi.provideAdapter(None, IPhysicallyLocatable,
-#                          LocationPhysicallyLocatable)
-
-#     # Set up apidoc module
-#     test.globs['apidoc'] = APIDocumentation(root_folder, '++apidoc++')
-
-#     # Register documentation modules
-#     ztapi.provideUtility(IDocumentationModule, UtilityModule(), 'Utility')
-
-
-# def tearDown(test):
-#     setup.placefulTearDown()
-
+from zope.app.apidoc.tests import LayerDocFileSuite
+import zope.app.apidoc.utilitymodule
 
 class UtilityModuleTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
@@ -76,7 +36,7 @@ class UtilityModuleTests(BrowserTestCase):
             basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find('IDocumentationModule') > 0)
+        self.assertIn('IDocumentationModule', body)
 
         # BBB 2006/02/18, to be removed after 12 months
         # this avoids the deprecation warning for the deprecated
@@ -95,9 +55,9 @@ class UtilityModuleTests(BrowserTestCase):
             basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(
-            body.find(
-               'zope.app.apidoc.utilitymodule.utilitymodule.UtilityModule') > 0)
+        self.assertIn(
+            'zope.app.apidoc.utilitymodule.utilitymodule.UtilityModule',
+            body)
         self.checkForBrokenLinks(
             body,
             '/++apidoc++/Utility/'
@@ -107,30 +67,14 @@ class UtilityModuleTests(BrowserTestCase):
 
 
 def test_suite():
-    checker = renormalizing.RENormalizing([
-        (re.compile(r"u('[^']*')"), r"\1"),
-        (re.compile("__builtin__"), 'builtins'),
-        (re.compile(r"b('[^']*')"), r"\1"),
-    ])
-
-    readme = doctest.DocFileSuite(
+    readme = LayerDocFileSuite(
         'README.rst',
-        setUp=setUp,
-        tearDown=tearDown,
-        checker=checker,
-        optionflags=(doctest.NORMALIZE_WHITESPACE
-                     | doctest.ELLIPSIS
-                     | renormalizing.IGNORE_EXCEPTION_MODULE_IN_PYTHON2))
-    readme.layer = APIDocLayer
-    browser = doctest.DocFileSuite(
+        zope.app.apidoc.utilitymodule)
+
+    browser = LayerDocFileSuite(
         'browser.rst',
-        setUp=setUp,
-        tearDown=tearDown,
-        checker=checker,
-        optionflags=(doctest.NORMALIZE_WHITESPACE
-                     | doctest.ELLIPSIS
-                     | renormalizing.IGNORE_EXCEPTION_MODULE_IN_PYTHON2))
-    browser.layer = APIDocLayer
+        zope.app.apidoc.utilitymodule)
+
     return unittest.TestSuite((
         readme,
         browser,

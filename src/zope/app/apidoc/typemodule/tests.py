@@ -14,15 +14,15 @@
 """Tests for the Book Documentation Module
 
 """
-import re
+
 import unittest
 import doctest
 
 from zope.component import testing
-from zope.testing import renormalizing
 
 from zope.app.apidoc.tests import BrowserTestCase
-
+from zope.app.apidoc.tests import standard_checker
+from zope.app.apidoc.tests import standard_option_flags
 from zope.app.apidoc.testing import APIDocLayer
 
 
@@ -43,15 +43,15 @@ class TypeModuleTests(BrowserTestCase):
 
 
 def test_suite():
-    checker = renormalizing.RENormalizing([
-        (re.compile(r"u('[^']*')"), r"\1"),
-    ])
+    checker = standard_checker()
 
     return unittest.TestSuite((
-        doctest.DocTestSuite('zope.app.apidoc.typemodule.type',
-                             setUp=testing.setUp,
-                             tearDown=testing.tearDown,
-                             checker=checker),
+        doctest.DocTestSuite(
+            'zope.app.apidoc.typemodule.type',
+            setUp=testing.setUp,
+            tearDown=testing.tearDown,
+            checker=checker,
+            optionflags=standard_option_flags),
         unittest.defaultTestLoader.loadTestsFromName(__name__),
     ))
 

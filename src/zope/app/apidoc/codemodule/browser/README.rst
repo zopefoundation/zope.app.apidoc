@@ -471,7 +471,7 @@ This namespace allows us to traverse the items of any sequence:
   >>> ns.traverse('text', None)
   Traceback (most recent call last):
   ...
-  ValueError: invalid literal for int(): text
+  ValueError: invalid literal for int() with base 10: 'text'
 
 Introspector View
 ~~~~~~~~~~~~~~~~~

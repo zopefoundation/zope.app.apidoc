@@ -18,10 +18,12 @@ import re
 import unittest
 import doctest
 
-from zope.testing import renormalizing
+
 from zope.app.apidoc.testing import APIDocLayer, APIDocNoDevModeLayer
 
 from zope.app.apidoc.tests import BrowserTestCase
+from zope.app.apidoc.tests import standard_checker
+from zope.app.apidoc.tests import standard_option_flags
 
 class APIDocTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
@@ -67,28 +69,27 @@ class APIDocTests(BrowserTestCase):
 
 
 def test_suite():
-    checker = renormalizing.RENormalizing([
+    checker = standard_checker(
         (re.compile(r'httperror_seek_wrapper:', re.M), 'HTTPError:'),
-        (re.compile(r"u('[^']*')"), r"\1"),
-    ])
-
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(APIDocTests))
-    apidoc_doctest = doctest.DocFileSuite(
-        "README.rst",
-        optionflags=(doctest.ELLIPSIS
-                     | doctest.NORMALIZE_WHITESPACE
-                     | renormalizing.IGNORE_EXCEPTION_MODULE_IN_PYTHON2),
-        checker=checker)
-    apidoc_doctest.layer = APIDocLayer
-    suite.addTest(
-        apidoc_doctest,
     )
 
-    nodevmode = doctest.DocFileSuite("nodevmode.rst")
+    apidoc_doctest = doctest.DocFileSuite(
+        "README.rst",
+        optionflags=standard_option_flags,
+        checker=checker)
+    apidoc_doctest.layer = APIDocLayer
+
+    nodevmode = doctest.DocFileSuite(
+        "nodevmode.rst",
+        optionflags=standard_option_flags,
+        checker=checker)
     nodevmode.layer = APIDocNoDevModeLayer
-    suite.addTest(nodevmode)
-    return suite
+
+    return unittest.TestSuite((
+        apidoc_doctest,
+        nodevmode,
+        unittest.defaultTestLoader.loadTestsFromName(__name__),
+    ))
 
 
 if __name__ == '__main__':
