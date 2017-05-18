@@ -71,16 +71,17 @@ Presentation code often like to wrap interfaces in security proxies and apidoc
 even uses location proxies for interface.
 
 
-`getFieldsInOrder(iface, _itemsorter=...)`
+`getFieldsInOrder(iface, _itemkey=...)`
 -----------------------------------------------------------
 
 For presentation purposes we often want fields to have the a certain order,
 most comonly the order they have in the interface. This function returns a
 list of (name, field) tuples in a specified order.
 
-The `_itemsorter` argument provides the function that is used to order the
-fields. The default function, which sorts by the fields' `order` attribute,
-should be the correct one for 99% of your needs.
+The `_itemkey` argument provides the function that is used to extract
+the key on which to order the fields. The default function, which
+uses the fields' `order` attribute, should be the correct one for
+99% of your needs.
 
 Reusing the interface created above, we check the output:
 
@@ -90,7 +91,7 @@ Reusing the interface created above, we check the output:
 By changing the sort method to sort by names, we get:
 
   >>> [n for n, a in interface.getFieldsInOrder(
-  ...       IFoo, _itemsorter=lambda x: x[0])]
+  ...       IFoo, _itemkey=lambda x: x[0])]
   ['bar', 'foo']
 
 
