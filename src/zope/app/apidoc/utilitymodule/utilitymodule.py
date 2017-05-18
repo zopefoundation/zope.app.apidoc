@@ -148,5 +148,5 @@ class UtilityModule(DocumentationModuleBase):
                 ifaces[path] = UtilityInterface(self, path, reg.provided)
 
         items = sorted(ifaces.items(),
-                       key=lambda x:x[0].split('.')[-1])
+                       key=lambda x: x[0].split('.')[-1])
         return items
