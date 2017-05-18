@@ -36,22 +36,20 @@ class TypeInterface(ReadContainerBase):
       >>> from zope.interface import Interface
       >>> class IFoo(Interface):
       ...    pass
-      >>> @implementer(IFoo)
-      ... class Foo(object):
-      ...     def getName(self):
-      ...         return 'IFoo'
+      >>> class IDerivedFoo(IFoo):
+      ...    pass
       >>> from zope import component as ztapi
-      >>> ztapi.provideUtility(Foo(), IFoo, 'Foo')
+      >>> ztapi.provideUtility(IDerivedFoo, IFoo, 'Foo')
 
       >>> typeiface = TypeInterface(IFoo, None, None)
       >>> typeiface.interface
       <InterfaceClass zope.app.apidoc.typemodule.type.IFoo>
 
-      >>> typeiface.get('Foo').__class__ == Foo
-      True
+      >>> typeiface.get('Foo').__class__
+      <class 'zope.interface.interface.InterfaceClass'>
 
       >>> typeiface.items()
-      [(u'Foo', <zope.app.apidoc.typemodule.type.Foo object at ...>)]
+      [(u'Foo', <InterfaceClass zope.app.apidoc.typemodule.type.IDerivedFoo>)]
 
     """
 
