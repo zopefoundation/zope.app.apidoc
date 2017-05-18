@@ -76,7 +76,15 @@ def cleanURL(url):
         url = url.split('?')[0]
     if '#' in url:
         url = url.split('#')[0]
-    return url
+
+    fragments = list(urlparse.urlparse(url))
+
+    fragments[2] = os.path.normpath(fragments[2])
+    fragments[2].replace('//', '/')
+    norm = urlparse.urlunparse(fragments)
+    return norm
+
+
 
 def completeURL(url):
     """Add file to URL, if not provided."""
@@ -99,10 +107,10 @@ class Link(object):
     def __init__(self, url, rootURL, referenceURL='None'):
         self.rootURL = rootURL
         self.referenceURL = referenceURL
-        self.originalURL = url #mechLink.url
-        self.callableURL = url #mechLink.absolute_url
-        self.url = completeURL(cleanURL(url))
-        self.absoluteURL = completeURL(cleanURL(self.callableURL))
+        self.originalURL = cleanURL(url) #mechLink.url
+        self.callableURL = cleanURL(url) #mechLink.absolute_url
+        self.url = self.originalURL #completeURL(cleanURL(url))
+        self.absoluteURL = self.url #completeURL(cleanURL(self.callableURL))
 
     def isLocalURL(self):
         """Determine whether the passed in URL is local and accessible."""
@@ -173,6 +181,12 @@ class PublisherBrowser(zope.testbrowser.wsgi.Browser,
     #     response.seek(old_location)
     #     return contents
 
+class FrameLink(zope.testbrowser.browser.Link):
+
+    @property
+    def url(self):
+        relurl = self._link['src']
+        return self.browser._absoluteUrl(relurl)
 
 class StaticAPIDocGenerator(object):
     """Static API doc Maker"""
@@ -181,7 +195,7 @@ class StaticAPIDocGenerator(object):
         self.options = options
         self.linkQueue = []
         for url in self.options.additional_urls + [self.options.startpage]:
-            link = Link('http://localhost/' + url,#mechanize.Link(self.options.url, url, '', '', ()),
+            link = Link('http://localhost' + url,#mechanize.Link(self.options.url, url, '', '', ()),
                         self.options.url)
             self.linkQueue.append(link)
         self.rootDir = os.path.join(os.path.dirname(__file__),
@@ -212,8 +226,10 @@ class StaticAPIDocGenerator(object):
         self.browser.setUserAndPassword(self.options.username,
                                         self.options.password)
 
-        if self.options.debug:
-            self.browser.addheaders.append(('X-zope-handle-errors', False))
+        if self.options.debug or True: # XXX: Debugging
+            #self.browser.addheaders.append(('X-zope-handle-errors', False))
+            self.browser.handleErrors = False
+
 
         classregistry.IGNORE_MODULES = self.options.ignore_modules
 
@@ -266,7 +282,6 @@ class StaticAPIDocGenerator(object):
 
         # Retrieve the content
         try:
-            print(link.callableURL)
             self.browser.open(link.callableURL)
         except urllib2.HTTPError as error:
             # Something went wrong with retrieving the page.
@@ -275,15 +290,17 @@ class StaticAPIDocGenerator(object):
                 '%s (%i): %s' % (error.msg, error.code, link.callableURL), 2)
             self.sendMessage('+-> Reference: ' + link.referenceURL, 2)
             # Now set the error page as the response
-            from mechanize import response_seek_wrapper
-            self.browser._response = response_seek_wrapper(error)
+            #from mechanize import response_seek_wrapper
+            #self.browser._response = response_seek_wrapper(error)
+            raise
         except (urllib2.URLError, ValueError):
             # We had a bad URL running the publisher browser
             self.linkErrors += 1
             self.sendMessage('Bad URL: ' + link.callableURL, 2)
             self.sendMessage('+-> Reference: ' + link.referenceURL, 2)
+            raise
             return
-        except Exception as error:
+        except BaseException as error:
             # This should never happen outside the debug mode. We really want
             # to catch all exceptions, so that we can investigate them.
             if self.options.debug:
@@ -302,8 +319,9 @@ class StaticAPIDocGenerator(object):
 
         for segment in segments:
             dir = os.path.join(dir, segment)
+            dir = os.path.normpath(dir)
             if not os.path.exists(dir):
-                os.mkdir(dir)
+                os.makedirs(dir)
 
         filepath = os.path.join(dir, filename)
 
@@ -312,6 +330,14 @@ class StaticAPIDocGenerator(object):
 
             try:
                 links = self.browser._response.html.find_all('a')
+                frames = self.browser._response.html.find_all('frame')
+                links = [zope.testbrowser.browser.Link(a, self.browser, self.browser._getBaseUrl())
+                         for a in links]
+                frames = [FrameLink(a, self.browser, self.browser._getBaseUrl())
+                          for a in frames]
+
+                links = links + frames
+
                 #links = self.browser.links()
             except HTMLParseError as error:
                 self.htmlErrors += 1
@@ -320,8 +346,13 @@ class StaticAPIDocGenerator(object):
                     error.msg, error.lineno, error.offset), 1)
                 links = []
 
-            links = [Link(mech_link, self.options.url, url)
-                     for mech_link in links]
+            mylinks = []
+            for l in links:
+                try:
+                    mylinks.append(Link(l.url, self.options.url, url))
+                except KeyError:
+                    pass
+            links = mylinks
 
             for link in links:
                 # Make sure we do not handle unwanted links.
@@ -333,7 +364,7 @@ class StaticAPIDocGenerator(object):
                     self.linkQueue.insert(0, link)
 
                 # Rewrite URLs
-                parts = ['..']*len(segments)
+                parts = ['..'] * len(segments)
                 parts.append(link.absoluteURL.replace(self.options.url, ''))
                 contents = contents.replace(link.originalURL, '/'.join(parts))
 
@@ -517,17 +548,17 @@ parser.add_option_group(reporting)
 default_setup_args = [
     '--verbosity', '5',
     '--publisher',
-    '--url', 'http://localhost:8080/',
+    '--url', 'http://localhost/',
     '--startpage', '/++apidoc++/static.html',
     '--username', 'mgr',
     '--password', 'mgrpw',
     '--progress',
-    '--add', '@@/varrow.png',
-    '--add', '@@/harrow.png',
-    '--add', '@@/tree_images/minus.png',
-    '--add', '@@/tree_images/plus.png',
-    '--add', '@@/tree_images/minus_vline.png',
-    '--add', '@@/tree_images/plus_vline.png',
+    '--add', '/@@/varrow.png',
+    '--add', '/@@/harrow.png',
+    '--add', '/@@/tree_images/minus.png',
+    '--add', '/@@/tree_images/plus.png',
+    '--add', '/@@/tree_images/minus_vline.png',
+    '--add', '/@@/tree_images/plus_vline.png',
     '--ignore', 'twisted',
     '--ignore', 'zope.app.twisted.ftp.test',
     '--load-all'
