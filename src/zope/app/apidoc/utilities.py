@@ -132,14 +132,22 @@ def getPythonPath(obj):
     # accessed (which is probably not a bad idea). So, we remove the security
     # proxies for this check.
     naked = removeSecurityProxy(obj)
-    if hasattr(naked, "im_class"): # Python 2 XXX Might be redundant with next clause
+    qname = ''
+    if hasattr(naked, '__qualname__'):
+        # Python 3. This makes unbound functions inside classes
+        # do the same thing as they do an Python 2: return just their
+        # class name.
+        qname = naked.__qualname__
+        qname = qname.split('.')[0]
+    if hasattr(naked, 'im_class'):
+        # Python 2, unbound methods
         naked = naked.im_class
     if isinstance(naked, types.MethodType):
         naked = type(naked.__self__)
     module = getattr(naked, '__module__', _marker)
     if module is _marker:
         return naked.__name__
-    return '%s.%s' %(module, naked.__name__)
+    return '%s.%s' %(module, qname or naked.__name__)
 
 
 def isReferencable(path):

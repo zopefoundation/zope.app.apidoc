@@ -166,29 +166,32 @@ For interfaces we simply get
   >>> utilities.getPythonPath(ISample)
   'zope.app.apidoc.doctest.ISample'
 
-and for classes (note that we must pass a "bound method", because the
-unbound method is no longer present in Python 2):
+and for classes we get the name of the class
 
   >>> class Sample(object):
   ...     def sample(self):
   ...         pass
 
-  >>> PY3 = str is not bytes
-  >>> utilities.getPythonPath(Sample().sample if PY3 else Sample.sample)
+  >>> utilities.getPythonPath(Sample)
   'zope.app.apidoc.doctest.Sample'
 
-One can also pass functions
+If a method is passed in, its class path is returned. This works for
+both bound and unbound methods (note that there is no such thing as an
+unbound method in Python 3, just functions, but we still get the same
+results):
+
+  >>> utilities.getPythonPath(Sample().sample)
+  'zope.app.apidoc.doctest.Sample'
+  >>> utilities.getPythonPath(Sample.sample)
+  'zope.app.apidoc.doctest.Sample'
+
+Plain functions are also supported:
 
   >>> def sample():
   ...     pass
 
   >>> utilities.getPythonPath(sample)
   'zope.app.apidoc.doctest.sample'
-
-and even methods. If a method is passed in, its class path is returned.
-
-  >>> utilities.getPythonPath(Sample().sample)
-  'zope.app.apidoc.doctest.Sample'
 
 Modules are another kind of objects that can return a python path:
 
