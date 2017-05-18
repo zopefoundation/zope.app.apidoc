@@ -38,24 +38,26 @@ GENERIC_INTERFACE_LEVEL = 4
 
 
 def _adapterishRegistrations(registry):
-    for r in registry.registeredAdapters():
-        yield r
-    for r in registry.registeredSubscriptionAdapters():
-        yield r
-    for r in registry.registeredHandlers():
-        yield r
+    for registrations in (registry.registeredAdapters,
+                          registry.registeredSubscriptionAdapters,
+                          registry.registeredHandlers):
+        for r in registrations():
+            yield r
 
+def _ignore_adapter(reg, withViews=False):
+    return (
+        # Ignore adapters that have no required interfaces
+        not reg.required
+        # Ignore views
+        or (not withViews and reg.required[-1].isOrExtends(IRequest)))
 
 def getRequiredAdapters(iface, withViews=False):
     """Get adapter registrations where the specified interface is required."""
     gsm = getGlobalSiteManager()
     for reg in _adapterishRegistrations(gsm):
-        # Ignore adapters that have no required interfaces
-        if not reg.required:
+        if _ignore_adapter(reg, withViews):
             continue
-        # Ignore views
-        if not withViews and reg.required[-1].isOrExtends(IRequest):
-            continue
+
         # Only get the adapters for which this interface is required
         for required_iface in reg.required:
             if iface.isOrExtends(required_iface):
@@ -66,14 +68,9 @@ def getProvidedAdapters(iface, withViews=False):
     """Get adapter registrations where this interface is provided."""
     gsm = getGlobalSiteManager()
     for reg in _adapterishRegistrations(gsm):
-        # Only get adapters
-        # Ignore adapters that have no required interfaces
-        if not reg.required:
+        if _ignore_adapter(reg, withViews):
             continue
-        # Ignore views
-        if not withViews and reg.required[-1] and \
-               reg.required[-1].isOrExtends(IRequest):
-            continue
+
         # Only get adapters for which this interface is provided
         if reg.provided is None or not reg.provided.isOrExtends(iface):
             continue
@@ -116,14 +113,12 @@ def getFactories(iface):
         if reg.provided is not IFactory:
             continue
         interfaces = reg.component.getInterfaces()
-        try:
-            if interfaces.isOrExtends(iface):
+        if hasattr(interfaces, 'isOrExtends'): # Single interface
+            interfaces = (interfaces,)
+        for interface in interfaces:
+            if interface.isOrExtends(iface):
                 yield reg
-        except AttributeError:
-            for interface in interfaces:
-                if interface.isOrExtends(iface):
-                    yield reg
-                    break
+                break
 
 
 def getUtilities(iface):
