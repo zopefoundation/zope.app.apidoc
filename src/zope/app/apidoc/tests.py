@@ -147,6 +147,16 @@ def tearDown(test):
     zope.testing.module.tearDown(test, 'zope.app.apidoc.doctest')
 
 
+class TestPresentation(unittest.TestCase):
+
+    def test_iconviewfactory(self):
+        from zope.browserresource.icon import IconViewFactory
+        from .presentation import getViewFactoryData
+        factory = IconViewFactory('rname', 'alt', 0, 0)
+
+        data = getViewFactoryData(factory)
+        self.assertEqual(data['resource'], factory.rname)
+
 # Generally useful classes and functions
 
 @implementer(IContainmentRoot)
@@ -217,6 +227,7 @@ def test_suite():
         file_test('presentation.rst',
                   globs={'__file__': __file__}),
         file_test('utilities.rst'),
+        unittest.defaultTestLoader.loadTestsFromName(__name__),
     ))
 
 if __name__ == '__main__':

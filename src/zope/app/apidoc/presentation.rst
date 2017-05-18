@@ -50,7 +50,7 @@ cases we cannot retrieve any useful information:
 
   >>> info = presentation.getViewFactoryData(3)
   >>> pprint(info)
-  {'path': None,
+  {'path': '__builtin__.int',
    'referencable': False,
    'resource': None,
    'template': None,
