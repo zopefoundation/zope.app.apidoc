@@ -21,6 +21,7 @@ import doctest
 from zope.component import testing
 
 from zope.app.apidoc.codemodule.text import TextFile
+from zope.app.apidoc.codemodule.module import Module
 
 from zope.app.apidoc.tests import standard_checker
 from zope.app.apidoc.tests import standard_option_flags
@@ -51,6 +52,40 @@ class TestText(unittest.TestCase):
 
         self.assertEqual(self._read_via_text('_test_cr.txt'),
                          u'This file\nuses \nMac \nline endings.')
+
+class TestModule(unittest.TestCase):
+
+    def test_non_dir_on_path(self):
+        path = zope.app.apidoc.codemodule.__path__
+        zope.app.apidoc.codemodule.__path__ = ['this is not a path']
+        try:
+            mod = Module(None, 'codemodule', zope.app.apidoc.codemodule)
+            self.assertEqual(0, len(mod))
+        finally:
+            zope.app.apidoc.codemodule.__path__ = path
+
+    def test_idempotent(self):
+        mod = Module(None, 'codemodule', zope.app.apidoc.codemodule)
+        before = len(mod)
+        self.assertGreater(before, 0)
+        self.assertTrue(mod._package)
+        mod._Module__setup()
+        self.assertEqual(len(mod), before)
+
+    def test__all_invalid(self):
+        assert not hasattr(zope.app.apidoc.codemodule, '__all__')
+        zope.app.apidoc.codemodule.__all__ = ('missingname',)
+        try:
+            mod = Module(None, 'codemodule', zope.app.apidoc.codemodule)
+            self.assertNotIn('missingname', mod)
+            self.assertGreaterEqual(len(mod), 12)
+        finally:
+            del zope.app.apidoc.codemodule.__all__
+
+    def test_access_attributes(self):
+        mod = Module(None, 'codemodule', zope.app.apidoc.codemodule.tests)
+        self.assertEqual(here, mod['here'])
+        self.assertEqual(mod['here'].__name__, 'here')
 
 def test_suite():
     checker = standard_checker()

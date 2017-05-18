@@ -38,12 +38,25 @@ from zope.app.apidoc.codemodule.zcml import ZCMLFile
 
 # Ignore these files, since they are not necessary or cannot be imported
 # correctly.
-IGNORE_FILES = ('tests', 'tests.py', 'ftests', 'ftests.py', 'CVS', 'gadfly',
-                'setup.py', 'introspection.py', 'Mount.py')
+IGNORE_FILES = frozenset((
+    'tests',
+    'tests.py',
+    'ftests',
+    'ftests.py',
+    'CVS',
+    '.svn',
+    '.git',
+    'gadfly',
+    'setup.py',
+    'introspection.py',
+    'Mount.py'
+))
 
 @implementer(ILocation, IModuleDocumentation)
 class Module(ReadContainerBase):
     """This class represents a Python module."""
+
+    _package = False
 
     def __init__(self, parent, name, module, setup=True):
         """Initialize object."""
@@ -55,51 +68,54 @@ class Module(ReadContainerBase):
         if setup:
             self.__setup()
 
-    def __setup(self):
-        """Setup the module sub-tree."""
+    def __setup_package(self):
         # Detect packages
-        if hasattr(self._module, '__file__') and \
-               (self._module.__file__.endswith('__init__.py') or
-                self._module.__file__.endswith('__init__.pyc')or
-                self._module.__file__.endswith('__init__.pyo')):
+        module_file = getattr(self._module, '__file__', '')
+        if module_file.endswith(('__init__.py', '__init__.pyc', '__init__.pyo')):
             self._package = True
-            for dir in self._module.__path__:
-                # TODO: If we are dealing with eggs, we will not have a
-                # directory right away. For now we just ignore zipped eggs;
-                # later we want to unzip it.
-                if not os.path.isdir(dir):
+
+        if not self._package:
+            return
+
+        for mod_dir in self._module.__path__:
+            # TODO: If we are dealing with eggs, we will not have a
+            # directory right away. For now we just ignore zipped eggs;
+            # later we want to unzip it.
+            if not os.path.isdir(mod_dir):
+                continue
+
+            for mod_file in os.listdir(mod_dir):
+                if mod_file in IGNORE_FILES or mod_file in self._children:
                     continue
-                for file in os.listdir(dir):
-                    if file in IGNORE_FILES or file in self._children:
-                        continue
-                    path = os.path.join(dir, file)
 
-                    if (os.path.isdir(path) and
-                        '__init__.py' in os.listdir(path)):
-                        # subpackage
-                        fullname = self._module.__name__ + '.' + file
-                        module = safe_import(fullname)
-                        if module is not None:
-                            self._children[file] = Module(self, file, module)
+                path = os.path.join(mod_dir, mod_file)
 
-                    elif os.path.isfile(path) and file.endswith('.py') and \
-                             not file.startswith('__init__'):
+                if os.path.isdir(path) and '__init__.py' in os.listdir(path):
+                    # subpackage
+                    # XXX Python 3 implicit packages don't have __init__.py
+
+                    fullname = self._module.__name__ + '.' + mod_file
+                    module = safe_import(fullname)
+                    if module is not None:
+                        self._children[mod_file] = Module(self, mod_file, module)
+                elif os.path.isfile(path):
+                    if mod_file.endswith('.py') and not mod_file.startswith('__init__'):
                         # module
-                        name = file[:-3]
+                        name = mod_file[:-3]
                         fullname = self._module.__name__ + '.' + name
                         module = safe_import(fullname)
                         if module is not None:
                             self._children[name] = Module(self, name, module)
 
-                    elif os.path.isfile(path) and file.endswith('.zcml'):
-                        self._children[file] = ZCMLFile(path, self._module,
-                                                        self, file)
+                    elif mod_file.endswith('.zcml'):
+                        self._children[mod_file] = ZCMLFile(path, self._module,
+                                                            self, mod_file)
 
-                    elif os.path.isfile(path) and file.endswith(('.txt', '.rst')):
-                        self._children[file] = TextFile(path, file, self)
+                    elif  mod_file.endswith(('.txt', '.rst')):
+                        self._children[mod_file] = TextFile(path, mod_file, self)
 
+    def __setup_classes_and_functions(self):
         # List the classes and functions in module, if any are available.
-        zope.deprecation.__show__.off()
         module_decl = self.getDeclaration()
         ifaces = list(module_decl)
         if ifaces:
@@ -113,22 +129,20 @@ class Module(ReadContainerBase):
                 # The module doesn't declare its interface.  Boo!
                 # Guess what names to document, avoiding aliases and names
                 # imported from other modules.
-                names = []
-                for name in self._module.__dict__.keys():
-                    attr = getattr(self._module, name, None)
+                names = set()
+                for name, attr in self._module.__dict__.items():
                     attr_module = getattr(attr, '__module__', None)
                     if attr_module != self._module.__name__:
                         continue
                     if getattr(attr, '__name__', None) != name:
                         continue
-                    names.append(name)
+                    names.add(name)
+
+        # If there is something the same name beneath, then module should
+        # have priority.
+        names = set(names) - set(self._children)
 
         for name in names:
-            # If there is something the same name beneath, then module should
-            # have priority.
-            if name in self._children:
-                continue
-
             attr = getattr(self._module, name, None)
             if attr is None:
                 continue
@@ -150,8 +164,15 @@ class Module(ReadContainerBase):
                         doc = f.__doc__
                 self._children[name] = Function(self, name, attr, doc=doc)
 
-        zope.deprecation.__show__.on()
+    def __setup(self):
+        """Setup the module sub-tree."""
+        self.__setup_package()
 
+        zope.deprecation.__show__.off()
+        try:
+            self.__setup_classes_and_functions()
+        finally:
+            zope.deprecation.__show__.on()
 
     def getDocString(self):
         """See IModuleDocumentation."""
@@ -193,10 +214,9 @@ class Module(ReadContainerBase):
 
         # Maybe it is a simple attribute of the module
         assert obj is None
-        if obj is None:
-            obj = getattr(self._module, key, default)
-            if obj is not default:
-                obj = LocationProxy(obj, self, key)
+        obj = getattr(self._module, key, default)
+        if obj is not default:
+            obj = LocationProxy(obj, self, key)
 
         return obj
 
