@@ -24,6 +24,7 @@ from zope.location import LocationProxy
 from zope.location.interfaces import ILocation
 
 from zope.app.apidoc.interfaces import IDocumentationModule
+from zope.app.apidoc.utilities import DocumentationModuleBase
 from zope.app.apidoc.utilities import ReadContainerBase
 
 
@@ -73,7 +74,7 @@ class TypeInterface(ReadContainerBase):
 
 
 @implementer(IDocumentationModule)
-class TypeModule(ReadContainerBase):
+class TypeModule(DocumentationModuleBase):
     r"""Represent the Documentation of all interface types.
 
     Demonstration::
@@ -104,9 +105,6 @@ class TypeModule(ReadContainerBase):
     this type. This can be very useful in cases where you want to determine
     all content type interfaces, for example.
     """)
-
-    __name__ = None
-    __parent__ = None
 
     def get(self, key, default=None):
         return TypeInterface(

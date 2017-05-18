@@ -55,6 +55,15 @@ class BookModule(OnlineHelp):
     tales.
     """)
 
+    __parent__ = None
+    __name__ = None
+
+    def withParentAndName(self, parent, name):
+        located = type(self)(self.title, self.path)
+        located.__parent__ = parent
+        located.__name__ = name
+        return located
+
 
 # Global Book Instance
 path = os.path.join(os.path.dirname(zope.app.apidoc.bookmodule.__file__),

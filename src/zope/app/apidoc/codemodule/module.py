@@ -192,6 +192,7 @@ class Module(ReadContainerBase):
             return child
 
         # Maybe it is a simple attribute of the module
+        assert obj is None
         if obj is None:
             obj = getattr(self._module, key, default)
             if obj is not default:

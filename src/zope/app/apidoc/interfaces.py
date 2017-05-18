@@ -37,3 +37,9 @@ class IDocumentationModule(ILocation):
         title=u"Module Description",
         description=u"This text describes the functionality of the module.",
         required=True)
+
+    def withParentAndName(parent, name):
+        """
+        Return a new object that is a copy of this object, but
+        being located at the given parent and name.
+        """

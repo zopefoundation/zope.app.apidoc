@@ -29,6 +29,7 @@ from zope.location.interfaces import ILocation
 import zope.app.appsetup.appsetup
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase
+from zope.app.apidoc.utilities import DocumentationModuleBase
 
 # Caching variables, so that the meta-ZCML files need to be read only once
 namespaces = None
@@ -107,7 +108,7 @@ class Directive(object):
 
 
 @implementer(IDocumentationModule)
-class ZCMLModule(ReadContainerBase):
+class ZCMLModule(DocumentationModuleBase):
     r"""Represent the Documentation of all ZCML namespaces.
 
     This documentation is implemented using a simple `IReadContainer`. The
@@ -130,8 +131,6 @@ class ZCMLModule(ReadContainerBase):
     available attributes.
     """)
 
-    __name__ = None
-    __parent__ = None
 
     def get(self, key, default=None):
         """See zope.container.interfaces.IReadContainer

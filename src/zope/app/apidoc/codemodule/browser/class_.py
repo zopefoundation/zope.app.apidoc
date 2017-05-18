@@ -18,14 +18,12 @@ __docformat__ = 'restructuredtext'
 
 import inspect
 
-from zope.component import getUtility
 from zope.proxy import removeAllProxies
 from zope.security.proxy import removeSecurityProxy
 from zope.traversing.api import getParent, traverse
 from zope.traversing.browser import absoluteURL
 from zope.traversing.interfaces import TraversalError
 
-from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import getPythonPath, getPermissionIds
 from zope.app.apidoc.utilities import renderText, getFunctionSignature
 from zope.app.apidoc.utilities import isReferencable
@@ -61,11 +59,14 @@ class ClassDetails(object):
         entries.sort(key=lambda x: x['path'])
         return entries
 
+    def _getCodeModule(self):
+        apidoc = traverse(self.context, '/++apidoc++')
+        return apidoc['Code']
 
     def _listClasses(self, classes):
         """Prepare a list of classes for presentation."""
         info = []
-        codeModule = getUtility(IDocumentationModule, "Code")
+        codeModule = self._getCodeModule()
         for cls in classes:
             # We need to removeAllProxies because the security checkers for
             # zope.container.contained.ContainedProxy and
@@ -87,7 +88,7 @@ class ClassDetails(object):
 
     def getBaseURL(self):
         """Return the URL for the API Documentation Tool."""
-        m = getUtility(IDocumentationModule, "Code")
+        m = self._getCodeModule()
         return absoluteURL(getParent(m), self.request)
 
 

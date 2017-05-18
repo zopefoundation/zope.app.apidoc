@@ -106,6 +106,18 @@ class ReadContainerBase(object):
     def __len__(self):
         return len(self.items())
 
+class DocumentationModuleBase(ReadContainerBase):
+    """Support for implementing a documentation module."""
+
+    __parent__ = None
+    __name__ = None
+
+    def withParentAndName(self, parent, name):
+        "Subclasses need to override this if they are stateful."
+        located = type(self)()
+        located.__parent__ = parent
+        located.__name__ = name
+        return located
 
 def getPythonPath(obj):
     """Return the path of the object in standard Python notation.

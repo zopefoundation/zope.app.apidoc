@@ -29,7 +29,7 @@ from zope.location import LocationProxy
 from zope.location.interfaces import ILocation
 
 from zope.app.apidoc.interfaces import IDocumentationModule
-from zope.app.apidoc.utilities import ReadContainerBase
+from zope.app.apidoc.utilities import DocumentationModuleBase
 
 class IInterfaceModule(IDocumentationModule):
     """Interface API Documentation Module
@@ -39,7 +39,7 @@ class IInterfaceModule(IDocumentationModule):
     """
 
 @implementer(ILocation, IInterfaceModule)
-class InterfaceModule(ReadContainerBase):
+class InterfaceModule(DocumentationModuleBase):
     r"""Represent the Documentation of all Interfaces.
 
     This documentation is implemented using a simple `IReadContainer`. The

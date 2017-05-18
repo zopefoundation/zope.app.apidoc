@@ -73,6 +73,15 @@ class CodeModule(Module):
                 self._children[name] = Module(self, name, module)
         self.__isSetup = True
 
+    def withParentAndName(self, parent, name):
+        located = type(self)()
+        located.__parent__ = parent
+        located.__name__ = name
+        # TODO: This causes the children to get re-computed each time, which
+        # could be fairly expensive. Can we give them a `withParentAndName`
+        # too?
+        return located
+
     def getDocString(self):
         """See Module class."""
         return _('Zope 3 root.')

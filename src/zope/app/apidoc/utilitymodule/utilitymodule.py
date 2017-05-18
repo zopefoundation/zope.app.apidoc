@@ -28,6 +28,7 @@ from zope.location.interfaces import ILocation
 from zope.i18nmessageid import ZopeMessageFactory as _
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase, getPythonPath
+from zope.app.apidoc.utilities import DocumentationModuleBase
 
 # Constant used when the utility has no name
 NONAME = '__noname__'
@@ -95,7 +96,7 @@ class UtilityInterface(ReadContainerBase):
 
 
 @implementer(IDocumentationModule)
-class UtilityModule(ReadContainerBase):
+class UtilityModule(DocumentationModuleBase):
     """Represent the Documentation of all Interfaces.
 
     This documentation is implemented using a simple `IReadContainer`. The
@@ -116,9 +117,6 @@ class UtilityModule(ReadContainerBase):
     Again, the documentation of a utility lists all the attributes/fields and
     methods the utility provides and provides a link to the implementation.
     """)
-
-    __name__ = None
-    __parent__ = None
 
     def get(self, key, default=None):
         parts = key.split('.')

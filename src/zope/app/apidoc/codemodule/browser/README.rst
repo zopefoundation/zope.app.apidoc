@@ -188,7 +188,7 @@ Get all attributes of this class.
 ~~~~~~~~~~~~~~
 Get all methods of this class.
 
-  >>> pprint(details.getMethods()[-2:])
+  >>> pprint(details.getMethods()[-3:-1])
   [{'doc': u'<p>Setup module and class tree.</p>\n',
     'interface': None,
     'name': 'setup',
