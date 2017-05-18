@@ -53,6 +53,19 @@ class InterfaceModuleTests(BrowserTestCase):
         self.assertIn('/++apidoc++/Code/zope/app/apidoc'
                       '/ifacemodule/ifacemodule/index.html', body)
 
+    def testStaticMenu(self):
+        response = self.publish(
+            '/++apidoc++/Interface/staticmenu.html',
+            basic='mgr:mgrpw')
+
+        self.assertEqual(response.getStatus(), 200)
+        body = response.getBody()
+        self.assertIn(
+            'zope.app.apidoc.interfaces.IDocumentationModule', body)
+        self.checkForBrokenLinks(body, '/++apidoc++/Interface/staticmenu.html',
+                                 basic='mgr:mgrpw',
+                                 # This page is slow, only do a few
+                                 max_links=5)
 
 def test_suite():
 

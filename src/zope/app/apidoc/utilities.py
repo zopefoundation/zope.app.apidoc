@@ -251,7 +251,7 @@ def getFunctionSignature(func, ignore_self=False):
         # Make sure the name is a string
         if isinstance(name, (tuple, list)):
             name = '(' + ', '.join(name) + ')'
-        elif not isinstance(name, str):
+        elif not isinstance(name, str): # pragma: no cover
             name = repr(name)
 
         if default is placeholder:
@@ -370,10 +370,10 @@ def renderText(text, module=None, format=None, dedent=True):
 
     assert format in _format_dict.values()
 
-    text = dedentString(text)
-
     if isinstance(text, bytes):
         text = text.decode('latin-1', 'replace')
+
+    text = dedentString(text)
     source = createObject(format, text)
 
     renderer = getMultiAdapter((source, TestRequest()))

@@ -92,7 +92,8 @@ class BrowserTestCase(unittest.TestCase):
         super(BrowserTestCase, self).tearDown()
 
 
-    def checkForBrokenLinks(self, orig_response, path, basic=None):
+    def checkForBrokenLinks(self, orig_response, path,
+                            basic=None, max_links=None):
         response = self.publish(path, basic=basic)
         links = response.html.find_all('a')
 
@@ -116,6 +117,11 @@ class BrowserTestCase(unittest.TestCase):
                 continue
             seen.add(href)
             self.publish(href, basic=basic)
+
+            if max_links is not None:
+                max_links -= 1
+                if not max_links:
+                    break
 
     def publish(self, path, basic=None, form=None, headers=None, env=None):
         assert basic
@@ -156,6 +162,22 @@ class TestPresentation(unittest.TestCase):
 
         data = getViewFactoryData(factory)
         self.assertEqual(data['resource'], factory.rname)
+
+class TestUtilities(unittest.TestCase):
+
+    @unittest.skipUnless(str is bytes, "Only on py2")
+    def test_slot_methods(self):
+        from zope.app.apidoc.utilities import getFunctionSignature
+        self.assertEqual("(<unknown>)", getFunctionSignature(object.__init__))
+
+    @unittest.skipUnless(str is bytes, "Only on py2")
+    def test_unpack_methods(self):
+        from zope.app.apidoc.utilities import getFunctionSignature
+        import six
+
+        six.exec_("def f((a, b)): pass")
+
+        self.assertEqual("((a, b))", getFunctionSignature(locals()['f']))
 
 # Generally useful classes and functions
 

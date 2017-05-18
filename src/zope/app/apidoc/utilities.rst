@@ -766,12 +766,17 @@ used. Clearly, you cannot specify both, the `module` and `format` argument.
 
 You specify the format as follows:
 
-  >>> utilities.renderText('Hello!\n', format='zope.source.rest')
+  >>> utilities.renderText(u'Hello!\n', format='zope.source.rest')
   u'<p>Hello!</p>\n'
 
 Note that the format string must be a valid source factory id; if the factory
 id is not given, 'zope.source.stx' is used. Thus, specifying the module is
 often safer (if available):
 
-  >>> utilities.renderText('Hello!\n', module=apidoc)
+  >>> utilities.renderText(u'Hello!\n', module=apidoc)
+  u'<p>Hello!</p>\n'
+
+Byte input is accepted, so long as it can be decoded:
+
+  >>> utilities.renderText(b'Hello!\n', module=apidoc)
   u'<p>Hello!</p>\n'
