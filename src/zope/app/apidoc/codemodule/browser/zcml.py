@@ -93,12 +93,12 @@ class DirectiveDetails(object):
             return
         try:
             isInterface = IInterface.providedBy(obj)
-        except (AttributeError, TypeError):
+        except (AttributeError, TypeError): # pragma: no cover
             # probably an object that does not like to play nice with the CA
             isInterface = False
 
         # The object might be an instance; in this case get a link to the class
-        if not hasattr(obj, '__name__'):
+        if not hasattr(obj, '__name__'): # pragma: no cover
             obj = getattr(obj, '__class__')
         path = getPythonPath(obj)
         if isInterface:
@@ -133,7 +133,7 @@ class DirectiveDetails(object):
                         if isinstance(field,
                                            (GlobalObject, GlobalInterface)):
                             url = self.objectURL(value, field, rootURL)
-                        else:
+                        else: # pragma: no cover
                             break
                         attr['values'].append({'value': value, 'url': url})
 

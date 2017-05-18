@@ -105,6 +105,70 @@ class CodeModuleTests(BrowserTestCase):
             body, '/++apidoc++/Code/zope/app/apidoc/configure.zcml/index.html',
             basic='mgr:mgrpw')
 
+from BTrees import OOBTree
+class TestClass(unittest.TestCase):
+
+    layer = APIDocLayer
+
+    @unittest.skipIf(OOBTree.OOBTree is OOBTree.OOBTreePy,
+                     "Only in the C implementation")
+    def test_listClasses_C(self):
+        from zope.app.apidoc.codemodule.browser.class_ import ClassDetails
+        from zope.publisher.browser import TestRequest
+        # BTree items doesn't set a module.
+
+        items_class = type(OOBTree.OOBTree({1: 2}).items())
+
+        details = ClassDetails()
+        details.request = TestRequest()
+        details.context = self.layer.getRootFolder()
+
+        info = details._listClasses([items_class])
+        self.assertIsNone(info[0]['url'], None)
+
+class TestIntrospectorNS(unittest.TestCase):
+
+    def _check_namespace(self, kind, context, name):
+        from zope.app.apidoc.codemodule.browser import introspector
+        from zope.location import LocationProxy
+
+        namespace = getattr(introspector, kind + 'Namespace')
+        traverser = namespace(context)
+        obj = traverser.traverse(name, ())
+        self.assertIsInstance(obj, LocationProxy)
+
+        self.assertIs(obj.__parent__, context)
+        self.assertTrue(obj.__name__.endswith(name))
+        return traverser, obj
+
+    def test_annotations(self):
+        from zope.annotation.attribute import AttributeAnnotations
+        anot = AttributeAnnotations(self)
+        anot['key'] = 42
+        self._check_namespace('annotations', anot, 'key')
+
+    def test_items(self):
+        self._check_namespace('sequenceItems', ["value"], '0')
+
+    def test_mapping(self):
+        self._check_namespace('mappingItems', {'key': 'value'}, 'key')
+
+
+class TestIntrospector(unittest.TestCase):
+    layer = APIDocLayer
+
+    classAttr = 1
+
+    def testIntrospector(self):
+        from zope.app.apidoc.codemodule.browser.introspector import Introspector
+        from zope.publisher.browser import TestRequest
+
+        ispect = Introspector(self, TestRequest())
+        atts = list(ispect.getAttributes())
+        names = [x['name'] for x in atts]
+        self.assertIn('classAttr', names)
+        self.assertNotIn('testAttributes', names)
+
 
 def test_suite():
     return unittest.TestSuite((

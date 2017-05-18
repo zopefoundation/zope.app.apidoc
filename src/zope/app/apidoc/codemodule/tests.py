@@ -69,6 +69,7 @@ class TestModule(unittest.TestCase):
         before = len(mod)
         self.assertGreater(before, 0)
         self.assertTrue(mod._package)
+        mod._Module__needsSetup = True
         mod._Module__setup()
         self.assertEqual(len(mod), before)
 
@@ -86,6 +87,14 @@ class TestModule(unittest.TestCase):
         mod = Module(None, 'codemodule', zope.app.apidoc.codemodule.tests)
         self.assertEqual(here, mod['here'])
         self.assertEqual(mod['here'].__name__, 'here')
+
+    def test_hookable(self):
+        import zope.component._api
+        from zope.hookable import hookable
+        self.assertIsInstance(zope.component._api.getSiteManager, hookable)
+        from zope.app.apidoc.codemodule.function import Function
+        mod = Module(None, 'hooks', zope.component._api)
+        self.assertIsInstance(mod._children['getSiteManager'], Function)
 
 def test_suite():
     checker = standard_checker()

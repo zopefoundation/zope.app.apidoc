@@ -5,14 +5,8 @@
     i18n_domain="zope">
 
   <include package="zope.browserresource" file="meta.zcml" />
-
-  <!-- BBB 2006/02/18, to be removed after 12 months -->
-  <layer
-      zcml:condition="have deprecatedlayers"
-      name="apidoc"
-      interface=".skin.apidoc"
-      bbb_aware="true"
-      />
+  <include package="zope.browserpage" file="meta.zcml" />
+  <include package="zope.component" file="meta.zcml" />
 
   <zope:interface
       interface=".skin.APIDOC"

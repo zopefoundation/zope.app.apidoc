@@ -70,11 +70,9 @@ class Menu(object):
             return []
         classModule = traverse(self.context, '/++apidoc++')['Code']
         classModule.setup()
+        found = [p for p in classRegistry if path in p]
         results = []
-        for p in classRegistry:
-            if path not in p:
-                continue
-
+        for p in found:
             klass = traverse(classModule, p.replace('.', '/'))
             results.append({
                 'path': p,
@@ -115,13 +113,13 @@ class Menu(object):
         results = []
         counter = 0
 
-        for p in classRegistry.keys():
+        for p in list(classRegistry): # Traversing can potentially change the registry
             klass = traverse(classModule, p.replace('.', '/'))
-            results.append(
-                {'path': p,
-                 'url': absoluteURL(klass, self.request),
-                 'counter': counter
-                 })
+            results.append({
+                'path': p,
+                'url': absoluteURL(klass, self.request),
+                'counter': counter
+            })
             counter += 1
 
         results.sort(key=_pathgetter)

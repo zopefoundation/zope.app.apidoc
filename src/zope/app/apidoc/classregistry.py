@@ -63,8 +63,6 @@ def safe_import(path, default=None):
     if module is default and __import_unknown_modules__:
         try:
             module = __import__(path, {}, {}, ('*',))
-        except ImportError:
-            return default
         # Some software, we cannot control, might raise all sorts of errors;
         # thus catch all exceptions and return the default.
         except Exception:

@@ -49,7 +49,7 @@ class annotationsNamespace(object):
         # only available in dev-mode.
         naked = zope.security.proxy.removeSecurityProxy(self.context)
         annotations = annotation.interfaces.IAnnotations(naked)
-        obj = name and annotations[name] or annotations
+        obj = annotations[name] if name else annotations
         if not IPhysicallyLocatable(obj, False):
             obj = location.LocationProxy(
                 obj, self.context, '++annotations++'+name)
@@ -168,10 +168,8 @@ class Introspector(BrowserView):
             val = getattr(obj, name)
             if not (inspect.ismethod(val) or inspect.ismethoddescriptor(val)):
                 continue
-            if inspect.ismethod(val):
-                signature = apidoc.utilities.getFunctionSignature(val)
-            else:
-                signature = '(...)'
+
+            signature = apidoc.utilities.getFunctionSignature(val)
 
             entry = {
                 'name': name,
@@ -231,8 +229,6 @@ class Introspector(BrowserView):
         # so we want to see things that we usually cannot see
         naked = zope.security.proxy.removeSecurityProxy(self.context)
         annotations = annotation.interfaces.IAnnotations(naked)
-        if not hasattr(annotations, 'items'):
-            return
         ann = []
         for key, value in annotations.items():
             ann.append({
@@ -241,5 +237,5 @@ class Introspector(BrowserView):
                 'value': repr(value),
                 'value_type': type(value).__name__,
                 'value_type_link': getTypeLink(type(value))
-                })
+            })
         return ann

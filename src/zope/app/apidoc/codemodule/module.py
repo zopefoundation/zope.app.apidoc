@@ -65,8 +65,9 @@ class Module(ReadContainerBase):
         self.__parent__ = parent
         self.__name__ = name
         self._module = module
-        self.__needsSetup = setup
-        self.__setup()
+        self._children = {}
+        if setup:
+            self.__setup()
 
     def __setup_package(self):
         # Detect packages
@@ -131,6 +132,8 @@ class Module(ReadContainerBase):
                 # imported from other modules.
                 names = set()
                 for name, attr in self._module.__dict__.items():
+                    if isinstance(attr, hookable):
+                        attr = attr.implementation
                     attr_module = getattr(attr, '__module__', None)
                     if attr_module != self._module.__name__:
                         continue
@@ -160,17 +163,11 @@ class Module(ReadContainerBase):
                 doc = attr.__doc__
                 if not doc:
                     f = module_decl.get(name)
-                    if f is not None:
-                        doc = f.__doc__
+                    doc = getattr(f, '__doc__', None)
                 self._children[name] = Function(self, name, attr, doc=doc)
 
     def __setup(self):
         """Setup the module sub-tree."""
-        if not self.__needsSetup:
-            return
-
-        self.__needsSetup = False
-        self._children = {}
         self.__setup_package()
 
         zope.deprecation.__show__.off()
@@ -181,7 +178,7 @@ class Module(ReadContainerBase):
 
     def withParentAndName(self, parent, name):
         located = type(self)(parent, name, self._module, False)
-        new_children = located._children = {}
+        new_children = located._children
         for x in self._children.values():
             try:
                 new_child = x.withParentAndName(located, x.__name__)

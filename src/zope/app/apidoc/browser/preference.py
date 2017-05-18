@@ -13,7 +13,6 @@
 ##############################################################################
 """API Doc Preference Views
 
-$Id$
 """
 __docformat__ = "reStructuredText"
 

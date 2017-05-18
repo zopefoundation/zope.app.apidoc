@@ -87,6 +87,30 @@ way up to the root, but we just want to go to the root module.
    {'name': 'codemodule',
     'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/codemodule'}]
 
+Module Details With Interfaces
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Let's also look at a module that defines interfaces:
+
+  >>> _context = traverse(cm, 'zope/app/apidoc/interfaces')
+  >>> details = browser.module.ModuleDetails(_context, TestRequest())
+  >>> pprint(details.getInterfaces())
+  [{'doc': 'Zope 3 API Documentation Module',
+    'name': 'IDocumentationModule',
+    'path': 'zope.app.apidoc.interfaces.IDocumentationModule',
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/interfaces/IDocumentationModule'}]
+
+Module Details With Implementation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Let's also look at a module that implements an interface itself:
+
+  >>> _context = traverse(cm, 'zope/lifecycleevent')
+  >>> details = browser.module.ModuleDetails(_context, TestRequest())
+  >>> pprint(details.getModuleInterfaces())
+  [{'name': 'IZopeLifecycleEvent',
+    'path': 'zope.lifecycleevent.interfaces.IZopeLifecycleEvent'}]
+
 
 Class Details
 -------------
@@ -284,8 +308,7 @@ ZCML files, just a template. The template then uses the directive details to
 provide all the view content:
 
   >>> details = browser.zcml.DirectiveDetails()
-  >>> zcml = traverse(cm,
-  ...     'zope/app/apidoc/codemodule/configure.zcml')
+  >>> zcml = traverse(cm, 'zope/app/apidoc/codemodule/configure.zcml')
   >>> details.context = zcml.rootElement
   >>> details.request = TestRequest()
   >>> details.__parent__ = details.context
@@ -391,6 +414,82 @@ Returns a list of all sub-directives:
 
   >>> details.getElements()
   [<Directive (u'http://namespaces.zope.org/zope', u'allow')>]
+
+Other Examples
+~~~~~~~~~~~~~~
+
+Let's look at sub-directive that has a namespace:
+
+  >>> details = browser.zcml.DirectiveDetails()
+  >>> zcml = traverse(cm, 'zope/app/apidoc/ftesting-base.zcml')
+  >>> browser_directive = [x for x in zcml.rootElement.subs if x.name[0].endswith('browser')][0]
+  >>> details.context = browser_directive
+  >>> details.request = TestRequest()
+  >>> details.fullTagName()
+  'browser:menu'
+
+The exact URL will vary depending on what ZCML has been loaded.
+
+  >>> details.url()
+  'http://127.0.0.1/++apidoc++/.../menu/index.html'
+
+Now one that has some tokens:
+
+  >>> details = browser.zcml.DirectiveDetails()
+  >>> zcml = traverse(cm, 'zope/app/apidoc/enabled.zcml')
+  >>> adapter_directive = [x for x in zcml.rootElement.subs if x.name[1] == 'adapter'][0]
+  >>> details.context = adapter_directive
+  >>> details.__parent__ = details.context
+  >>> details.request = TestRequest()
+  >>> pprint(details.attributes())
+  [{'name': 'factory',
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/apidoc/apidocNamespace/index.html',
+    'value': '.apidoc.apidocNamespace',
+    'values': []},
+   {'name': 'provides',
+   'url': 'http://127.0.0.1/++apidoc++/Interface/zope.traversing.interfaces.ITraversable/index.html',
+   'value': 'zope.traversing.interfaces.ITraversable',
+   'values': []},
+   {'name': 'for', 'url': None, 'value': '*', 'values': []},
+   {'name': 'name', 'url': None, 'value': 'apidoc', 'values': []}]
+
+Now one with *multiple* tokens:
+
+  >>> details = browser.zcml.DirectiveDetails()
+  >>> zcml = traverse(cm, 'zope/traversing/configure.zcml')
+  >>> adapter_directive = [x for x in zcml.rootElement.subs if x.name[1] == 'adapter']
+  >>> adapter_directive = [x for x in adapter_directive if ' ' in x.attrs[(None, 'for')]][0]
+  >>> details.context = adapter_directive
+  >>> details.__parent__ = details.context
+  >>> details.request = TestRequest()
+  >>> pprint(details.attributes())
+  [{'name': 'factory',
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/traversing/namespace/etc/index.html',
+    'value': 'zope.traversing.namespace.etc',
+    'values': []},
+   {'name': 'provides',
+    'url': 'http://127.0.0.1/++apidoc++/Interface/zope.traversing.interfaces.ITraversable/index.html',
+    'value': 'zope.traversing.interfaces.ITraversable',
+    'values': []},
+   {'name': 'for',
+    'url': None,
+    'value': '* zope.publisher.interfaces.IRequest',
+    'values': [{'url': None, 'value': '*'},
+                {'url': 'http://127.0.0.1/++apidoc++/Interface/zope.publisher.interfaces.IRequest/index.html',
+                 'value': 'zope.publisher.interfaces.IRequest'}]},
+   {'name': 'name', 'url': None, 'value': 'etc', 'values': []}]
+
+And now one that is subdirectives:
+
+  >>> details = browser.zcml.DirectiveDetails()
+  >>> zcml = traverse(cm, 'zope/app/apidoc/browser/configure.zcml')
+  >>> adapter_directive = [x for x in zcml.rootElement.subs if x.name[1] == 'pages'][0]
+  >>> details.context = adapter_directive.subs[0]
+  >>> details.__parent__ = details.context
+  >>> details.request = TestRequest()
+  >>> details.url()
+  'http://127.0.0.1/++apidoc++/.../pages/index.html#page'
+
 
 
 The Introspector

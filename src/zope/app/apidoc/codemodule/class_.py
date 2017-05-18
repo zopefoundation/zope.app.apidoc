@@ -107,6 +107,5 @@ class Class(object):
     def getConstructor(self):
         """See IClassDocumentation."""
         init = getattr(self.__klass, '__init__', None)
-        if not callable(init):
-            return None
-        return init
+        if callable(init):
+            return init
