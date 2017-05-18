@@ -31,6 +31,9 @@ from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
 class UtilityDetails(object):
     """Utility Details View."""
 
+    context = None
+    request = None
+
     def getAPIDocRootURL(self):
         return findAPIDocumentationRootURL(self.context, self.request)
 
@@ -60,6 +63,9 @@ class UtilityDetails(object):
 class Menu(object):
     """Menu View Helper Class"""
 
+    context = None
+    request = None
+
     def getMenuTitle(self, node):
         """Return the title of the node that is displayed in the menu."""
         obj = node.context
@@ -78,4 +84,3 @@ class Menu(object):
             return '%s/Utility/%s/%s/index.html' % (apidoc_url, getName(iface), getName(obj))
         if isinstance(obj, UtilityInterface):
             return '%s/Interface/%s/index.html' % (apidoc_url, getName(obj))
-        return None

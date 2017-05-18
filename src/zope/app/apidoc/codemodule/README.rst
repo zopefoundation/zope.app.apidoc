@@ -89,7 +89,7 @@ still get to them:
 
   >>> names = sorted(module['tests'].keys())
   >>> names
-  ['BrowserTestCase', 'LayerDocFileSuite', 'LayerDocTestSuite', 'Root', 'rootLocation', 'setUp', 'standard_checker', 'tearDown', 'test_suite']
+  ['BrowserTestCase', 'LayerDocFileSuite', 'LayerDocTestSuite', 'Root', 'setUp', 'standard_checker', 'tearDown', 'test_suite']
 
 
 Classes

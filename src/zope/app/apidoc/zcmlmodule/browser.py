@@ -102,7 +102,6 @@ class DirectiveDetails(object):
                     'column': info.column,
                     'eline': info.eline,
                     'ecolumn': info.ecolumn}
-        return None
 
     def getInfo(self):
         """Get the file where the directive was declared."""
@@ -117,7 +116,6 @@ class DirectiveDetails(object):
             return {
                 'path': path,
                 'url': isReferencable(path) and path.replace('.', '/') or None}
-        return None
 
     def getSubdirectives(self):
         """Create a list of subdirectives."""
@@ -125,7 +123,7 @@ class DirectiveDetails(object):
         for ns, name, schema, handler, info in self.context.subdirs:
             details = self._getInterfaceDetails(schema)
             path = getPythonPath(handler)
-            url = isReferencable(path) and path.replace('.', '/') or None
+            url = path.replace('.', '/') if isReferencable(path) else None
             dirs.append({
                 'namespace': ns,
                 'name': name,

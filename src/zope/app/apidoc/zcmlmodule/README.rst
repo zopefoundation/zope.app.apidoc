@@ -56,8 +56,8 @@ The namespace manages a particular ZCML namespace. The object always
 expects the parent to be a `ZCMLModule` instance. So let's create a namespace:
 
   >>> module = ZCMLModule()
-  >>> module._makeDocStructure()
-  >>> from zope.app.apidoc.zcmlmodule import Namespace
+  >>> from zope.app.apidoc.zcmlmodule import Namespace, _clear
+  >>> _clear()
   >>> ns = Namespace(ZCMLModule(), 'http://namespaces.zope.org/browser')
 
 We can now get its short name, which is the name without the URL prefix:

@@ -14,7 +14,6 @@
 """Zope 3 API Documentation
 
 """
-from __future__ import absolute_import
 __docformat__ = 'restructuredtext'
 
 import zope.component
@@ -39,21 +38,31 @@ class APIDocumentation(ReadContainerBase):
         self.__parent__ = parent
         self.__name__ = name
 
+    def __locate(self, obj, name):
+        # In general, *always* doing this is not just weird (threads), it also leads to
+        # circular __parent__ chains, which causes issues with things like
+        # zope.securitypolicy
+        # (https://github.com/zopefoundation/zope.securitypolicy/issues/8), and
+        # it can lead to bad behaviour with sharing persistent objects
+        # across ZODB connections (which may close). Fortunately, our traverser
+        # takes care of this by making sure we are always located at an (equivalent)
+        # fresh root.
+        locate(obj, self, name)
+        return obj
+
     def get(self, key, default=None):
         """See zope.container.interfaces.IReadContainer"""
         utility = zope.component.queryUtility(IDocumentationModule, key, default)
-        if utility != default:
-            locate(utility, self, key)
+        if utility is not default:
+            utility = self.__locate(utility, key)
         return utility
 
     def items(self):
         """See zope.container.interfaces.IReadContainer"""
-        items = list(zope.component.getUtilitiesFor(IDocumentationModule))
-        items.sort()
+        items = sorted(zope.component.getUtilitiesFor(IDocumentationModule))
         utils = []
         for key, value in items:
-            locate(value, self, key)
-            utils.append((key, value))
+            utils.append((key, self.__locate(value, key)))
         return utils
 
 
@@ -70,4 +79,12 @@ class apidocNamespace(object):
 
 def handleNamespace(ob, name):
     """Used to traverse to an API Documentation."""
-    return APIDocumentation(ob, '++apidoc++'+name)
+    # Ignore the `ob` we traverse through. We always want to be
+    # located at the root, although not the *actual* root.
+    # This is because we have to reparent our children, which are
+    # shared, in-memory utilities, and in the presence of multiple threads,
+    # doing so at different times would be bad in case connections get closed.
+    # So we make a pseudo root.
+    from zope.site.folder import rootFolder
+    ob = rootFolder()
+    return APIDocumentation(ob, '++apidoc++' + name)

@@ -72,6 +72,12 @@ def truncateSysPath(path):
 class ReadContainerBase(object):
     """Base for `IReadContainer` objects."""
 
+    def __repr__(self):
+        if getattr(self, '__name__', None) is None:
+            return super(ReadContainerBase, self).__repr__()
+        c = type(self)
+        return "<%s.%s '%s' at 0x%x>" % (c.__module__, c.__name__, self.__name__, id(self))
+
     def get(self, key, default=None):
         raise NotImplementedError()
 
@@ -193,10 +199,18 @@ def getPermissionIds(name, checker=_marker, klass=_marker):
 
 def getFunctionSignature(func, ignore_self=False):
     """Return the signature of a function or method."""
-    if not isinstance(func, (types.FunctionType, types.MethodType)):
-        raise TypeError("func must be a function or method")
+    if not callable(func): #isinstance(func, (types.FunctionType, types.MethodType)):
+        raise TypeError("func must be a function or method not a %s (%r)" % (type(func), func))
 
-    args, varargs, varkw, defaults = inspect.getargspec(func)
+    try:
+        args, varargs, varkw, defaults = inspect.getargspec(func)
+    except TypeError:
+        # On Python 2, inspect.getargspec can't handle certain types
+        # of callable things, like object.__init__ (<slot wrapper '__init__'> is not
+        # a python function), but it *can* handle them on Python 3.
+        # Punt on Python 2
+        return '(<unknown>)'
+
     placeholder = object()
     sig = '('
     # By filling up the default tuple, we now have equal indeces for args and

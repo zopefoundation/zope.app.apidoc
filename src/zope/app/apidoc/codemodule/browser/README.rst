@@ -44,7 +44,7 @@ Return info objects for all classes in this module.
   >>> pprint(details.getClasses())
   [{'doc': 'Represent the code browser documentation root',
     'name': 'CodeModule',
-    'url': 'http://127.0.0.1/++etc++site/++apidoc++/Code/zope/app/apidoc/codemodule/codemodule/CodeModule'}]
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/codemodule/CodeModule'}]
 
 This module doesn't contain anything else.
 
@@ -75,17 +75,17 @@ way up to the root, but we just want to go to the root module.
   >>> bc.request = details.request
   >>> pprint(bc(), width=1)
   [{'name': u'[top]',
-    'url': 'http://127.0.0.1/++etc++site/++apidoc++/Code'},
+    'url': 'http://127.0.0.1/++apidoc++/Code'},
    {'name': u'zope',
-    'url': 'http://127.0.0.1/++etc++site/++apidoc++/Code/zope'},
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope'},
    {'name': 'app',
-    'url': 'http://127.0.0.1/++etc++site/++apidoc++/Code/zope/app'},
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app'},
    {'name': 'apidoc',
-    'url': 'http://127.0.0.1/++etc++site/++apidoc++/Code/zope/app/apidoc'},
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc'},
    {'name': 'codemodule',
-    'url': 'http://127.0.0.1/++etc++site/++apidoc++/Code/zope/app/apidoc/codemodule'},
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule'},
    {'name': 'codemodule',
-    'url': 'http://127.0.0.1/++etc++site/++apidoc++/Code/zope/app/apidoc/codemodule/codemodule'}]
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/codemodule'}]
 
 
 Class Details
@@ -109,7 +109,7 @@ Get all bases of this class.
 
   >>> pprint(details.getBases())
   [{'path': 'zope.app.apidoc.codemodule.module.Module',
-    'url': 'http://127.0.0.1/++etc++site/++apidoc++/Code/zope/app/apidoc/codemodule/module/Module'}]
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/module/Module'}]
 
 `getKnownSubclasses()`
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -130,9 +130,9 @@ Prepare a list of classes for presentation.
   ...       zope.app.apidoc.apidoc.APIDocumentation,
   ...       zope.app.apidoc.codemodule.codemodule.Module]))
   [{'path': 'zope.app.apidoc.apidoc.APIDocumentation',
-    'url': 'http://127.0.0.1/++etc++site/++apidoc++/Code/zope/app/apidoc/apidoc/APIDocumentation'},
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/apidoc/APIDocumentation'},
    {'path': 'zope.app.apidoc.codemodule.module.Module',
-    'url': 'http://127.0.0.1/++etc++site/++apidoc++/Code/zope/app/apidoc/codemodule/module/Module'}]
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/module/Module'}]
 
 `getBaseURL()`
 ~~~~~~~~~~~~~~
@@ -143,7 +143,7 @@ Note that the following output is a bit different than usual, since
 we have not setup all path elements.
 
   >>> details.getBaseURL()
-  'http://127.0.0.1/++etc++site/++apidoc++'
+  'http://127.0.0.1/++apidoc++'
 
 `getInterfaces()`
 ~~~~~~~~~~~~~~~~~
@@ -251,7 +251,7 @@ Get all attributes of this function.
 Return the URL for the API Documentation Tool.
 
   >>> details.getBaseURL()
-  'http://127.0.0.1/++etc++site/++apidoc++'
+  'http://127.0.0.1/++apidoc++'
 
 
 Text File Details
@@ -330,7 +330,7 @@ Returns the URL of the directive docuemntation in the ZCML documentation
 module.
 
   >>> details.url()
-  u'http://127.0.0.1/++etc++site/++apidoc++/ZCML/ALL/configure/index.html'
+  u'http://127.0.0.1/++apidoc++/ZCML/ALL/configure/index.html'
 
 `objectURL(value, field, rootURL)`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -342,7 +342,7 @@ crafts a documentation URL for it:
   >>> field = GlobalObject()
 
   >>> details.objectURL('.interfaces.IZCMLFile', field, '')
-  'http://127.0.0.1/++etc++site/++apidoc++/Interface/zope.app.apidoc.codemodule.interfaces.IZCMLFile/index.html'
+  'http://127.0.0.1/++apidoc++/Interface/zope.app.apidoc.codemodule.interfaces.IZCMLFile/index.html'
 
   >>> details.objectURL('.zcml.ZCMLFile', field, '')
   '/zope/app/apidoc/codemodule/zcml/ZCMLFile/index.html'
@@ -371,7 +371,7 @@ will be listed too.
   >>> details.context = details.context.subs[0]
   >>> pprint(details.attributes())
   [{'name': u'class',
-    'url': 'http://127.0.0.1/++etc++site/++apidoc++/Code/zope/app/apidoc/codemodule/module/Module/index.html',
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/module/Module/index.html',
     'value': u'.module.Module',
     'values': []}]
 
@@ -481,14 +481,14 @@ class. In the following section we are going to demonstrate the methods used
 to collect the data. First we need to create an object though; let's use a
 root folder:
 
-  >>> rootFolder.__parent__
+  >>> rootFolder
   <zope.site.folder.Folder object at ...>
 
 Now we instantiate the view
 
   >>> from zope.publisher.browser import TestRequest
   >>> request = TestRequest()
-  >>> inspect = introspector.Introspector(rootFolder.__parent__, request)
+  >>> inspect = introspector.Introspector(rootFolder, request)
 
 so that we can start looking at the methods. First we should note that the
 class documentation view is directly available:
@@ -585,7 +585,7 @@ and then get the sequence items:
 
 Similar functionality exists for a mapping. But we first have to add an item:
 
-  >>> rootFolder.__parent__['list'] = list
+  >>> rootFolder['list'] = list
 
 Now let's have a look:
 
@@ -609,7 +609,7 @@ object is annotatable,
 
 then we can get an annotation mapping:
 
-  >>> rootFolder.__parent__.__annotations__ = {'my.list': list}
+  >>> rootFolder.__annotations__ = {'my.list': list}
 
   >>> pprint(inspect.getAnnotationsInfo())
   [{'key': 'my.list',

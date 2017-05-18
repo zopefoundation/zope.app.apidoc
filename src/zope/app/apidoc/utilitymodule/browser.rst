@@ -40,7 +40,7 @@ You can now get the title and link from the menu:
   >>> menu.getMenuTitle(node)
   'iface'
   >>> menu.getMenuLink(node)
-  'http://127.0.0.1/++etc++site/++apidoc++/Interface/foo.bar.iface/index.html'
+  'http://127.0.0.1/++apidoc++/Interface/foo.bar.iface/index.html'
 
 Next, let's get the menu title and link for a utility with a name. We first
 have to create a utility registration
@@ -61,7 +61,7 @@ We can now ask the menu to give us the tile and link for the utility:
   >>> menu.getMenuTitle(node)
   'FooBar'
   >>> menu.getMenuLink(node)
-  'http://127.0.0.1/++etc++site/++apidoc++/Utility/foo.bar.iface/Rm9vQmFy/index.html'
+  'http://127.0.0.1/++apidoc++/Utility/foo.bar.iface/Rm9vQmFy/index.html'
 
 Finally, we get menu title and link for a utility without a name:
 
@@ -76,7 +76,7 @@ Finally, we get menu title and link for a utility without a name:
   >>> menu.getMenuTitle(node)
   'no name'
   >>> menu.getMenuLink(node)
-  'http://127.0.0.1/++etc++site/++apidoc++/Utility/foo.bar.iface/X19ub25hbWVfXw==/index.html'
+  'http://127.0.0.1/++apidoc++/Utility/foo.bar.iface/X19ub25hbWVfXw==/index.html'
 
 
 `UtilityDetails` class

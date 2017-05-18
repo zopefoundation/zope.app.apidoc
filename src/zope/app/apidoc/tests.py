@@ -14,19 +14,13 @@
 """Tests for the Interface Documentation Module
 
 """
-import re
-import os
-import unittest
 import doctest
+import os
+import re
+import unittest
 
+import zope.app.renderer
 import zope.component.testing
-from zope.configuration import xmlconfig
-from zope.interface import implementer
-from zope.traversing.interfaces import IContainmentRoot
-from zope.location import LocationProxy
-
-from zope.testing import renormalizing
-
 import zope.testing.module
 
 from webtest import TestApp
@@ -34,7 +28,13 @@ from webtest import TestApp
 from zope.app.apidoc.apidoc import APIDocumentation
 from zope.app.apidoc.testing import APIDocLayer
 
-from zope.app.component.testing import PlacefulSetup, setUpTraversal
+from zope.app.component.testing import PlacefulSetup
+from zope.app.component.testing import setUpTraversal
+
+from zope.configuration import xmlconfig
+from zope.interface import implementer
+from zope.testing import renormalizing
+from zope.traversing.interfaces import IContainmentRoot
 
 _old_appsetup_context = None
 
@@ -58,7 +58,10 @@ def _tearDown_AppSetup():
 def _setUp_LayerPlace(test):
     # We're in the layer, so we don't want to tear down zope.testing,
     # which would tear down zope.component
-    root_folder = PlacefulSetup().buildFolders(True)
+    psetup = PlacefulSetup()
+    # Make a folder tree and a site.
+    psetup.buildFolders(True)
+    root_folder = psetup.rootFolder
     setUpTraversal()
 
     global _old_appsetup_context
@@ -77,6 +80,8 @@ def _tearDown_LayerPlace(test):
 
 class BrowserTestCase(unittest.TestCase):
 
+    layer = APIDocLayer
+
     def setUp(self):
         super(BrowserTestCase, self).setUp()
         _setUp_AppSetup()
@@ -91,23 +96,25 @@ class BrowserTestCase(unittest.TestCase):
         response = self.publish(path, basic=basic)
         links = response.html.find_all('a')
 
+        seen = set()
         for link in links:
             try:
                 href = link.attrs['href']
             except KeyError:
                 pass
-            if '++apidoc++' in href:
-                # XXX: We are this! Enable it
-                # We don't install this at test time
-                continue
-            if href.startswith('http://dev.zope.org'):
-                # Don't try to follow external links
-                continue
+
             if href.startswith('./'):
                 href = href[2:]
 
+            if href.startswith('http://localhost/'):
+                href = href[16:]
+
             if not href.startswith('/'):
                 href = path.rsplit('/', 1)[0] + '/' + href
+
+            if href in seen:
+                continue
+            seen.add(href)
             self.publish(href, basic=basic)
 
     def publish(self, path, basic=None, form=None, headers=None, env=None):
@@ -129,7 +136,6 @@ class BrowserTestCase(unittest.TestCase):
 
 
 def setUp(test):
-    import zope.app.renderer
     zope.component.testing.setUp()
     xmlconfig.file('configure.zcml', zope.app.renderer)
     zope.testing.module.setUp(test, 'zope.app.apidoc.doctest')
@@ -146,9 +152,6 @@ class Root(object):
 
     __parent__ = None
     __name__ = ''
-
-def rootLocation(obj, name):
-    return LocationProxy(obj, Root(), name)
 
 standard_checker_patterns = (
     (re.compile(r"u('[^']*')"), r"\1"),

@@ -38,7 +38,8 @@ class TypeInterface(ReadContainerBase):
       ...    pass
       >>> @implementer(IFoo)
       ... class Foo(object):
-      ...     pass
+      ...     def getName(self):
+      ...         return 'IFoo'
       >>> from zope import component as ztapi
       >>> ztapi.provideUtility(Foo(), IFoo, 'Foo')
 
@@ -69,7 +70,7 @@ class TypeInterface(ReadContainerBase):
         """See zope.container.interfaces.IReadContainer"""
         results = [(name, LocationProxy(iface, self, name))
                    for name, iface in getUtilitiesFor(self.interface)]
-        results.sort(key=lambda x: x[1].__name__)
+        results.sort(key=lambda x: (x[1].getName(), x[0]))
         return results
 
 
@@ -105,6 +106,9 @@ class TypeModule(ReadContainerBase):
     this type. This can be very useful in cases where you want to determine
     all content type interfaces, for example.
     """)
+
+    __name__ = None
+    __parent__ = None
 
     def get(self, key, default=None):
         return TypeInterface(

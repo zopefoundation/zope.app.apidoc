@@ -7,6 +7,10 @@ CHANGES
 
 - Add support for Python 3.4, 3.5, 3.6 and PyPy.
 
+- The ``++apidoc++`` namespace is now always located beneath the root.
+  This solves issues with multiple threads and concurrent requests and
+  also circular parent chains.
+
 - Modernize some of the templates.  An increment towards having
   zope.app.apidoc compatible with Chameleon.
 

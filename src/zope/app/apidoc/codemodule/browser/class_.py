@@ -31,8 +31,8 @@ from zope.app.apidoc.utilities import renderText, getFunctionSignature
 from zope.app.apidoc.utilities import isReferencable
 
 
-def getTypeLink(type):
-    if type is type(None):
+def getTypeLink(type, _NoneType=type(None)):
+    if type is _NoneType:
         return None
     path = getPythonPath(type)
     return path.replace('.', '/') if isReferencable(path) else None
@@ -157,7 +157,8 @@ class ClassDetails(object):
         if attr is None:
             return None
         attr = removeSecurityProxy(attr)
+
         return {
             'signature': getFunctionSignature(attr, ignore_self=True),
             'doc': renderText(attr.__doc__ or '', inspect.getmodule(attr)),
-            }
+        }

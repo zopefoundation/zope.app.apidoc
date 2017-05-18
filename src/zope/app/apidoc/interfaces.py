@@ -17,8 +17,9 @@ __docformat__ = 'restructuredtext'
 
 from zope.interface import Interface
 from zope.schema import TextLine, Text
+from zope.location.interfaces import ILocation
 
-class IDocumentationModule(Interface):
+class IDocumentationModule(ILocation):
     """Zope 3 API Documentation Module
 
     A documentation module contains the documentation for one specific aspect

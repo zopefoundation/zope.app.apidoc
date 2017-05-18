@@ -65,22 +65,22 @@ class Menu(object):
           >>> from pprint import pprint
           >>> pprint(info)
           [{'path': 'zope.app.apidoc.codemodule.browser.Foo',
-            'url': 'http://127.0.0.1/++etc++site/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Foo/'},
+            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Foo/'},
            {'path': 'zope.app.apidoc.codemodule.browser.Foo2',
-            'url': 'http://127.0.0.1/++etc++site/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Foo2/'}]
+            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Foo2/'}]
 
           >>> menu.request = TestRequest(form={'path': 'o2'})
           >>> info = menu.findClasses()
           >>> pprint(info)
           [{'path': 'zope.app.apidoc.codemodule.browser.Foo2',
-            'url': 'http://127.0.0.1/++etc++site/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Foo2/'}]
+            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Foo2/'}]
 
 
           >>> menu.request = TestRequest(form={'path': 'Blah'})
           >>> info = menu.findClasses()
           >>> pprint(info)
           [{'path': 'zope.app.apidoc.codemodule.browser.Blah',
-            'url': 'http://127.0.0.1/++etc++site/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Blah/'}]
+            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Blah/'}]
 
         """
         path = self.request.get('path', None)

@@ -264,7 +264,7 @@ class StaticAPIDocGenerator(object):
         # Retrieve the content
         try:
             self.browser.open(link.callableURL)
-        except urllib2.HTTPError, error:
+        except urllib2.HTTPError as error:
             # Something went wrong with retrieving the page.
             self.linkErrors += 1
             self.sendMessage(
@@ -279,7 +279,7 @@ class StaticAPIDocGenerator(object):
             self.sendMessage('Bad URL: ' + link.callableURL, 2)
             self.sendMessage('+-> Reference: ' + link.referenceURL, 2)
             return
-        except Exception, error:
+        except Exception as error:
             # This should never happen outside the debug mode. We really want
             # to catch all exceptions, so that we can investigate them.
             if self.options.debug:
@@ -307,7 +307,7 @@ class StaticAPIDocGenerator(object):
 
             try:
                 links = self.browser.links()
-            except HTMLParser.HTMLParseError, error:
+            except HTMLParser.HTMLParseError as error:
                 self.htmlErrors += 1
                 self.sendMessage('Failed to parse HTML: ' + url, 1)
                 self.sendMessage('+-> %s: line %i, column %s' % (

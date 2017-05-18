@@ -434,7 +434,7 @@ If you do not pass a function or method to the function, it will fail:
   >>> utilities.getFunctionSignature('func')
   Traceback (most recent call last):
   ...
-  TypeError: func must be a function or method
+  TypeError: func must be a function or method not a ...
 
 A very uncommon, but perfectly valid (in Python 2), case is that tuple arguments are
 unpacked inside the argument list of the function. Here is an example:

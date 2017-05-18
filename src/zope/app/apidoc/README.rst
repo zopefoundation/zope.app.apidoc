@@ -47,13 +47,12 @@ Now we can instantiate the class (which is usually done when traversing
   >>> from zope.app.apidoc.apidoc import APIDocumentation
   >>> doc = APIDocumentation(None, '++apidoc++')
 
-  >>> modules =  doc.keys()
-  >>> modules.sort()
+  >>> modules = sorted(doc.keys())
   >>> modules
   [u'Interface', u'ZCML']
 
   >>> doc['ZCML']
-  <zope.app.apidoc.zcmlmodule.ZCMLModule object at ...>
+  <zope.app.apidoc.zcmlmodule.ZCMLModule 'ZCML' at ...>
 
 
 Developing a Module

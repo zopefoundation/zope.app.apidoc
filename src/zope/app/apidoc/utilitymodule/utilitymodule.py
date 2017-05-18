@@ -117,6 +117,9 @@ class UtilityModule(ReadContainerBase):
     methods the utility provides and provides a link to the implementation.
     """)
 
+    __name__ = None
+    __parent__ = None
+
     def get(self, key, default=None):
         parts = key.split('.')
         try:
@@ -135,7 +138,7 @@ class UtilityModule(ReadContainerBase):
             # Get the next site manager
             sm = smlist.pop()
             # If we have already looked at this site manager, then skip it
-            if sm in seen:
+            if sm in seen: # pragma: no cover
                 continue
             # Add the current site manager to the list of seen ones
             seen.append(sm)
