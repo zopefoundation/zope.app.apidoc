@@ -67,19 +67,21 @@ class CodeModule(Module):
         """Setup module and class tree."""
         if self.__isSetup:
             return
+        self.__isSetup = True
+        self._children = {}
         for name, mod in zope.component.getUtilitiesFor(IAPIDocRootModule):
             module = safe_import(mod)
             if module is not None:
                 self._children[name] = Module(self, name, module)
-        self.__isSetup = True
 
     def withParentAndName(self, parent, name):
         located = type(self)()
         located.__parent__ = parent
         located.__name__ = name
-        # TODO: This causes the children to get re-computed each time, which
-        # could be fairly expensive. Can we give them a `withParentAndName`
-        # too?
+        self.setup()
+        located._children = {name: module.withParentAndName(located, name)
+                             for name, module in self._children.items()}
+        located.__isSetup = True
         return located
 
     def getDocString(self):

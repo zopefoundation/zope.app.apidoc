@@ -42,9 +42,11 @@ class UtilityModuleTests(BrowserTestCase):
         # this avoids the deprecation warning for the deprecated
         # zope.publisher.interfaces.ILayer interface which get traversed
         # as a utility in this test
+        # This is slow, so we limit the number of links we fetch.
         zope.deprecation.__show__.off()
         self.checkForBrokenLinks(body, '/++apidoc++/Utility/menu.html',
-                                 basic='mgr:mgrpw')
+                                 basic='mgr:mgrpw',
+                                 max_links=10)
         zope.deprecation.__show__.on()
 
     def testUtilityDetailsView(self):

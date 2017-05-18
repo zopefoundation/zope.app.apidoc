@@ -15,11 +15,14 @@
 
 """
 __docformat__ = 'restructuredtext'
+import operator
 
 from zope.traversing.api import traverse
 from zope.traversing.browser import absoluteURL
 
 from zope.app.apidoc.classregistry import classRegistry
+
+_pathgetter = operator.itemgetter("path")
 
 class Menu(object):
     """Menu for the Class Documentation Module.
@@ -66,15 +69,18 @@ class Menu(object):
         if path is None:
             return []
         classModule = traverse(self.context, '/++apidoc++')['Code']
+        classModule.setup()
         results = []
-        for p in classRegistry.keys():
-            if p.find(path) >= 0:
-                klass = traverse(classModule, p.replace('.', '/'))
-                results.append(
-                    {'path': p,
-                     'url': absoluteURL(klass, self.request) + '/'
-                     })
-        results.sort(key=lambda x: x['path'])
+        for p in classRegistry:
+            if path not in p:
+                continue
+
+            klass = traverse(classModule, p.replace('.', '/'))
+            results.append({
+                'path': p,
+                'url': absoluteURL(klass, self.request) + '/'
+            })
+        results.sort(key=_pathgetter)
         return results
 
     def findAllClasses(self):
@@ -118,5 +124,5 @@ class Menu(object):
                  })
             counter += 1
 
-        results.sort(key=lambda x: x['path'])
+        results.sort(key=_pathgetter)
         return results

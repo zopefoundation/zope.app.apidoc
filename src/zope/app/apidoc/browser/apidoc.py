@@ -28,16 +28,14 @@ class APIDocumentationView(object):
 
     def getModuleList(self):
         """Get a list of all available documentation modules."""
-        items = list(self.context.items())
-        items.sort()
+        items = sorted(self.context.items())
         result = []
         for name, module in items:
             description = removeSecurityProxy(module.description)
             description = translate(description, context=self.request,
                                     default=description)
             description = renderText(description, module.__class__.__module__)
-            if isinstance(description, bytes):
-                description = description.decode("utf-8")
+            assert not isinstance(description, bytes)
             result.append({'name': name,
                            'title': module.title,
                            'description': description})

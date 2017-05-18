@@ -117,6 +117,7 @@ class BrowserTestCase(unittest.TestCase):
             if href in seen:
                 continue
             seen.add(href)
+
             self.publish(href, basic=basic)
 
             if max_links is not None:

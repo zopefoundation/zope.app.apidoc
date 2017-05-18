@@ -20,6 +20,7 @@ import types
 import six
 
 import zope
+from zope.proxy import getProxiedObject
 from zope.interface import implementer
 from zope.interface import providedBy
 from zope.interface.interface import InterfaceClass
@@ -57,16 +58,15 @@ class Module(ReadContainerBase):
     """This class represents a Python module."""
 
     _package = False
+    _children = None
 
     def __init__(self, parent, name, module, setup=True):
         """Initialize object."""
         self.__parent__ = parent
         self.__name__ = name
         self._module = module
-        self._children = {}
-        self._package = False
-        if setup:
-            self.__setup()
+        self.__needsSetup = setup
+        self.__setup()
 
     def __setup_package(self):
         # Detect packages
@@ -166,6 +166,11 @@ class Module(ReadContainerBase):
 
     def __setup(self):
         """Setup the module sub-tree."""
+        if not self.__needsSetup:
+            return
+
+        self.__needsSetup = False
+        self._children = {}
         self.__setup_package()
 
         zope.deprecation.__show__.off()
@@ -173,6 +178,22 @@ class Module(ReadContainerBase):
             self.__setup_classes_and_functions()
         finally:
             zope.deprecation.__show__.on()
+
+    def withParentAndName(self, parent, name):
+        located = type(self)(parent, name, self._module, False)
+        new_children = located._children = {}
+        for x in self._children.values():
+            try:
+                new_child = x.withParentAndName(located, x.__name__)
+            except AttributeError:
+                if isinstance(x, LocationProxy):
+                    new_child = LocationProxy(getProxiedObject(x), located, x.__name__)
+                else:
+                    new_child = LocationProxy(x, located, x.__name__)
+
+            new_children[x.__name__] = new_child
+
+        return located
 
     def getDocString(self):
         """See IModuleDocumentation."""
