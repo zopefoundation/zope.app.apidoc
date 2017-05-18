@@ -1,12 +1,12 @@
 ========================================
-Code Module specific `apidoc` Directives 
+Code Module specific `apidoc` Directives
 ========================================
 
 The `apidoc:rootModule` Directive
 ---------------------------------
 
 The `rootModule` directive allows you to register a third party Python package
-with apidoc's code browser. 
+with apidoc's code browser.
 
 Before we can register a new root module, we need to load the
 metaconfiguration:
@@ -48,9 +48,12 @@ registry tries to import the path. The hook was provided for security reasons,
 since uncontrolled importing of modules in a running application is considered
 a security hole.
 
-By default the flag is set to false:
+By default the flag is set to false (of course, this depends on the
+order in which tests are run and what ZCML has been configured or if
+this was manually changed, so we can't really rely on the default here):
 
   >>> from zope.app.apidoc import classregistry
+  >>> classregistry.__import_unknown_modules__ = False
   >>> classregistry.__import_unknown_modules__
   False
 
@@ -75,4 +78,3 @@ We can also set it back to false of course:
 
   >>> classregistry.__import_unknown_modules__
   False
-

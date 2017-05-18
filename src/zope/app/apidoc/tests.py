@@ -196,6 +196,26 @@ class TestUtilities(unittest.TestCase):
 
         self.assertEqual("((a, b))", getFunctionSignature(locals()['f']))
 
+
+from zope.app.apidoc import static
+
+class TestStatic(unittest.TestCase):
+
+    def test_run(self):
+        import tempfile
+        import shutil
+        tmpdir = tempfile.mkdtemp(suffix='apidoc.TestStatic')
+        self.addCleanup(shutil.rmtree, tmpdir)
+
+        try:
+            static.main(['static', tmpdir])
+            self.fail("Should raise SystemExit")
+        except SystemExit as e:
+            self.assertEqual(e.args[0], 0)
+        finally:
+            APIDocLayer.testTearDown()
+            APIDocLayer.tearDown()
+
 # Generally useful classes and functions
 
 @implementer(IContainmentRoot)

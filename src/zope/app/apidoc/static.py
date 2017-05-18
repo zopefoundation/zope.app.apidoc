@@ -13,7 +13,7 @@
 ##############################################################################
 """Retrieve Static APIDOC
 
-$Id$
+
 """
 __docformat__ = "reStructuredText"
 
@@ -23,15 +23,20 @@ import os.path
 import sys
 import time
 import optparse
-import urllib2
-import urlparse
+from six.moves.urllib import error as urllib2
+from six.moves.urllib import parse as urlparse
+
 import warnings
-import HTMLParser
+try:
+    from HTMLParser import HTMLParseError
+except ImportError:
+    class HTMLParseError(Exception):
+        pass
 
-import zope.testbrowser.testing
-import mechanize
+import zope.testbrowser.browser
+import zope.testbrowser.wsgi
 
-from zope.app.testing import functional
+#from zope.app.testing import functional
 
 from zope.app.apidoc import classregistry
 
@@ -91,13 +96,13 @@ def completeURL(url):
 class Link(object):
     """A link in the page."""
 
-    def __init__(self, mechLink, rootURL, referenceURL='None'):
+    def __init__(self, url, rootURL, referenceURL='None'):
         self.rootURL = rootURL
         self.referenceURL = referenceURL
-        self.originalURL = mechLink.url
-        self.callableURL = mechLink.absolute_url
-        self.url = completeURL(cleanURL(mechLink.url))
-        self.absoluteURL = completeURL(cleanURL(mechLink.absolute_url))
+        self.originalURL = url #mechLink.url
+        self.callableURL = url #mechLink.absolute_url
+        self.url = completeURL(cleanURL(url))
+        self.absoluteURL = completeURL(cleanURL(self.callableURL))
 
     def isLocalURL(self):
         """Determine whether the passed in URL is local and accessible."""
@@ -115,14 +120,14 @@ class Link(object):
 
     def isApidocLink(self):
         # Make sure that only apidoc links are loaded
-        if self.absoluteURL.startswith(self.rootURL+'++apidoc++/'):
+        if self.absoluteURL.startswith(self.rootURL + '++apidoc++/'):
             return True
-        if self.absoluteURL.startswith(self.rootURL+'@@/'):
+        if self.absoluteURL.startswith(self.rootURL + '@@/'):
             return True
         return False
 
 
-class OnlineBrowser(mechanize.Browser, object):
+class OnlineBrowser(zope.testbrowser.wsgi.Browser, object):
 
     def __init__(self, factory=None, history=None, request_class=None):
         if factory == None:
@@ -134,41 +139,39 @@ class OnlineBrowser(mechanize.Browser, object):
         hash = base64.encodestring(user+':'+pw).strip()
         self.addheaders.append(('Authorization', 'Basic '+hash))
 
-    @property
-    def contents(self):
-        """Get the content of the returned data"""
-        response = self.response()
-        old_location = response.tell()
-        response.seek(0)
-        contents = response.read()
-        response.seek(old_location)
-        return contents
+    # @property
+    # def contents(self):
+    #     """Get the content of the returned data"""
+    #     response = self.response()
+    #     old_location = response.tell()
+    #     response.seek(0)
+    #     contents = response.read()
+    #     response.seek(old_location)
+    #     return contents
 
 
-class PublisherBrowser(zope.testbrowser.testing.PublisherMechanizeBrowser,
+class PublisherBrowser(zope.testbrowser.wsgi.Browser,
                        object):
 
     def __init__(self, *args, **kw):
-        functional.defineLayer(
-            'Functional',
-            zcml=os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                              'ftesting.zcml')))
-        Functional.setUp()
+        from zope.app.apidoc.testing import APIDocLayer
+        APIDocLayer.setUp()
+        APIDocLayer.testSetUp()
         super(PublisherBrowser, self).__init__(*args, **kw)
 
     def setUserAndPassword(self, user, pw):
         """Specify the username and password to use for the retrieval."""
-        self.addheaders.append(('Authorization', 'Basic %s:%s' %(user, pw)))
+        self.addHeader('Authorization', 'Basic %s:%s' %(user, pw))
 
-    @property
-    def contents(self):
-        """Get the content of the returned data"""
-        response = self.response()
-        old_location = response.tell()
-        response.seek(0)
-        contents = response.read()
-        response.seek(old_location)
-        return contents
+    # @property
+    # def contents(self):
+    #     """Get the content of the returned data"""
+    #     response = self.response()
+    #     old_location = response.tell()
+    #     response.seek(0)
+    #     contents = response.read()
+    #     response.seek(old_location)
+    #     return contents
 
 
 class StaticAPIDocGenerator(object):
@@ -178,7 +181,7 @@ class StaticAPIDocGenerator(object):
         self.options = options
         self.linkQueue = []
         for url in self.options.additional_urls + [self.options.startpage]:
-            link = Link(mechanize.Link(self.options.url, url, '', '', ()),
+            link = Link('http://localhost/' + url,#mechanize.Link(self.options.url, url, '', '', ()),
                         self.options.url)
             self.linkQueue.append(link)
         self.rootDir = os.path.join(os.path.dirname(__file__),
@@ -263,6 +266,7 @@ class StaticAPIDocGenerator(object):
 
         # Retrieve the content
         try:
+            print(link.callableURL)
             self.browser.open(link.callableURL)
         except urllib2.HTTPError as error:
             # Something went wrong with retrieving the page.
@@ -284,6 +288,7 @@ class StaticAPIDocGenerator(object):
             # to catch all exceptions, so that we can investigate them.
             if self.options.debug:
                 import pdb; pdb.set_trace()
+            raise
             return
 
         # Get the response content
@@ -303,11 +308,12 @@ class StaticAPIDocGenerator(object):
         filepath = os.path.join(dir, filename)
 
         # Now retrieve all links
-        if self.browser.viewing_html():
+        if self.browser.isHtml:
 
             try:
-                links = self.browser.links()
-            except HTMLParser.HTMLParseError as error:
+                links = self.browser._response.html.find_all('a')
+                #links = self.browser.links()
+            except HTMLParseError as error:
                 self.htmlErrors += 1
                 self.sendMessage('Failed to parse HTML: ' + url, 1)
                 self.sendMessage('+-> %s: line %i, column %s' % (
@@ -333,71 +339,72 @@ class StaticAPIDocGenerator(object):
 
         # Write the data into the file
         try:
-            file = open(filepath, 'w')
-            file.write(contents)
-            file.close()
+            with open(filepath, 'wb') as f:
+                if not isinstance(contents, bytes):
+                    contents = contents.encode('utf-8')
+                f.write(contents)
         except IOError:
             # The file already exists, so it is a duplicate and a bad one,
             # since the URL misses `index.hml`. ReST can produce strange URLs
             # that produce this problem, and we have little control over it.
             pass
 
-class ApiDocDefaultFactory(mechanize._html.DefaultFactory):
-    """Based on sgmllib."""
-    def __init__(self, i_want_broken_xhtml_support=False):
-        mechanize._html.Factory.__init__(
-            self,
-            forms_factory=mechanize._html.FormsFactory(),
-            links_factory=ApiDocLinksFactory(urltags=urltags),
-            title_factory=mechanize._html.TitleFactory(),
-            response_type_finder=mechanize._html.ResponseTypeFinder(
-                allow_xhtml=i_want_broken_xhtml_support),
-            )
+# class ApiDocDefaultFactory(mechanize._html.DefaultFactory):
+#     """Based on sgmllib."""
+#     def __init__(self, i_want_broken_xhtml_support=False):
+#         mechanize._html.Factory.__init__(
+#             self,
+#             forms_factory=mechanize._html.FormsFactory(),
+#             links_factory=ApiDocLinksFactory(urltags=urltags),
+#             title_factory=mechanize._html.TitleFactory(),
+#             response_type_finder=mechanize._html.ResponseTypeFinder(
+#                 allow_xhtml=i_want_broken_xhtml_support),
+#             )
 
 
-class ApiDocLinksFactory(mechanize._html.LinksFactory):
-    """Copy of mechanize link factory.
+# class ApiDocLinksFactory(mechanize._html.LinksFactory):
+#     """Copy of mechanize link factory.
 
-    Unfortunately, the original implementation explicitely ignores base hrefs.
-    """
+#     Unfortunately, the original implementation explicitely ignores base hrefs.
+#     """
 
-    def links(self):
-        """Return an iterator that provides links of the document."""
-        response = self._response
-        encoding = self._encoding
-        base_url = self._base_url
-        p = self.link_parser_class(response, encoding=encoding)
+#     def links(self):
+#         """Return an iterator that provides links of the document."""
+#         response = self._response
+#         encoding = self._encoding
+#         base_url = self._base_url
+#         p = self.link_parser_class(response, encoding=encoding)
 
-        for token in p.tags(*(self.urltags.keys()+["base"])):
-            # NOTE: WE WANT THIS HERE NOT TO IGNORE IT!
-            #if token.data == "base":
-            #    base_url = dict(token.attrs).get("href")
-            #    continue
-            if token.type == "endtag":
-                continue
-            attrs = dict(token.attrs)
-            tag = token.data
-            name = attrs.get("name")
-            text = None
-            # XXX use attr_encoding for ref'd doc if that doc does not provide
-            #  one by other means
-            #attr_encoding = attrs.get("charset")
-            url = attrs.get(self.urltags[tag])  # XXX is "" a valid URL?
-            if not url:
-                # Probably an <A NAME="blah"> link or <AREA NOHREF...>.
-                # For our purposes a link is something with a URL, so ignore
-                # this.
-                continue
+#         for token in p.tags(*(self.urltags.keys()+["base"])):
+#             # NOTE: WE WANT THIS HERE NOT TO IGNORE IT!
+#             #if token.data == "base":
+#             #    base_url = dict(token.attrs).get("href")
+#             #    continue
+#             if token.type == "endtag":
+#                 continue
+#             attrs = dict(token.attrs)
+#             tag = token.data
+#             name = attrs.get("name")
+#             text = None
+#             # XXX use attr_encoding for ref'd doc if that doc does not provide
+#             #  one by other means
+#             #attr_encoding = attrs.get("charset")
+#             url = attrs.get(self.urltags[tag])  # XXX is "" a valid URL?
+#             if not url:
+#                 # Probably an <A NAME="blah"> link or <AREA NOHREF...>.
+#                 # For our purposes a link is something with a URL, so ignore
+#                 # this.
+#                 continue
 
-            url = mechanize._rfc3986.clean_url(url, encoding)
-            if tag == "a":
-                if token.type != "startendtag":
-                    # hmm, this'd break if end tag is missing
-                    text = p.get_compressed_text(("endtag", tag))
-                # but this doesn't work for eg. <a href="blah"><b>Andy</b></a>
-                #text = p.get_compressed_text()
+#             url = mechanize._rfc3986.clean_url(url, encoding)
+#             if tag == "a":
+#                 if token.type != "startendtag":
+#                     # hmm, this'd break if end tag is missing
+#                     text = p.get_compressed_text(("endtag", tag))
+#                 # but this doesn't work for eg. <a href="blah"><b>Andy</b></a>
+#                 #text = p.get_compressed_text()
 
-            yield mechanize._html.Link(base_url, url, text, tag, token.attrs)
+#             yield mechanize._html.Link(base_url, url, text, tag, token.attrs)
 
 
 ###############################################################################
@@ -511,7 +518,7 @@ default_setup_args = [
     '--verbosity', '5',
     '--publisher',
     '--url', 'http://localhost:8080/',
-    '--startpage', '++apidoc++/static.html',
+    '--startpage', '/++apidoc++/static.html',
     '--username', 'mgr',
     '--password', 'mgrpw',
     '--progress',
@@ -561,8 +568,8 @@ def get_options(args=None, defaults=None):
 ###############################################################################
 
 
-def main():
-    options = get_options()
+def main(args=None):
+    options = get_options(args)
     maker = StaticAPIDocGenerator(options)
     maker.start()
     sys.exit(0)
