@@ -17,6 +17,7 @@
 import doctest
 import os
 import re
+import sys
 import unittest
 
 import zope.app.renderer
@@ -165,10 +166,25 @@ class TestPresentation(unittest.TestCase):
 
 class TestUtilities(unittest.TestCase):
 
-    @unittest.skipUnless(str is bytes, "Only on py2")
-    def test_slot_methods(self):
+    # All three implementations (Py2, PyPy2, Python 3) do different
+    # things with slot method descriptors
+    @unittest.skipIf(str is not bytes or hasattr(sys, 'pypy_version_info'),
+                     "Only on CPython2")
+    def test_slot_methods2(self):
         from zope.app.apidoc.utilities import getFunctionSignature
         self.assertEqual("(<unknown>)", getFunctionSignature(object.__init__))
+
+    @unittest.skipIf(str is bytes, "Only on Cpython3")
+    def test_slot_methods3(self):
+        from zope.app.apidoc.utilities import getFunctionSignature
+        self.assertEqual("(self, *args, **kwargs)", getFunctionSignature(object.__init__))
+
+    @unittest.skipIf(str is not bytes or not hasattr(sys, 'pypy_version_info'),
+                     "Only on PyPy")
+    def test_slot_methodspypy2(self):
+        from zope.app.apidoc.utilities import getFunctionSignature
+        self.assertEqual("(obj, *args, **keywords)", getFunctionSignature(object.__init__))
+
 
     @unittest.skipUnless(str is bytes, "Only on py2")
     def test_unpack_methods(self):
