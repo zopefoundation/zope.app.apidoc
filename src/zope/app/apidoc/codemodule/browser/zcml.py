@@ -13,7 +13,6 @@
 ##############################################################################
 """ZCML Element Views
 
-$Id$
 """
 __docformat__ = "reStructuredText"
 from zope.component import getUtility
@@ -36,7 +35,7 @@ def findDocModule(obj):
         return obj
     return findDocModule(getParent(obj))
 
-def _compareAttrs(x,nameOrder):
+def _compareAttrs(x, nameOrder):
     if x['name'] in nameOrder:
         valueX = nameOrder.index(x['name'])
     else:

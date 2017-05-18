@@ -72,31 +72,28 @@ class Class(object):
 
     if str is bytes:
         # Python 2
-        def getAttributes(self):
-            """See IClassDocumentation."""
-            return [(name, obj, iface)
-                    for name, obj, iface in self._iterAllAttributes()
-                    if not (ismethod(obj) or ismethoddescriptor(obj))]
-
-        def getMethods(self):
-            """See IClassDocumentation."""
-            return [(name, obj, iface)
-                    for name, obj, iface in self._iterAllAttributes()
-                    if ismethod(obj)]
+        def _ismethod(self, obj):
+            return ismethod(obj)
     else:
-        # XXX: This may not really be exactly correct.
-        def getAttributes(self):
-            """See IClassDocumentation."""
-            return [(name, obj, iface)
-                    for name, obj, iface in self._iterAllAttributes()
-                    if not callable(obj)]
+        # On Python 3, there is no unbound method.
+        # we treat everything that's callable as a method.
+        # The corner case is where we bind a C
+        # function to an attribute; it's not *technically* a method,
+        # but it acts just like a @staticmethod, so it works out
+        # the same
+        _ismethod = callable
 
-        def getMethods(self):
-            """See IClassDocumentation."""
-            return [(name, obj, iface)
-                    for name, obj, iface in self._iterAllAttributes()
-                    if callable(obj)]
+    def getAttributes(self):
+        """See IClassDocumentation."""
+        return [(name, obj, iface)
+                for name, obj, iface in self._iterAllAttributes()
+                if not self._ismethod(obj) and not ismethoddescriptor(obj)]
 
+    def getMethods(self):
+        """See IClassDocumentation."""
+        return [(name, obj, iface)
+                for name, obj, iface in self._iterAllAttributes()
+                if self._ismethod(obj)]
 
     def getMethodDescriptors(self):
         return [(name, obj, iface)
