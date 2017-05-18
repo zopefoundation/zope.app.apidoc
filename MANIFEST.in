@@ -11,3 +11,4 @@ recursive-include src *.png
 recursive-include src *.pt
 recursive-include src *.zcml
 recursive-include src *.rst
+recursive-include src *.txt

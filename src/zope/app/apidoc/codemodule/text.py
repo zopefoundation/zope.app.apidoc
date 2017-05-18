@@ -15,6 +15,7 @@
 
 """
 __docformat__ = 'restructuredtext'
+
 from zope.interface import implementer
 from zope.location.interfaces import ILocation
 
@@ -31,6 +32,11 @@ class TextFile(object):
         self.__name__ = name
 
     def getContent(self):
-        with open(self.path, 'rUb') as f:
+        with open(self.path, 'rb') as f:
             content = f.read()
+
+        # Make newlines universal
+        content = content.replace(b'\r\n', b'\n')
+        content = content.replace(b'\r', b'\n')
+
         return content.decode('utf-8')
