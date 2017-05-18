@@ -411,15 +411,17 @@ any positional arguments:
 
 Next we test whether the signature is correctly determined for class
 methods. Note that the `self` argument is removed from the signature, since it
-is not essential for documentation (this only happens on Python 2 when
-we pass an "unbound method"; Python 3 doesn't have such a concept, so
-we always pass bound methods).
+is not essential for documentation; this happens by default on Python
+2 for unbound methods, but since Python 3 doesn't have such a concept
+we have to explicitly ask for that behaviour:
 
 We start out with a simple positional argument:
 
   >>> class Klass(object):
   ...     def func(self, attr):
   ...         pass
+  >>> utilities.getFunctionSignature(Klass.func, ignore_self=True)
+  '(attr)'
   >>> utilities.getFunctionSignature(Klass().func)
   '(attr)'
 
@@ -429,6 +431,8 @@ unspecified keyword arguments:
   >>> class Klass(object):
   ...     def func(self, attr, *args, **kw):
   ...         pass
+  >>> utilities.getFunctionSignature(Klass().func, ignore_self=True)
+  '(attr, *args, **kw)'
   >>> utilities.getFunctionSignature(Klass().func)
   '(attr, *args, **kw)'
 
@@ -440,7 +444,8 @@ If you do not pass a function or method to the function, it will fail:
   TypeError: func must be a function or method not a ...
 
 A very uncommon, but perfectly valid (in Python 2), case is that tuple arguments are
-unpacked inside the argument list of the function. Here is an example:
+unpacked inside the argument list of the function. Here is an example
+(we can't actually test it because it fails on Python 3):
 
   def func((arg1, arg2)):
        pass
