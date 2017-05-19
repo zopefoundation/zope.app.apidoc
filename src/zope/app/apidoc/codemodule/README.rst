@@ -27,7 +27,7 @@ different:
   True
 
   >>> sorted(cm.keys())
-  [u'BTrees', u'ZConfig', u'ZODB', u'persistent', u'transaction', u'zope']
+  [u'BTrees', u'ZConfig', u'ZODB', u'persistent', u'transaction', ...]
 
 
 Module

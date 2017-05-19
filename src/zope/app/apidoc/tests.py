@@ -201,41 +201,93 @@ from zope.app.apidoc import static
 
 class TestStatic(unittest.TestCase):
 
-    def setUp(self):
-        # XXX: The static needs to do this.
-        _setUp_AppSetup()
-
-    def tearDown(self):
-        _tearDown_AppSetup()
-
-    @unittest.skip("Takes too long right now")
-    def test_run(self):
+    def _tempdir(self):
         import tempfile
         import shutil
-        import sys
-        tmpdir = tempfile.mkdtemp(suffix='apidoc.TestStatic')
+        tmpdir = tempfile.mkdtemp(suffix='.apidoc.TestStatic')
         self.addCleanup(shutil.rmtree, tmpdir)
+        return tmpdir
+
+    def test_run(self):
+        tmpdir = self._tempdir()
+        static.main(['--max-runtime', '10', os.path.join(tmpdir, 'dir')])
+
+        self.assertIn('static.html',
+                      os.listdir(os.path.join(tmpdir, 'dir', '++apidoc++')))
+
+    def test_run_404(self):
+        tmpdir = self._tempdir()
+        # Fetch a 404 page
+        bad_url = '++apidoc++/Code/zope/formlib/form/PageEditForm/index.html'
+        maker = static.main(['--max-runtime', '1',
+                             '--startpage', bad_url,
+                             tmpdir])
+        self.assertEqual(9, maker.counter) # our six default images, plus scripts
+        self.assertEqual(1, maker.linkErrors)
+
+    def test_processLink_errors(self):
+        tmpdir = self._tempdir()
+
+        class ErrorBrowser(object):
+            error_kind = ValueError
+            contents = ''
+            isHtml = False
+            def open(self, url):
+                raise self.error_kind(url)
+
+            def end(self):
+                pass
+
+        class ErrorGenerator(static.StaticAPIDocGenerator):
+            error_kind = ValueError
+
+            def processLink(self, link):
+                b = self.browser
+                self.browser = ErrorBrowser()
+                self.browser.error_kind = self.error_kind
+                super(ErrorGenerator, self).processLink(link)
+                self.browser = b
+
+        maker = static.main(['--max-runtime', '10', os.path.join(tmpdir, 'dir')],
+                            generator=ErrorGenerator)
+        self.assertEqual(7, maker.counter)
+        self.assertEqual(7, maker.linkErrors)
 
 
-        # XXX: The static ideally needs to do replace sys.exit
-        # with something that doesn't lead to a 500 error (or fails debuging)
-        # This is triggered just by importing zdaemon.__main__, among
-        # others
-        e = sys.exit
-        def exit(i):
-            pass
-        sys.exit = exit
-        # XXX: Need a way to limit how many requests it makes. This takes
-        # forever!
-        try:
-            static.main(['static', tmpdir])
-            self.fail("Should raise SystemExit")
-        except SystemExit as e:
-            self.assertEqual(e.args[0], 0)
-        finally:
-            sys.exit = e
-            APIDocLayer.testTearDown()
-            APIDocLayer.tearDown()
+        class BadErrorGenerator(ErrorGenerator):
+            error_kind = Exception
+
+        maker = static.main(['--max-runtime', '10', os.path.join(tmpdir, 'dir')],
+                            generator=BadErrorGenerator)
+        self.assertEqual(7, maker.counter)
+        self.assertEqual(0, maker.linkErrors)
+        self.assertEqual(7, maker.otherErrors)
+
+    def test_cleanURL(self):
+        self.assertEqual("http://localhost/",
+                         static.cleanURL("http://localhost/#frogment"))
+
+    def test_completeURL(self):
+        self.assertEqual("http://localhost/index.html",
+                         static.completeURL("http://localhost/"))
+
+    def test_Link_localURL(self):
+
+        self.assertFalse(static.Link('javascript:alert()', '').isLocalURL())
+        self.assertFalse(static.Link('mailto:person@company', '').isLocalURL())
+        self.assertFalse(static.Link("http://external.site/", "http://localhost/").isLocalURL())
+
+    def test_OnlineBrowser(self):
+        browser = static.OnlineBrowser.begin()
+        browser.setUserAndPassword('user', 'password')
+        # pylint:disable=protected-access
+        x = browser._req_headers["Authorization"]
+        self.assertEqual(x, 'Basic dXNlcjpwYXNzd29yZA==')
+        browser.setDebugMode(True)
+        x = browser._req_headers["X-zope-handle-errors"]
+        self.assertEqual(x, 'False')
+
+        browser.end()
 
 # Generally useful classes and functions
 

@@ -74,6 +74,9 @@
 
   <include package="zope.dublincore" />
 
+  <!-- Error reporting utility -->
+  <include package="zope.error" />
+
   <!-- traversing -->
   <include package="zope.location" />
   <include package="zope.traversing" />

@@ -26,13 +26,9 @@ def read(*rnames):
     with open(os.path.join(os.path.dirname(__file__), *rnames)) as f:
         return f.read()
 
-static_requires = [
-    'zope.securitypolicy',
-    'zope.app.securitypolicy',
-]
-
 tests_require = [
     'zope.app.securitypolicy',
+    'zope.app.schema',
     'zope.browserpage >= 4.1.0',
     'zope.securitypolicy',
     'zope.login',
@@ -45,7 +41,9 @@ tests_require = [
     'zope.app.folder >= 4.0.0',
     'zope.applicationcontrol >= 4.0.0',
     'zope.app.wsgi',
-] + static_requires
+]
+
+static_requires = tests_require
 
 setup(
     name='zope.app.apidoc',

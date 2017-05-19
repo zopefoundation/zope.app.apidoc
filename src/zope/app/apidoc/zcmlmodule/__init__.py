@@ -170,6 +170,7 @@ def _makeDocStructure():
         return
 
     context = zope.app.appsetup.appsetup.getConfigContext()
+    assert context is not None
     namespaces, subdirs = docutils.makeDocStructures(context)
 
     # Empty keys are not so good for a container
