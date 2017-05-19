@@ -1,6 +1,6 @@
-========================
-Zope 3 API Documentation
-========================
+==========================
+ Zope 3 API Documentation
+==========================
 
 This Zope 3 package provides fully dynamic API documentation of Zope 3 and
 registered add-on components. The package is very extensible and can be easily
@@ -26,7 +26,7 @@ APIs to extract information from various objects used by Zope 3.
 
 
 Using the API Dcoumentation
----------------------------
+===========================
 
 The `APIDocumentation` class provides access to all available documentation
 modules. Documentation modules are utilities providing `IDocumentationModule`:
@@ -56,7 +56,7 @@ Now we can instantiate the class (which is usually done when traversing
 
 
 Developing a Module
--------------------
+===================
 
 1. Implement a class that realizes the `IDocumentationModule`
    interface.
@@ -84,7 +84,7 @@ in them for some guidance.
 
 
 New Static APIDOC-Version
--------------------------
+=========================
 
 An alternative APIDOC-Version is available through ++apidoc++/static.html
 Find and Tree is implemented in Javascript. So it should be possible to do a

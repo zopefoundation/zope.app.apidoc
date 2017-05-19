@@ -1,6 +1,6 @@
-==================
-The Class Registry
-==================
+====================
+ The Class Registry
+====================
 
 This little registry allows us to quickly query a complete list of classes
 that are defined and used by Zope 3. The prime feature of the class is the
@@ -63,8 +63,8 @@ are the names of the classes:
 
 There are two API methods specific to the class registry:
 
-`getClassesThatImplement(iface)`
---------------------------------
+``getClassesThatImplement(iface)``
+==================================
 
 This method returns all classes that implement the specified interface:
 
@@ -85,8 +85,8 @@ This method returns all classes that implement the specified interface:
   >>> pprint(reg.getClassesThatImplement(ID))
   []
 
-`getSubclassesOf(klass)`
-------------------------
+``getSubclassesOf(klass)``
+==========================
 
 This method will find all classes that inherit the specified class:
 
@@ -98,7 +98,7 @@ This method will find all classes that inherit the specified class:
 
 
 Safe Imports
-------------
+============
 
 Using the ``safe_import()`` we can quickly look up modules by minimizing
 import calls.

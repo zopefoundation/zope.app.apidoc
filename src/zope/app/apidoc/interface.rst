@@ -1,6 +1,6 @@
-==============================
-Interface Inspection Utilities
-==============================
+================================
+ Interface Inspection Utilities
+================================
 
 This document is a presentation of the utility functions provided by
 
@@ -26,8 +26,8 @@ For the following demonstrations, we need a nice interface that we can inspect:
   ...         """This is the `blah` method."""
 
 
-`getElements(iface, type=IElement)`
------------------------------------
+``getElements(iface, type=IElement)``
+=====================================
 
 Return a dictionary containing all elements in an interface. The type
 specifies whether we are looking for attributes, fields or methods. So let's
@@ -57,9 +57,9 @@ You might be surprised by the above result, since the fields and methods are
 again included. However, fields and methods are just attributes and thus
 extend the simple attribute implementation. If you want to get a list of
 attributes that does not include fields and methods, see the
-`getAttributes(iface)` function.
+``getAttributes(iface)`` function.
 
-The default type is `IElement` which will simply return all elements of the
+The default type is ``IElement`` which will simply return all elements of the
 interface:
 
   >>> names = sorted(interface.getElements(IFoo).keys())
@@ -71,16 +71,16 @@ Presentation code often like to wrap interfaces in security proxies and apidoc
 even uses location proxies for interface.
 
 
-`getFieldsInOrder(iface, _itemkey=...)`
------------------------------------------------------------
+``getFieldsInOrder(iface, _itemkey=...)``
+=========================================
 
 For presentation purposes we often want fields to have the a certain order,
 most comonly the order they have in the interface. This function returns a
 list of (name, field) tuples in a specified order.
 
-The `_itemkey` argument provides the function that is used to extract
+The ``_itemkey`` argument provides the function that is used to extract
 the key on which to order the fields. The default function, which
-uses the fields' `order` attribute, should be the correct one for
+uses the fields' ``order`` attribute, should be the correct one for
 99% of your needs.
 
 Reusing the interface created above, we check the output:
@@ -95,8 +95,8 @@ By changing the sort method to sort by names, we get:
   ['bar', 'foo']
 
 
-`getAttributes(iface)`
-----------------------
+``getAttributes(iface)``
+========================
 
 This function returns a (name, attr) tuple for every attribute in the
 interface. Note that this function will only return pure attributes; it
@@ -108,8 +108,8 @@ ignores methods and fields.
   [('baz', <zope.interface.interface.Attribute object at ...>)]
 
 
-`getMethods(iface)`
--------------------
+``getMethods(iface)``
+=====================
 
 This function returns a (name, method) tuple for every declared method in the
 interface.
@@ -119,8 +119,8 @@ interface.
   [('blah', <zope.interface.interface.Method object at ...>)]
 
 
-`getFields(iface)`
-------------------
+``getFields(iface)``
+====================
 
 This function returns a (name, field) tuple for every declared field in the
 interface.
@@ -129,31 +129,31 @@ interface.
   [('bar', <zope.schema._bootstrapfields.TextLine object at ...>),
    ('foo', <zope.schema._bootstrapfields.Field object at ...>)]
 
-Note that this returns the same result as `getFieldsInOrder()` with the fields
-sorted by their `order` attribute, except that you cannot specify the sort
+Note that this returns the same result as ``getFieldsInOrder()`` with the fields
+sorted by their ``order`` attribute, except that you cannot specify the sort
 function here. This function was mainly provided for symmetry with the other
 functions.
 
 
-`getInterfaceTypes(iface)`
---------------------------
+``getInterfaceTypes(iface)``
+============================
 
 Interfaces can be categorized/grouped by using interface types. Interface
-types simply extend `zope.interface.interfaces.IInterface`, which are
+types simply extend ``zope.interface.interfaces.IInterface``, which are
 basically meta-interfaces. The interface types are then provided by particular
 interfaces.
 
-The `getInterfaceTypes()` function returns a list of interface types that are
+The ``getInterfaceTypes()`` function returns a list of interface types that are
 provided for the specified interface. Note that you commonly expect only one
 type per interface, though.
 
-Before we assign any type to our `IFoo` interface, there are no types
+Before we assign any type to our ``IFoo`` interface, there are no types
 declared.
 
   >>> interface.getInterfaceTypes(IFoo)
   []
 
-Now we define a new type called `IContentType`
+Now we define a new type called ``IContentType``
 
   >>> from zope.interface.interfaces import IInterface
   >>> class IContentType(IInterface):
@@ -174,8 +174,8 @@ Again note that the interface passed to this function *cannot* be proxied,
 otherwise this method will pick up the proxy's interfaces as well.
 
 
-`getFieldInterface(field)`
---------------------------
+``getFieldInterface(field)``
+============================
 
 This function tries pretty hard to determine the best-matching interface that
 represents the field. Commonly the field class has the same name as the field
@@ -189,7 +189,7 @@ interface (minus an "I"). So this is our first choice:
   <InterfaceClass zope.schema.interfaces.IInt>
 
 If the name matching method fails, it picks the first interface that extends
-`IField`:
+``IField``:
 
   >>> from zope.schema.interfaces import IField
   >>> class ISpecialField(IField):
@@ -206,8 +206,8 @@ If the name matching method fails, it picks the first interface that extends
   <InterfaceClass zope.app.apidoc.doctest.ISpecialField>
 
 
-`getAttributeInfoDictionary(attr, format='restructuredtext')`
--------------------------------------------------------------
+``getAttributeInfoDictionary(attr, format='restructuredtext')``
+===============================================================
 
 This function returns a page-template-friendly dictionary for a simple
 attribute:
@@ -218,8 +218,8 @@ attribute:
    'name': 'baz'}
 
 
-`getMethodInfoDictionary(method, format='restructuredtext')`
--------------------------------------------------------------
+``getMethodInfoDictionary(method, format='restructuredtext')``
+==============================================================
 
 This function returns a page-template-friendly dictionary for a method:
 
@@ -230,8 +230,8 @@ This function returns a page-template-friendly dictionary for a method:
    'signature': '(one, two, three=None, *args, **kwargs)'}
 
 
-`getFieldInfoDictionary(field, format='restructuredtext')`
-----------------------------------------------------------
+``getFieldInfoDictionary(field, format='restructuredtext')``
+============================================================
 
 This function returns a page-template-friendly dictionary for a field:
 

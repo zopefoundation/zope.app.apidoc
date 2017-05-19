@@ -1,22 +1,22 @@
-=================================
-Presentation Inspection Utilities
-=================================
+===================================
+ Presentation Inspection Utilities
+===================================
 
-The `presentation` module provides some nice utilities to inspect presentation
+The ``presentation`` module provides some nice utilities to inspect presentation
 registrations.
 
   >>> from zope.app.apidoc import presentation
 
 
-`getViewFactoryData(factory)`
------------------------------
+``getViewFactoryData(factory)``
+===============================
 
 This function tries really hard to determine the correct information about a
 view factory. For example, when you create a page, a new type is dynamically
 generated upon registration. Let's look at a couple examples.
 
 First, let's inspect a case where a simple browser page was configured without
-a special view class. In these cases the factory is a `SimpleViewClass`:
+a special view class. In these cases the factory is a ``SimpleViewClass``:
 
   >>> from zope.browserpage.simpleviewclass import SimpleViewClass
   >>> view = SimpleViewClass('browser/index.pt')
@@ -43,7 +43,7 @@ thus be viewed by the class browser, the (page) template used for the view and
 the URL under which the factory will be found in the class browser. Some
 views, like icons, also use resources to provide their data. In these cases
 the name of the resource will be provided. Of course, not in all cases all
-values will be available. Empty values are marked with `None`.
+values will be available. Empty values are marked with ``None``.
 
 Believe it or not, in some cases the factory is just a simple type. In these
 cases we cannot retrieve any useful information:
@@ -199,14 +199,14 @@ and the result is finally our original factory:
    'url': 'zope/app/apidoc/doctest/Factory'}
 
 
-`getPresentationType(iface)`
-----------------------------
+``getPresentationType(iface)``
+==============================
 
 In Zope 3, presentation types (i.e. browser, ftp, ...) are defined through
-their special request interface, such as `IBrowserRequest` or
-`IFTPRequest`. To complicate matters further, layer interfaces are used in
+their special request interface, such as ``IBrowserRequest`` or
+``IFTPRequest``. To complicate matters further, layer interfaces are used in
 browser presentations to allow skinning. Layers extend any request type, but
-most commonly `IBrowserRequest`. This function inspects the request interface
+most commonly ``IBrowserRequest``. This function inspects the request interface
 of any presentation multi-adapter and determines its type, which is returned
 in form of an interface.
 
@@ -237,16 +237,16 @@ is returned:
   <InterfaceClass zope.app.apidoc.doctest.ILayer3>
 
 Note that more specific presentation types are considered first. For example,
-`IBrowserRequest` extends `IHTTPRequest`, but it will always determine the
-presentation type to be an `IBrowserRequest`.
+``IBrowserRequest`` extends ``IHTTPRequest``, but it will always determine the
+presentation type to be an ``IBrowserRequest``.
 
 
-`getViews(iface, type=IRequest)`
---------------------------------
+``getViews(iface, type=IRequest)``
+==================================
 
 This function retrieves all available view registrations for a given interface
 and presentation type. The default argument for the presentation type is
-`IRequest`, which will effectively return all views for the specified
+``IRequest``, which will effectively return all views for the specified
 interface.
 
 To see how this works, we first have to register some views:
@@ -281,12 +281,12 @@ should be returned:
                        [Interface, IHTTPRequest], Interface, 'bar', None, u'')]
 
 
-`filterViewRegistrations(regs, iface, level=SPECIFC_INTERFACE_LEVEL)`
----------------------------------------------------------------------
+``filterViewRegistrations(regs, iface, level=SPECIFC_INTERFACE_LEVEL)``
+=======================================================================
 
 Oftentimes the amount of views that are being returned for a particular
 interface are too much to show at once. It is then good to split the view into
-categories. The `filterViewRegistrations()` function allows you to filter the
+categories. The ``filterViewRegistrations()`` function allows you to filter the
 views on how specific they are to the interface. Here are the three levels you
 can select from:
 
@@ -297,7 +297,7 @@ can select from:
                                 interface that the specified interface extends.
 
   * GENERIC_INTERFACE_LEVEL -- Only return registrations that explicitely
-                               require the `Interface` interface.
+                               require the ``Interface`` interface.
 
 So, let's see how this is done. We first need to create a couple of interfaces
 and register some views:
@@ -375,8 +375,8 @@ since all three levels are mutually exclusive.
                 [Interface, IHTTPRequest], Interface, 'view.html', None, u'')]
 
 
-`getViewInfoDictionary(reg)`
-----------------------------
+``getViewInfoDictionary(reg)``
+==============================
 
 Now that we have all these utilities to select the registrations, we need to
 prepare the them for output. For page templates the best data structures are
