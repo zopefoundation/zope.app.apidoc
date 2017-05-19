@@ -17,9 +17,12 @@
 __docformat__ = 'restructuredtext'
 import operator
 
+from zope.security.proxy import removeSecurityProxy
+
 from zope.traversing.api import traverse
 from zope.traversing.browser import absoluteURL
 
+from zope.app.apidoc.browser.utilities import findAPIDocumentationRoot
 from zope.app.apidoc.classregistry import classRegistry
 
 _pathgetter = operator.itemgetter("path")
@@ -57,7 +60,7 @@ class Menu(object):
           [{'path': 'zope.app.apidoc.codemodule.browser.menu.Men',
             'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/browser/menu/Menu/'},
            {'path': 'zope.app.apidoc.ifacemodule.menu.Men',
-            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/ifacemodule/menu/Menu/'}]
+            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/ifacemodule/menu/Menu/'}...]
 
           >>> menu.request = TestRequest(form={'path': 'illegal name'})
           >>> info = menu.findClasses()
@@ -68,8 +71,8 @@ class Menu(object):
         path = self.request.get('path', None)
         if path is None:
             return []
-        classModule = traverse(self.context, '/++apidoc++')['Code']
-        classModule.setup()
+        classModule = findAPIDocumentationRoot(self.context)['Code']
+        removeSecurityProxy(classModule).setup()
         found = [p for p in classRegistry if path in p]
         results = []
         for p in found:
@@ -108,8 +111,8 @@ class Menu(object):
           >>> len(info)
           1
         """
-        classModule = traverse(self.context, '/++apidoc++')['Code']
-        classModule.setup() # run setup if not yet done
+        classModule = findAPIDocumentationRoot(self.context)['Code']
+        removeSecurityProxy(classModule).setup() # run setup if not yet done
         results = []
         counter = 0
 

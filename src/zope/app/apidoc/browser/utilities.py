@@ -13,15 +13,16 @@
 ##############################################################################
 """Common Utilities for Browser View
 
-$Id$
 """
 from zope.app.apidoc.apidoc import APIDocumentation
 from zope.traversing.browser import absoluteURL
 from zope.traversing.api import getParent
 from zope.security.proxy import isinstance
 
-def findAPIDocumentationRootURL(context, request):
+def findAPIDocumentationRoot(context, request=None):
     if isinstance(context, APIDocumentation):
-        return absoluteURL(context, request)
-    else:
-        return findAPIDocumentationRootURL(getParent(context), request)
+        return context
+    return findAPIDocumentationRoot(getParent(context), request)
+
+def findAPIDocumentationRootURL(context, request):
+    return absoluteURL(findAPIDocumentationRoot(context, request), request)

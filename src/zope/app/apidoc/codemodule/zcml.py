@@ -23,6 +23,7 @@ from zope.cachedescriptors.property import Lazy
 from zope.configuration import xmlconfig, config
 from zope.interface import implementer, directlyProvides
 from zope.location.interfaces import ILocation
+from zope.location.location import LocationProxy
 
 import zope.app.appsetup.appsetup
 
@@ -44,6 +45,12 @@ class MyConfigHandler(xmlconfig.ConfigurationHandler, object):
 
     def evaluateCondition(self, expression):
         # We always want to process/show all ZCML directives.
+        # The exception needs to be `installed` that evaluates to False;
+        # if we can't load the package, we can't process the file
+        arguments = expression.split(None)
+        verb = arguments.pop(0)
+        if verb in ('installed', 'not-installed'):
+            return super(MyConfigHandler, self).evaluateCondition(expression)
         return True
 
     def startElementNS(self, name, qname, attrs):
@@ -109,6 +116,13 @@ class ZCMLFile(object):
         self.package = package
         self.__parent__ = parent
         self.__name__ = name
+
+    def withParentAndName(self, parent, name):
+        located = type(self)(self.filename, self.package, parent, name)
+        # We don't copy the root element; let it parse again if needed, instead
+        # of trying to recurse through all the children and copy them.
+        return located
+
 
     @Lazy
     def rootElement(self):

@@ -72,13 +72,36 @@ class Module(ReadContainerBase):
     def __setup_package(self):
         # Detect packages
         module_file = getattr(self._module, '__file__', '')
+        module_path = getattr(self._module, '__path__', None)
         if module_file.endswith(('__init__.py', '__init__.pyc', '__init__.pyo')):
             self._package = True
+        elif hasattr(self._module, '__package__'):
+            # Detect namespace packages, especially (but not limited
+            # to) Python 3 with implicit namespace packages:
+
+            # "When the module is a package, its
+            # __package__ value should be set to its __name__. When
+            # the module is not a package, __package__ should be set
+            # to the empty string for top-level modules, or for
+            # submodules, to the parent package's "
+
+            # Note that everything has __package__ on Python 3, but not
+            # necessarily on Python 2.
+            pkg_name = self._module.__package__
+            self._package = pkg_name and self._module.__name__ == pkg_name
+        else:
+            # Python 2. Lets do some introspection. Namespace packages
+            # often have an empty file. Note that path isn't necessarily
+            # indexable.
+            if (module_file == ''
+                and module_path
+                and os.path.isdir(list(module_path)[0])):
+                self._package = True
 
         if not self._package:
             return
 
-        for mod_dir in self._module.__path__:
+        for mod_dir in module_path:
             # TODO: If we are dealing with eggs, we will not have a
             # directory right away. For now we just ignore zipped eggs;
             # later we want to unzip it.

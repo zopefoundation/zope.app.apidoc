@@ -16,6 +16,8 @@
 """
 import unittest
 
+from zope.traversing.api import traverse
+
 from zope.app.apidoc.testing import APIDocLayer
 from zope.app.apidoc.tests import BrowserTestCase
 from zope.app.apidoc.tests import LayerDocFileSuite
@@ -121,7 +123,7 @@ class TestClass(unittest.TestCase):
 
         details = ClassDetails()
         details.request = TestRequest()
-        details.context = self.layer.getRootFolder()
+        details.context = traverse(self.layer.getRootFolder(), '/++apidoc++')
 
         info = details._listClasses([items_class])
         self.assertIsNone(info[0]['url'], None)

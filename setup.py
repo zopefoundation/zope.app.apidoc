@@ -27,20 +27,28 @@ def read(*rnames):
         return f.read()
 
 tests_require = [
-    'zope.app.securitypolicy',
-    'zope.app.schema',
+    'zope.app.authentication >= 4.0.0',
+    'zope.app.folder >= 4.0.0',
+    'zope.app.http >= 4.0.1',
+    'zope.app.principalannotation >= 4.0.0',
+    'zope.app.rotterdam >= 4.0.0',
+    'zope.app.wsgi >= 4.1.0',
+    'zope.applicationcontrol >= 4.0.0',
+
     'zope.browserpage >= 4.1.0',
-    'zope.securitypolicy',
     'zope.login',
+    'zope.principalannotation',
+    'zope.securitypolicy',
     'zope.testing',
     'zope.testrunner',
-    'zope.principalannotation',
-    'zope.app.http',
-    'zope.app.rotterdam >= 4.0.0',
-    'zope.app.principalannotation',
-    'zope.app.folder >= 4.0.0',
-    'zope.applicationcontrol >= 4.0.0',
-    'zope.app.wsgi',
+
+    # Things we don't use or configure, but which are
+    # picked up indirectly by other packages and
+    # need to be loaded to avoid errors running the
+    # full static export.
+    'zope.app.component[test]',
+    'zope.app.form[test]', # zc.sourcefactory
+    'zope.app.schema[test]',
 ]
 
 static_requires = tests_require
@@ -105,7 +113,7 @@ setup(
         'zope.app.exception >= 4.0.0',
         'zope.app.onlinehelp >= 4.0.0',
         'zope.app.preference >= 4.0.0',
-        'zope.app.publisher',
+        'zope.app.publisher >= 4.0.0',
         'zope.app.renderer >= 4.0.0',
         'zope.app.tree >= 4.0.0',
         'zope.cachedescriptors',

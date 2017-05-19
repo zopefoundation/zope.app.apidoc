@@ -28,6 +28,8 @@ from zope.app.apidoc.utilities import getPythonPath, getPermissionIds
 from zope.app.apidoc.utilities import renderText, getFunctionSignature
 from zope.app.apidoc.utilities import isReferencable
 
+from zope.app.apidoc.browser.utilities import findAPIDocumentationRoot
+
 
 def getTypeLink(type, _NoneType=type(None)):
     if type is _NoneType:
@@ -60,7 +62,7 @@ class ClassDetails(object):
         return entries
 
     def _getCodeModule(self):
-        apidoc = traverse(self.context, '/++apidoc++')
+        apidoc = findAPIDocumentationRoot(self.context)
         return apidoc['Code']
 
     def _listClasses(self, classes):

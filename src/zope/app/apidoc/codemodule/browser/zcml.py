@@ -15,16 +15,18 @@
 
 """
 __docformat__ = "reStructuredText"
-from zope.component import getUtility
+
 from zope.configuration.fields import GlobalObject, GlobalInterface, Tokens
 from zope.interface.interfaces import IInterface
 from zope.schema import getFieldNamesInOrder
 from zope.security.proxy import isinstance, removeSecurityProxy
 from zope.traversing.api import getParent
+from zope.traversing.api import traverse
 from zope.traversing.browser import absoluteURL
 
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import getPythonPath, isReferencable
+from zope.app.apidoc.browser.utilities import findAPIDocumentationRoot
 from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
 
 from zope.app.apidoc.zcmlmodule import quoteNS
@@ -76,7 +78,7 @@ class DirectiveDetails(object):
         # Sometimes ns is `None`, especially in the slug files, where no
         # namespaces are used.
         ns = quoteNS(ns or 'ALL')
-        zcml = getUtility(IDocumentationModule, 'ZCML')
+        zcml = findAPIDocumentationRoot(self.context, self.request)['ZCML']
         if name not in zcml[ns]:
             ns = 'ALL'
         link = '%s/ZCML/%s/%s/index.html' % (

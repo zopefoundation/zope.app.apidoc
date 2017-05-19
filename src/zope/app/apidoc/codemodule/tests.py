@@ -96,6 +96,45 @@ class TestModule(unittest.TestCase):
         mod = Module(None, 'hooks', zope.component._api)
         self.assertIsInstance(mod._children['getSiteManager'], Function)
 
+    def test_zope_loaded_correctly(self):
+        # Zope is guaranteed to be a namespace package, as is zope.app.
+        import zope
+        import zope.app
+        import zope.annotation
+        import zope.app.apidoc
+        mod = Module(None, 'zope', zope)
+        self.assertEqual(mod['annotation']._module, zope.annotation)
+        self.assertEqual(mod['app']._module, zope.app)
+        self.assertEqual(mod['app']['apidoc']._module, zope.app.apidoc)
+
+class TestZCML(unittest.TestCase):
+
+    def setUp(self):
+        from zope.app.apidoc.tests import _setUp_AppSetup
+        _setUp_AppSetup()
+
+    def tearDown(self):
+        from zope.app.apidoc.tests import _tearDown_AppSetup
+        _tearDown_AppSetup()
+
+    def test_installed(self):
+        from zope.app.apidoc.codemodule.zcml import MyConfigHandler
+        handler = MyConfigHandler(None)
+        self.assertTrue(handler.evaluateCondition('installed zope'))
+        self.assertFalse(handler.evaluateCondition('installed not-a-package'))
+
+    def test_copy_with_root(self):
+        from zope.app.apidoc.codemodule.zcml import ZCMLFile
+        fname = os.path.join(here, '..', 'ftesting-base.zcml')
+        zcml = ZCMLFile(fname, zope.app.apidoc,
+                        None, None)
+
+        zcml.rootElement
+        self.assertEqual(zcml, zcml.rootElement.__parent__)
+
+        clone = zcml.withParentAndName(self, 'name')
+        self.assertEqual(clone.rootElement.__parent__, clone)
+
 def test_suite():
     checker = standard_checker()
 

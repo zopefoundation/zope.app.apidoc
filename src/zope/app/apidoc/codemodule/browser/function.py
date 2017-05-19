@@ -16,12 +16,11 @@
 """
 __docformat__ = 'restructuredtext'
 
-from zope.traversing.api import getParent, traverse
+from zope.traversing.api import getParent
 from zope.traversing.browser import absoluteURL
 
-
 from zope.app.apidoc.utilities import renderText
-
+from zope.app.apidoc.browser.utilities import findAPIDocumentationRoot
 from zope.app.apidoc.codemodule.browser.class_ import getTypeLink
 
 class FunctionDetails(object):
@@ -48,6 +47,6 @@ class FunctionDetails(object):
 
     def getBaseURL(self):
         """Return the URL for the API Documentation Tool."""
-        apidoc = traverse(self.context, '/++apidoc++')
+        apidoc = findAPIDocumentationRoot(self.context)
         m = apidoc['Code']
         return absoluteURL(getParent(m), self.request)
