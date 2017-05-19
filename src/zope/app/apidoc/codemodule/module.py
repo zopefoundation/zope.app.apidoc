@@ -20,6 +20,7 @@ import types
 import six
 
 import zope
+from zope.cachedescriptors.property import Lazy
 from zope.proxy import getProxiedObject
 from zope.interface import implementer
 from zope.interface import providedBy
@@ -200,19 +201,13 @@ class Module(ReadContainerBase):
             zope.deprecation.__show__.on()
 
     def withParentAndName(self, parent, name):
-        located = type(self)(parent, name, self._module, False)
-        new_children = located._children
-        for x in self._children.values():
-            try:
-                new_child = x.withParentAndName(located, x.__name__)
-            except AttributeError:
-                if isinstance(x, LocationProxy):
-                    new_child = LocationProxy(getProxiedObject(x), located, x.__name__)
-                else:
-                    new_child = LocationProxy(x, located, x.__name__)
-
-            new_children[x.__name__] = new_child
-
+        located = _LazyModule(self, parent, name, self._module)
+        # Our module tree can be very large, but typically during any one
+        # traversal we're only going to need one specific branch. So
+        # initializing it lazily the first time one specific level's _children
+        # is accessed has a *major* performance benefit.
+        # A plain @Lazy attribute won't work since we need to copy from self;
+        # we use a subclass, with the provisio that it can be the *only* subclass
         return located
 
     def getDocString(self):
@@ -250,11 +245,13 @@ class Module(ReadContainerBase):
 
         if obj is not None:
             child = Module(self, key, obj)
-            self._children[key] = child
+            # But note that we don't hold on to it. This is a transient
+            # object, almost certainly not actually in our namespace.
+            # TODO: Why do we even allow this? It leads to much larger static exports
+            # and things that aren't even reachable from the menus.
             return child
 
         # Maybe it is a simple attribute of the module
-        assert obj is None
         obj = getattr(self._module, key, default)
         if obj is not default:
             obj = LocationProxy(obj, self, key)
@@ -268,3 +265,27 @@ class Module(ReadContainerBase):
         return [(name, value)
                 for name, value in self._children.items()
                 if not name.startswith('_')]
+
+class _LazyModule(Module):
+
+    copy_from = None
+
+    def __init__(self, copy_from, parent, name, module):
+        Module.__init__(self, parent, name, module, False)
+        del self._children # get our @Lazy back
+        self._copy_from = copy_from
+
+    @Lazy
+    def _children(self):
+        new_children = {}
+        for x in self._copy_from._children.values():
+            try:
+                new_child = x.withParentAndName(self, x.__name__)
+            except AttributeError:
+                if isinstance(x, LocationProxy):
+                    new_child = LocationProxy(getProxiedObject(x), self, x.__name__)
+                else:
+                    new_child = LocationProxy(x, self, x.__name__)
+
+            new_children[x.__name__] = new_child
+        return new_children

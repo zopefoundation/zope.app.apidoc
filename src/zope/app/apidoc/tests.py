@@ -74,6 +74,8 @@ def _setUp_LayerPlace(test):
     test.globs['apidoc'] = APIDocumentation(root_folder, '++apidoc++')
     test.globs['rootFolder'] = root_folder
 
+    from zope.app.apidoc.codemodule import codemodule
+    codemodule._cleanUp()
 
 def _tearDown_LayerPlace(test):
     _tearDown_AppSetup()

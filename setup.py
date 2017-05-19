@@ -42,6 +42,9 @@ tests_require = [
     'zope.testing',
     'zope.testrunner',
 
+    # If we wanted to depend on lxml, it can parse the results quite
+    # a bit faster.
+
     # Things we don't use or configure, but which are
     # picked up indirectly by other packages and
     # need to be loaded to avoid errors running the

@@ -7,6 +7,10 @@
     <allow interface=".interfaces.IModuleDocumentation" />
   </class>
 
+  <class class=".module._LazyModule">
+	  <require like_class=".module.Module" />
+  </class>
+
   <class class=".class_.Class">
     <allow interface=".interfaces.IClassDocumentation" />
   </class>

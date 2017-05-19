@@ -99,8 +99,8 @@ class Menu(object):
 
           Make sure we're registered.
 
-          >>> traverse(menu.context, 'zope/app/apidoc/codemodule/browser/menu')
-          <zope.app.apidoc.codemodule.module.Module 'menu' at ...>
+          >>> traverse(menu.context, 'zope/app/apidoc/codemodule/browser/menu/Menu')
+          <zope.app.apidoc.codemodule.class_.Class object at ...>
 
           Testing the method with various inputs.
 

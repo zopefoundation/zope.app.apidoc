@@ -103,9 +103,21 @@ class CodeModule(Module):
     def get(self, key, default=None):
         """See zope.container.interfaces.IReadContainer."""
         self.setup()
+        # TODO: Do we really like that this allows importing things from
+        # outside our defined namespace? This can lead to a static
+        # export with unreachable objects (not in the menu)
         return super(CodeModule, self).get(key, default)
 
     def items(self):
         """See zope.container.interfaces.IReadContainer."""
         self.setup()
         return super(CodeModule, self).items()
+
+def _cleanUp():
+    from zope.component import getGlobalSiteManager
+    code = getGlobalSiteManager().queryUtility(IDocumentationModule, name='Code')
+    if code is not None:
+        code.__init__()
+
+from zope.testing.cleanup import addCleanUp
+addCleanUp(_cleanUp)
