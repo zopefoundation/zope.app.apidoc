@@ -218,8 +218,8 @@ class TestStatic(unittest.TestCase):
     def test_run_404(self):
         tmpdir = self._tempdir()
         # Fetch a 404 page
-        bad_url = '++apidoc++/Code/zope/formlib/form/PageEditForm/index.html'
-        maker = static.main(['--max-runtime', '1',
+        bad_url = '/++apidoc++/Code/zope/formlib/form/PageEditForm/index.html'
+        maker = static.main(['--max-runtime', '10', # allow for old slow pypy
                              '--startpage', bad_url,
                              tmpdir])
         self.assertEqual(9, maker.counter) # our six default images, plus scripts
