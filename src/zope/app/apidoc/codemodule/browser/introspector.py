@@ -141,7 +141,8 @@ class Introspector(BrowserView):
         for name in apidoc.utilities.getPublicAttributes(obj):
             value = getattr(obj, name)
             if inspect.ismethod(value) or inspect.ismethoddescriptor(value):
-                continue
+                # It's not clear why this condition never seems to be taken
+                continue  # pragma: no cover
             entry = {
                 'name': name,
                 'value': repr(value),

@@ -182,7 +182,7 @@ class TestUtilities(unittest.TestCase):
 
     @unittest.skipIf(str is not bytes or not hasattr(sys, 'pypy_version_info'),
                      "Only on PyPy")
-    def test_slot_methodspypy2(self):
+    def test_slot_methodspypy2(self): # pragma: no cover (we don't run coverage on pypy)
         from zope.app.apidoc.utilities import getFunctionSignature
         self.assertEqual("(obj, *args, **keywords)", getFunctionSignature(object.__init__))
 
@@ -234,9 +234,6 @@ class TestStatic(unittest.TestCase):
             isHtml = False
             def open(self, url):
                 raise self.error_kind(url)
-
-            def end(self):
-                pass
 
         class ErrorGenerator(static.StaticAPIDocGenerator):
             error_kind = ValueError

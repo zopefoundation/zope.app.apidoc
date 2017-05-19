@@ -19,19 +19,13 @@ directory. This function attempts to remove the absolute path to the root
 directory and replaces it with "Zope3".
 
   >>> import os
-  >>> path = os.path.join(utilities.BASEDIR, 'src', 'zope', 'README.txt')
-
-  >>> utilities.BASEDIR in path
-  True
+  >>> path = os.path.join(os.path.dirname(utilities.__file__), 'README.txt')
 
   >>> path = utilities.relativizePath(path)
 
-  >>> utilities.BASEDIR in path
-  False
-
   # Be kind to Windows users
   >>> path.replace('\\', '/')
-  'Zope3/src/zope/README.txt'
+  'Zope3/zope/app/apidoc/README.txt'
 
 If the base path is not found in a particular path, the original path is
 returned:

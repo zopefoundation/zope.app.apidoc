@@ -20,7 +20,7 @@ import re
 import sys
 import types
 import inspect
-from os.path import dirname
+import os.path
 
 import six
 
@@ -46,27 +46,23 @@ space_re = re.compile(r'\n^( *)\S', re.M)
 
 _marker = object()
 
-try:
-    _path = zope.app.__file__
-except AttributeError:
-    try:
-        _path = zope.app.__path__[0]
-    except TypeError:
-        # "_NamespacePath" object does not support indexing
-        _path = list(zope.app.__path__)[0]
-BASEDIR = dirname(dirname(dirname(dirname(_path))))
-del _path
 
 def relativizePath(path):
-    return path.replace(BASEDIR, 'Zope3')
-
+    matching_paths = [p for p in sys.path if path.startswith(p)]
+    if not matching_paths: # pragma: no cover
+        return path
+    longest_matching_path = max(matching_paths, key=len)
+    common_prefix = os.path.commonprefix([longest_matching_path, path])
+    return path.replace(common_prefix, 'Zope3') if common_prefix else path
 
 def truncateSysPath(path):
     """Remove the system path prefix from the path."""
-    for syspath in sys.path:
-        if syspath and path.startswith(syspath):
-            return path.replace(syspath, '')[1:]
-    return path
+    matching_paths = [p for p in sys.path if path.startswith(p)]
+    if not matching_paths: # pragma: no cover
+        return path
+    longest_matching_path = max(matching_paths, key=len)
+    common_prefix = os.path.commonprefix([longest_matching_path, path])
+    return path.replace(common_prefix, '')[1:] if common_prefix else path
 
 @implementer(IReadContainer)
 class ReadContainerBase(object):
