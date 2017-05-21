@@ -114,7 +114,7 @@ setup(
         'zope.app.appsetup >= 4.0.0',
         'zope.app.basicskin >= 4.0.0',
         'zope.app.exception >= 4.0.0',
-        'zope.app.onlinehelp >= 4.0.0',
+        'zope.app.onlinehelp >= 4.0.1',
         'zope.app.preference >= 4.0.0',
         'zope.app.publisher >= 4.0.0',
         'zope.app.renderer >= 4.0.0',
