@@ -13,30 +13,29 @@
 ##############################################################################
 """Class Views
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 
 import inspect
-import types
-from zope.component import getUtility
+
 from zope.proxy import removeAllProxies
 from zope.security.proxy import removeSecurityProxy
 from zope.traversing.api import getParent, traverse
 from zope.traversing.browser import absoluteURL
 from zope.traversing.interfaces import TraversalError
 
-from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import getPythonPath, getPermissionIds
 from zope.app.apidoc.utilities import renderText, getFunctionSignature
 from zope.app.apidoc.utilities import isReferencable
 
+from zope.app.apidoc.browser.utilities import findAPIDocumentationRoot
 
-def getTypeLink(type):
-    if type is types.NoneType:
+
+def getTypeLink(type, _NoneType=type(None)):
+    if type is _NoneType:
         return None
     path = getPythonPath(type)
-    return isReferencable(path) and path.replace('.', '/') or None
+    return path.replace('.', '/') if isReferencable(path) else None
 
 def getInterfaceInfo(iface):
     if iface is None:
@@ -48,6 +47,9 @@ def getInterfaceInfo(iface):
 class ClassDetails(object):
     """Represents the details of the class."""
 
+    context = None
+    request = None
+
     def getBases(self):
         """Get all bases of this class."""
         return self._listClasses(self.context.getBases())
@@ -56,14 +58,17 @@ class ClassDetails(object):
     def getKnownSubclasses(self):
         """Get all known subclasses of this class."""
         entries = self._listClasses(self.context.getKnownSubclasses())
-        entries.sort(lambda x, y: cmp(x['path'], y['path']))
+        entries.sort(key=lambda x: x['path'])
         return entries
 
+    def _getCodeModule(self):
+        apidoc = findAPIDocumentationRoot(self.context)
+        return apidoc['Code']
 
     def _listClasses(self, classes):
         """Prepare a list of classes for presentation."""
         info = []
-        codeModule = getUtility(IDocumentationModule, "Code")
+        codeModule = self._getCodeModule()
         for cls in classes:
             # We need to removeAllProxies because the security checkers for
             # zope.container.contained.ContainedProxy and
@@ -85,7 +90,7 @@ class ClassDetails(object):
 
     def getBaseURL(self):
         """Return the URL for the API Documentation Tool."""
-        m = getUtility(IDocumentationModule, "Code")
+        m = self._getCodeModule()
         return absoluteURL(getParent(m), self.request)
 
 
@@ -106,7 +111,7 @@ class ClassDetails(object):
         klass = removeSecurityProxy(self.context)
         for name, attr, iface in klass.getAttributes():
             entry = {'name': name,
-                     'value': `attr`,
+                     'value': repr(attr),
                      'type': type(attr).__name__,
                      'type_link': getTypeLink(type(attr)),
                      'interface': getInterfaceInfo(iface)}
@@ -135,7 +140,7 @@ class ClassDetails(object):
 
         for name, attr, iface in klass.getMethods():
             entry = {'name': name,
-                     'signature': getFunctionSignature(attr),
+                     'signature': getFunctionSignature(attr, ignore_self=True),
                      'doc': renderText(attr.__doc__ or '',
                                        inspect.getmodule(attr)),
                      'interface': getInterfaceInfo(iface)}
@@ -152,10 +157,9 @@ class ClassDetails(object):
     def getConstructor(self):
         """Get info about the constructor, or None if there isn't one."""
         attr = self.context.getConstructor()
-        if attr is None:
-            return None
-        attr = removeSecurityProxy(attr)
-        return {
-            'signature': getFunctionSignature(attr),
-            'doc': renderText(attr.__doc__ or '', inspect.getmodule(attr)),
+        if attr is not None:
+            attr = removeSecurityProxy(attr)
+            return {
+                'signature': getFunctionSignature(attr, ignore_self=True),
+                'doc': renderText(attr.__doc__ or '', inspect.getmodule(attr)),
             }

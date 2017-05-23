@@ -13,14 +13,16 @@
 ##############################################################################
 """Module representation for code browser
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 import os
 import types
+import six
 
 import zope
-from zope.interface import implements
+from zope.cachedescriptors.property import Lazy
+from zope.proxy import getProxiedObject
+from zope.interface import implementer
 from zope.interface import providedBy
 from zope.interface.interface import InterfaceClass
 from zope.location.interfaces import ILocation
@@ -29,7 +31,7 @@ from zope.hookable import hookable
 
 from zope.app.apidoc.classregistry import safe_import
 from zope.app.apidoc.utilities import ReadContainerBase
-from interfaces import IModuleDocumentation
+from zope.app.apidoc.codemodule.interfaces import IModuleDocumentation
 
 from zope.app.apidoc.codemodule.class_ import Class
 from zope.app.apidoc.codemodule.function import Function
@@ -38,12 +40,26 @@ from zope.app.apidoc.codemodule.zcml import ZCMLFile
 
 # Ignore these files, since they are not necessary or cannot be imported
 # correctly.
-IGNORE_FILES = ('tests', 'tests.py', 'ftests', 'ftests.py', 'CVS', 'gadfly',
-                'setup.py', 'introspection.py', 'Mount.py')
+IGNORE_FILES = frozenset((
+    'tests',
+    'tests.py',
+    'ftests',
+    'ftests.py',
+    'CVS',
+    '.svn',
+    '.git',
+    'gadfly',
+    'setup.py',
+    'introspection.py',
+    'Mount.py'
+))
 
+@implementer(ILocation, IModuleDocumentation)
 class Module(ReadContainerBase):
     """This class represents a Python module."""
-    implements(ILocation, IModuleDocumentation)
+
+    _package = False
+    _children = None
 
     def __init__(self, parent, name, module, setup=True):
         """Initialize object."""
@@ -51,55 +67,80 @@ class Module(ReadContainerBase):
         self.__name__ = name
         self._module = module
         self._children = {}
-        self._package = False
         if setup:
             self.__setup()
 
-    def __setup(self):
-        """Setup the module sub-tree."""
+    def __setup_package(self):
         # Detect packages
-        if hasattr(self._module, '__file__') and \
-               (self._module.__file__.endswith('__init__.py') or
-                self._module.__file__.endswith('__init__.pyc')or
-                self._module.__file__.endswith('__init__.pyo')):
+        module_file = getattr(self._module, '__file__', '')
+        module_path = getattr(self._module, '__path__', None)
+        if module_file.endswith(('__init__.py', '__init__.pyc', '__init__.pyo')):
             self._package = True
-            for dir in self._module.__path__:
-                # TODO: If we are dealing with eggs, we will not have a
-                # directory right away. For now we just ignore zipped eggs;
-                # later we want to unzip it.
-                if not os.path.isdir(dir):
+        elif hasattr(self._module, '__package__'):
+            # Detect namespace packages, especially (but not limited
+            # to) Python 3 with implicit namespace packages:
+
+            # "When the module is a package, its
+            # __package__ value should be set to its __name__. When
+            # the module is not a package, __package__ should be set
+            # to the empty string for top-level modules, or for
+            # submodules, to the parent package's "
+
+            # Note that everything has __package__ on Python 3, but not
+            # necessarily on Python 2.
+            pkg_name = self._module.__package__
+            self._package = pkg_name and self._module.__name__ == pkg_name
+        else:
+            # Python 2. Lets do some introspection. Namespace packages
+            # often have an empty file. Note that path isn't necessarily
+            # indexable.
+            if (module_file == ''
+                and module_path
+                and os.path.isdir(list(module_path)[0])):
+                self._package = True
+
+        if not self._package:
+            return
+
+        for mod_dir in module_path:
+            # TODO: If we are dealing with eggs, we will not have a
+            # directory right away. For now we just ignore zipped eggs;
+            # later we want to unzip it.
+            if not os.path.isdir(mod_dir):
+                continue
+
+            for mod_file in os.listdir(mod_dir):
+                if mod_file in IGNORE_FILES or mod_file in self._children:
                     continue
-                for file in os.listdir(dir):
-                    if file in IGNORE_FILES or file in self._children:
-                        continue
-                    path = os.path.join(dir, file)
 
-                    if (os.path.isdir(path) and
-                        '__init__.py' in os.listdir(path)):
-                        # subpackage
-                        fullname = self._module.__name__ + '.' + file
-                        module = safe_import(fullname)
-                        if module is not None:
-                            self._children[file] = Module(self, file, module)
+                path = os.path.join(mod_dir, mod_file)
 
-                    elif os.path.isfile(path) and file.endswith('.py') and \
-                             not file.startswith('__init__'):
+                if os.path.isdir(path) and '__init__.py' in os.listdir(path):
+                    # subpackage
+                    # XXX Python 3 implicit packages don't have __init__.py
+
+                    fullname = self._module.__name__ + '.' + mod_file
+                    module = safe_import(fullname)
+                    if module is not None:
+                        self._children[mod_file] = Module(self, mod_file, module)
+                elif os.path.isfile(path):
+                    if mod_file.endswith('.py') and not mod_file.startswith('__init__'):
                         # module
-                        name = file[:-3]
+                        name = mod_file[:-3]
                         fullname = self._module.__name__ + '.' + name
                         module = safe_import(fullname)
                         if module is not None:
                             self._children[name] = Module(self, name, module)
 
-                    elif os.path.isfile(path) and file.endswith('.zcml'):
-                        self._children[file] = ZCMLFile(path, self._module,
-                                                        self, file)
+                    elif mod_file.endswith('.zcml'):
+                        self._children[mod_file] = ZCMLFile(path, self._module,
+                                                            self, mod_file)
 
-                    elif os.path.isfile(path) and file.endswith('.txt'):
-                        self._children[file] = TextFile(path, file, self)
+                    elif  mod_file.endswith(('.txt', '.rst')):
+                        self._children[mod_file] = TextFile(path, mod_file, self)
 
+    def __setup_classes_and_functions(self):
         # List the classes and functions in module, if any are available.
-        zope.deprecation.__show__.off()
         module_decl = self.getDeclaration()
         ifaces = list(module_decl)
         if ifaces:
@@ -113,30 +154,30 @@ class Module(ReadContainerBase):
                 # The module doesn't declare its interface.  Boo!
                 # Guess what names to document, avoiding aliases and names
                 # imported from other modules.
-                names = []
-                for name in self._module.__dict__.keys():
-                    attr = getattr(self._module, name, None)
+                names = set()
+                for name, attr in self._module.__dict__.items():
+                    if isinstance(attr, hookable):
+                        attr = attr.implementation
                     attr_module = getattr(attr, '__module__', None)
                     if attr_module != self._module.__name__:
                         continue
                     if getattr(attr, '__name__', None) != name:
                         continue
-                    names.append(name)
+                    names.add(name)
+
+        # If there is something the same name beneath, then module should
+        # have priority.
+        names = set(names) - set(self._children)
 
         for name in names:
-            # If there is something the same name beneath, then module should
-            # have priority.
-            if name in self._children:
-                continue
-
             attr = getattr(self._module, name, None)
             if attr is None:
                 continue
 
-	    if isinstance(attr, hookable):
-		attr = attr.implementation
+            if isinstance(attr, hookable):
+                attr = attr.implementation
 
-            if isinstance(attr, (types.ClassType, types.TypeType)):
+            if isinstance(attr, six.class_types):
                 self._children[name] = Class(self, name, attr)
 
             elif isinstance(attr, InterfaceClass):
@@ -146,12 +187,28 @@ class Module(ReadContainerBase):
                 doc = attr.__doc__
                 if not doc:
                     f = module_decl.get(name)
-                    if f is not None:
-                        doc = f.__doc__
+                    doc = getattr(f, '__doc__', None)
                 self._children[name] = Function(self, name, attr, doc=doc)
 
-        zope.deprecation.__show__.on()
+    def __setup(self):
+        """Setup the module sub-tree."""
+        self.__setup_package()
 
+        zope.deprecation.__show__.off()
+        try:
+            self.__setup_classes_and_functions()
+        finally:
+            zope.deprecation.__show__.on()
+
+    def withParentAndName(self, parent, name):
+        located = _LazyModule(self, parent, name, self._module)
+        # Our module tree can be very large, but typically during any one
+        # traversal we're only going to need one specific branch. So
+        # initializing it lazily the first time one specific level's _children
+        # is accessed has a *major* performance benefit.
+        # A plain @Lazy attribute won't work since we need to copy from self;
+        # we use a subclass, with the provisio that it can be the *only* subclass
+        return located
 
     def getDocString(self):
         """See IModuleDocumentation."""
@@ -187,13 +244,17 @@ class Module(ReadContainerBase):
         obj = safe_import(path)
 
         if obj is not None:
-            return Module(self, key, obj)
+            child = Module(self, key, obj)
+            # But note that we don't hold on to it. This is a transient
+            # object, almost certainly not actually in our namespace.
+            # TODO: Why do we even allow this? It leads to much larger static exports
+            # and things that aren't even reachable from the menus.
+            return child
 
         # Maybe it is a simple attribute of the module
-        if obj is None:
-            obj = getattr(self._module, key, default)
-            if obj is not default:
-                obj = LocationProxy(obj, self, key)
+        obj = getattr(self._module, key, default)
+        if obj is not default:
+            obj = LocationProxy(obj, self, key)
 
         return obj
 
@@ -204,3 +265,27 @@ class Module(ReadContainerBase):
         return [(name, value)
                 for name, value in self._children.items()
                 if not name.startswith('_')]
+
+class _LazyModule(Module):
+
+    copy_from = None
+
+    def __init__(self, copy_from, parent, name, module):
+        Module.__init__(self, parent, name, module, False)
+        del self._children # get our @Lazy back
+        self._copy_from = copy_from
+
+    @Lazy
+    def _children(self):
+        new_children = {}
+        for x in self._copy_from._children.values():
+            try:
+                new_child = x.withParentAndName(self, x.__name__)
+            except AttributeError:
+                if isinstance(x, LocationProxy):
+                    new_child = LocationProxy(getProxiedObject(x), self, x.__name__)
+                else:
+                    new_child = LocationProxy(x, self, x.__name__)
+
+            new_children[x.__name__] = new_child
+        return new_children

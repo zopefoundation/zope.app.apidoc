@@ -13,7 +13,6 @@
 ##############################################################################
 """Function Views
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 from zope.app.apidoc.utilities import renderText
@@ -21,10 +20,11 @@ from zope.app.apidoc.utilities import renderText
 class TextFileDetails(object):
     """Represents the details of the text file."""
 
+    context = None
+    request = None
+
     def renderedContent(self):
         """Render the file content to HTML."""
-        if self.context.path.endswith('.stx'):
-            format = 'zope.source.stx'
-        else:
-            format = 'zope.source.rest'
-        return renderText(self.context.getContent(), format=format)
+        ctx = self.context
+        format = 'zope.source.stx' if ctx.path.endswith('.stx') else 'zope.source.rest'
+        return renderText(ctx.getContent(), format=format)

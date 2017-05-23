@@ -13,57 +13,143 @@
 ##############################################################################
 """Tests for the Code Documentation Module
 
-$Id$
 """
-import os
+import os.path
 import unittest
 import doctest
 
-from zope.configuration import xmlconfig
-import zope.app.appsetup.appsetup
-from zope.app.testing import placelesssetup
+from zope.component import testing
 
+from zope.app.apidoc.codemodule.text import TextFile
+from zope.app.apidoc.codemodule.module import Module
 
-def setUp(test):
-    placelesssetup.setUp()
+from zope.app.apidoc.tests import standard_checker
+from zope.app.apidoc.tests import standard_option_flags
+from zope.app.apidoc.tests import LayerDocFileSuite
+import zope.app.apidoc.codemodule
 
-    meta = '''
-    <configure
-        xmlns:meta="http://namespaces.zope.org/meta"
-        i18n_domain="zope">
-      <meta:provides feature="devmode" />
-      <include package="zope.app.zcmlfiles" file="meta.zcml" />
-      <include package="zope.app.zcmlfiles" file="menus.zcml" />
-    </configure>
-    '''
-    xmlconfig.string(meta)
+here = os.path.dirname(__file__)
 
-    meta = os.path.join(os.path.dirname(zope.app.zcmlfiles.__file__), 'meta.zcml')
-    context = xmlconfig.file(meta, zope.app.zcmlfiles)
-    context.provideFeature('devmode')
-    meta = os.path.join(os.path.dirname(zope.app.apidoc.__file__), 'meta.zcml')
-    context = xmlconfig.file(meta, zope.app.apidoc, context)
+class TestText(unittest.TestCase):
 
-    # Fix up path for tests.
-    global old_context
-    old_context = zope.app.appsetup.appsetup.__config_context
-    zope.app.appsetup.appsetup.__config_context = context
+    def _read_via_text(self, path):
+        return TextFile(os.path.join(here, path), path, None).getContent()
 
-def tearDown(test):
-    placelesssetup.tearDown()
-    global old_context
-    zope.app.appsetup.appsetup.__config_context = old_context
+    def _read_bytes(self, path):
+        with open(os.path.join(here, path), 'rb') as f:
+            return f.read()
 
+    def test_crlf(self):
+        self.assertEqual(self._read_bytes('_test_crlf.txt'),
+                         b'This file\r\nuses \r\nWindows \r\nline endings.')
+
+        self.assertEqual(self._read_via_text('_test_crlf.txt'),
+                         u'This file\nuses \nWindows \nline endings.')
+
+    def test_cr(self):
+        self.assertEqual(self._read_bytes('_test_cr.txt'),
+                         b'This file\ruses \rMac \rline endings.')
+
+        self.assertEqual(self._read_via_text('_test_cr.txt'),
+                         u'This file\nuses \nMac \nline endings.')
+
+class TestModule(unittest.TestCase):
+
+    def test_non_dir_on_path(self):
+        path = zope.app.apidoc.codemodule.__path__
+        zope.app.apidoc.codemodule.__path__ = ['this is not a path']
+        try:
+            mod = Module(None, 'codemodule', zope.app.apidoc.codemodule)
+            self.assertEqual(0, len(mod))
+        finally:
+            zope.app.apidoc.codemodule.__path__ = path
+
+    def test_idempotent(self):
+        mod = Module(None, 'codemodule', zope.app.apidoc.codemodule)
+        before = len(mod)
+        self.assertGreater(before, 0)
+        self.assertTrue(mod._package)
+        mod._Module__needsSetup = True
+        mod._Module__setup()
+        self.assertEqual(len(mod), before)
+
+    def test__all_invalid(self):
+        assert not hasattr(zope.app.apidoc.codemodule, '__all__')
+        zope.app.apidoc.codemodule.__all__ = ('missingname',)
+        try:
+            mod = Module(None, 'codemodule', zope.app.apidoc.codemodule)
+            self.assertNotIn('missingname', mod)
+            self.assertGreaterEqual(len(mod), 12)
+        finally:
+            del zope.app.apidoc.codemodule.__all__
+
+    def test_access_attributes(self):
+        mod = Module(None, 'codemodule', zope.app.apidoc.codemodule.tests)
+        self.assertEqual(here, mod['here'])
+        self.assertEqual(mod['here'].__name__, 'here')
+
+    def test_hookable(self):
+        import zope.component._api
+        from zope.hookable import hookable
+        self.assertIsInstance(zope.component._api.getSiteManager, hookable)
+        from zope.app.apidoc.codemodule.function import Function
+        mod = Module(None, 'hooks', zope.component._api)
+        self.assertIsInstance(mod._children['getSiteManager'], Function)
+
+    def test_zope_loaded_correctly(self):
+        # Zope is guaranteed to be a namespace package, as is zope.app.
+        import zope
+        import zope.app
+        import zope.annotation
+        import zope.app.apidoc
+        mod = Module(None, 'zope', zope)
+        self.assertEqual(mod['annotation']._module, zope.annotation)
+        self.assertEqual(mod['app']._module, zope.app)
+        self.assertEqual(mod['app']['apidoc']._module, zope.app.apidoc)
+
+class TestZCML(unittest.TestCase):
+
+    def setUp(self):
+        from zope.app.apidoc.tests import _setUp_AppSetup
+        _setUp_AppSetup()
+
+    def tearDown(self):
+        from zope.app.apidoc.tests import _tearDown_AppSetup
+        _tearDown_AppSetup()
+
+    def test_installed(self):
+        from zope.app.apidoc.codemodule.zcml import MyConfigHandler
+        handler = MyConfigHandler(None)
+        self.assertTrue(handler.evaluateCondition('installed zope'))
+        self.assertFalse(handler.evaluateCondition('installed not-a-package'))
+
+    def test_copy_with_root(self):
+        from zope.app.apidoc.codemodule.zcml import ZCMLFile
+        fname = os.path.join(here, '..', 'ftesting-base.zcml')
+        zcml = ZCMLFile(fname, zope.app.apidoc,
+                        None, None)
+
+        zcml.rootElement
+        self.assertEqual(zcml, zcml.rootElement.__parent__)
+
+        clone = zcml.withParentAndName(self, 'name')
+        self.assertEqual(clone.rootElement.__parent__, clone)
 
 def test_suite():
+    checker = standard_checker()
+
     return unittest.TestSuite((
-        doctest.DocFileSuite('README.txt',
-                             setUp=setUp, tearDown=tearDown,
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
-        doctest.DocFileSuite('directives.txt',
-                             setUp=placelesssetup.setUp,
-                             tearDown=placelesssetup.tearDown),
-        ))
+        LayerDocFileSuite(
+            'README.rst',
+            zope.app.apidoc.codemodule),
+        doctest.DocFileSuite(
+            'directives.rst',
+            setUp=testing.setUp,
+            tearDown=testing.tearDown,
+            checker=checker,
+            optionflags=standard_option_flags),
+        unittest.defaultTestLoader.loadTestsFromName(__name__),
+    ))
 
 if __name__ == '__main__':
-    unittest.main(default="test_suite")
+    unittest.main(defaultTest="test_suite")

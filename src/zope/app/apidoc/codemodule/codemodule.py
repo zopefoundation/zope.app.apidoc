@@ -16,13 +16,12 @@
 This module is able to take a dotted name of any class and display
 documentation for it.
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 
 import zope.component
 from zope.i18nmessageid import ZopeMessageFactory as _
-from zope.interface import implements
+from zope.interface import implementer
 
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.classregistry import safe_import
@@ -30,9 +29,9 @@ from zope.app.apidoc.codemodule.interfaces import IAPIDocRootModule
 from zope.app.apidoc.codemodule.module import Module
 
 
+@implementer(IDocumentationModule)
 class CodeModule(Module):
     """Represent the code browser documentation root"""
-    implements(IDocumentationModule)
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
     title = _('Code Browser')
@@ -68,11 +67,22 @@ class CodeModule(Module):
         """Setup module and class tree."""
         if self.__isSetup:
             return
+        self.__isSetup = True
+        self._children = {}
         for name, mod in zope.component.getUtilitiesFor(IAPIDocRootModule):
             module = safe_import(mod)
             if module is not None:
                 self._children[name] = Module(self, name, module)
-        self.__isSetup = True
+
+    def withParentAndName(self, parent, name):
+        located = type(self)()
+        located.__parent__ = parent
+        located.__name__ = name
+        self.setup()
+        located._children = {name: module.withParentAndName(located, name)
+                             for name, module in self._children.items()}
+        located.__isSetup = True
+        return located
 
     def getDocString(self):
         """See Module class."""
@@ -93,9 +103,21 @@ class CodeModule(Module):
     def get(self, key, default=None):
         """See zope.container.interfaces.IReadContainer."""
         self.setup()
+        # TODO: Do we really like that this allows importing things from
+        # outside our defined namespace? This can lead to a static
+        # export with unreachable objects (not in the menu)
         return super(CodeModule, self).get(key, default)
 
     def items(self):
         """See zope.container.interfaces.IReadContainer."""
         self.setup()
         return super(CodeModule, self).items()
+
+def _cleanUp():
+    from zope.component import getGlobalSiteManager
+    code = getGlobalSiteManager().queryUtility(IDocumentationModule, name='Code')
+    if code is not None:
+        code.__init__()
+
+from zope.testing.cleanup import addCleanUp
+addCleanUp(_cleanUp)

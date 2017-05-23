@@ -1,22 +1,22 @@
-=================================
-Presentation Inspection Utilities
-=================================
+===================================
+ Presentation Inspection Utilities
+===================================
 
-The `presentation` module provides some nice utilities to inspect presentation
+The ``presentation`` module provides some nice utilities to inspect presentation
 registrations.
 
   >>> from zope.app.apidoc import presentation
 
 
-`getViewFactoryData(factory)`
------------------------------
+``getViewFactoryData(factory)``
+===============================
 
 This function tries really hard to determine the correct information about a
 view factory. For example, when you create a page, a new type is dynamically
 generated upon registration. Let's look at a couple examples.
 
 First, let's inspect a case where a simple browser page was configured without
-a special view class. In these cases the factory is a `SimpleViewClass`:
+a special view class. In these cases the factory is a ``SimpleViewClass``:
 
   >>> from zope.browserpage.simpleviewclass import SimpleViewClass
   >>> view = SimpleViewClass('browser/index.pt')
@@ -43,14 +43,14 @@ thus be viewed by the class browser, the (page) template used for the view and
 the URL under which the factory will be found in the class browser. Some
 views, like icons, also use resources to provide their data. In these cases
 the name of the resource will be provided. Of course, not in all cases all
-values will be available. Empty values are marked with `None`.
+values will be available. Empty values are marked with ``None``.
 
 Believe it or not, in some cases the factory is just a simple type. In these
 cases we cannot retrieve any useful information:
 
   >>> info = presentation.getViewFactoryData(3)
   >>> pprint(info)
-  {'path': None,
+  {'path': '__builtin__.int',
    'referencable': False,
    'resource': None,
    'template': None,
@@ -64,22 +64,22 @@ have a referencable name, so we lookup the class and use its name:
 
   >>> info = presentation.getViewFactoryData(Factory())
   >>> pprint(info)
-  {'path': '__builtin__.Factory',
+  {'path': 'zope.app.apidoc.doctest.Factory',
    'referencable': True,
    'resource': None,
    'template': None,
-   'url': '__builtin__/Factory'}
+   'url': 'zope/app/apidoc/doctest/Factory'}
 
 One of the more common cases, however, is that the factory is a class or
 type. In this case we can just retrieve the reference directly:
 
   >>> info = presentation.getViewFactoryData(Factory)
   >>> pprint(info)
-  {'path': '__builtin__.Factory',
+  {'path': 'zope.app.apidoc.doctest.Factory',
    'referencable': True,
    'resource': None,
    'template': None,
-   'url': '__builtin__/Factory'}
+   'url': 'zope/app/apidoc/doctest/Factory'}
 
 When factories are created by a directive, they can also be functions. In
 those cases we just simply return the function path:
@@ -88,15 +88,15 @@ those cases we just simply return the function path:
   ...     pass
 
   # The testing framework does not set the __module__ correctly
-  >>> factory.__module__ = '__builtin__'
+  >>> factory.__module__ = 'zope.app.apidoc.doctest'
 
   >>> info = presentation.getViewFactoryData(factory)
   >>> pprint(info)
-  {'path': '__builtin__.factory',
+  {'path': 'zope.app.apidoc.doctest.factory',
    'referencable': True,
    'resource': None,
    'template': None,
-   'url': '__builtin__/factory'}
+   'url': 'zope/app/apidoc/doctest/factory'}
 
 However, the function is rather unhelpful, since it will be the same for all
 views that use that code path. For this reason the function keeps track of the
@@ -106,11 +106,11 @@ original factory component in a function attribute called ``factory``:
 
   >>> info = presentation.getViewFactoryData(factory)
   >>> pprint(info)
-  {'path': '__builtin__.Factory',
+  {'path': 'zope.app.apidoc.doctest.Factory',
    'referencable': True,
    'resource': None,
    'template': None,
-   'url': '__builtin__/Factory'}
+   'url': 'zope/app/apidoc/doctest/Factory'}
 
 Let's now have a look at some extremly specific cases. If a view is registered
 using the ``zope:view`` directive and a permission is specified, a
@@ -124,11 +124,11 @@ using the ``zope:view`` directive and a permission is specified, a
 
   >>> info = presentation.getViewFactoryData(proxyView)
   >>> pprint(info)
-  {'path': '__builtin__.Factory',
+  {'path': 'zope.app.apidoc.doctest.Factory',
    'referencable': True,
    'resource': None,
    'template': None,
-   'url': '__builtin__/Factory'}
+   'url': 'zope/app/apidoc/doctest/Factory'}
 
 Another use case is when a new type is created by the ``browser:page`` or
 ``browser:view`` directive. In those cases the true/original factory is really
@@ -140,11 +140,11 @@ the first base class. Those cases are detected by inspecting the
 
   >>> info = presentation.getViewFactoryData(new_class)
   >>> pprint(info)
-  {'path': '__builtin__.Factory',
+  {'path': 'zope.app.apidoc.doctest.Factory',
    'referencable': True,
    'resource': None,
    'template': None,
-   'url': '__builtin__/Factory'}
+   'url': 'zope/app/apidoc/doctest/Factory'}
 
 The same sort of thing happens for XML-RPC views, except that those are
 wrapped twice:
@@ -157,11 +157,11 @@ wrapped twice:
 
   >>> info = presentation.getViewFactoryData(new_class2)
   >>> pprint(info)
-  {'path': '__builtin__.Factory',
+  {'path': 'zope.app.apidoc.doctest.Factory',
    'referencable': True,
    'resource': None,
    'template': None,
-   'url': '__builtin__/Factory'}
+   'url': 'zope/app/apidoc/doctest/Factory'}
 
 Finally, it sometimes happens that a factory is wrapped and the wrapper is
 wrapped in return:
@@ -176,11 +176,11 @@ Initially, the documentation is not very helpful:
 
   >>> info = presentation.getViewFactoryData(wrapper2)
   >>> pprint(info)
-  {'path': 'None.wrapper2',
+  {'path': 'zope.app.apidoc.doctest.wrapper2',
    'referencable': True,
    'resource': None,
    'template': None,
-   'url': 'None/wrapper2'}
+   'url': 'zope/app/apidoc/doctest/wrapper2'}
 
 However, if those wrappers play nicely, they provide a factory attribute each
 step of the way ...
@@ -192,21 +192,21 @@ and the result is finally our original factory:
 
   >>> info = presentation.getViewFactoryData(wrapper2)
   >>> pprint(info)
-  {'path': '__builtin__.Factory',
+  {'path': 'zope.app.apidoc.doctest.Factory',
    'referencable': True,
    'resource': None,
    'template': None,
-   'url': '__builtin__/Factory'}
+   'url': 'zope/app/apidoc/doctest/Factory'}
 
 
-`getPresentationType(iface)`
-----------------------------
+``getPresentationType(iface)``
+==============================
 
 In Zope 3, presentation types (i.e. browser, ftp, ...) are defined through
-their special request interface, such as `IBrowserRequest` or
-`IFTPRequest`. To complicate matters further, layer interfaces are used in
+their special request interface, such as ``IBrowserRequest`` or
+``IFTPRequest``. To complicate matters further, layer interfaces are used in
 browser presentations to allow skinning. Layers extend any request type, but
-most commonly `IBrowserRequest`. This function inspects the request interface
+most commonly ``IBrowserRequest``. This function inspects the request interface
 of any presentation multi-adapter and determines its type, which is returned
 in form of an interface.
 
@@ -234,19 +234,19 @@ is returned:
   ...     pass
 
   >>> presentation.getPresentationType(ILayer3)
-  <InterfaceClass __builtin__.ILayer3>
+  <InterfaceClass zope.app.apidoc.doctest.ILayer3>
 
 Note that more specific presentation types are considered first. For example,
-`IBrowserRequest` extends `IHTTPRequest`, but it will always determine the
-presentation type to be an `IBrowserRequest`.
+``IBrowserRequest`` extends ``IHTTPRequest``, but it will always determine the
+presentation type to be an ``IBrowserRequest``.
 
 
-`getViews(iface, type=IRequest)`
---------------------------------
+``getViews(iface, type=IRequest)``
+==================================
 
 This function retrieves all available view registrations for a given interface
 and presentation type. The default argument for the presentation type is
-`IRequest`, which will effectively return all views for the specified
+``IRequest``, which will effectively return all views for the specified
 interface.
 
 To see how this works, we first have to register some views:
@@ -254,11 +254,11 @@ To see how this works, we first have to register some views:
   >>> class IFoo(Interface):
   ...     pass
 
-  >>> from zope.app.testing import ztapi
-  >>> ztapi.provideAdapter((IFoo, IHTTPRequest), Interface, None, name='foo')
-  >>> ztapi.provideAdapter((Interface, IHTTPRequest), Interface, None,
+  >>> from zope import component as ztapi
+  >>> ztapi.provideAdapter(adapts=(IFoo, IHTTPRequest), provides=Interface, factory=None, name='foo')
+  >>> ztapi.provideAdapter(adapts=(Interface, IHTTPRequest), provides=Interface, factory=None,
   ...                      name='bar')
-  >>> ztapi.provideAdapter((IFoo, IBrowserRequest), Interface, None,
+  >>> ztapi.provideAdapter(adapts=(IFoo, IBrowserRequest), provides=Interface, factory=None,
   ...                      name='blah')
 
 Now let's see what we've got. If we do not specify a type, all registrations
@@ -266,8 +266,8 @@ should be returned:
 
   >>> regs = list(presentation.getViews(IFoo))
   >>> regs.sort()
-  >>> regs #doctest:+ELLIPSIS
-  [AdapterRegistration(<BaseGlobalComponents base>, 
+  >>> regs
+  [AdapterRegistration(<BaseGlobalComponents base>,
                        [IFoo, IBrowserRequest], Interface, 'blah', None, u''),
    AdapterRegistration(<BaseGlobalComponents base>,
                        [IFoo, IHTTPRequest], Interface, 'foo', None, u''),
@@ -276,17 +276,17 @@ should be returned:
 
   >>> regs = list(presentation.getViews(Interface, IHTTPRequest))
   >>> regs.sort()
-  >>> regs #doctest:+ELLIPSIS
-  [AdapterRegistration(<BaseGlobalComponents base>, 
+  >>> regs
+  [AdapterRegistration(<BaseGlobalComponents base>,
                        [Interface, IHTTPRequest], Interface, 'bar', None, u'')]
 
 
-`filterViewRegistrations(regs, iface, level=SPECIFC_INTERFACE_LEVEL)`
----------------------------------------------------------------------
+``filterViewRegistrations(regs, iface, level=SPECIFC_INTERFACE_LEVEL)``
+=======================================================================
 
 Oftentimes the amount of views that are being returned for a particular
 interface are too much to show at once. It is then good to split the view into
-categories. The `filterViewRegistrations()` function allows you to filter the
+categories. The ``filterViewRegistrations()`` function allows you to filter the
 views on how specific they are to the interface. Here are the three levels you
 can select from:
 
@@ -297,7 +297,7 @@ can select from:
                                 interface that the specified interface extends.
 
   * GENERIC_INTERFACE_LEVEL -- Only return registrations that explicitely
-                               require the `Interface` interface.
+                               require the ``Interface`` interface.
 
 So, let's see how this is done. We first need to create a couple of interfaces
 and register some views:
@@ -311,14 +311,14 @@ and register some views:
   >>> from zope.testing.cleanup import cleanUp
   >>> cleanUp()
 
-  >>> ztapi.provideAdapter((IContent, IHTTPRequest), Interface,
-  ...                      None, name='view.html')
-  >>> ztapi.provideAdapter((IContent, IHTTPRequest), Interface,
-  ...                      None, name='edit.html')
-  >>> ztapi.provideAdapter((IFile, IHTTPRequest), Interface,
-  ...                      None, name='view.html')
-  >>> ztapi.provideAdapter((Interface, IHTTPRequest), Interface,
-  ...                      None, name='view.html')
+  >>> ztapi.provideAdapter(adapts=(IContent, IHTTPRequest), provides=Interface,
+  ...                      factory=None, name='view.html')
+  >>> ztapi.provideAdapter(adapts=(IContent, IHTTPRequest), provides=Interface,
+  ...                      factory=None, name='edit.html')
+  >>> ztapi.provideAdapter(adapts=(IFile, IHTTPRequest), provides=Interface,
+  ...                      factory=None, name='view.html')
+  >>> ztapi.provideAdapter(adapts=(Interface, IHTTPRequest), provides=Interface,
+  ...                      factory=None, name='view.html')
 
 Now we get all the registrations:
 
@@ -330,7 +330,7 @@ Let's now filter those registrations:
   ...     regs, IFile, level=presentation.SPECIFIC_INTERFACE_LEVEL))
   >>> result.sort()
   >>> result
-  [AdapterRegistration(<BaseGlobalComponents base>, 
+  [AdapterRegistration(<BaseGlobalComponents base>,
                      [IFile, IHTTPRequest], Interface, 'view.html', None, u'')]
 
   >>> result = list(presentation.filterViewRegistrations(
@@ -357,7 +357,7 @@ since all three levels are mutually exclusive.
   ...                        presentation.EXTENDED_INTERFACE_LEVEL))
   >>> result.sort()
   >>> result
-  [AdapterRegistration(<BaseGlobalComponents base>, 
+  [AdapterRegistration(<BaseGlobalComponents base>,
                   [IContent, IHTTPRequest], Interface, 'edit.html', None, u''),
    AdapterRegistration(<BaseGlobalComponents base>,
                   [IContent, IHTTPRequest], Interface, 'view.html', None, u''),
@@ -375,8 +375,8 @@ since all three levels are mutually exclusive.
                 [Interface, IHTTPRequest], Interface, 'view.html', None, u'')]
 
 
-`getViewInfoDictionary(reg)`
-----------------------------
+``getViewInfoDictionary(reg)``
+==============================
 
 Now that we have all these utilities to select the registrations, we need to
 prepare the them for output. For page templates the best data structures are
@@ -389,18 +389,18 @@ Let's first create a registration:
   >>> reg = AdapterRegistration(None, (IFile, Interface, IHTTPRequest),
   ...                           Interface, 'view.html', Factory, 'reg info')
 
-  >>> pprint(presentation.getViewInfoDictionary(reg), width=1)
+  >>> pprint(presentation.getViewInfoDictionary(reg), width=50)
   {'doc': 'reg info',
-   'factory': {'path': '__builtin__.Factory',
+   'factory': {'path': 'zope.app.apidoc.doctest.Factory',
                'referencable': True,
                'resource': None,
                'template': None,
-               'url': '__builtin__/Factory'},
+               'url': 'zope/app/apidoc/doctest/Factory'},
    'name': u'view.html',
    'provided': {'module': 'zope.interface',
                 'name': 'Interface'},
    'read_perm': None,
-   'required': [{'module': '__builtin__',
+   'required': [{'module': 'zope.app.apidoc.doctest',
                  'name': 'IFile'},
                 {'module': 'zope.interface',
                  'name': 'Interface'},

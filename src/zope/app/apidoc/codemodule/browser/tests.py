@@ -13,134 +13,34 @@
 ##############################################################################
 """Tests for the Code Documentation Module
 
-$Id$
 """
-import os
 import unittest
-import doctest
-import re
 
-from zope.component.interfaces import IFactory
-from zope.configuration import xmlconfig
-from zope.interface import implements
-from zope.testing import renormalizing
-from zope.traversing.interfaces import IContainmentRoot
+from zope.traversing.api import traverse
 
-import zope.app
-import zope.app.appsetup.appsetup
-from zope.app.renderer.rest import ReStructuredTextSourceFactory
-from zope.app.renderer.rest import IReStructuredTextSource
-from zope.app.renderer.rest import ReStructuredTextToHTMLRenderer
-from zope.app.testing import placelesssetup, setup, ztapi
-from zope.app.testing.functional import BrowserTestCase
-from zope.app.testing.functional import FunctionalDocFileSuite
-
-from zope.app.apidoc.interfaces import IDocumentationModule
-from zope.app.apidoc.apidoc import APIDocumentation
-from zope.app.apidoc.codemodule.interfaces import IAPIDocRootModule
-from zope.app.apidoc.codemodule.codemodule import CodeModule
 from zope.app.apidoc.testing import APIDocLayer
-from zope.app.apidoc.zcmlmodule import ZCMLModule
+from zope.app.apidoc.tests import BrowserTestCase
+from zope.app.apidoc.tests import LayerDocFileSuite
+from zope.app.apidoc.tests import LayerDocTestSuite
 
-# Just for loading purposes
-import zope.app.apidoc.codemodule.browser.module
-import zope.app.apidoc.codemodule.browser.class_
-import zope.app.apidoc.codemodule.browser.function
-import zope.app.apidoc.codemodule.browser.text
-import zope.app.apidoc.codemodule.browser.zcml
+import zope.app.apidoc.codemodule
 
 
-def foo(cls, bar=1, *args):
+def foo(cls, bar=1, *args): # used in README.rst
     """This is the foo function."""
 foo.deprecated = True
-
-meta = '''
-<configure
-    xmlns:meta="http://namespaces.zope.org/meta"
-    i18n_domain="zope">
-  <meta:provides feature="devmode" />
-  <include package="zope.app.zcmlfiles" file="meta.zcml" />
-  <include package="zope.app.apidoc" file="meta.zcml" />
-  <include package="zope.app.zcmlfiles" file="menus.zcml" />
-</configure>
-'''
-
-def setUp(test):
-    test.globs['rootFolder'] = setup.placefulSetUp(True)
-
-    class RootModule(str):
-        implements(IAPIDocRootModule)
-
-    # Register zope package to apidoc
-    ztapi.provideUtility(IAPIDocRootModule, RootModule('zope'), "zope")
-
-    # Set up apidoc module
-    test.globs['apidoc'] = APIDocumentation(test.globs['rootFolder'],
-                                            '++apidoc++')
-
-    # Register documentation modules
-    ztapi.provideUtility(IDocumentationModule, CodeModule(), "Code")
-    ztapi.provideUtility(IDocumentationModule, ZCMLModule(), "ZCML")
-
-    # Register Renderer Components
-    ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
-                         'zope.source.rest')
-    ztapi.browserView(IReStructuredTextSource, '',
-                      ReStructuredTextToHTMLRenderer)
-    # Cheat and register the ReST factory for STX as well.
-    ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
-                         'zope.source.stx')
-
-    # Register ++apidoc++ namespace
-    from zope.app.apidoc.apidoc import apidocNamespace
-    from zope.traversing.interfaces import ITraversable
-    ztapi.provideAdapter(None, ITraversable, apidocNamespace, name="apidoc")
-    ztapi.provideView(None, None, ITraversable, "apidoc", apidocNamespace)
-
-    # Register ++apidoc++ namespace
-    from zope.traversing.namespace import view
-    from zope.traversing.interfaces import ITraversable
-    ztapi.provideAdapter(None, ITraversable, view, name="view")
-    ztapi.provideView(None, None, ITraversable, "view", view)
-
-    context = xmlconfig.string(meta)
-
-    # Fix up path for tests.
-    global old_context
-    old_context = zope.app.appsetup.appsetup.__config_context
-    zope.app.appsetup.appsetup.__config_context = context
-
-    # Fix up path for tests.
-    global old_source_file
-    old_source_file = zope.app.appsetup.appsetup.__config_source
-    zope.app.appsetup.appsetup.__config_source = os.path.join(
-        os.path.dirname(zope.app.zcmlfiles.__file__), 'meta.zcml')
-
-    # Register the index.html view for codemodule.class_.Class
-    from zope.publisher.browser import BrowserView
-    from zope.app.apidoc.codemodule.class_ import Class
-    from zope.app.apidoc.codemodule.browser.class_ import ClassDetails
-    class Details(ClassDetails, BrowserView):
-        pass
-    ztapi.browserView(Class, 'index.html', Details)
-
-
-def tearDown(test):
-    setup.placefulTearDown()
-    global old_context, old_source_file
-    zope.app.appsetup.appsetup.__config_context = old_context
-    zope.app.appsetup.appsetup.__config_source = old_source_file
 
 
 class CodeModuleTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
+    layer = APIDocLayer
 
     def testMenu(self):
         response = self.publish('/++apidoc++/Code/menu.html',
                                 basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find('Zope Source') > 0)
+        self.assertIn('Zope Source', body)
         self.checkForBrokenLinks(body, '/++apidoc++/Code/menu.html',
                                  basic='mgr:mgrpw')
 
@@ -150,8 +50,8 @@ class CodeModuleTests(BrowserTestCase):
                                 form={'path': 'Code', 'SUBMIT': 'Find'})
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(
-            body.find('zope.app.apidoc.codemodule.codemodule.CodeModule') > 0)
+        self.assertIn(
+            'zope.app.apidoc.codemodule.codemodule.CodeModule', body)
         self.checkForBrokenLinks(body, '/++apidoc++/Code/menu.html',
                                  basic='mgr:mgrpw')
 
@@ -160,7 +60,7 @@ class CodeModuleTests(BrowserTestCase):
                                 basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find('Zope 3 API Documentation') > 0)
+        self.assertIn('Zope 3 API Documentation', body)
         self.checkForBrokenLinks(
             body, '/++apidoc++/Code/zope/app/apidoc/apidoc', basic='mgr:mgrpw')
 
@@ -170,7 +70,7 @@ class CodeModuleTests(BrowserTestCase):
             basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find('Represent the complete API Documentation.') > 0)
+        self.assertIn('Represent the complete API Documentation.', body)
         self.checkForBrokenLinks(
             body, '/++apidoc++/Code/zope/app/apidoc/apidoc/APIDocumentation',
             basic='mgr:mgrpw')
@@ -181,19 +81,20 @@ class CodeModuleTests(BrowserTestCase):
             basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find('handleNamespace(ob, name)') > 0)
+        self.assertIn('handleNamespace(ob, name)', body)
         self.checkForBrokenLinks(
-            body, '/++apidoc++/Code/zope/app/apidoc/apidoc/handleNamesapce',
-            basic='mgr:mgrpw')
+             body,
+            '/++apidoc++/Code/zope/app/apidoc/apidoc/handleNamespace',
+             basic='mgr:mgrpw')
 
     def testTextFileDetailsView(self):
         response = self.publish(
-            '/++apidoc++/Code/zope/app/apidoc/README.txt/index.html',
+            '/++apidoc++/Code/zope/app/apidoc/README.rst/index.html',
             basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
         self.checkForBrokenLinks(
-            body, '/++apidoc++/Code/zope/app/apidoc/README.txt/index.html',
+            body, '/++apidoc++/Code/zope/app/apidoc/README.rst/index.html',
             basic='mgr:mgrpw')
 
     def testZCMLFileDetailsView(self):
@@ -206,28 +107,83 @@ class CodeModuleTests(BrowserTestCase):
             body, '/++apidoc++/Code/zope/app/apidoc/configure.zcml/index.html',
             basic='mgr:mgrpw')
 
+from BTrees import OOBTree
+class TestClass(unittest.TestCase):
+
+    layer = APIDocLayer
+
+    @unittest.skipIf(OOBTree.OOBTree is OOBTree.OOBTreePy,
+                     "Only in the C implementation")
+    def test_listClasses_C(self):
+        from zope.app.apidoc.codemodule.browser.class_ import ClassDetails
+        from zope.publisher.browser import TestRequest
+        # BTree items doesn't set a module.
+
+        items_class = type(OOBTree.OOBTree({1: 2}).items())
+
+        details = ClassDetails()
+        details.request = TestRequest()
+        details.context = traverse(self.layer.getRootFolder(), '/++apidoc++')
+
+        info = details._listClasses([items_class])
+        self.assertIsNone(info[0]['url'], None)
+
+class TestIntrospectorNS(unittest.TestCase):
+
+    def _check_namespace(self, kind, context, name):
+        from zope.app.apidoc.codemodule.browser import introspector
+        from zope.location import LocationProxy
+
+        namespace = getattr(introspector, kind + 'Namespace')
+        traverser = namespace(context)
+        obj = traverser.traverse(name, ())
+        self.assertIsInstance(obj, LocationProxy)
+
+        self.assertIs(obj.__parent__, context)
+        self.assertTrue(obj.__name__.endswith(name))
+        return traverser, obj
+
+    def test_annotations(self):
+        from zope.annotation.attribute import AttributeAnnotations
+        anot = AttributeAnnotations(self)
+        anot['key'] = 42
+        self._check_namespace('annotations', anot, 'key')
+
+    def test_items(self):
+        self._check_namespace('sequenceItems', ["value"], '0')
+
+    def test_mapping(self):
+        self._check_namespace('mappingItems', {'key': 'value'}, 'key')
+
+
+class TestIntrospector(unittest.TestCase):
+    layer = APIDocLayer
+
+    classAttr = 1
+
+    def testIntrospector(self):
+        from zope.app.apidoc.codemodule.browser.introspector import Introspector
+        from zope.publisher.browser import TestRequest
+
+        ispect = Introspector(self, TestRequest())
+        atts = list(ispect.getAttributes())
+        names = [x['name'] for x in atts]
+        self.assertIn('classAttr', names)
+        self.assertNotIn('testAttributes', names)
+
 
 def test_suite():
-    checker = renormalizing.RENormalizing([
-        (re.compile(r" with base 10: 'text'"), r': text'),
-        ])
-    CodeModuleTests.layer = APIDocLayer
-    introspector = FunctionalDocFileSuite(
-        "introspector.txt",
-        optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
-    introspector.layer = APIDocLayer
     return unittest.TestSuite((
-        doctest.DocFileSuite(
-            'README.txt',
-            setUp=setUp, tearDown=tearDown,checker=checker,
-            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS),
-        doctest.DocTestSuite(
-            'zope.app.apidoc.codemodule.browser.menu',
-            setUp=setUp, tearDown=tearDown,
-            optionflags=doctest.NORMALIZE_WHITESPACE),
-        unittest.makeSuite(CodeModuleTests),
-        introspector,
-        ))
+        LayerDocFileSuite(
+            'README.rst',
+            zope.app.apidoc.codemodule.browser),
+        LayerDocTestSuite(
+            'zope.app.apidoc.codemodule.browser.menu'),
+        LayerDocFileSuite(
+            "introspector.rst",
+            zope.app.apidoc.codemodule.browser),
+        unittest.defaultTestLoader.loadTestsFromName(__name__),
+    ))
 
 if __name__ == '__main__':
-    unittest.main(default="test_suite")
+    unittest.main(defaultTest='test_suite')

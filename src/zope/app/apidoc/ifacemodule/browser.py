@@ -13,30 +13,29 @@
 ##############################################################################
 """Interface Details View
 
-$Id$
 """
 
 __docformat__ = 'restructuredtext'
 
 import inspect
 
-from zope.component import getUtility
 from zope.i18nmessageid import ZopeMessageFactory as _
+from zope.location.interfaces import LocationError
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.publisher.interfaces.xmlrpc import IXMLRPCRequest
 from zope.publisher.interfaces.http import IHTTPRequest
 from zope.publisher.interfaces.ftp import IFTPRequest
 from zope.publisher.browser import BrowserView
-from zope.security.proxy import isinstance, removeSecurityProxy
+from zope.security.proxy import removeSecurityProxy
 from zope.proxy import removeAllProxies
-from zope.traversing.api import getName, getParent, traverse
+from zope.traversing.api import getName, traverse
 from zope.traversing.browser import absoluteURL
 
 from zope.app.apidoc.utilities import getPythonPath, renderText
-from zope.app.apidoc.apidoc import APIDocumentation
 from zope.app.apidoc import classregistry
 from zope.app.apidoc import interface, component, presentation
 from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
+from zope.app.apidoc.browser.utilities import findAPIDocumentationRoot
 
 class InterfaceDetails(BrowserView):
     """View class for an Interface."""
@@ -135,8 +134,7 @@ class InterfaceDetails(BrowserView):
         # returned.
         iface = removeAllProxies(self.context)
         # Make sure that the required fields are shown first
-        sorter = lambda x, y: cmp((not x[1].required, x[0].lower()),
-                                  (not y[1].required, y[0].lower()))
+        sorter = lambda x: (not x[1].required, x[0].lower())
         return [interface.getFieldInfoDictionary(field)
                 for name, field in interface.getFieldsInOrder(iface, sorter)]
 
@@ -241,16 +239,13 @@ class InterfaceDetails(BrowserView):
 
             views[(type in views) and type or None].append(reg)
 
-
-        sort_function = lambda x, y: cmp(x['name'], y['name'])
-
         for type, sel_views in views.items():
             for level, qualifier in level_map.items():
                 regs = tuple(component.filterAdapterRegistrations(
                     sel_views, iface, level=qualifier))
                 infos = [presentation.getViewInfoDictionary(reg)
                          for reg in regs]
-                infos.sort()
+
                 setattr(self, level+type_map[type]+'Views', infos)
 
     def getViewClassTitles(self):
@@ -273,19 +268,20 @@ class InterfaceDetails(BrowserView):
 class InterfaceBreadCrumbs(object):
     """View that provides breadcrumbs for interface objects"""
 
+    context = None
+    request = None
+
     def __call__(self):
         """Create breadcrumbs for an interface object.
 
         The breadcrumbs are rooted at the code browser.
         """
-        docroot = self.context
-        while not isinstance(docroot, APIDocumentation):
-            docroot = getParent(docroot)
+        docroot = findAPIDocumentationRoot(self.context)
         codeModule = traverse(docroot, "Code")
         crumbs = [{
             'name': _('[top]'),
             'url': absoluteURL(codeModule, self.request)
-            }]
+        }]
         # We need the __module__ of the interface, not of a location proxy,
         # so we have to remove all proxies.
         iface = removeAllProxies(self.context)
@@ -296,9 +292,9 @@ class InterfaceBreadCrumbs(object):
             crumbs.append({
                 'name': name,
                 'url': absoluteURL(obj, self.request)
-                })
+            })
         crumbs.append({
             'name': iface.__name__,
             'url': absoluteURL(self.context, self.request)
-            })
+        })
         return crumbs

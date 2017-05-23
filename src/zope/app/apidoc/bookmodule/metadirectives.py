@@ -19,12 +19,12 @@ __docformat__ = 'restructuredtext'
 
 from zope.configuration.fields import Path, MessageID, Tokens
 from zope.interface import Interface
-from zope.schema import BytesLine, TextLine
+from zope.schema import NativeStringLine, TextLine
 
 class IBookChapterDirective(Interface):
     """Register a new Book Chapter"""
 
-    id = BytesLine(
+    id = NativeStringLine(
         title=u"Topic Id",
         description=u"Id of the chapter as it will appear in the URL.",
         required=True)
@@ -39,7 +39,7 @@ class IBookChapterDirective(Interface):
         description=u"Path to the file that contains the chapter content.",
         required=False)
 
-    parent = BytesLine(
+    parent = NativeStringLine(
         title=u"Parent Chapter",
         description=u"Id of the parent chapter.",
         default="",

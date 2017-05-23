@@ -18,18 +18,18 @@ execute them) and uses the collected data to generate the tree. The result of
 the evaluation is stored in thread-global variables, so that we have to parse
 the files only once.
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 
-from zope.configuration import docutils, xmlconfig
+from zope.configuration import docutils
 from zope.i18nmessageid import ZopeMessageFactory as _
-from zope.interface import implements
+from zope.interface import implementer
 from zope.location.interfaces import ILocation
 
 import zope.app.appsetup.appsetup
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase
+from zope.app.apidoc.utilities import DocumentationModuleBase
 
 # Caching variables, so that the meta-ZCML files need to be read only once
 namespaces = None
@@ -48,10 +48,10 @@ def unquoteNS(ns):
     return ns
 
 
+@implementer(ILocation)
 class Namespace(ReadContainerBase):
     """Simple namespace object for the ZCML Documentation Module."""
 
-    implements(ILocation)
 
     def __init__(self, parent, name):
         self.__parent__ = parent
@@ -77,8 +77,9 @@ class Namespace(ReadContainerBase):
 
     def get(self, key, default=None):
         """See zope.container.interfaces.IReadContainer"""
+        _makeDocStructure()
         ns = self.getFullName()
-        if not namespaces[ns].has_key(key):
+        if key not in namespaces[ns]:
             return default
         schema, handler, info = namespaces[ns][key]
         sd = subdirs.get((ns, key), [])
@@ -87,17 +88,15 @@ class Namespace(ReadContainerBase):
 
     def items(self):
         """See zope.container.interfaces.IReadContainer"""
-        list = []
-        for key in namespaces[self.getFullName()].keys():
-            list.append((key, self.get(key)))
-        list.sort()
-        return list
+        _makeDocStructure()
+        return sorted(((key, self.get(key))
+                       for key
+                       in namespaces[self.getFullName()].keys()))
 
 
+@implementer(ILocation)
 class Directive(object):
     """Represents a ZCML Directive."""
-
-    implements(ILocation)
 
     def __init__(self, ns, name, schema, handler, info, subdirs):
         self.__parent__ = ns
@@ -108,13 +107,12 @@ class Directive(object):
         self.subdirs = subdirs
 
 
-class ZCMLModule(ReadContainerBase):
+@implementer(IDocumentationModule)
+class ZCMLModule(DocumentationModuleBase):
     r"""Represent the Documentation of all ZCML namespaces.
 
     This documentation is implemented using a simple `IReadContainer`. The
     items of the container."""
-
-    implements(IDocumentationModule)
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
     title = _('ZCML Reference')
@@ -133,33 +131,20 @@ class ZCMLModule(ReadContainerBase):
     available attributes.
     """)
 
-    def _makeDocStructure(self):
-        # Some trivial caching
-        global namespaces
-        global subdirs
-        context = zope.app.appsetup.appsetup.getConfigContext()
-        namespaces, subdirs = docutils.makeDocStructures(context)
-
-        # Empty keys are not so good for a container
-        if namespaces.has_key(''):
-            namespaces['ALL'] = namespaces['']
-            del namespaces['']
-
 
     def get(self, key, default=None):
         """See zope.container.interfaces.IReadContainer
 
         Get the namespace by name; long and abbreviated names work.
         """
-        if namespaces is None or subdirs is None:
-            self._makeDocStructure()
+        _makeDocStructure()
 
         key = unquoteNS(key)
-        if namespaces.has_key(key):
+        if key in namespaces:
             return Namespace(self, key)
 
         full_key = 'http://namespaces.zope.org/' + key
-        if namespaces.has_key(full_key):
+        if full_key in namespaces:
             return Namespace(self, full_key)
 
         return default
@@ -167,16 +152,31 @@ class ZCMLModule(ReadContainerBase):
 
     def items(self):
         """See zope.container.interfaces.IReadContainer"""
-        if namespaces is None or subdirs is None:
-            self._makeDocStructure()
-        list = []
-        for key in namespaces.keys():
+        _makeDocStructure()
+        result = []
+        for key in namespaces:
             namespace = Namespace(self, key)
             # We need to make sure that we use the quoted URL as key
-            list.append((namespace.getQuotedName(), namespace))
-        list.sort()
-        return list
+            result.append((namespace.getQuotedName(), namespace))
+        result.sort()
+        return result
 
+
+def _makeDocStructure():
+    # Some trivial caching
+    global namespaces
+    global subdirs
+    if namespaces is not None and subdirs is not None:
+        return
+
+    context = zope.app.appsetup.appsetup.getConfigContext()
+    assert context is not None
+    namespaces, subdirs = docutils.makeDocStructures(context)
+
+    # Empty keys are not so good for a container
+    if '' in namespaces:
+        namespaces['ALL'] = namespaces['']
+        del namespaces['']
 
 def _clear():
     global namespaces

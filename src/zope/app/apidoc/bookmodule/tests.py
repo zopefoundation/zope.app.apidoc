@@ -13,15 +13,20 @@
 ##############################################################################
 """Tests for the Book Documentation Module
 
-$Id$
 """
 import unittest
 import doctest
 
+from zope.app.apidoc.tests import standard_checker
+from zope.app.apidoc.tests import standard_option_flags
+
 def test_suite():
     return unittest.TestSuite((
-        doctest.DocTestSuite('zope.app.apidoc.bookmodule.browser'),
-        ))
+        doctest.DocTestSuite(
+            'zope.app.apidoc.bookmodule.browser',
+            checker=standard_checker(),
+            optionflags=standard_option_flags),
+    ))
 
 if __name__ == '__main__':
-    unittest.main(default='test_suite')
+    unittest.main(defaultTest='test_suite')

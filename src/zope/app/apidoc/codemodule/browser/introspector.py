@@ -13,12 +13,11 @@
 ##############################################################################
 """Introspector view for content components
 
-$Id$
+
 """
 __docformat__ = 'restructuredtext'
-
+import six
 import inspect
-import types
 
 import zope.interface
 import zope.security.proxy
@@ -31,10 +30,10 @@ from zope.traversing.api import getParent, traverse
 
 from zope.app import apidoc
 
-def getTypeLink(type):
-    if type is types.NoneType:
+def getTypeLink(type_):
+    if type_ is type(None):
         return None
-    path = apidoc.utilities.getPythonPath(type)
+    path = apidoc.utilities.getPythonPath(type_)
     importable = apidoc.utilities.isReferencable(path)
     return importable and path.replace('.', '/') or None
 
@@ -50,7 +49,7 @@ class annotationsNamespace(object):
         # only available in dev-mode.
         naked = zope.security.proxy.removeSecurityProxy(self.context)
         annotations = annotation.interfaces.IAnnotations(naked)
-        obj = name and annotations[name] or annotations
+        obj = annotations[name] if name else annotations
         if not IPhysicallyLocatable(obj, False):
             obj = location.LocationProxy(
                 obj, self.context, '++annotations++'+name)
@@ -90,8 +89,9 @@ class mappingItemsNamespace(object):
 
 
 # Small hack to simulate a traversal root.
+@zope.interface.implementer(IContainmentRoot)
 class TraversalRoot(object):
-    zope.interface.implements(IContainmentRoot)
+    pass
 
 
 class Introspector(BrowserView):
@@ -141,10 +141,15 @@ class Introspector(BrowserView):
         for name in apidoc.utilities.getPublicAttributes(obj):
             value = getattr(obj, name)
             if inspect.ismethod(value) or inspect.ismethoddescriptor(value):
-                continue
+                # Because getPublicAttributes(obj) loops through
+                # dir(obj) which is more or less obj.__dict__, and
+                # when obj is an instance (and not a class), its
+                # __dict__ tends not to have methods in it, so this condition
+                # should typically not be taken.
+                continue  # pragma: no cover
             entry = {
                 'name': name,
-                'value': `value`,
+                'value': repr(value),
                 'value_linkable': IPhysicallyLocatable(value, False) and True,
                 'type': type(value).__name__,
                 'type_link': getTypeLink(type(value)),
@@ -168,10 +173,8 @@ class Introspector(BrowserView):
             val = getattr(obj, name)
             if not (inspect.ismethod(val) or inspect.ismethoddescriptor(val)):
                 continue
-            if inspect.ismethod(val):
-                signature = apidoc.utilities.getFunctionSignature(val)
-            else:
-                signature = '(...)'
+
+            signature = apidoc.utilities.getFunctionSignature(val)
 
             entry = {
                 'name': name,
@@ -195,11 +198,11 @@ class Introspector(BrowserView):
         ann = []
         # Make the object naked, so that we can inspect the value types.
         naked = zope.security.proxy.removeSecurityProxy(self.context)
-        for index in xrange(0, len(self.context)):
+        for index in six.moves.xrange(0, len(self.context)):
             value = naked[index]
             ann.append({
                 'index': index,
-                'value': `value`,
+                'value': repr(value),
                 'value_type': type(value).__name__,
                 'value_type_link': getTypeLink(type(value))
                 })
@@ -216,8 +219,8 @@ class Introspector(BrowserView):
         for key, value in naked.items():
             ann.append({
                 'key': key,
-                'key_string': `key`,
-                'value': `value`,
+                'key_string': repr(key),
+                'value': repr(value),
                 'value_type': type(value).__name__,
                 'value_type_link': getTypeLink(type(value))
                 })
@@ -231,15 +234,13 @@ class Introspector(BrowserView):
         # so we want to see things that we usually cannot see
         naked = zope.security.proxy.removeSecurityProxy(self.context)
         annotations = annotation.interfaces.IAnnotations(naked)
-        if not hasattr(annotations, 'items'):
-            return
         ann = []
         for key, value in annotations.items():
             ann.append({
                 'key': key,
-                'key_string': `key`,
-                'value': `value`,
+                'key_string': repr(key),
+                'value': repr(value),
                 'value_type': type(value).__name__,
                 'value_type_link': getTypeLink(type(value))
-                })
+            })
         return ann

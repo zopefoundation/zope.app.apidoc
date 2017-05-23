@@ -13,49 +13,15 @@
 ##############################################################################
 """Tests for the Interface Documentation Module
 
-$Id$
 """
-import unittest
-import doctest
 
-from zope.component.interfaces import IFactory
-from zope.interface.interfaces import IInterface
+import unittest
+
+import zope.app.apidoc.ifacemodule
 
 from zope.app.apidoc.testing import APIDocLayer
-from zope.app.apidoc.apidoc import APIDocumentation
-from zope.app.apidoc.interfaces import IDocumentationModule
-from zope.app.apidoc.ifacemodule.ifacemodule import InterfaceModule
-from zope.app.renderer.rest import ReStructuredTextSourceFactory
-from zope.app.renderer.rest import IReStructuredTextSource
-from zope.app.renderer.rest import ReStructuredTextToHTMLRenderer
-from zope.app.testing import ztapi, setup
-from zope.app.testing.functional import BrowserTestCase
-from zope.app.tree.interfaces import IUniqueId
-from zope.app.tree.adapters import LocationUniqueId
-
-def setUp(test):
-    root_folder = setup.placefulSetUp(True)
-
-    ztapi.provideAdapter(IInterface, IUniqueId, LocationUniqueId)
-
-    # Set up apidoc module
-    test.globs['apidoc'] = APIDocumentation(root_folder, '++apidoc++')
-
-    # Register InterfaceModule
-    ztapi.provideUtility(IDocumentationModule, InterfaceModule(), "Interface")
-
-    # Register Renderer Components
-    ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
-                         'zope.source.rest')
-    ztapi.browserView(IReStructuredTextSource, '',
-                      ReStructuredTextToHTMLRenderer)
-    # Cheat and register the ReST factory for STX as well
-    ztapi.provideUtility(IFactory, ReStructuredTextSourceFactory,
-                         'zope.source.stx')
-
-
-def tearDown(test):
-    setup.placefulTearDown()
+from zope.app.apidoc.tests import LayerDocFileSuite
+from zope.app.apidoc.tests import BrowserTestCase
 
 
 class InterfaceModuleTests(BrowserTestCase):
@@ -67,11 +33,11 @@ class InterfaceModuleTests(BrowserTestCase):
         response = self.publish(
             '/++apidoc++/Interface/menu.html',
             basic='mgr:mgrpw',
-            env = {'name_only': True, 'search_str': 'IDoc'})
+            env={'name_only': 'True', 'search_str': 'IDoc'})
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find(
-            'zope.app.apidoc.interfaces.IDocumentationModule') > 0)
+        self.assertIn(
+            'zope.app.apidoc.interfaces.IDocumentationModule', body)
         self.checkForBrokenLinks(body, '/++apidoc++/Interface/menu.html',
                                  basic='mgr:mgrpw')
 
@@ -83,21 +49,39 @@ class InterfaceModuleTests(BrowserTestCase):
             basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find('Interface API Documentation Module') > 0)
-        self.assert_(body.find('/++apidoc++/Code/zope/app/apidoc'
-                               '/ifacemodule/ifacemodule/index.html') > 0)
+        self.assertIn('Interface API Documentation Module', body)
+        self.assertIn('/++apidoc++/Code/zope/app/apidoc'
+                      '/ifacemodule/ifacemodule/index.html', body)
 
+    def testStaticMenu(self):
+        response = self.publish(
+            '/++apidoc++/Interface/staticmenu.html',
+            basic='mgr:mgrpw')
+
+        self.assertEqual(response.getStatus(), 200)
+        body = response.getBody()
+        self.assertIn(
+            'zope.app.apidoc.interfaces.IDocumentationModule', body)
+        self.checkForBrokenLinks(body, '/++apidoc++/Interface/staticmenu.html',
+                                 basic='mgr:mgrpw',
+                                 # This page is slow, only do a few
+                                 max_links=5)
 
 def test_suite():
+
+    readme = LayerDocFileSuite(
+        'README.rst',
+        zope.app.apidoc.ifacemodule)
+
+    browser = LayerDocFileSuite(
+        'browser.rst',
+        zope.app.apidoc.ifacemodule)
+
     return unittest.TestSuite((
-        doctest.DocFileSuite('README.txt',
-                             setUp=setUp, tearDown=tearDown,
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
-        doctest.DocFileSuite('browser.txt',
-                             setUp=setUp, tearDown=tearDown,
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
-        unittest.makeSuite(InterfaceModuleTests),
-        ))
+        readme,
+        browser,
+        unittest.defaultTestLoader.loadTestsFromName(__name__)
+    ))
 
 if __name__ == '__main__':
     unittest.main(defaultTest="test_suite")

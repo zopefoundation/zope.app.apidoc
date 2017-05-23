@@ -20,24 +20,26 @@ After registering an interface
   >>> provideInterface('IFoo', IFoo)
 
 Now let's lookup an interface that is registered.
-  
+
   >>> module.get('IFoo')
   <InterfaceClass __builtin__.IFoo>
 
-  >>> module.get('__builtin__.IFoo')
+  >>> module.get(IFoo.__module__ + '.IFoo')
   <InterfaceClass __builtin__.IFoo>
-  
+
 
 Now we find an interface that is not in the site manager, but exists.
 
   >>> module.get('zope.app.apidoc.interfaces.IDocumentationModule')
   <InterfaceClass zope.app.apidoc.interfaces.IDocumentationModule>
- 
+
 Finally, you can list all registered interfaces:
 
-  >>> ifaces = module.items()
-  >>> ifaces.sort()
+  >>> ifaces = sorted(module.items())
   >>> from pprint import pprint
   >>> pprint(ifaces)
-  [(u'IFoo', <InterfaceClass __builtin__.IFoo>),
-   (u'__builtin__.IFoo', <InterfaceClass __builtin__.IFoo>)]
+  [...
+   (u'IFoo', <InterfaceClass __builtin__.IFoo>),
+   ...
+   (u'__builtin__.IFoo', <InterfaceClass __builtin__.IFoo>),
+    ...]

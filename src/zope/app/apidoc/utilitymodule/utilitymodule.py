@@ -13,37 +13,47 @@
 ##############################################################################
 """Utility Documentation Module
 
-$Id$
+
 """
 __docformat__ = 'restructuredtext'
 
-import base64, binascii
+import base64
+import binascii
 
 import zope.component
-from zope.component.registry import UtilityRegistration
-from zope.interface import implements
+
+from zope.interface import implementer
 from zope.location.interfaces import ILocation
 
 from zope.i18nmessageid import ZopeMessageFactory as _
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase, getPythonPath
+from zope.app.apidoc.utilities import DocumentationModuleBase
 
 # Constant used when the utility has no name
 NONAME = '__noname__'
 
 def encodeName(name):
-    return base64.urlsafe_b64encode(name.encode('utf-8'))
+    name = base64.urlsafe_b64encode(name.encode('utf-8'))
+    if not isinstance(name, str):
+        name = name.decode('ascii')
+    return name
 
 def decodeName(name):
     try:
-        return base64.urlsafe_b64decode(str(name)).decode('utf-8')
+        to_decode = name
+        if not isinstance(to_decode, bytes):
+            to_decode = to_decode.encode("ascii")
+
+        return base64.urlsafe_b64decode(to_decode).decode('utf-8')
     except (binascii.Error, TypeError):
         # Someone probably passed a non-encoded name, so let's accept that.
         return name
 
+
+@implementer(ILocation)
 class Utility(object):
     """Representation of a utility for the API Documentation"""
-    implements(ILocation)
 
     def __init__(self, parent, reg):
         """Initialize Utility object."""
@@ -56,9 +66,9 @@ class Utility(object):
         self.doc = reg.info
 
 
+@implementer(ILocation)
 class UtilityInterface(ReadContainerBase):
     """Representation of an interface a utility provides."""
-    implements(ILocation)
 
     def __init__(self, parent, name, interface):
         self.__parent__ = parent
@@ -74,7 +84,7 @@ class UtilityInterface(ReadContainerBase):
         utils = [Utility(self, reg)
                  for reg in sm.registeredUtilities()
                  if reg.name == key and reg.provided == self.interface]
-        return utils and utils[0] or default
+        return utils[0] if utils else default
 
     def items(self):
         """See zope.container.interfaces.IReadContainer"""
@@ -82,17 +92,16 @@ class UtilityInterface(ReadContainerBase):
         items = [(encodeName(reg.name or NONAME), Utility(self, reg))
                  for reg in sm.registeredUtilities()
                  if self.interface == reg.provided]
-        items.sort()
-        return items
+        return sorted(items)
 
 
-class UtilityModule(ReadContainerBase):
+@implementer(IDocumentationModule)
+class UtilityModule(DocumentationModuleBase):
     """Represent the Documentation of all Interfaces.
 
     This documentation is implemented using a simple `IReadContainer`. The
     items of the container are all utility interfaces.
     """
-    implements(IDocumentationModule)
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
     title = _('Utilities')
@@ -127,7 +136,7 @@ class UtilityModule(ReadContainerBase):
             # Get the next site manager
             sm = smlist.pop()
             # If we have already looked at this site manager, then skip it
-            if sm in seen:
+            if sm in seen: # pragma: no cover
                 continue
             # Add the current site manager to the list of seen ones
             seen.append(sm)
@@ -138,7 +147,6 @@ class UtilityModule(ReadContainerBase):
                 path = getPythonPath(reg.provided)
                 ifaces[path] = UtilityInterface(self, path, reg.provided)
 
-        items = ifaces.items()
-        items.sort(lambda x, y: cmp(x[0].split('.')[-1], y[0].split('.')[-1]))
+        items = sorted(ifaces.items(),
+                       key=lambda x: x[0].split('.')[-1])
         return items
-

@@ -7,6 +7,10 @@
     <allow interface=".interfaces.IModuleDocumentation" />
   </class>
 
+  <class class=".module._LazyModule">
+	  <require like_class=".module.Module" />
+  </class>
+
   <class class=".class_.Class">
     <allow interface=".interfaces.IClassDocumentation" />
   </class>
@@ -32,6 +36,9 @@
     <allow interface=".interfaces.IModuleDocumentation" />
     <allow attributes="rootModules" />
   </class>
+
+  <include package="zope.app.apidoc" file="meta.zcml" />
+  <include package="zope.app.apidoc.codemodule" file="meta.zcml" />
 
   <apidoc:rootModule module="BTrees" />
   <apidoc:rootModule module="RestrictedPython" />

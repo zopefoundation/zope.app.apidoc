@@ -13,11 +13,9 @@
 ##############################################################################
 """Views/Presentation Utilities
 
-$Id$
 """
-from types import ClassType
+import six
 from zope.component import getGlobalSiteManager
-from zope.component.registry import AdapterRegistration
 from zope.interface import Interface
 
 from zope.i18nmessageid import ZopeMessageFactory as _
@@ -25,7 +23,7 @@ from zope.app.apidoc.utilities import getPythonPath, relativizePath
 from zope.app.apidoc.utilities import getPermissionIds
 from zope.app.apidoc.component import getParserInfoInfoDictionary
 from zope.app.apidoc.component import getInterfaceInfoDictionary
-from zope.app.publisher.browser.icon import IconViewFactory
+from zope.browserresource.icon import IconViewFactory
 
 from zope.publisher.interfaces import IRequest
 from zope.publisher.interfaces.browser import IBrowserRequest
@@ -42,6 +40,7 @@ BROWSER_DIRECTIVES_MODULE = 'zope.app.publisher.browser.viewmeta'
 XMLRPC_DIRECTIVES_MODULE = 'zope.app.publisher.xmlrpc.metaconfigure'
 JSONRPC_DIRECTIVES_MODULE = 'jsonserver.metaconfigure'
 
+
 def getViewFactoryData(factory):
     """Squeeze some useful information out of the view factory"""
     info = {'path': None, 'url': None, 'template': None, 'resource': None,
@@ -54,8 +53,7 @@ def getViewFactoryData(factory):
     while hasattr(factory, 'factory'):
         factory = factory.factory
 
-    if hasattr(factory, '__name__') and \
-       factory.__name__.startswith('SimpleViewClass'):
+    if getattr(factory, '__name__', '').startswith('SimpleViewClass'):
         # In the case of a SimpleView, the base is really what we are
         # interested in. Usually the first listed class is the interesting one.
         base = factory.__bases__[0]
@@ -64,40 +62,30 @@ def getViewFactoryData(factory):
         info['template_obj'] = factory.index
 
     # Basic Type is a factory
-    elif isinstance(factory, (str, unicode, float, int, list, tuple)):
+    elif isinstance(factory, (six.string_types, float, int, list, tuple)):
         info['referencable'] = False
 
-    elif factory.__module__ is not None and \
-             factory.__module__.startswith(BROWSER_DIRECTIVES_MODULE):
-        info['path'] = getPythonPath(factory.__bases__[0])
+    elif factory.__module__ is not None:
+        if factory.__module__.startswith(BROWSER_DIRECTIVES_MODULE):
+            info['path'] = getPythonPath(factory.__bases__[0])
+        # XML-RPC view factory, generated during registration
+        elif (factory.__module__.startswith(XMLRPC_DIRECTIVES_MODULE)
+            # JSON-RPC view factory, generated during registration
+            # This is needed for the 3rd party jsonserver implementation
+            # TODO: See issue http://www.zope.org/Collectors/Zope3-dev/504, ri
+            or factory.__module__.startswith(JSONRPC_DIRECTIVES_MODULE)):
+            # Those factories are method publisher and security wrapped
+            info['path'] = getPythonPath(factory.__bases__[0].__bases__[0])
 
-    # XML-RPC view factory, generated during registration
-    elif factory.__module__ is not None and \
-             factory.__module__.startswith(XMLRPC_DIRECTIVES_MODULE):
-
-        # Those factories are method publisher and security wrapped
-        info['path'] = getPythonPath(factory.__bases__[0].__bases__[0])
-
-    # JSON-RPC view factory, generated during registration
-    # This is needed for the 3rd party jsonserver implementation
-    # TODO: See issue http://www.zope.org/Collectors/Zope3-dev/504, ri
-    elif factory.__module__ is not None and \
-             factory.__module__.startswith(JSONRPC_DIRECTIVES_MODULE):
-
-        # Those factories are method publisher and security wrapped
-        info['path'] = getPythonPath(factory.__bases__[0].__bases__[0])
-
-    # A factory that is a class instance; since we cannot reference instances,
-    # reference the class.
-    elif not hasattr(factory, '__name__'):
+    if not info['path'] and not hasattr(factory, '__name__'):
+        # A factory that is a class instance; since we cannot reference instances,
+        # reference the class.
         info['path'] = getPythonPath(factory.__class__)
 
-    # A simple class-based factory
-    elif type(factory) in (type, ClassType):
-        info['path'] = getPythonPath(factory)
-
-    # We have tried our best; just get the Python path as good as you can.
-    else:
+    if not info['path']:
+        # Either a simple class-based factory, or not. It doesn't
+        # matter. We have tried our best; just get the Python path as
+        # good as you can.
         info['path'] = getPythonPath(factory)
 
     if info['referencable']:
@@ -114,9 +102,9 @@ def getPresentationType(iface):
     # Note that the order of the requests matters here, since we want to
     # inspect the most specific one first. For example, IBrowserRequest is also
     # an IHTTPRequest.
-    for type in [IBrowserRequest, IXMLRPCRequest, IHTTPRequest, IFTPRequest]:
-        if iface.isOrExtends(type):
-            return type
+    for kind in [IBrowserRequest, IXMLRPCRequest, IHTTPRequest, IFTPRequest]:
+        if iface.isOrExtends(kind):
+            return kind
     return iface
 
 
@@ -124,7 +112,7 @@ def getViews(iface, type=IRequest):
     """Get all view registrations for a particular interface."""
     gsm = getGlobalSiteManager()
     for reg in gsm.registeredAdapters():
-        if (len(reg.required) > 0 and
+        if (reg.required and
             reg.required[-1] is not None and
             reg.required[-1].isOrExtends(type)):
 
@@ -159,14 +147,14 @@ def filterViewRegistrations(regs, iface, level=SPECIFIC_INTERFACE_LEVEL):
 def getViewInfoDictionary(reg):
     """Build up an information dictionary for a view registration."""
     # get configuration info
-    if isinstance(reg.info, (str, unicode)):
+    if isinstance(reg.info, six.string_types):
         doc = reg.info
         zcml = None
     else:
         doc = None
         zcml = getParserInfoInfoDictionary(reg.info)
 
-    info = {'name' : unicode(reg.name) or _('<i>no name</i>'),
+    info = {'name' : six.text_type(reg.name) or _('<i>no name</i>'),
             'type' : getPythonPath(getPresentationType(reg.required[-1])),
             'factory' : getViewFactoryData(reg.factory),
             'required': [getInterfaceInfoDictionary(iface)

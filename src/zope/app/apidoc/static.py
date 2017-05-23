@@ -13,7 +13,7 @@
 ##############################################################################
 """Retrieve Static APIDOC
 
-$Id$
+
 """
 __docformat__ = "reStructuredText"
 
@@ -22,25 +22,23 @@ import os
 import os.path
 import sys
 import time
-import optparse
-import urllib2
-import urlparse
+import argparse
+from six.moves.urllib import error as urllib2
+from six.moves.urllib import parse as urlparse
+
 import warnings
-import HTMLParser
 
-import zope.testbrowser.testing
-import mechanize
+import zope.testbrowser.browser
+import zope.testbrowser.wsgi
 
-from zope.app.testing import functional
 
 from zope.app.apidoc import classregistry
 
 VERBOSITY_MAP = {1: 'ERROR', 2: 'WARNING', 3: 'INFO'}
 
 # A mapping of HTML elements that can contain links to the attribute that
-# actually contains the link
+# actually contains the link, with the exception of standard <a> tags.
 urltags = {
-    "a": "href",
     "area": "href",
     "base": "href",
     "frame": "src",
@@ -53,7 +51,7 @@ urltags = {
 def getMaxWidth():
     try:
         import curses
-    except ImportError:
+    except ImportError: # pragma: no cover
         pass
     else:
         try:
@@ -61,9 +59,9 @@ def getMaxWidth():
             cols = curses.tigetnum('cols')
             if cols > 0:
                 return cols
-        except curses.error:
+        except curses.error: # pragma: no cover
             pass
-    return 80
+    return 80 # pragma: no cover
 
 def cleanURL(url):
     """Clean a URL from parameters."""
@@ -71,7 +69,15 @@ def cleanURL(url):
         url = url.split('?')[0]
     if '#' in url:
         url = url.split('#')[0]
-    return url
+
+    fragments = list(urlparse.urlparse(url))
+
+    fragments[2] = os.path.normpath(fragments[2])
+    fragments[2].replace('//', '/')
+    norm = urlparse.urlunparse(fragments)
+    return norm
+
+
 
 def completeURL(url):
     """Add file to URL, if not provided."""
@@ -79,10 +85,7 @@ def completeURL(url):
         url += 'index.html'
     if '.' not in url.split('/')[-1]:
         url += '/index.html'
-    filename = url.split('/')[-1]
-    if filename.startswith('@@'):
-        url = url.replace(filename, filename[2:])
-    # Now normalize the URL.
+
     fragments = list(urlparse.urlparse(url))
     fragments[2] = os.path.normpath(fragments[2])
     return urlparse.urlunparse(fragments)
@@ -91,13 +94,15 @@ def completeURL(url):
 class Link(object):
     """A link in the page."""
 
-    def __init__(self, mechLink, rootURL, referenceURL='None'):
+    def __init__(self, url, rootURL, referenceURL='None'):
         self.rootURL = rootURL
         self.referenceURL = referenceURL
-        self.originalURL = mechLink.url
-        self.callableURL = mechLink.absolute_url
-        self.url = completeURL(cleanURL(mechLink.url))
-        self.absoluteURL = completeURL(cleanURL(mechLink.absolute_url))
+        self.originalURL = url
+
+        absolute_url = urlparse.urljoin(rootURL, url)
+        self.callableURL = absolute_url
+        self.url = completeURL(cleanURL(url))
+        self.absoluteURL = completeURL(cleanURL(self.callableURL))
 
     def isLocalURL(self):
         """Determine whether the passed in URL is local and accessible."""
@@ -115,107 +120,154 @@ class Link(object):
 
     def isApidocLink(self):
         # Make sure that only apidoc links are loaded
-        if self.absoluteURL.startswith(self.rootURL+'++apidoc++/'):
-            return True
-        if self.absoluteURL.startswith(self.rootURL+'@@/'):
-            return True
-        return False
+        allowed_prefixes = ((self.rootURL + '++apidoc++/'),
+                            (self.rootURL + '@@/'))
+        return self.absoluteURL.startswith(allowed_prefixes)
 
 
-class OnlineBrowser(mechanize.Browser, object):
-
-    def __init__(self, factory=None, history=None, request_class=None):
-        if factory == None:
-            factory = ApiDocDefaultFactory()
-        mechanize.Browser.__init__(self, factory, history, request_class)
+class OnlineBrowser(zope.testbrowser.browser.Browser):
 
     def setUserAndPassword(self, user, pw):
         """Specify the username and password to use for the retrieval."""
-        hash = base64.encodestring(user+':'+pw).strip()
-        self.addheaders.append(('Authorization', 'Basic '+hash))
+        user_pw = user + ':' + pw
+        if not isinstance(user_pw, bytes):
+            user_pw = user_pw.encode('utf-8')
+        encoded = base64.b64encode(user_pw).strip()
+        if not isinstance(encoded, str):
+            encoded = encoded.decode('ascii')
+        self.addHeader("Authorization", 'Basic ' + encoded)
 
-    @property
-    def contents(self):
-        """Get the content of the returned data"""
-        response = self.response()
-        old_location = response.tell()
-        response.seek(0)
-        contents = response.read()
-        response.seek(old_location)
-        return contents
+    @classmethod
+    def begin(cls):
+        return cls()
+
+    def end(self):
+        pass
+
+    def setDebugMode(self, debug):
+        handle = not debug
+        self.addHeader('X-zope-handle-errors', str(handle))
 
 
-class PublisherBrowser(zope.testbrowser.testing.PublisherMechanizeBrowser,
-                       object):
+class PublisherBrowser(zope.testbrowser.wsgi.Browser):
 
-    def __init__(self, *args, **kw):
-        functional.defineLayer(
-            'Functional',
-            zcml=os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                              'ftesting.zcml')))
-        Functional.setUp()
-        super(PublisherBrowser, self).__init__(*args, **kw)
+    old_appsetup_context = None
+
 
     def setUserAndPassword(self, user, pw):
         """Specify the username and password to use for the retrieval."""
-        self.addheaders.append(('Authorization', 'Basic %s:%s' %(user, pw)))
+        self.addHeader('Authorization', 'Basic %s:%s' % (user, pw))
+
+    @classmethod
+    def begin(cls):
+        # TODO: We need to let this define what config file to execute.
+        from zope.app.apidoc.testing import APIDocLayer
+        from zope.app.appsetup import appsetup
+        APIDocLayer.setUp()
+        APIDocLayer.testSetUp()
+
+        self = cls()
+
+        # Fix up path for tests.
+        self.old_appsetup_context = appsetup.getConfigContext()
+        setattr(appsetup, '__config_context', APIDocLayer.context)
+
+        return self
+
+    def end(self):
+        from zope.app.apidoc.testing import APIDocLayer
+        from zope.app.appsetup import appsetup
+        APIDocLayer.testTearDown()
+        APIDocLayer.tearDown()
+        setattr(appsetup, '__config_context', self.old_appsetup_context)
+        self.old_appsetup_context = None
+
+    def setDebugMode(self, debug):
+        self.handleErrors = not debug
+
+class ArbitraryLink(zope.testbrowser.browser.Link):
+
+    attr_name = 'src'
+
+    def __init__(self, elem, browser, base, attr_name=None):
+        super(ArbitraryLink, self).__init__(elem, browser, base)
+        if attr_name:
+            self.attr_name = attr_name
 
     @property
-    def contents(self):
-        """Get the content of the returned data"""
-        response = self.response()
-        old_location = response.tell()
-        response.seek(0)
-        contents = response.read()
-        response.seek(old_location)
-        return contents
-
+    def url(self):
+        relurl = self._link[self.attr_name]
+        return self.browser._absoluteUrl(relurl)
 
 class StaticAPIDocGenerator(object):
     """Static API doc Maker"""
 
+    counter = 0
+    linkErrors = 0
+    htmlErrors = 0
+    otherErrors = 0
+    visited = ()
+
+    _old_ignore_modules = None
+    _old_import_unknown_modules = None
+
     def __init__(self, options):
         self.options = options
         self.linkQueue = []
+
+        if self.options.ret_kind == 'webserver': # pragma: no cover
+            self.browser = OnlineBrowser
+            self.base_url = self.options.url
+            if self.base_url[-1] != '/':
+                self.base_url += '/'
+        else:
+            assert self.options.ret_kind == 'publisher', self.options.ret_kind
+            self.browser = PublisherBrowser
+            self.base_url = 'http://localhost/'
+
         for url in self.options.additional_urls + [self.options.startpage]:
-            link = Link(mechanize.Link(self.options.url, url, '', '', ()),
-                        self.options.url)
+            link = Link(url, self.base_url)
             self.linkQueue.append(link)
-        self.rootDir = os.path.join(os.path.dirname(__file__),
-                                    self.options.target_dir)
-        self.maxWidth = getMaxWidth()-13
+
+        self.rootDir = self.options.target_dir
+        self.maxWidth = getMaxWidth() - 13
         self.needNewLine = False
 
-    def start(self):
+    def __enter__(self):
+        if not os.path.exists(self.rootDir):
+            os.makedirs(self.rootDir)
+
+        self.browser = self.browser.begin()
+        self.browser.setUserAndPassword(self.options.username,
+                                        self.options.password)
+
+        self.browser.setDebugMode(self.options.debug)
+
+        self._old_ignore_modules = classregistry.IGNORE_MODULES
+        classregistry.IGNORE_MODULES = set(self.options.ignore_modules)
+
+        self._old_import_unknown_modules = classregistry.__import_unknown_modules__
+        if self.options.import_unknown_modules:
+            classregistry.__import_unknown_modules__ = True
+
+
+    def __exit__(self, *args):
+        self.browser.end()
+        classregistry.IGNORE_MODULES = self._old_ignore_modules
+        classregistry.__import_unknown_modules__ = self._old_import_unknown_modules
+
+    def retrieve(self):
         """Start the retrieval of the apidoc."""
         t0 = time.time()
+        end_time = None
+        if self.options.max_runtime:
+            end_time = t0 + self.options.max_runtime
 
-        self.visited = []
-        self.counter = 0
-        self.linkErrors = 0
-        self.htmlErrors = 0
+        self.visited = set()
 
         # Turn off deprecation warnings
         warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-        if not os.path.exists(self.rootDir):
-            os.mkdir(self.rootDir)
-
-        if self.options.use_webserver:
-            self.browser = OnlineBrowser()
-        elif self.options.use_publisher:
-            self.browser = PublisherBrowser()
-
-        self.browser.setUserAndPassword(self.options.username,
-                                        self.options.password)
-
-        if self.options.debug:
-            self.browser.addheaders.append(('X-zope-handle-errors', False))
-
-        classregistry.IGNORE_MODULES = self.options.ignore_modules
-
-        if self.options.import_unknown_modules:
-            classregistry.__import_unknown_modules__ = True
 
         # Work through all links until there are no more to work on.
         self.sendMessage('Starting retrieval.')
@@ -227,19 +279,23 @@ class StaticAPIDocGenerator(object):
             if link.absoluteURL not in self.visited:
                 self.showProgress(link)
                 self.processLink(link)
+            if end_time and time.time() >= end_time:
+                break
 
         t1 = time.time()
 
         self.sendMessage("Run time: %.3f sec" % (t1-t0))
-        self.sendMessage("Links: %i" %self.counter)
-        self.sendMessage("Link Retrieval Errors: %i" %self.linkErrors)
-        self.sendMessage("HTML ParsingErrors: %i" %self.htmlErrors)
+        self.sendMessage("Links: %i" % self.counter)
+        if self.linkQueue:
+            self.sendMessage("Unprocessed links: %d" % len(self.linkQueue))
+        self.sendMessage("Link Retrieval Errors: %i" % self.linkErrors)
+        self.sendMessage("HTML ParsingErrors: %i" % self.htmlErrors)
 
     def showProgress(self, link):
         self.counter += 1
         if self.options.progress:
             url = link.absoluteURL[-(self.maxWidth):]
-            sys.stdout.write('\r' + ' '*(self.maxWidth+13))
+            sys.stdout.write('\r' + ' ' * (self.maxWidth + 13))
             sys.stdout.write('\rLink %5d: %s' % (self.counter, url))
             sys.stdout.flush()
             self.needNewLine = True
@@ -256,304 +312,267 @@ class StaticAPIDocGenerator(object):
 
     def processLink(self, link):
         """Process a link."""
+
         url = link.absoluteURL
 
         # Whatever will happen, we have looked at the URL
-        self.visited.append(url)
+        self.visited.add(url)
 
         # Retrieve the content
         try:
             self.browser.open(link.callableURL)
-        except urllib2.HTTPError, error:
+        except urllib2.HTTPError as error:
             # Something went wrong with retrieving the page.
             self.linkErrors += 1
             self.sendMessage(
                 '%s (%i): %s' % (error.msg, error.code, link.callableURL), 2)
             self.sendMessage('+-> Reference: ' + link.referenceURL, 2)
-            # Now set the error page as the response
-            from mechanize import response_seek_wrapper
-            self.browser._response = response_seek_wrapper(error)
         except (urllib2.URLError, ValueError):
             # We had a bad URL running the publisher browser
             self.linkErrors += 1
             self.sendMessage('Bad URL: ' + link.callableURL, 2)
             self.sendMessage('+-> Reference: ' + link.referenceURL, 2)
-            return
-        except Exception, error:
+        except BaseException as error:
             # This should never happen outside the debug mode. We really want
             # to catch all exceptions, so that we can investigate them.
-            if self.options.debug:
+            self.sendMessage('Bad URL: ' + link.callableURL, 2)
+            self.sendMessage('+-> Reference: ' + link.referenceURL, 2)
+            self.otherErrors += 1
+
+            if self.options.debug: # pragma: no cover
                 import pdb; pdb.set_trace()
             return
 
-        # Get the response content
-        contents = self.browser.contents
+        self._handleOneResponse(link)
+
+    def _handleDirForResponse(self, link):
+        url = link.absoluteURL
 
         # Make sure the directory exists and get a file path.
-        relativeURL = url.replace(self.options.url, '')
-        dir = self.rootDir
+        relativeURL = url.replace(self.base_url, '')
         segments = relativeURL.split('/')
         filename = segments.pop()
 
+        dir_part = self.rootDir
         for segment in segments:
-            dir = os.path.join(dir, segment)
-            if not os.path.exists(dir):
-                os.mkdir(dir)
+            dir_part = os.path.join(dir_part, segment)
+            dir_part = os.path.normpath(dir_part)
+            if not os.path.exists(dir_part):
+                os.makedirs(dir_part)
 
-        filepath = os.path.join(dir, filename)
+        filepath = os.path.join(dir_part, filename)
+        return filepath
 
-        # Now retrieve all links
-        if self.browser.viewing_html():
+    def _handleFindLinksForResponse(self, link):
+        # Now retrieve all links and rewrite the html
+        contents = self.browser.contents
 
+        if not self.browser.isHtml:
+            return contents
+
+        url = link.absoluteURL
+        html = self.browser._response.html # pylint:disable=protected-access
+        baseUrl = self.browser._getBaseUrl() # pylint:disable=protected-access
+
+        links = html.find_all('a')
+        links = [zope.testbrowser.browser.Link(a, self.browser, baseUrl)
+                 for a in links]
+
+        for tagname, attrname in urltags.items():
+            tags = html.find_all(tagname)
+            tag_links = [ArbitraryLink(a, self.browser, baseUrl, attrname)
+                         for a in tags]
+            links.extend(tag_links)
+
+        mylinks = []
+        for l in links:
             try:
-                links = self.browser.links()
-            except HTMLParser.HTMLParseError, error:
-                self.htmlErrors += 1
-                self.sendMessage('Failed to parse HTML: ' + url, 1)
-                self.sendMessage('+-> %s: line %i, column %s' % (
-                    error.msg, error.lineno, error.offset), 1)
-                links = []
+                mylinks.append(Link(l.url, self.base_url, url))
+            except KeyError:
+                # Very occasionally we get a tag that doesn't have the expected
+                # attribute.
+                pass
+        links = mylinks
 
-            links = [Link(mech_link, self.options.url, url)
-                     for mech_link in links]
+        relativeURL = url.replace(self.base_url, '')
+        segments = relativeURL.split('/')
+        segments.pop() # filename
 
-            for link in links:
-                # Make sure we do not handle unwanted links.
-                if not (link.isLocalURL() and link.isApidocLink()):
-                    continue
+        for page_link in links:
+            # Make sure we do not handle unwanted links.
+            if not page_link.isLocalURL() or not page_link.isApidocLink(): # pragma: no cover
+                continue
 
-                # Add link to the queue
-                if link.absoluteURL not in self.visited:
-                    self.linkQueue.insert(0, link)
+            # Add link to the queue
+            if page_link.absoluteURL not in self.visited:
+                self.linkQueue.insert(0, page_link)
 
-                # Rewrite URLs
-                parts = ['..']*len(segments)
-                parts.append(link.absoluteURL.replace(self.options.url, ''))
-                contents = contents.replace(link.originalURL, '/'.join(parts))
+            # Rewrite URLs
+            parts = ['..'] * len(segments)
+            parts.append(page_link.absoluteURL.replace(self.base_url, ''))
+            contents = contents.replace(page_link.originalURL, '/'.join(parts))
+
+        return contents
+
+    def _handleOneResponse(self, link):
+        # Get the response content
+
+        filepath = self._handleDirForResponse(link)
+
+        contents = self._handleFindLinksForResponse(link)
 
         # Write the data into the file
+        if not isinstance(contents, bytes):
+            contents = contents.encode('utf-8')
         try:
-            file = open(filepath, 'w')
-            file.write(contents)
-            file.close()
-        except IOError:
+            with open(filepath, 'wb') as f:
+                f.write(contents)
+        except IOError: # pragma: no cover
             # The file already exists, so it is a duplicate and a bad one,
             # since the URL misses `index.hml`. ReST can produce strange URLs
             # that produce this problem, and we have little control over it.
+
+            # In other words, since we don't specify to open the file
+            # in exclusive creation, perhaps it refers to a
+            # directory? Or the disk is getting full?
             pass
-
-class ApiDocDefaultFactory(mechanize._html.DefaultFactory):
-    """Based on sgmllib."""
-    def __init__(self, i_want_broken_xhtml_support=False):
-        mechanize._html.Factory.__init__(
-            self,
-            forms_factory=mechanize._html.FormsFactory(),
-            links_factory=ApiDocLinksFactory(urltags=urltags),
-            title_factory=mechanize._html.TitleFactory(),
-            response_type_finder=mechanize._html.ResponseTypeFinder(
-                allow_xhtml=i_want_broken_xhtml_support),
-            )
-
-
-class ApiDocLinksFactory(mechanize._html.LinksFactory):
-    """Copy of mechanize link factory.
-
-    Unfortunately, the original implementation explicitely ignores base hrefs.
-    """
-
-    def links(self):
-        """Return an iterator that provides links of the document."""
-        response = self._response
-        encoding = self._encoding
-        base_url = self._base_url
-        p = self.link_parser_class(response, encoding=encoding)
-
-        for token in p.tags(*(self.urltags.keys()+["base"])):
-            # NOTE: WE WANT THIS HERE NOT TO IGNORE IT!
-            #if token.data == "base":
-            #    base_url = dict(token.attrs).get("href")
-            #    continue
-            if token.type == "endtag":
-                continue
-            attrs = dict(token.attrs)
-            tag = token.data
-            name = attrs.get("name")
-            text = None
-            # XXX use attr_encoding for ref'd doc if that doc does not provide
-            #  one by other means
-            #attr_encoding = attrs.get("charset")
-            url = attrs.get(self.urltags[tag])  # XXX is "" a valid URL?
-            if not url:
-                # Probably an <A NAME="blah"> link or <AREA NOHREF...>.
-                # For our purposes a link is something with a URL, so ignore
-                # this.
-                continue
-
-            url = mechanize._rfc3986.clean_url(url, encoding)
-            if tag == "a":
-                if token.type != "startendtag":
-                    # hmm, this'd break if end tag is missing
-                    text = p.get_compressed_text(("endtag", tag))
-                # but this doesn't work for eg. <a href="blah"><b>Andy</b></a>
-                #text = p.get_compressed_text()
-
-            yield mechanize._html.Link(base_url, url, text, tag, token.attrs)
 
 
 ###############################################################################
 # Command-line UI
 
-parser = optparse.OptionParser("%prog [options] TARGET_DIR")
+def _create_arg_parser():
 
-######################################################################
-# Retrieval
+    parser = argparse.ArgumentParser()
 
-retrieval = optparse.OptionGroup(
-    parser, "Retrieval", "Options that deal with setting up the generator")
+    parser.add_argument("target_dir",
+                        help="The directory to contain the output files")
 
-retrieval.add_option(
-    '--publisher', '-p', action="store_true", dest='use_publisher',
-    help="""\
-Use the publisher directly to retrieve the data. The program will bring up
-Zope 3 for you.
-""")
+    ######################################################################
+    # Retrieval
 
-retrieval.add_option(
-    '--webserver', '-w', action="store_true", dest='use_webserver',
-    help="""\
-Use and external Web server that is connected to Zope 3.
-""")
+    retrieval = parser.add_argument_group(title="Retrieval",
+                                          description="Options that deal with setting up the generator")
 
-retrieval.add_option(
-    '--url', '-u', action="store", dest='url',
-    help="""\
-The URL that will be used to retrieve the HTML pages. This option is
-meaningless, if you are using the publisher as backend. Also, the value of
-this option should *not* include the `++apidoc++` namespace.
-""")
+    ret_kind = retrieval.add_mutually_exclusive_group()
 
-retrieval.add_option(
-    '--startpage', '-s', action="store", dest='startpage',
-    help="""\
-The startpage specifies the path (after the URL) that is used as the starting
-point to retrieve the contents. The default is `++apidoc++/static.html`. This
-option can be very useful for debugging, since it allows you to select
-specific pages.
-""")
+    ret_kind.add_argument(
+        '--publisher', '-p', action="store_const", dest='ret_kind',
+        const="publisher", default='publisher',
+        help="""Use the publisher directly to retrieve the data. The program will bring up
+        Zope 3 for you.
+        """
+    )
 
-retrieval.add_option(
-    '--username', '--user', action="store", dest='username',
-    help="""\
-Username to access the Web site.
-""")
+    ret_kind.add_argument(
+        '--webserver', '-w', action="store_const", dest='ret_kind',
+        const="webserver",
+        help="""Use an external Web server that is connected to Zope 3."""
+    )
 
-retrieval.add_option(
-    '--password', '--pwd', action="store", dest='password',
-    help="""\
-Password to access the Web site.
-""")
+    retrieval.add_argument(
+        '--url', '-u', action="store", dest='url',
+        default="http://localhost/",
+        help="""The URL that will be used to retrieve the HTML pages. This option is
+        meaningless, if you are using the publisher as backend. Also, the value of
+        this option should *not* include the `++apidoc++` namespace."""
+    )
 
-retrieval.add_option(
-    '--add', '-a', action="append", dest='additional_urls',
-    help="""\
-Add an additional URL to the list of URLs to retrieve. Specifying those is
-sometimes necessary, if the links are hidden in cryptic JAvascript code.
-""")
+    retrieval.add_argument(
+        '--startpage', '-s', action="store", dest='startpage',
+        default='/++apidoc++/static.html',
+        help="""The startpage specifies the path (after the URL) that is used as the starting
+        point to retrieve the contents. This
+        option can be very useful for debugging, since it allows you to select
+        specific pages. """
+    )
 
-retrieval.add_option(
-    '--ignore', '-i', action="append", dest='ignore_modules',
-    help="""\
-Add modules that should be ignored during retrieval. That allows you to limit
-the scope of the generated API documentation.
-""")
+    retrieval.add_argument(
+        '--username', '--user', action="store", dest='username',
+        default="mgr",
+        help="""Username to access the Web site."""
+    )
 
-retrieval.add_option(
-    '--load-all', '-l', action="store_true", dest='import_unknown_modules',
-    help="""\
-Retrieve all referenced modules, even if they have not been imported during
-the startup process.
-""")
+    retrieval.add_argument(
+        '--password', '--pwd', action="store", dest='password',
+        default="mgrpw",
+        help="""Password to access the Web site."""
+    )
 
-parser.add_option_group(retrieval)
+    retrieval.add_argument(
+        '--add', '-a', action="append", dest='additional_urls',
+        nargs="*",
+        default=[
+            '/@@/varrow.png',
+            '/@@/harrow.png',
+            '/@@/tree_images/minus.png',
+            '/@@/tree_images/plus.png',
+            '/@@/tree_images/minus_vline.png',
+            '/@@/tree_images/plus_vline.png',
+        ],
+        help="""Add an additional URL to the list of URLs to retrieve. Specifying those is
+        sometimes necessary, if the links are hidden in cryptic Javascript code."""
+    )
 
-######################################################################
-# Reporting
+    retrieval.add_argument(
+        '--ignore', '-i', action="append", dest='ignore_modules',
+        nargs="*",
+        default=['twisted', 'zope.app.twisted.ftp.test'],
+        help="""Add modules that should be ignored during retrieval. That allows you to limit
+        the scope of the generated API documentation."""
+    )
 
-reporting = optparse.OptionGroup(
-    parser, "Reporting", "Options that configure the user output information.")
+    # XXX: How can this actually be turned off or disallowed?
+    retrieval.add_argument(
+        '--load-all', '-l', action="store_true", dest='import_unknown_modules',
+        default=True,
+        help="""Retrieve all referenced modules, even if they have not been imported during
+        the startup process."""
+    )
 
-reporting.add_option(
-    '--verbosity', '-v', type="int", dest='verbosity',
-    help="""\
-Specifies the reporting detail level.
-""")
+    retrieval.add_argument(
+        '--max-runtime', action='store', type=int, default=0,
+        help="""If given, the program will attempt to run for no longer than this
+        many seconds, terminating after the time limit and leaving
+        output unfinished. This is most helpful for tests."""
+    )
 
-reporting.add_option(
-    '--progress', '-b', action="store_true", dest='progress',
-    help="""\
-Output progress status
-""")
+    ######################################################################
+    # Reporting
 
-reporting.add_option(
-    '--debug', '-d', action="store_true", dest='debug',
-    help="""\
-Run in debug mode. This will allow you to use the debugger, if the publisher
-experienced an error.
-""")
+    reporting = parser.add_argument_group(title="Reporting",
+                                          description="Options that configure the user output information.")
 
-parser.add_option_group(reporting)
+    reporting.add_argument(
+        '--verbosity', '-v', type=int, dest='verbosity',
+        default=5,
+        help="""Specifies the reporting detail level."""
+    )
+
+    reporting.add_argument(
+        '--progress', '-b', action="store_true", dest='progress',
+        default=True,
+        help="""Output progress status."""
+    )
+
+    reporting.add_argument(
+        '--debug', '-d', action="store_true", dest='debug',
+        help="""Run in debug mode. This will allow you to use the debugger, if the publisher
+        experienced an error."""
+    )
+
+    return parser
 
 ######################################################################
 # Command-line processing
 
-# Default setup
-default_setup_args = [
-    '--verbosity', '5',
-    '--publisher',
-    '--url', 'http://localhost:8080/',
-    '--startpage', '++apidoc++/static.html',
-    '--username', 'mgr',
-    '--password', 'mgrpw',
-    '--progress',
-    '--add', '@@/varrow.png',
-    '--add', '@@/harrow.png',
-    '--add', '@@/tree_images/minus.png',
-    '--add', '@@/tree_images/plus.png',
-    '--add', '@@/tree_images/minus_vline.png',
-    '--add', '@@/tree_images/plus_vline.png',
-    '--ignore', 'twisted',
-    '--ignore', 'zope.app.twisted.ftp.test',
-    '--load-all'
-    ]
 
-def merge_options(options, defaults):
-    odict = options.__dict__
-    for name, value in defaults.__dict__.items():
-        if (value is not None) and (odict[name] is None):
-            odict[name] = value
+def get_options(args=None):
+    #original_testrunner_args = args
 
-def get_options(args=None, defaults=None):
+    options = _create_arg_parser().parse_args(args)
 
-    default_setup, _ = parser.parse_args(default_setup_args)
-    assert not _
-    if defaults:
-        defaults, _ = parser.parse_args(defaults)
-        assert not _
-        merge_options(defaults, default_setup)
-    else:
-        defaults = default_setup
-
-    if args is None:
-        args = sys.argv
-    original_testrunner_args = args
-    args = args[1:]
-    options, positional = parser.parse_args(args)
-    merge_options(options, defaults)
-    options.original_testrunner_args = original_testrunner_args
-
-    if not positional:
-        parser.error("No target directory specified.")
-    options.target_dir = positional.pop()
+    #options.original_testrunner_args = original_testrunner_args
 
     return options
 
@@ -561,11 +580,32 @@ def get_options(args=None, defaults=None):
 ###############################################################################
 
 
-def main():
-    options = get_options()
-    maker = StaticAPIDocGenerator(options)
-    maker.start()
-    sys.exit(0)
+def main(args=None, generator=StaticAPIDocGenerator):
+    options = get_options(args)
+    maker = generator(options)
+    try:
+        # Replace a few things to make this work better.
+        # First, some scripts have names like __main__ and want to
+        # peek at sys.argv; arguments for us will not be correct
+        # for them, so we replace argv. Likewise, they may want to
+        # exit, and we don't want them to do that.
+        old_argv = sys.argv
+        sys.argv = ['program', '--help']
+
+        old_exit = sys.exit
+        def exit(_arg):
+            pass
+        sys.exit = exit
+        with maker:
+            maker.retrieve()
+        return maker
+    finally:
+        sys.argv = old_argv
+        sys.exit = old_exit
+
 
 if __name__ == '__main__':
+    import logging
+    logging.basicConfig()
     main()
+    sys.exit(0)

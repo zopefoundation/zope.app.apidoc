@@ -4,6 +4,8 @@
   xmlns:zcml="http://namespaces.zope.org/zcml"
   i18n_domain="zope">
 
+  <include package="zope.component" file="meta.zcml" />
+
   <view
       name="apidoc" type="*"
       provides="zope.traversing.interfaces.ITraversable" for="*"

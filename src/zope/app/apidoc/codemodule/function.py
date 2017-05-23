@@ -11,21 +11,21 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Function representation for code browser 
+"""Function representation for code browser
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 
-from zope.interface import implements
+from zope.interface import implementer
 from zope.location.interfaces import ILocation
 
 from zope.app.apidoc.utilities import getFunctionSignature
-from interfaces import IFunctionDocumentation
+from zope.app.apidoc.codemodule.interfaces import IFunctionDocumentation
 
+
+@implementer(ILocation, IFunctionDocumentation)
 class Function(object):
     """This class represents a function declared in the module."""
-    implements(ILocation, IFunctionDocumentation)
 
     def __init__(self, module, name, func, doc=None):
         self.__parent__ = module
@@ -50,4 +50,4 @@ class Function(object):
 
     def getAttributes(self):
         """See IClassDocumentation."""
-        return self.__func.__dict__.items()
+        return list(self.__func.__dict__.items())

@@ -13,17 +13,18 @@
 ##############################################################################
 """Function representation for code browser
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
-from zope.interface import implements
+
+from zope.interface import implementer
 from zope.location.interfaces import ILocation
 
 from zope.app.apidoc.codemodule.interfaces import ITextFile
 
+
+@implementer(ILocation, ITextFile)
 class TextFile(object):
     """This class represents a function declared in the module."""
-    implements(ILocation, ITextFile)
 
     def __init__(self, path, name, package):
         self.path = path
@@ -31,7 +32,11 @@ class TextFile(object):
         self.__name__ = name
 
     def getContent(self):
-        file = open(self.path, 'rU')
-        content = file.read()
-        file.close()
+        with open(self.path, 'rb') as f:
+            content = f.read()
+
+        # Make newlines universal
+        content = content.replace(b'\r\n', b'\n')
+        content = content.replace(b'\r', b'\n')
+
         return content.decode('utf-8')

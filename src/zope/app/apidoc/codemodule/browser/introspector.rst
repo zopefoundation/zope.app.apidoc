@@ -6,7 +6,7 @@ The "Introspector" view provides access to information about the current
 obejct, the context of the introspector view. When in `devmode`, the
 introspector is simply available as follows:
 
-    >>> from zope.testbrowser.testing import Browser
+    >>> from zope.testbrowser.wsgi import Browser
     >>> browser = Browser()
     >>> browser.addHeader('Authorization', 'Basic mgr:mgrpw')
     >>> browser.handleErrors = False
@@ -65,7 +65,7 @@ object, including the value of the attribute. This is information can be very
 useful when debugging an application. The only attribute of the folder is the
 data attribute:
 
-    >>> print browser.contents
+    >>> print(browser.contents)
     <!DOCTYPE...
     ...
     <h2>Attributes/Properties</h2>
@@ -76,7 +76,9 @@ data attribute:
         ...
         <br />
         <i>Value:</i>
+        <a href="http://localhost/++attribute++data/@@introspector.html">
         <code>&lt;BTrees.OOBTree.OOBTree object at ...&gt;</code>
+        </a>
         <br />
         <span class="small">
           <i>Permissions:</i>
@@ -95,7 +97,7 @@ implemented. Like for the class method documentation, the method's signature,
 doc string, permissions and the interface the method is declared in. Here an
 example:
 
-    >>> print browser.contents
+    >>> print(browser.contents)
     <!DOCTYPE...
     ...
     <h2>Methods</h2>
@@ -131,77 +133,79 @@ add an object to the folder first:
 
     >>> import re
     >>> browser.getLink(re.compile('^File$')).click()
-    >>> import cStringIO
-    >>> browser.getControl('Data').value = cStringIO.StringIO('content')
+    >>> from io import BytesIO
+    >>> browser.getControl('Data').value = BytesIO(b'content')
     >>> browser.getControl(name='add_input_name').value = 'file.txt'
     >>> browser.getControl('Add').click()
     >>> browser.getLink('Introspector').click()
 
 Now the introspector will show the file and allow you to click on it:
 
-    >>> print browser.contents
+    >>> print(browser.contents)
     <!DOCTYPE...
     ...
-    <h2>Mapping Items</h2>
-    <div class="indent">
-      <ul class="attr-list">
-        <li>
-          <b>
-            <code>u'file.txt'</code>
-          </b>
-          <br />
-          <a href="++items++file.txt/@@introspector.html">
-            <code>&lt;zope.app.file.file.File object at ...&gt;</code>
-          </a>
-          (<span>type:</span>
-           <a href="...zope/container/contained/ContainedProxy/index.html">
-            <code>ContainedProxy</code></a>)
-        </li>
-      </ul>
-    </div>
+      <div>
+        <h2>Mapping Items</h2>
+        <div class="indent">
+          <ul class="attr-list">
+            <li>
+              <b>
+                <code>'file.txt'</code>
+              </b>
+              <br />
+              <a href="++items++file.txt/@@introspector.html">
+                <code>&lt;zope.app.file.file.File object at ...&gt;</code>
+              </a>
+                (<span>type:</span>
+                <a href="http://localhost/++apidoc++/Code/zope/container/contained/ContainedProxy/index.html">
+                  <code>ContainedProxy</code></a>)
     ...
 
 The final section of the introspector displays the annotations that are
 declared for the object. The standard annotation that almost every object
 provides is the Dublin Core:
 
-    >>> print browser.contents
+    >>> print(browser.contents)
     <!DOCTYPE...
     ...
     <h2>Annotations</h2>
-    <div class="indent">
-      <ul class="attr-list">
-        <li>
-          <b>
-            <code>'zope.app.dublincore.ZopeDublinCore'</code>
-          </b>
-          <br />
-          <a href="++annotations++zope.app.dublincore.ZopeDublinCore/@@int...">
-            <code>...</code>
-          </a>
-          (<span>type:</span>
-           <a href="...lincore/annotatableadapter/ZDCAnnotationData/index.html">
-           <code>ZDCAnnotationData</code></a>)
-        </li>
-        ...
-      </ul>
+        <div class="indent">
+          <ul class="attr-list">
+            <li>
+              <b>
+                <code>'zope.app.dublincore.ZopeDublinCore'</code>
+              </b>
+              <br />
+              <a href="++annotations++zope.app.dublincore.ZopeDublinCore/@@introspector.html">
+                <code>...</code>
+              </a>
+                (<span>type:</span>
+                <a href="http://localhost/++apidoc++/Code/zope/dublincore/annotatableadapter/ZDCAnnotationData/index.html">
+                  <code>ZDCAnnotationData</code></a>)
+            </li>
+          </ul>
+        </div>
+      </div>
+    <BLANKLINE>
     </div>
     ...
 
-As you can see you can click on the annotation to discover it further:
+As you can see you can click on the annotation to discover it further;
+the exact constructor signature varies depending on Python version
+(some versions report ``*args, **kwargs``, others report ``dict=None,
+**kwargs``):
 
     >>> browser.getLink('ZDCAnnotationData').click()
-    >>> print browser.contents
+    >>> print(browser.contents)
     <!DOCTYPE...
     ...
-    <h2...>Constructor</h2>
+      <h2 ...>Constructor</h2>
       <div class="indent">
         <div>
-          <b><code>__init__(dict=None, **kwargs)</code>
+          <b><code>__init__(..., **kwargs)</code>
           </b><br />
           <div class="inline documentation"></div>
         </div>
-      </div>
     ...
 
 That's it! The introspector view has a lot more potential, but that's for

@@ -102,7 +102,7 @@ Returns the interface details class for the schema.
 
   >>> iface_details = details.getSchema()
 
-  >>> iface_details #doctest:+ELLIPSIS
+  >>> iface_details
   <zope.app.apidoc.ifacemodule.browser.InterfaceDetails object at ...>
 
   >>> iface_details.context
@@ -208,7 +208,7 @@ but if we add one
 
 the result becomes more interesting:
 
-  >>> pprint(details.getSubdirectives(), width=1) #doctest:+ELLIPSIS
+  >>> pprint(details.getSubdirectives(), width=1)
   [{'handler': {'path': 'None.handler', 'url': None},
     'info': 'info',
     'name': 'foo',

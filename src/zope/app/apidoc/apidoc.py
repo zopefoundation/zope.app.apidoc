@@ -13,19 +13,18 @@
 ##############################################################################
 """Zope 3 API Documentation
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 
 import zope.component
-from zope.interface import implements
+from zope.interface import implementer
 from zope.publisher.browser import applySkin
-from zope.location import locate
 from zope.location.interfaces import ILocation
 
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase
 
+@implementer(ILocation)
 class APIDocumentation(ReadContainerBase):
     """Represent the complete API Documentation.
 
@@ -33,27 +32,29 @@ class APIDocumentation(ReadContainerBase):
     items of the container are all registered utilities for
     `IDocumentationModule`.
     """
-    implements(ILocation)
 
     def __init__(self, parent, name):
         self.__parent__ = parent
         self.__name__ = name
 
+    # We must always be careful to return copies that are located beneath us.
+    # We can't return the original because they're expected to be shared in memory
+    # and mutating their parentage causes issues with crossing ZODB connections
+    # and even circular parentage.
+
     def get(self, key, default=None):
         """See zope.container.interfaces.IReadContainer"""
         utility = zope.component.queryUtility(IDocumentationModule, key, default)
-        if utility != default:
-            locate(utility, self, key)
+        if utility is not default:
+            utility = utility.withParentAndName(self, key)
         return utility
 
     def items(self):
         """See zope.container.interfaces.IReadContainer"""
-        items = list(zope.component.getUtilitiesFor(IDocumentationModule))
-        items.sort()
+        items = sorted(zope.component.getUtilitiesFor(IDocumentationModule))
         utils = []
         for key, value in items:
-            locate(value, self, key)
-            utils.append((key, value))
+            utils.append((key, value.withParentAndName(self, key)))
         return utils
 
 
@@ -70,4 +71,4 @@ class apidocNamespace(object):
 
 def handleNamespace(ob, name):
     """Used to traverse to an API Documentation."""
-    return APIDocumentation(ob, '++apidoc++'+name)
+    return APIDocumentation(ob, '++apidoc++' + name)

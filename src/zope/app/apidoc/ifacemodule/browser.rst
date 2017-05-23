@@ -131,11 +131,12 @@ Let's now create another interface `IBar` and make `Foo` an adapter from
   >>> class IBar(zope.interface.Interface):
   ...     pass
 
-  >>> class Foo(object):
-  ...     zope.interface.implements(IFoo)
+  >>> @zope.interface.implementer(IFoo)
+  ... class Foo(object):
+  ...     pass
 
-  >>> from zope.app.testing import ztapi
-  >>> ztapi.provideAdapter(IBar, IFoo, Foo)
+  >>> from zope import component as ztapi
+  >>> ztapi.provideAdapter(adapts=(IBar,), provides=IFoo, factory=Foo)
 
   >>> from zope.app.apidoc.classregistry import classRegistry
   >>> classRegistry['__builtin__.Foo'] = Foo
@@ -144,12 +145,12 @@ Let's also register a factory for `Foo`
 
   >>> from zope.component.interfaces import IFactory
   >>> from zope.component.factory import Factory
-  >>> ztapi.provideUtility(IFactory, Factory(Foo, title='Foo Factory'),
+  >>> ztapi.provideUtility(Factory(Foo, title='Foo Factory'), IFactory,
   ...                      'FooFactory')
 
 and a utility providing `IFoo`:
 
-  >>> ztapi.provideUtility(IFoo, Foo(), 'The Foo')
+  >>> ztapi.provideUtility(Foo(), IFoo, 'The Foo')
 
 Now that the initial setup is done, we can create an interface that is located
 in the interface documentation module
@@ -221,7 +222,7 @@ we get a result:
 
 Return a list of attributes in the order they were specified.
 
-  >>> pprint(details.getAttributes())
+  >>> pprint(sorted(details.getAttributes(), key=lambda x: x['name']))
   [{'doc': u'<p>This is bar.</p>\n',
     'name': 'bar'},
    {'doc': u'<p>This is foo.</p>\n',
@@ -233,7 +234,7 @@ Return a list of attributes in the order they were specified.
 
 Return a list of methods in the order they were specified.
 
-  >>> pprint(details.getMethods())
+  >>> pprint(sorted(details.getMethods(), key=lambda x: x['name']))
   [{'doc': u'<p>This is blah.</p>\n',
     'name': 'blah',
     'signature': '()'},
@@ -296,132 +297,9 @@ interface.Interface.
 
 Get adapters where this interface is required.
 
-  >>> pprint(sorted(details.getGenericRequiredAdapters()), width=1)
-  [{'doc': u'',
-    'factory': 'None.append',
-    'factory_url': None,
-    'name': u'',
-    'provided': None,
-    'required': [{'isInterface': True,
-                  'isType': False,
-                  'module': 'zope.interface',
-                  'name': 'Interface'}],
-    'zcml': None},
-   {'doc': u'',
-    'factory': 'zope.location.traversing.LocationPhysicallyLocatable',
-    'factory_url': 'zope/location/traversing/LocationPhysicallyLocatable',
-    'name': u'',
-    'provided': {'module': 'zope.location.interfaces',
-                 'name': 'ILocationInfo'},
-    'required': [{'isInterface': True,
-                  'isType': False,
-                  'module': 'zope.interface',
-                  'name': 'Interface'}],
-    'zcml': None},
-   {'doc': u'',
-    'factory': 'zope.site.site.SiteManagerAdapter',
-    'factory_url': 'zope/site/site/SiteManagerAdapter',
-    'name': u'',
-    'provided': {'module': 'zope.interface.interfaces',
-                 'name': 'IComponentLookup'},
-    'required': [{'isInterface': True,
-                  'isType': False,
-                  'module': 'zope.interface',
-                  'name': 'Interface'}],
-    'zcml': None},
-   {'doc': u'',
-    'factory': 'zope.traversing.adapters.DefaultTraversable',
-    'factory_url': 'zope/traversing/adapters/DefaultTraversable',
-    'name': u'',
-    'provided': {'module': 'zope.traversing.interfaces',
-                 'name': 'ITraversable'},
-    'required': [{'isInterface': True,
-                  'isType': False,
-                  'module': 'zope.interface',
-                  'name': 'Interface'}],
-    'zcml': None},
-   {'doc': u'',
-    'factory': 'zope.traversing.adapters.Traverser',
-    'factory_url': 'zope/traversing/adapters/Traverser',
-    'name': u'',
-    'provided': {'module': 'zope.traversing.interfaces',
-                 'name': 'ITraverser'},
-    'required': [{'isInterface': True,
-                  'isType': False,
-                  'module': 'zope.interface',
-                  'name': 'Interface'}],
-    'zcml': None},
-   {'doc': u'',
-    'factory': 'zope.traversing.namespace.etc',
-    'factory_url': 'zope/traversing/namespace/etc',
-    'name': u'etc',
-    'provided': {'module': 'zope.traversing.interfaces',
-                 'name': 'ITraversable'},
-    'required': [{'isInterface': True,
-                  'isType': False,
-                  'module': 'zope.interface',
-                  'name': 'Interface'}],
-    'zcml': None},
-   {'doc': u'',
-    'factory': 'zope.traversing.namespace.etc',
-    'factory_url': 'zope/traversing/namespace/etc',
-    'name': u'etc',
-    'provided': {'module': 'zope.traversing.interfaces',
-                 'name': 'ITraversable'},
-    'required': [{'isInterface': True,
-                  'isType': False,
-                  'module': 'zope.interface',
-                  'name': 'Interface'},
-                 {'isInterface': True,
-                  'isType': False,
-                  'module': 'zope.interface',
-                  'name': 'Interface'}],
-    'zcml': None},
-   {'doc': u'',
-    'factory': 'zope.traversing.namespace.etc',
-    'factory_url': 'zope/traversing/namespace/etc',
-    'name': u'etc',
-    'provided': {'module': 'zope.traversing.interfaces',
-                 'name': 'ITraversable'},
-    'required': [{'isInterface': True,
-                  'isType': False,
-                  'module': 'zope.interface',
-                  'name': 'Interface'},
-                 {'isInterface': True,
-                  'isType': False,
-                  'module': 'zope.interface',
-                  'name': 'Interface'}],
-    'zcml': None},
-   {'doc': u'',
-    'factory': 'zope.traversing.namespace.etc',
-    'factory_url': 'zope/traversing/namespace/etc',
-    'name': u'etc',
-    'provided': {'module': 'zope.traversing.interfaces',
-                 'name': 'ITraversable'},
-    'required': [{'isInterface': True,
-                  'isType': False,
-                  'module': 'zope.interface',
-                  'name': 'Interface'},
-                 {'isInterface': True,
-                  'isType': False,
-                  'module': 'zope.interface',
-                  'name': 'Interface'}],
-    'zcml': None},
-   {'doc': u'',
-    'factory': 'zope.traversing.namespace.etc',
-    'factory_url': 'zope/traversing/namespace/etc',
-    'name': u'etc',
-    'provided': {'module': 'zope.traversing.interfaces',
-                 'name': 'ITraversable'},
-    'required': [{'isInterface': True,
-                  'isType': False,
-                  'module': 'zope.interface',
-                  'name': 'Interface'},
-                 {'isInterface': True,
-                  'isType': False,
-                  'module': 'zope.interface',
-                  'name': 'Interface'}],
-    'zcml': None}]
+  >>> required = details.getGenericRequiredAdapters()
+  >>> len(required) >= 10
+  True
 
 
 `getProvidedAdapters()`

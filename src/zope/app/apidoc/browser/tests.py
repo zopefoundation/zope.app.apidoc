@@ -13,20 +13,22 @@
 ##############################################################################
 """Functional Tests for API Documentation.
 
-$Id$
 """
 import re
 import unittest
 import doctest
 
-import zope.app.testing.functional
-from zope.testing import renormalizing
-from zope.app.testing.functional import BrowserTestCase, FunctionalNoDevMode
-from zope.app.testing.functional import FunctionalDocFileSuite
+
 from zope.app.apidoc.testing import APIDocLayer, APIDocNoDevModeLayer
+
+from zope.app.apidoc.tests import BrowserTestCase
+from zope.app.apidoc.tests import standard_checker
+from zope.app.apidoc.tests import standard_option_flags
 
 class APIDocTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
+
+    layer = APIDocLayer
 
     def testMenu(self):
         response = self.publish('/++apidoc++/menu.html',
@@ -65,27 +67,29 @@ class APIDocTests(BrowserTestCase):
         self.checkForBrokenLinks(body, '/++apidoc++/modulelist.html',
                                  basic='mgr:mgrpw')
 
-checker = renormalizing.RENormalizing([
-    (re.compile(r'httperror_seek_wrapper:', re.M), 'HTTPError:'),
-    ]) 
 
 def test_suite():
-    suite = unittest.TestSuite()
-    APIDocTests.layer = APIDocLayer
-    suite.addTest(unittest.makeSuite(APIDocTests))
-    apidoc_doctest = FunctionalDocFileSuite(
-        "README.txt",
-        optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE,
+    checker = standard_checker(
+        (re.compile(r'httperror_seek_wrapper:', re.M), 'HTTPError:'),
+    )
+
+    apidoc_doctest = doctest.DocFileSuite(
+        "README.rst",
+        optionflags=standard_option_flags,
         checker=checker)
     apidoc_doctest.layer = APIDocLayer
-    suite.addTest(
-        apidoc_doctest,
-        )
 
-    nodevmode = FunctionalDocFileSuite("nodevmode.txt")
+    nodevmode = doctest.DocFileSuite(
+        "nodevmode.rst",
+        optionflags=standard_option_flags,
+        checker=checker)
     nodevmode.layer = APIDocNoDevModeLayer
-    suite.addTest(nodevmode)
-    return suite
+
+    return unittest.TestSuite((
+        apidoc_doctest,
+        nodevmode,
+        unittest.defaultTestLoader.loadTestsFromName(__name__),
+    ))
 
 
 if __name__ == '__main__':

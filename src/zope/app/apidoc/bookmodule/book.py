@@ -18,13 +18,12 @@ site manager. Therefore, currently there are no unregsitered interfaces
 listed in the documentation. This might be good, since unregistered interfaces
 are usually private and not of interest to a general developer.
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 import os.path
 
 from zope.i18nmessageid import ZopeMessageFactory as _
-from zope.interface import implements
+from zope.interface import implementer
 
 import zope.app.apidoc.bookmodule
 from zope.app.apidoc.interfaces import IDocumentationModule
@@ -38,12 +37,12 @@ class IBookModule(IDocumentationModule):
     implementing this interface.
     """
 
+
+@implementer(IBookModule)
 class BookModule(OnlineHelp):
     """Represent a book compiled from various `README.txt` and other `*.txt`
     documentation files.
     """
-
-    implements(IBookModule)
 
     # See zope.app.apidoc.interfaces.IDocumentationModule
     title = _('Book')
@@ -56,6 +55,15 @@ class BookModule(OnlineHelp):
     tales.
     """)
 
+    __parent__ = None
+    __name__ = None
+
+    def withParentAndName(self, parent, name):
+        located = type(self)(self.title, self.path)
+        located.__parent__ = parent
+        located.__name__ = name
+        return located
+
 
 # Global Book Instance
 path = os.path.join(os.path.dirname(zope.app.apidoc.bookmodule.__file__),
@@ -63,7 +71,6 @@ path = os.path.join(os.path.dirname(zope.app.apidoc.bookmodule.__file__),
 book = BookModule(_('Book'), path)
 
 def _clear():
-    global book
     book.__init__(book.title, book.path)
 
 from zope.testing import cleanup

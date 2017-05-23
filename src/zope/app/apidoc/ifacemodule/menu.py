@@ -13,13 +13,16 @@
 ##############################################################################
 """Interface Module Browser Menu (Tree)
 
-$Id$
+
 """
 __docformat__ = 'restructuredtext'
+import operator
 from zope.security.proxy import removeSecurityProxy
 import re
 
-whitepattern = re.compile('\s{2,}')
+whitepattern = re.compile(r'\s{2,}')
+namegetter = operator.itemgetter('name')
+
 def getAllTextOfInterface(iface):
     """Get all searchable text from an interface"""
     iface = removeSecurityProxy(iface)
@@ -34,10 +37,13 @@ def getAllTextOfInterface(iface):
 class Menu(object):
     """Menu for the Interface Documentation Module."""
 
+    context = None
+    request = None
+
     def findInterfaces(self):
         """Find the interface that match any text in the documentation strings
         or a partial path."""
-        name_only = ('name_only' in self.request) and True or False
+        name_only = 'name_only' in self.request
         search_str = self.request.get('search_str', None)
         results = []
 
@@ -46,11 +52,11 @@ class Menu(object):
         for name, iface in self.context.items():
             if (search_str in name or
                 (not name_only and search_str in getAllTextOfInterface(iface))):
-                results.append(
-                    {'name': name,
+                results.append({
+                    'name': name,
                      'url': './%s/index.html' %name
-                     })
-        results.sort(lambda x, y: cmp(x['name'], y['name']))
+                })
+        results.sort(key=namegetter)
         return results
 
     def findAllInterfaces(self):
@@ -60,14 +66,13 @@ class Menu(object):
 
         counter = 0
         for name, iface in self.context.items():
-            rtext = getAllTextOfInterface(iface)
-            results.append(
-                {'name': name,
-                 'url': './%s/index.html' %name,
-                 'counter': counter,
-                 'doc': whitepattern.sub(' ',getAllTextOfInterface(iface))
-                 })
+            results.append({
+                'name': name,
+                'url': './%s/index.html' % name,
+                'counter': counter,
+                'doc': whitepattern.sub(' ', getAllTextOfInterface(iface))
+            })
             counter += 1
 
-        results.sort(lambda x, y: cmp(x['name'], y['name']))
+        results.sort(key=namegetter)
         return results

@@ -20,8 +20,8 @@ To make the documentation module useful, we have to register a utility, so why
 not the documentation module itself?
 
   >>> from zope.app.apidoc.interfaces import IDocumentationModule
-  >>> from zope.app.testing import ztapi
-  >>> ztapi.provideUtility(IDocumentationModule, module, 'Utility')
+  >>> from zope import component as ztapi
+  >>> ztapi.provideUtility(module, IDocumentationModule, 'Utility')
 
 Now we can get a single utility interface by path:
 
@@ -31,10 +31,13 @@ Now we can get a single utility interface by path:
 and list all available interfaces:
 
   >>> module.items()
-  [('zope.app.apidoc.interfaces.IDocumentationModule',
+  [...
+   ('zope.app.apidoc.interfaces.IDocumentationModule',
     <zope.app.apidoc.utilitymodule.utilitymodule.UtilityInterface ...>),
+   ...
    ('zope.security.interfaces.IPermission',
-    <zope.app.apidoc.utilitymodule.utilitymodule.UtilityInterface ...>)]
+    <zope.app.apidoc.utilitymodule.utilitymodule.UtilityInterface ...>),
+   ...]
 
 
 `UtilityInterface` class
@@ -57,7 +60,7 @@ Now we can get the utility:
 
 Unnamed utilities are special, since they can be looked up in different ways:
 
-  >>> ztapi.provideUtility(IDocumentationModule, module, '')
+  >>> ztapi.provideUtility(module, IDocumentationModule, '')
 
   >>> ut_iface.get('').component
   <zope.app.apidoc.utilitymodule.utilitymodule.UtilityModule object at ...>
@@ -74,8 +77,9 @@ If you try to get a non-existent utility, `None` is returned:
 You can get a list of available utilities as well, of course:
 
   >>> ut_iface.items()
-  [('VXRpbGl0eQ==', <...apidoc.utilitymodule.utilitymodule.Utility ...>),
-   ('X19ub25hbWVfXw==', <...apidoc.utilitymodule.utilitymodule.Utility ...>)]
+  [...
+   (b'VXRpbGl0eQ==', <...apidoc.utilitymodule.utilitymodule.Utility ...>),
+   (b'X19ub25hbWVfXw==', <...apidoc.utilitymodule.utilitymodule.Utility ...>)]
 
 Bu what are those strange names? Since utility names can be any string, it is
 hard to deal with them in a URL. Thus the system will advertise and use the
@@ -96,7 +100,7 @@ Round trips of encoding and decoding should be possible:
 
   >>> encoded = encodeName(u'Some Utility')
   >>> encoded
-  'U29tZSBVdGlsaXR5'
+  b'U29tZSBVdGlsaXR5'
 
   >>> decodeName(encoded)
   u'Some Utility'

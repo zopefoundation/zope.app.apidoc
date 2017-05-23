@@ -1,6 +1,6 @@
-=======================
-Miscellaneous Utilities
-=======================
+=========================
+ Miscellaneous Utilities
+=========================
 
 The utilities module provides some useful helper functions and classes that
 make the work of the API doctool and inspection code easier.
@@ -8,8 +8,8 @@ make the work of the API doctool and inspection code easier.
   >>> from zope.app.apidoc import utilities
 
 
-`relativizePath(path)`
-----------------------
+``relativizePath(path)``
+========================
 
 When dealing with files, such as page templates and text files, and not with
 Python paths, it is necessary to keep track of the the absolute path of the
@@ -19,19 +19,13 @@ directory. This function attempts to remove the absolute path to the root
 directory and replaces it with "Zope3".
 
   >>> import os
-  >>> path = os.path.join(utilities.BASEDIR, 'src', 'zope', 'README.txt')
-
-  >>> utilities.BASEDIR in path
-  True
+  >>> path = os.path.join(os.path.dirname(utilities.__file__), 'README.txt')
 
   >>> path = utilities.relativizePath(path)
 
-  >>> utilities.BASEDIR in path
-  False
-
   # Be kind to Windows users
   >>> path.replace('\\', '/')
-  'Zope3/src/zope/README.txt'
+  'Zope3/zope/app/apidoc/README.txt'
 
 If the base path is not found in a particular path, the original path is
 returned:
@@ -41,8 +35,8 @@ returned:
   'foo/bar/blah.txt'
 
 
-`truncateSysPath(path)`
------------------------
+``truncateSysPath(path)``
+=========================
 
 In some cases it is useful to just know the path after the sys path of a
 module. For example, you have a path of a file in a module. To look up the
@@ -61,19 +55,19 @@ If there is no matching system path, then the whole path is returned:
   'some/other/path'
 
 
-`ReadContainerBase` (Class)
----------------------------
+``ReadContainerBase`` (Class)
+=============================
 
-This class serves as a base class for `IReadContainer` objects that minimizes
-the implementation of an `IReadContainer` to two methods, `get()` and
-`items()`, since the other methods can be implemented using these two.
+This class serves as a base class for ``IReadContainer`` objects that minimizes
+the implementation of an ``IReadContainer`` to two methods, ``get()`` and
+``items()``, since the other methods can be implemented using these two.
 
 Note that this implementation might be very expensive for certain container,
 especially if collecting the items is of high order. However, there are many
 scenarios when one has a complete mapping already and simply want to persent
-it as an `IReadContainer`.
+it as an ``IReadContainer``.
 
-Let's start by making a simple `IReadContainer` implementation using the
+Let's start by making a simple ``IReadContainer`` implementation using the
 class:
 
   >>> class Container(utilities.ReadContainerBase):
@@ -84,7 +78,7 @@ class:
 
   >>> container = Container()
 
-Now we can use the methods. First `get()`
+Now we can use the methods. First ``get()``
 
   >>> container.get('a')
   1
@@ -93,7 +87,7 @@ Now we can use the methods. First `get()`
   >>> container['b']
   2
 
-and then `items()`
+and then ``items()``
 
   >>> container.items()
   [('a', 1), ('b', 2)]
@@ -104,7 +98,7 @@ and then `items()`
 
 Then naturally, all the other methods work as well:
 
-  * `__getitem__(key)`
+  * ``__getitem__(key)``
 
     >>> container['a']
     1
@@ -113,49 +107,49 @@ Then naturally, all the other methods work as well:
     ...
     KeyError: 'c'
 
-  * `__contains__(key)`
+  * ``__contains__(key)``
 
     >>> 'a' in container
     True
     >>> 'c' in container
     False
 
-  * `keys()`
+  * ``keys()``
 
     >>> container.keys()
     ['a', 'b']
 
-  * `__iter__()`
+  * ``__iter__()``
 
     >>> iterator = iter(container)
-    >>> iterator.next()
+    >>> next(iterator)
     1
-    >>> iterator.next()
+    >>> next(iterator)
     2
-    >>> iterator.next()
+    >>> next(iterator)
     Traceback (most recent call last):
     ...
     StopIteration
 
-  * `values()`
+  * ``values()``
 
     >>> container.values()
     [1, 2]
 
-  * `__len__()`
+  * ``__len__()``
 
     >>> len(container)
     2
 
 
-`getPythonPath(obj)`
---------------------
+``getPythonPath(obj)``
+======================
 
 Return the path of the object in standard Python dot-notation.
 
 This function makes only sense for objects that provide a name, since we
 cannot determine the path otherwise. Instances, for example, do not have a
-`__name__` attribute, so we would expect them to fail.
+``__name__`` attribute, so we would expect them to fail.
 
 For interfaces we simply get
 
@@ -166,16 +160,26 @@ For interfaces we simply get
   >>> utilities.getPythonPath(ISample)
   'zope.app.apidoc.doctest.ISample'
 
-and for classes
+and for classes we get the name of the class
 
   >>> class Sample(object):
   ...     def sample(self):
   ...         pass
 
+  >>> utilities.getPythonPath(Sample)
+  'zope.app.apidoc.doctest.Sample'
+
+If a method is passed in, its class path is returned. This works for
+both bound and unbound methods (note that there is no such thing as an
+unbound method in Python 3, just functions, but we still get the same
+results):
+
+  >>> utilities.getPythonPath(Sample().sample)
+  'zope.app.apidoc.doctest.Sample'
   >>> utilities.getPythonPath(Sample.sample)
   'zope.app.apidoc.doctest.Sample'
 
-One can also pass functions
+Plain functions are also supported:
 
   >>> def sample():
   ...     pass
@@ -183,17 +187,12 @@ One can also pass functions
   >>> utilities.getPythonPath(sample)
   'zope.app.apidoc.doctest.sample'
 
-and even methods. If a method is passed in, its class path is returned.
-
-  >>> utilities.getPythonPath(Sample.sample)
-  'zope.app.apidoc.doctest.Sample'
-
 Modules are another kind of objects that can return a python path:
 
   >>> utilities.getPythonPath(utilities)
   'zope.app.apidoc.utilities'
 
-Passing in `None` returns `None`:
+Passing in ``None`` returns ``None``:
 
   >>> utilities.getPythonPath(None)
 
@@ -205,8 +204,8 @@ Clearly, instance lookups should fail:
   AttributeError: 'Sample' object has no attribute '__name__'
 
 
-`isReferencable(path)`
-----------------------
+``isReferencable(path)``
+========================
 
 Determine whether a path can be referenced in the API doc, usually by the code
 browser module. Initially you might think that all objects that have paths can
@@ -278,7 +277,7 @@ Finally, the global ``IGNORE_MODULES`` list from the class registry is also
 used to give a negative answer. If a module is listed in ``IGNORE_MODULES``,
 then ``False`` is returned.
 
-  >>> import classregistry
+  >>> from zope.app.apidoc import classregistry
   >>> classregistry.IGNORE_MODULES.append('zope.app.apidoc')
 
   >>> utilities.isReferencable('zope.app')
@@ -294,14 +293,14 @@ then ``False`` is returned.
   True
 
 
-`getPermissionIds(name, checker=_marker, klass=_marker)`
---------------------------------------------------------
+``getPermissionIds(name, checker=_marker, klass=_marker)``
+==========================================================
 
 Get the permissions of a class attribute. The attribute is specified by name.
 
-Either the `klass` or the `checker` argument must be specified. If the class
+Either the ``klass`` or the ``checker`` argument must be specified. If the class
 is specified, then the checker for it is looked up. Furthermore, this function
-only works with `INameBasedChecker` checkers. If another checker is found,
+only works with ``INameBasedChecker`` checkers. If another checker is found,
 ``None`` is returned for the permissions.
 
 We start out by defining the class and then the checker for it:
@@ -336,35 +335,35 @@ Now let's see how this function works:
   >>> entries['write_perm']
   'zope.Write'
 
-The `Sample` class does not know about the `attr2` attribute:
+The ``Sample`` class does not know about the ``attr2`` attribute:
 
   >>> entries = utilities.getPermissionIds('attr2', klass=Sample)
-  >>> print entries['read_perm']
+  >>> print(entries['read_perm'])
   n/a
-  >>> print entries['write_perm']
+  >>> print(entries['write_perm'])
   n/a
 
-The `Sample2` class does not have a checker:
+The ``Sample2`` class does not have a checker:
 
   >>> entries = utilities.getPermissionIds('attr', klass=Sample2)
   >>> entries['read_perm'] is None
   True
-  >>> print entries['write_perm'] is None
+  >>> entries['write_perm'] is None
   True
 
-Finally, the `Sample` class' `attr3` attribute is public:
+Finally, the ``Sample`` class' ``attr3`` attribute is public:
 
   >>> entries = utilities.getPermissionIds('attr3', klass=Sample)
-  >>> print entries['read_perm']
+  >>> print(entries['read_perm'])
   zope.Public
-  >>> print entries['write_perm']
+  >>> print(entries['write_perm'])
   zope.Public
 
 
-`getFunctionSignature(func)`
-----------------------------
+``getFunctionSignature(func)``
+==============================
 
-Return the signature of a function or method. The `func` argument *must* be a
+Return the signature of a function or method. The ``func`` argument *must* be a
 generic function or a method of a class.
 
 First, we get the signature of a function that has a specific positional and
@@ -405,15 +404,19 @@ any positional arguments:
   '(**kw)'
 
 Next we test whether the signature is correctly determined for class
-methods. Note that the `self` argument is removed from the signature, since it
-is not essential for documentation.
+methods. Note that the ``self`` argument is removed from the signature, since it
+is not essential for documentation; this happens by default on Python
+2 for unbound methods, but since Python 3 doesn't have such a concept
+we have to explicitly ask for that behaviour:
 
 We start out with a simple positional argument:
 
   >>> class Klass(object):
   ...     def func(self, attr):
   ...         pass
-  >>> utilities.getFunctionSignature(Klass.func)
+  >>> utilities.getFunctionSignature(Klass.func, ignore_self=True)
+  '(attr)'
+  >>> utilities.getFunctionSignature(Klass().func)
   '(attr)'
 
 Next we have specific and unspecified positional arguments as well as
@@ -422,7 +425,9 @@ unspecified keyword arguments:
   >>> class Klass(object):
   ...     def func(self, attr, *args, **kw):
   ...         pass
-  >>> utilities.getFunctionSignature(Klass.func)
+  >>> utilities.getFunctionSignature(Klass().func, ignore_self=True)
+  '(attr, *args, **kw)'
+  >>> utilities.getFunctionSignature(Klass().func)
   '(attr, *args, **kw)'
 
 If you do not pass a function or method to the function, it will fail:
@@ -430,24 +435,25 @@ If you do not pass a function or method to the function, it will fail:
   >>> utilities.getFunctionSignature('func')
   Traceback (most recent call last):
   ...
-  TypeError: func must be a function or method
+  TypeError: func must be a function or method not a ...
 
-A very uncommon, but perfectly valid, case is that tuple arguments are
-unpacked inside the argument list of the function. Here is an example:
+A very uncommon, but perfectly valid (in Python 2), case is that tuple arguments are
+unpacked inside the argument list of the function. Here is an example
+(we can't actually test it because it fails on Python 3)::
 
-  >>> def func((arg1, arg2)):
-  ...     pass
-  >>> utilities.getFunctionSignature(func)
+  def func((arg1, arg2)):
+       pass
+  utilities.getFunctionSignature(func)
   '((arg1, arg2))'
 
-Even default assignment is allowed:
+Even default assignment is allowed::
 
-  >>> def func((arg1, arg2)=(1, 2)):
-  ...     pass
-  >>> utilities.getFunctionSignature(func)
+  def func((arg1, arg2)=(1, 2)):
+       pass
+  utilities.getFunctionSignature(func)
   '((arg1, arg2)=(1, 2))'
 
-However, lists of this type are not allowed inside the argument list:
+However, lists of this type are not allowed inside the argument list::
 
   >>> def func([arg1, arg2]):
   ...     pass
@@ -455,7 +461,7 @@ However, lists of this type are not allowed inside the argument list:
   ...
   SyntaxError: invalid syntax
 
-Internal assignment is also not legal:
+Internal assignment is also not legal::
 
   >>> def func((arg1, arg2=1)):
   ...     pass
@@ -464,14 +470,14 @@ Internal assignment is also not legal:
   SyntaxError: invalid syntax
 
 
-`getPublicAttributes(obj)`
---------------------------
+``getPublicAttributes(obj)``
+============================
 
 Return a list of public attribute names for a given object.
 
 This excludes any attribute starting with '_', which includes attributes of
-the form `__attr__`, which are commonly considered public, but they are so
-special that they are excluded. The `obj` argument can be either a classic
+the form ``__attr__``, which are commonly considered public, but they are so
+special that they are excluded. The ``obj`` argument can be either a classic
 class, type or instance of the previous two. Note that the term "attributes"
 here includes methods and properties.
 
@@ -522,23 +528,23 @@ attributes as well:
   ['attr', 'attr2', 'attr3', 'func']
 
 
-`getInterfaceForAttribute(name, interfaces=_marker, klass=_marker, asPath=True)`
---------------------------------------------------------------------------------
+``getInterfaceForAttribute(name, interfaces=_marker, klass=_marker, asPath=True)``
+==================================================================================
 
 Determine the interface in which an attribute is defined. This function is
 nice, if you have an attribute name which you retrieved from a class and want
 to know which interface requires it to be there.
 
-Either the `interfaces` or `klass` argument must be specified. If `interfaces`
-is not specified, the `klass` is used to retrieve a list of
-interfaces. `interfaces` must be iterable.
+Either the ``interfaces`` or ``klass`` argument must be specified. If ``interfaces``
+is not specified, the ``klass`` is used to retrieve a list of
+interfaces. ``interfaces`` must be iterable.
 
-`asPath` specifies whether the dotted name of the interface or the interface
+``asPath`` specifies whether the dotted name of the interface or the interface
 object is returned.
 
 First, we need to create some interfaces and a class that implements them:
 
-  >>> from zope.interface import Interface, Attribute, implements
+  >>> from zope.interface import Interface, Attribute, implementer
   >>> class I1(Interface):
   ...     attr = Attribute('attr')
 
@@ -546,8 +552,9 @@ First, we need to create some interfaces and a class that implements them:
   ...     def getAttr():
   ...         '''get attr'''
 
-  >>> class Sample(object):
-  ...     implements(I2)
+  >>> @implementer(I2)
+  ... class Sample(object):
+  ...    pass
 
 First we check whether an aatribute can be found in a list of interfaces:
 
@@ -564,7 +571,7 @@ of interfaces:
   >>> utilities.getInterfaceForAttribute('getAttr', klass=Sample, asPath=False)
   <InterfaceClass zope.app.apidoc.doctest.I2>
 
-By default, `asPath` is `True`, which means the path of the interface is
+By default, ``asPath`` is ``True``, which means the path of the interface is
 returned:
 
   >>> utilities.getInterfaceForAttribute('attr', (I1, I2))
@@ -577,7 +584,7 @@ If no match is found, ``None`` is returned.
   >>> utilities.getInterfaceForAttribute('attr2', klass=Sample) is None
   True
 
-If both, the `interfaces` and `klass` argument are missing, raise an error:
+If both, the ``interfaces`` and ``klass`` argument are missing, raise an error:
 
   >>> utilities.getInterfaceForAttribute('getAttr')
   Traceback (most recent call last):
@@ -593,8 +600,8 @@ Similarly, it does not make sense if both are specified:
   ValueError: must specify only one of interfaces and klass
 
 
-`columnize(entries, columns=3)`
--------------------------------
+``columnize(entries, columns=3)``
+=================================
 
 This function places a list of entries into columns.
 
@@ -625,13 +632,13 @@ Here are some examples:
   [[1, 2], [3, 4]]
 
 
-`getDocFormat(module)`
-----------------------
+``getDocFormat(module)``
+========================
 
 This function inspects a module to determine the supported documentation
 format. The function returns a valid renderer source factory id.
 
-If the `__docformat__` module attribute is specified, its value will be used
+If the ``__docformat__`` module attribute is specified, its value will be used
 to look up the factory id:
 
   >>> from zope.app.apidoc import apidoc
@@ -646,9 +653,9 @@ By default structured text is returned:
 
 This is a sensible default, since we only decided later in development to
 endorse restructured text, so that many files are still in the structured text
-format. All converted and new modules will have the `__docformat__` attribute.
+format. All converted and new modules will have the ``__docformat__`` attribute.
 
-The `__docformat__` attribute can also optionally specify a language field. We
+The ``__docformat__`` attribute can also optionally specify a language field. We
 simply ignore it:
 
   >>> class Module(object):
@@ -659,8 +666,8 @@ simply ignore it:
   'zope.source.rest'
 
 
-`dedentString(text)`
----------------------
+``dedentString(text)``
+======================
 
 Before doc strings can be processed using STX or ReST they must be dendented,
 since otherwise the output will be incorrect. Let's have a look at some
@@ -695,7 +702,7 @@ newline character. Let's now try a simple multi-line docstring:
   ...     discuss some edge cases.
   ...     '''
 
-  >>> print utilities.dedentString(func.__doc__)
+  >>> print(utilities.dedentString(func.__doc__))
   Short description
   <BLANKLINE>
   Lengthy description, giving some more background information and
@@ -715,7 +722,7 @@ chosen:
   ...       Second Level
   ...     '''
 
-  >>> print utilities.dedentString(func.__doc__)
+  >>> print(utilities.dedentString(func.__doc__))
   Short description
   <BLANKLINE>
   Root Level
@@ -732,7 +739,7 @@ chosen:
   ...     And now the description.
   ...     '''
 
-  >>> print utilities.dedentString(func.__doc__)
+  >>> print(utilities.dedentString(func.__doc__))
   Short description
   <BLANKLINE>
     $$$ print 'example'
@@ -742,23 +749,28 @@ chosen:
   <BLANKLINE>
 
 
-`renderText(text, module=None, format=None)`
---------------------------------------------
+``renderText(text, module=None, format=None)``
+==============================================
 
 A function that quickly renders the given text using the specified format.
 
-If the `module` argument is specified, the function will try to determine the
-format using the module. If the `format` argument is given, it is simply
-used. Clearly, you cannot specify both, the `module` and `format` argument.
+If the ``module`` argument is specified, the function will try to determine the
+format using the module. If the ``format`` argument is given, it is simply
+used. Clearly, you cannot specify both, the ``module`` and ``format`` argument.
 
 You specify the format as follows:
 
-  >>> utilities.renderText('Hello!\n', format='zope.source.rest')
+  >>> utilities.renderText(u'Hello!\n', format='zope.source.rest')
   u'<p>Hello!</p>\n'
 
 Note that the format string must be a valid source factory id; if the factory
 id is not given, 'zope.source.stx' is used. Thus, specifying the module is
 often safer (if available):
 
-  >>> utilities.renderText('Hello!\n', module=apidoc)
+  >>> utilities.renderText(u'Hello!\n', module=apidoc)
+  u'<p>Hello!</p>\n'
+
+Byte input is accepted, so long as it can be decoded:
+
+  >>> utilities.renderText(b'Hello!\n', module=apidoc)
   u'<p>Hello!</p>\n'

@@ -12,15 +12,14 @@
 #
 ##############################################################################
 """Generic API Documentation Interfaces
-
-$Id$
 """
 __docformat__ = 'restructuredtext'
 
 from zope.interface import Interface
 from zope.schema import TextLine, Text
+from zope.location.interfaces import ILocation
 
-class IDocumentationModule(Interface):
+class IDocumentationModule(ILocation):
     """Zope 3 API Documentation Module
 
     A documentation module contains the documentation for one specific aspect
@@ -38,3 +37,9 @@ class IDocumentationModule(Interface):
         title=u"Module Description",
         description=u"This text describes the functionality of the module.",
         required=True)
+
+    def withParentAndName(parent, name):
+        """
+        Return a new object that is a copy of this object, but
+        being located at the given parent and name.
+        """

@@ -13,19 +13,20 @@
 ##############################################################################
 """ZCML Element Views
 
-$Id$
 """
 __docformat__ = "reStructuredText"
-from zope.component import getUtility
+
 from zope.configuration.fields import GlobalObject, GlobalInterface, Tokens
 from zope.interface.interfaces import IInterface
 from zope.schema import getFieldNamesInOrder
 from zope.security.proxy import isinstance, removeSecurityProxy
 from zope.traversing.api import getParent
+from zope.traversing.api import traverse
 from zope.traversing.browser import absoluteURL
 
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import getPythonPath, isReferencable
+from zope.app.apidoc.browser.utilities import findAPIDocumentationRoot
 from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
 
 from zope.app.apidoc.zcmlmodule import quoteNS
@@ -36,29 +37,25 @@ def findDocModule(obj):
         return obj
     return findDocModule(getParent(obj))
 
-def _compareAttrs(x, y, nameOrder):
+def _compareAttrs(x, nameOrder):
     if x['name'] in nameOrder:
         valueX = nameOrder.index(x['name'])
     else:
         valueX = 999999
-
-    if y['name'] in nameOrder:
-        valueY = nameOrder.index(y['name'])
-    else:
-        valueY = 999999
-
-    return cmp(valueX, valueY)
+    return valueX
 
 
 class DirectiveDetails(object):
+
+    context = None
+    request = None
 
     def fullTagName(self):
         context = removeSecurityProxy(self.context)
         ns, name = context.name
         if context.prefixes.get(ns):
             return '%s:%s' %(context.prefixes[ns], name)
-        else:
-            return name
+        return name
 
     def line(self):
         return str(removeSecurityProxy(self.context).info.line)
@@ -81,7 +78,7 @@ class DirectiveDetails(object):
         # Sometimes ns is `None`, especially in the slug files, where no
         # namespaces are used.
         ns = quoteNS(ns or 'ALL')
-        zcml = getUtility(IDocumentationModule, 'ZCML')
+        zcml = findAPIDocumentationRoot(self.context, self.request)['ZCML']
         if name not in zcml[ns]:
             ns = 'ALL'
         link = '%s/ZCML/%s/%s/index.html' % (
@@ -98,12 +95,12 @@ class DirectiveDetails(object):
             return
         try:
             isInterface = IInterface.providedBy(obj)
-        except (AttributeError, TypeError):
+        except (AttributeError, TypeError): # pragma: no cover
             # probably an object that does not like to play nice with the CA
             isInterface = False
 
         # The object might be an instance; in this case get a link to the class
-        if not hasattr(obj, '__name__'):
+        if not hasattr(obj, '__name__'): # pragma: no cover
             obj = getattr(obj, '__class__')
         path = getPythonPath(obj)
         if isInterface:
@@ -121,7 +118,7 @@ class DirectiveDetails(object):
         names = context.schema.names(True)
         rootURL = absoluteURL(findDocModule(self), self.request)
         for attr in attrs:
-            name = (attr['name'] in names) and attr['name'] or attr['name']+'_'
+            name = attr['name'] if attr['name'] in names else attr['name'] + '_'
             field = context.schema.get(name)
 
             if isinstance(field, (GlobalObject, GlobalInterface)):
@@ -138,7 +135,7 @@ class DirectiveDetails(object):
                         if isinstance(field,
                                            (GlobalObject, GlobalInterface)):
                             url = self.objectURL(value, field, rootURL)
-                        else:
+                        else: # pragma: no cover
                             break
                         attr['values'].append({'value': value, 'url': url})
 
@@ -147,20 +144,20 @@ class DirectiveDetails(object):
         fieldNames = getFieldNamesInOrder(context.schema)
         fieldNames = [name.endswith('_') and name[:-1] or name
                       for name in fieldNames]
-        attrs.sort(lambda x, y: _compareAttrs(x, y, fieldNames))
+        attrs.sort(key=lambda x: _compareAttrs(x, fieldNames))
 
         if not IRootDirective.providedBy(context):
             return attrs
 
         xmlns = []
         for uri, prefix in context.prefixes.items():
-            name = prefix and ':'+prefix or ''
-            xmlns.append({'name': 'xmlns'+name,
+            name = ':' + prefix if prefix else ''
+            xmlns.append({'name': 'xmlns' + name,
                           'value': uri,
                           'url': None,
                           'values': []})
 
-        xmlns.sort(lambda x, y: cmp(x['name'], y['name']))
+        xmlns.sort(key=lambda x: x['name'])
         return xmlns + attrs
 
     def hasSubDirectives(self):

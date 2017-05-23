@@ -12,28 +12,25 @@
 #
 ##############################################################################
 """Class representation for code browser
-
-$Id$
 """
 
 __docformat__ = 'restructuredtext'
 
 from inspect import ismethod, ismethoddescriptor
 
-from zope.interface import implements, implementedBy
+from zope.interface import implementer, implementedBy
 from zope.security.checker import getCheckerForInstancesOf
 from zope.location.interfaces import ILocation
 
 from zope.app.apidoc.classregistry import classRegistry
 from zope.app.apidoc.utilities import getInterfaceForAttribute
 from zope.app.apidoc.utilities import getPublicAttributes
-from interfaces import IClassDocumentation
+from zope.app.apidoc.codemodule.interfaces import IClassDocumentation
 
 
+@implementer(ILocation, IClassDocumentation)
 class Class(object):
     """This class represents a class declared in the module."""
-
-    implements(ILocation, IClassDocumentation)
 
     def __init__(self, module, name, klass):
         self.__parent__ = module
@@ -42,7 +39,6 @@ class Class(object):
 
         # Setup interfaces that are implemented by this class.
         self.__interfaces = tuple(implementedBy(klass))
-        all_ifaces = {}
         self.__all_ifaces = tuple(implementedBy(klass).flattened())
 
         # Register the class with the global class registry.
@@ -74,17 +70,30 @@ class Class(object):
                     name, self.__all_ifaces, asPath=False)
             yield name, getattr(self.__klass, name), iface
 
+    if str is bytes:
+        # Python 2
+        def _ismethod(self, obj):
+            return ismethod(obj)
+    else:
+        # On Python 3, there is no unbound method.
+        # we treat everything that's callable as a method.
+        # The corner case is where we bind a C
+        # function to an attribute; it's not *technically* a method,
+        # but it acts just like a @staticmethod, so it works out
+        # the same
+        _ismethod = callable
+
     def getAttributes(self):
         """See IClassDocumentation."""
         return [(name, obj, iface)
                 for name, obj, iface in self._iterAllAttributes()
-                if not (ismethod(obj) or ismethoddescriptor(obj))]
+                if not self._ismethod(obj) and not ismethoddescriptor(obj)]
 
     def getMethods(self):
         """See IClassDocumentation."""
         return [(name, obj, iface)
                 for name, obj, iface in self._iterAllAttributes()
-                if ismethod(obj)]
+                if self._ismethod(obj)]
 
     def getMethodDescriptors(self):
         return [(name, obj, iface)
@@ -98,6 +107,5 @@ class Class(object):
     def getConstructor(self):
         """See IClassDocumentation."""
         init = getattr(self.__klass, '__init__', None)
-        if not ismethod(init):
-            return None
-        return init
+        if callable(init):
+            return init

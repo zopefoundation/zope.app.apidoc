@@ -1,0 +1,3 @@
+# make sure git doesn't normalize these files.
+_test_crlf.txt text=false
+_test_cr.txt text=false

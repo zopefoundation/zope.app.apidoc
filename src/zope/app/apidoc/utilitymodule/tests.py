@@ -13,44 +13,22 @@
 ##############################################################################
 """Tests for the Utility Documentation Module
 
-$Id$
 """
+
 import unittest
-import doctest
 
 import zope.deprecation
-from zope.traversing.interfaces import IPhysicallyLocatable
-from zope.location.traversing import LocationPhysicallyLocatable
 
-from zope.app.apidoc.utilitymodule.utilitymodule import UtilityModule
-from zope.app.apidoc.interfaces import IDocumentationModule
-from zope.app.apidoc.apidoc import APIDocumentation
 from zope.app.apidoc.testing import APIDocLayer
-from zope.app.testing import setup, ztapi
-from zope.app.testing.functional import BrowserTestCase
-from zope.app.tree.interfaces import IUniqueId
-from zope.app.tree.adapters import LocationUniqueId
 
-
-def setUp(test):
-    root_folder = setup.placefulSetUp(True)
-    ztapi.provideAdapter(None, IUniqueId, LocationUniqueId)
-    ztapi.provideAdapter(None, IPhysicallyLocatable,
-                         LocationPhysicallyLocatable)
-
-    # Set up apidoc module
-    test.globs['apidoc'] = APIDocumentation(root_folder, '++apidoc++')
-
-    # Register documentation modules
-    ztapi.provideUtility(IDocumentationModule, UtilityModule(), 'Utility')
-
-
-def tearDown(test):
-    setup.placefulTearDown()
-
+from zope.app.apidoc.tests import BrowserTestCase
+from zope.app.apidoc.tests import LayerDocFileSuite
+import zope.app.apidoc.utilitymodule
 
 class UtilityModuleTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
+
+    layer = APIDocLayer
 
     def testMenu(self):
         response = self.publish(
@@ -58,15 +36,17 @@ class UtilityModuleTests(BrowserTestCase):
             basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find('IDocumentationModule') > 0)
+        self.assertIn('IDocumentationModule', body)
 
         # BBB 2006/02/18, to be removed after 12 months
         # this avoids the deprecation warning for the deprecated
         # zope.publisher.interfaces.ILayer interface which get traversed
         # as a utility in this test
+        # This is slow, so we limit the number of links we fetch.
         zope.deprecation.__show__.off()
         self.checkForBrokenLinks(body, '/++apidoc++/Utility/menu.html',
-                                 basic='mgr:mgrpw')
+                                 basic='mgr:mgrpw',
+                                 max_links=10)
         zope.deprecation.__show__.on()
 
     def testUtilityDetailsView(self):
@@ -77,9 +57,9 @@ class UtilityModuleTests(BrowserTestCase):
             basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(
-            body.find(
-               'zope.app.apidoc.utilitymodule.utilitymodule.UtilityModule') > 0)
+        self.assertIn(
+            'zope.app.apidoc.utilitymodule.utilitymodule.UtilityModule',
+            body)
         self.checkForBrokenLinks(
             body,
             '/++apidoc++/Utility/'
@@ -89,19 +69,19 @@ class UtilityModuleTests(BrowserTestCase):
 
 
 def test_suite():
-    UtilityModuleTests.layer = APIDocLayer
+    readme = LayerDocFileSuite(
+        'README.rst',
+        zope.app.apidoc.utilitymodule)
+
+    browser = LayerDocFileSuite(
+        'browser.rst',
+        zope.app.apidoc.utilitymodule)
+
     return unittest.TestSuite((
-        doctest.DocFileSuite('README.txt',
-                             setUp=setUp,
-                             tearDown=tearDown,
-                             optionflags=doctest.NORMALIZE_WHITESPACE|
-                                         doctest.ELLIPSIS),
-        doctest.DocFileSuite('browser.txt',
-                             setUp=setUp,
-                             tearDown=tearDown,
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
-        unittest.makeSuite(UtilityModuleTests),
-        ))
+        readme,
+        browser,
+        unittest.defaultTestLoader.loadTestsFromName(__name__),
+    ))
 
 if __name__ == '__main__':
-    unittest.main(default="test_suite")
+    unittest.main(defaultTest='test_suite')

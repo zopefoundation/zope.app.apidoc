@@ -13,15 +13,19 @@
 ##############################################################################
 """Code Module Menu
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
-from zope.component import getUtility
+import operator
+
+from zope.security.proxy import removeSecurityProxy
+
 from zope.traversing.api import traverse
 from zope.traversing.browser import absoluteURL
 
-from zope.app.apidoc.interfaces import IDocumentationModule
+from zope.app.apidoc.browser.utilities import findAPIDocumentationRoot
 from zope.app.apidoc.classregistry import classRegistry
+
+_pathgetter = operator.itemgetter("path")
 
 class Menu(object):
     """Menu for the Class Documentation Module.
@@ -30,73 +34,54 @@ class Menu(object):
     `findClasses()` for the simple search implementation.
     """
 
+    context = None
+    request = None
+
     def findClasses(self):
         """Find the classes that match a partial path.
 
         Examples::
           >>> from zope.app.apidoc.codemodule.class_ import Class
 
-          >>> cm = apidoc.get('Code')
-          >>> mod = cm['zope']['app']['apidoc']['codemodule']['browser']
-
-          Setup a couple of classes and register them.
-
-          >>> class Foo(object):
-          ...     pass
-          >>> mod._children['Foo'] = Class(mod, 'Foo', Foo)
-          >>> class Foo2(object):
-          ...     pass
-          >>> mod._children['Foo2'] = Class(mod, 'Foo2', Foo2)
-          >>> class Blah(object):
-          ...     pass
-          >>> mod._children['Blah'] = Class(mod, 'Blah', Blah)
-
           Setup the view.
 
           >>> from zope.app.apidoc.codemodule.browser.menu import Menu
           >>> from zope.publisher.browser import TestRequest
           >>> menu = Menu()
-          >>> menu.context = cm
+          >>> menu.context = apidoc['Code']
 
           Testing the method with various inputs.
 
-          >>> menu.request = TestRequest(form={'path': 'Foo'})
+          >>> menu.request = TestRequest(form={'path': 'menu'})
           >>> info = menu.findClasses()
 
           >>> from pprint import pprint
           >>> pprint(info)
-          [{'path': 'zope.app.apidoc.codemodule.browser.Foo',
-            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Foo/'},
-           {'path': 'zope.app.apidoc.codemodule.browser.Foo2',
-            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Foo2/'}]
+          [{'path': 'zope.app.apidoc.codemodule.browser.menu.Men',
+            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/browser/menu/Menu/'},
+           {'path': 'zope.app.apidoc.ifacemodule.menu.Men',
+            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/ifacemodule/menu/Menu/'}...]
 
-          >>> menu.request = TestRequest(form={'path': 'o2'})
+          >>> menu.request = TestRequest(form={'path': 'illegal name'})
           >>> info = menu.findClasses()
           >>> pprint(info)
-          [{'path': 'zope.app.apidoc.codemodule.browser.Foo2',
-            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Foo2/'}]
-
-
-          >>> menu.request = TestRequest(form={'path': 'Blah'})
-          >>> info = menu.findClasses()
-          >>> pprint(info)
-          [{'path': 'zope.app.apidoc.codemodule.browser.Blah',
-            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/browser/Blah/'}]
+          []
 
         """
         path = self.request.get('path', None)
         if path is None:
             return []
-        classModule = getUtility(IDocumentationModule, "Code")
+        classModule = findAPIDocumentationRoot(self.context)['Code']
+        removeSecurityProxy(classModule).setup()
+        found = [p for p in classRegistry if path in p]
         results = []
-        for p in classRegistry.keys():
-            if p.find(path) >= 0:
-                klass = traverse(classModule, p.replace('.', '/'))
-                results.append(
-                    {'path': p,
-                     'url': absoluteURL(klass, self.request) + '/'
-                     })
-        results.sort(lambda x, y: cmp(x['path'], y['path']))
+        for p in found:
+            klass = traverse(classModule, p.replace('.', '/'))
+            results.append({
+                'path': p,
+                'url': absoluteURL(klass, self.request) + '/'
+            })
+        results.sort(key=_pathgetter)
         return results
 
     def findAllClasses(self):
@@ -104,49 +89,41 @@ class Menu(object):
         """Find all classes
 
         Examples::
-          >>> from zope.app.apidoc.codemodule.class_ import Class
-          >>> cm = apidoc.get('Code')
-          >>> mod = cm['zope']['app']['apidoc']['codemodule']['browser']
-
-          Setup a couple of classes and register them.
-
-          >>> class Foo(object):
-          ...     pass
-          >>> mod._children['Foo'] = Class(mod, 'Foo', Foo)
-          >>> class Foo2(object):
-          ...     pass
-          >>> mod._children['Foo2'] = Class(mod, 'Foo2', Foo2)
-          >>> class Blah(object):
-          ...     pass
-          >>> mod._children['Blah'] = Class(mod, 'Blah', Blah)
 
           Setup the view.
 
           >>> from zope.app.apidoc.codemodule.browser.menu import Menu
           >>> from zope.publisher.browser import TestRequest
           >>> menu = Menu()
-          >>> menu.context = cm
+          >>> menu.context = apidoc['Code']
+
+          Make sure we're registered.
+
+          >>> traverse(menu.context, 'zope/app/apidoc/codemodule/browser/menu/Menu')
+          <zope.app.apidoc.codemodule.class_.Class object at ...>
 
           Testing the method with various inputs.
 
           >>> menu.request = TestRequest(form={'path': 'Foo'})
           >>> info = menu.findAllClasses()
 
-          >>> len(info) > 3
-          True
+          >>> info = [x for x in info if x['path'] == 'zope.app.apidoc.codemodule.browser.menu.Menu']
+          >>> len(info)
+          1
         """
-        classModule = getUtility(IDocumentationModule, "Code")
-        classModule.setup() # run setup if not yet done
+        classModule = findAPIDocumentationRoot(self.context)['Code']
+        removeSecurityProxy(classModule).setup() # run setup if not yet done
         results = []
         counter = 0
-        for p in classRegistry.keys():
+
+        for p in list(classRegistry): # Traversing can potentially change the registry
             klass = traverse(classModule, p.replace('.', '/'))
-            results.append(
-                {'path': p,
-                 'url': absoluteURL(klass, self.request),
-                 'counter': counter
-                 })
+            results.append({
+                'path': p,
+                'url': absoluteURL(klass, self.request),
+                'counter': counter
+            })
             counter += 1
 
-        results.sort(lambda x, y: cmp(x['path'], y['path']))
+        results.sort(key=_pathgetter)
         return results

@@ -1,6 +1,6 @@
-==============================
-Component Inspection Utilities
-==============================
+================================
+ Component Inspection Utilities
+================================
 
 Once you have an interface, you really want to discover on how this interface
 interacts with other components in Zope 3. The functions in
@@ -28,18 +28,18 @@ some interfaces to work with:
   ...     pass
 
 
-`getRequiredAdapters(iface, withViews=False)`
----------------------------------------------
+``getRequiredAdapters(iface, withViews=False)``
+===============================================
 
 This function returns adapter registrations for adapters that require the
 specified interface. So let's create some adapter registrations:
 
   >>> from zope.publisher.interfaces import IRequest
-  >>> from zope.app.testing import ztapi
-  >>> ztapi.provideAdapter((IFoo,), IResult, None)
-  >>> ztapi.provideAdapter((IFoo, IBar), ISpecialResult, None)
-  >>> ztapi.provideAdapter((IFoo, IRequest), ISpecialResult, None)
-  >>> ztapi.subscribe((IFoo,), None, 'stubFactory')
+  >>> from zope import component as ztapi
+  >>> ztapi.provideAdapter(adapts=(IFoo,), provides=IResult, factory=None)
+  >>> ztapi.provideAdapter(adapts=(IFoo, IBar), provides=ISpecialResult, factory=None)
+  >>> ztapi.provideAdapter(adapts=(IFoo, IRequest), provides=ISpecialResult, factory=None)
+  >>> ztapi.provideHandler(adapts=(IFoo,), factory='stubFactory')
 
   >>> regs = list(component.getRequiredAdapters(IFoo))
   >>> regs.sort()
@@ -51,7 +51,7 @@ specified interface. So let's create some adapter registrations:
    HandlerRegistration(<BaseGlobalComponents base>,
                        [IFoo], u'', 'stubFactory', u'')]
 
-Note how the adapter requiring an `IRequest` at the end of the required
+Note how the adapter requiring an ``IRequest`` at the end of the required
 interfaces is neglected. This is because it is recognized as a view and views
 are not returned by default. But you can simply turn this flag on:
 
@@ -89,8 +89,8 @@ And all of the required interfaces are considered, of course:
                        [IFoo, IBar], ISpecialResult, u'', None, u'')]
 
 
-`getProvidedAdapters(iface, withViews=False)`
----------------------------------------------
+``getProvidedAdapters(iface, withViews=False)``
+===============================================
 
 Of course, we are also interested in the adapters that provide a certain
 interface. This function returns those adapter registrations, again ignoring
@@ -102,7 +102,7 @@ views by default.
   [AdapterRegistration(<BaseGlobalComponents base>,
                        [IFoo, IBar], ISpecialResult, u'', None, u'')]
 
-And by specifying the `withView` flag, we get views as well:
+And by specifying the ``withView`` flag, we get views as well:
 
   >>> regs = list(component.getProvidedAdapters(ISpecialResult, withViews=True))
   >>> regs.sort()
@@ -112,7 +112,7 @@ And by specifying the `withView` flag, we get views as well:
    AdapterRegistration(<BaseGlobalComponents base>,
                        [IFoo, IRequest], ISpecialResult, u'', None, u'')]
 
-We can of course also ask for adapters specifying `IResult`:
+We can of course also ask for adapters specifying ``IResult``:
 
   >>> regs = list(component.getProvidedAdapters(IResult, withViews=True))
   >>> regs.sort()
@@ -125,29 +125,32 @@ We can of course also ask for adapters specifying `IResult`:
                        [IFoo], IResult, u'', None, u'')]
 
 
-`getClasses(iface)`
--------------------
+``getClasses(iface)``
+=====================
 
 This package comes with a little tool called the class registry
-(see `classregistry.txt`). It provides a dictionary of all classes in the
+(see ``classregistry.txt``). It provides a dictionary of all classes in the
 visible packages. This function utilizes the registry to retrieve all classes
 that implement the specified interface.
 
 Let's start by creating and registering some classes:
 
-  >>> from zope.interface import implements
+  >>> from zope.interface import implementer
   >>> from zope.app.apidoc.classregistry import classRegistry
 
-  >>> class MyFoo(object):
-  ...     implements(IFoo)
+  >>> @implementer(IFoo)
+  ... class MyFoo(object):
+  ...    pass
   >>> classRegistry['MyFoo'] = MyFoo
 
-  >>> class MyBar(object):
-  ...     implements(IBar)
+  >>> @implementer(IBar)
+  ... class MyBar(object):
+  ...    pass
   >>> classRegistry['MyBar'] = MyBar
 
-  >>> class MyFooBar(object):
-  ...     implements(IFooBar)
+  >>> @implementer(IFooBar)
+  ... class MyFooBar(object):
+  ...    pass
   >>> classRegistry['MyFooBar'] = MyFooBar
 
 Let's now see whether what results we get:
@@ -164,8 +167,8 @@ Let's now see whether what results we get:
    ('MyFooBar', <class 'zope.app.apidoc.doctest.MyFooBar'>)]
 
 
-`getFactories(ifaces)`
-----------------------
+``getFactories(ifaces)``
+========================
 
 Return the factory registrations of the factories that will return objects
 providing this interface.
@@ -174,10 +177,10 @@ Again, the first step is to create some factories:
 
   >>> from zope.component.factory import Factory
   >>> from zope.component.interfaces import IFactory
-  >>> ztapi.provideUtility(IFactory, Factory(MyFoo), 'MyFoo')
-  >>> ztapi.provideUtility(IFactory, Factory(MyBar), 'MyBar')
-  >>> ztapi.provideUtility(IFactory,
-  ...     Factory(MyFooBar, 'MyFooBar', 'My Foo Bar'), 'MyFooBar')
+  >>> ztapi.provideUtility(Factory(MyFoo), IFactory, 'MyFoo')
+  >>> ztapi.provideUtility(Factory(MyBar), IFactory, 'MyBar')
+  >>> ztapi.provideUtility(
+  ...     Factory(MyFooBar, 'MyFooBar', 'My Foo Bar'), IFactory, 'MyFooBar')
 
 Let's see whether we will be able to get them:
 
@@ -197,42 +200,42 @@ Let's see whether we will be able to get them:
             <Factory for <class 'zope.app.apidoc.doctest.MyFooBar'>>, None, u'')]
 
 
-`getUtilities(iface)`
----------------------
+``getUtilities(iface)``
+=======================
 
 Return all utility registrations for utilities that provide the specified
 interface.
 
 As usual, we have to register some utilities first:
 
-  >>> ztapi.provideUtility(IFoo, MyFoo())
-  >>> ztapi.provideUtility(IBar, MyBar())
-  >>> ztapi.provideUtility(IFooBar, MyFooBar())
+  >>> ztapi.provideUtility(MyFoo(), IFoo)
+  >>> ztapi.provideUtility(MyBar(), IBar)
+  >>> ztapi.provideUtility(MyFooBar(), IFooBar)
 
 Now let's have a look what we have:
 
   >>> regs = list(component.getUtilities(IFooBar))
   >>> regs.sort()
-  >>> regs #doctest:+ELLIPSIS
+  >>> regs
   [UtilityRegistration(<BaseGlobalComponents base>, IFooBar, u'',
                        <zope.app.apidoc.doctest.MyFooBar object at ...>, None, u'')]
 
   >>> regs = list(component.getUtilities(IFoo))
   >>> regs.sort()
-  >>> regs #doctest:+ELLIPSIS
+  >>> regs
   [UtilityRegistration(<BaseGlobalComponents base>, IFoo, u'',
                        <zope.app.apidoc.doctest.MyFoo object at ...>, None, u''),
    UtilityRegistration(<BaseGlobalComponents base>, IFooBar, u'',
                        <zope.app.apidoc.doctest.MyFooBar object at ...>, None, u'')]
 
 
-`getRealFactory(factory)`
--------------------------
+``getRealFactory(factory)``
+===========================
 
 During registration, factories are commonly masked by wrapper functions. Also,
-factories are sometimes also `IFactory` instances, which are not referencable,
+factories are sometimes also ``IFactory`` instances, which are not referencable,
 so that we would like to return the class. If the wrapper objects/functions
-play nice, then they provide a `factory` attribute that points to the next
+play nice, then they provide a ``factory`` attribute that points to the next
 wrapper or the original factory.
 
 The task of this function is to remove all the factory wrappers and make sure
@@ -249,22 +252,22 @@ that the returned factory is referencable.
   ...     return wrapper1(*args)
   >>> wrapper2.factory = wrapper1
 
-So whether we pass in `Factory`,
+So whether we pass in ``Factory``,
 
   >>> component.getRealFactory(Factory)
   <class 'zope.app.apidoc.doctest.Factory'>
 
-`wrapper1`,
+``wrapper1``,
 
   >>> component.getRealFactory(wrapper1)
   <class 'zope.app.apidoc.doctest.Factory'>
 
-or `wrapper2`,
+or ``wrapper2``,
 
   >>> component.getRealFactory(wrapper2)
   <class 'zope.app.apidoc.doctest.Factory'>
 
-the answer should always be the `Factory` class. Next we are going to pass in
+the answer should always be the ``Factory`` class. Next we are going to pass in
 an instance, and again we should get our class aas a result:
 
   >>> factory = Factory()
@@ -281,8 +284,8 @@ Even, if the factory instance is wrapped, we should get the factory class:
   <class 'zope.app.apidoc.doctest.Factory'>
 
 
-`getInterfaceInfoDictionary(iface)`
------------------------------------
+``getInterfaceInfoDictionary(iface)``
+=====================================
 
 This function returns a small info dictionary for an interface. It only
 reports the module and the name. This is useful for cases when we only want to
@@ -294,7 +297,7 @@ utilities.
   {'module': 'zope.app.apidoc.doctest', 'name': 'IFoo'}
 
 The functions using this function use it with little care and can also
-sometimes pass in `None`. In these cases we want to return `None`:
+sometimes pass in ``None``. In these cases we want to return ``None``:
 
   >>> component.getInterfaceInfoDictionary(None) is None
   True
@@ -312,8 +315,8 @@ object references.  This may change.
   {'module': 'zope.app.apidoc.doctest', 'name': 'MyFoo'}
 
 
-`getTypeInfoDictionary(type)`
------------------------------
+``getTypeInfoDictionary(type)``
+===============================
 
 This function returns the info dictionary of a type.
 
@@ -323,8 +326,8 @@ This function returns the info dictionary of a type.
    'url': '__builtin__/tuple'}
 
 
-`getSpecificationInfoDictionary(spec)`
---------------------------------------
+``getSpecificationInfoDictionary(spec)``
+========================================
 
 Thsi function returns an info dictionary for the given specification. A
 specification can either be an interface or class. If it is an interface, it
@@ -355,16 +358,17 @@ Let's now look at the behavior when passing a type:
 For the type, we simply reuse the type info dictionary function.
 
 
-`getAdapterInfoDictionary(reg)`
--------------------------------
+``getAdapterInfoDictionary(reg)``
+=================================
 
 This function returns a page-template-friendly dictionary representing the
 data of an adapter registration in an output-friendly format.
 
 Let's first create an adapter registration:
 
-  >>> class MyResult(object):
-  ...     implements(IResult)
+  >>> @implementer(IResult)
+  ... class MyResult(object):
+  ...    pass
 
   >>> from zope.component.registry import AdapterRegistration
   >>> reg = AdapterRegistration(None, (IFoo, IBar), IResult, 'FooToResult',
@@ -372,7 +376,7 @@ Let's first create an adapter registration:
 
 And now get the info dictionary:
 
-  >>> pprint(component.getAdapterInfoDictionary(reg), width=1)
+  >>> pprint(component.getAdapterInfoDictionary(reg), width=50)
   {'doc': 'doc info',
    'factory': 'zope.app.apidoc.doctest.MyResult',
    'factory_url': 'zope/app/apidoc/doctest/MyResult',
@@ -399,7 +403,7 @@ will be ``None``:
 
   >>> reg = AdapterRegistration(None, (IFoo, IBar), IResult, 'FooToResult',
   ...                            MyResultType, 'doc info')
-  >>> pprint(component.getAdapterInfoDictionary(reg), width=1)
+  >>> pprint(component.getAdapterInfoDictionary(reg), width=50)
   {'doc': 'doc info',
    'factory': 'zope.app.apidoc.doctest.MyResult2',
    'factory_url': None,
@@ -440,8 +444,8 @@ see how the function handles subscriptions:
    'zcml': None}
 
 
-`getFactoryInfoDictionary(reg)`
--------------------------------
+``getFactoryInfoDictionary(reg)``
+=================================
 
 This function returns a page-template-friendly dictionary representing the
 data of a factory (utility) registration in an output-friendly format.
@@ -450,7 +454,7 @@ Luckily we have already registered some factories, so we just reuse their
 registrations:
 
   >>> pprint(component.getFactoryInfoDictionary(
-  ...     component.getFactories(IFooBar).next()))
+  ...     next(component.getFactories(IFooBar))))
   {'description': u'<p>My Foo Bar</p>\n',
    'name': u'MyFooBar',
    'title': 'MyFooBar',
@@ -469,18 +473,18 @@ will be ``None``:
   >>> MyFactoryType = type('MyFactory', (FactoryBase,), {})
   >>> from zope.interface import classImplements
   >>> classImplements(MyFactoryType, IFactory)
-  >>> ztapi.provideUtility(IFactory, MyFactoryType(), 'MyFactory')
+  >>> ztapi.provideUtility(MyFactoryType(), IFactory, 'MyFactory')
 
   >>> pprint(component.getFactoryInfoDictionary(
-  ...     component.getFactories(IMine).next()), width=1)
+  ...     next(component.getFactories(IMine))), width=50)
   {'description': u'',
    'name': u'MyFactory',
    'title': u'',
    'url': None}
 
 
-`getUtilityInfoDictionary(name, factory)`
------------------------------------------
+``getUtilityInfoDictionary(name, factory)``
+===========================================
 
 This function returns a page-template-friendly dictionary representing the
 data of a utility registration in an output-friendly format.
@@ -489,9 +493,9 @@ Luckily we have already registered some utilities, so we just reuse their
 registrations:
 
   >>> pprint(component.getUtilityInfoDictionary(
-  ...     component.getUtilities(IFooBar).next()))
+  ...     next(component.getUtilities(IFooBar))))
   {'iface_id': 'zope.app.apidoc.doctest.IFooBar',
    'name': u'<i>no name</i>',
    'path': 'zope.app.apidoc.doctest.MyFooBar',
    'url': 'Code/zope/app/apidoc/doctest/MyFooBar',
-   'url_name': 'X19ub25hbWVfXw=='}
+   'url_name': b'X19ub25hbWVfXw=='}

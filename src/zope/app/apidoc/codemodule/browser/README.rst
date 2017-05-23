@@ -30,7 +30,7 @@ process to get a module documentation object:
 
 Get the doc string of the module formatted in STX or ReST.
 
-  >>> print details.getDoc().strip()
+  >>> print(details.getDoc().strip())
   <p>Code Documentation Module</p>
   <p>This module is able to take a dotted name of any class and display
   documentation for it.</p>
@@ -86,6 +86,30 @@ way up to the root, but we just want to go to the root module.
     'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule'},
    {'name': 'codemodule',
     'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/codemodule'}]
+
+Module Details With Interfaces
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Let's also look at a module that defines interfaces:
+
+  >>> _context = traverse(cm, 'zope/app/apidoc/interfaces')
+  >>> details = browser.module.ModuleDetails(_context, TestRequest())
+  >>> pprint(details.getInterfaces())
+  [{'doc': 'Zope 3 API Documentation Module',
+    'name': 'IDocumentationModule',
+    'path': 'zope.app.apidoc.interfaces.IDocumentationModule',
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/interfaces/IDocumentationModule'}]
+
+Module Details With Implementation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Let's also look at a module that implements an interface itself:
+
+  >>> _context = traverse(cm, 'zope/lifecycleevent')
+  >>> details = browser.module.ModuleDetails(_context, TestRequest())
+  >>> pprint(details.getModuleInterfaces())
+  [{'name': 'IZopeLifecycleEvent',
+    'path': 'zope.lifecycleevent.interfaces.IZopeLifecycleEvent'}]
 
 
 Class Details
@@ -178,37 +202,37 @@ Get all attributes of this class.
   {'interface': {'path': 'zope.app.apidoc.interfaces.IDocumentationModule',
                  'url': 'zope.app.apidoc.interfaces.IDocumentationModule'},
    'name': 'title',
-   'read_perm': None,
+   'read_perm': 'zope.Public',
    'type': 'Message',
    'type_link': 'zope/i18nmessageid/message/Message',
    'value': "u'Code Browser'",
-   'write_perm': None}
+   'write_perm': u'n/a'}
 
 `getMethods()`
 ~~~~~~~~~~~~~~
 Get all methods of this class.
 
-  >>> pprint(details.getMethods()[-2:])
+  >>> pprint(details.getMethods()[-3:-1])
   [{'doc': u'<p>Setup module and class tree.</p>\n',
     'interface': None,
     'name': 'setup',
-    'read_perm': None,
+    'read_perm': u'n/a',
     'signature': '()',
-    'write_perm': None},
+    'write_perm': u'n/a'},
    {'doc': u'',
     'interface': {'path': 'zope.interface.common.mapping.IEnumerableMapping',
                   'url': 'zope.interface.common.mapping.IEnumerableMapping'},
     'name': 'values',
-    'read_perm': None,
+    'read_perm': 'zope.Public',
     'signature': '()',
-    'write_perm': None}]
+    'write_perm': u'n/a'}]
 
 `getDoc()`
 ~~~~~~~~~~
 
 Get the doc string of the class STX formatted.
 
-  >>> print details.getDoc()[:-1]
+  >>> print(details.getDoc()[:-1])
   <p>Represent the code browser documentation root</p>
 
 
@@ -262,7 +286,7 @@ documentation component:
 
   >>> details = browser.text.TextFileDetails()
   >>> details.context = traverse(cm,
-  ...     'zope/app/apidoc/codemodule/README.txt')
+  ...     'zope/app/apidoc/codemodule/README.rst')
   >>> details.request = TestRequest()
 
 Here are the methods:
@@ -272,7 +296,7 @@ Here are the methods:
 
 Render the file content to HTML.
 
-  >>> print details.renderedContent()[:48]
+  >>> print(details.renderedContent()[:48])
   <h1 class="title">Code Documentation Module</h1>
 
 
@@ -284,8 +308,7 @@ ZCML files, just a template. The template then uses the directive details to
 provide all the view content:
 
   >>> details = browser.zcml.DirectiveDetails()
-  >>> zcml = traverse(cm,
-  ...     'zope/app/apidoc/codemodule/configure.zcml')
+  >>> zcml = traverse(cm, 'zope/app/apidoc/codemodule/configure.zcml')
   >>> details.context = zcml.rootElement
   >>> details.request = TestRequest()
   >>> details.__parent__ = details.context
@@ -371,8 +394,7 @@ will be listed too.
   >>> details.context = details.context.subs[0]
   >>> pprint(details.attributes())
   [{'name': u'class',
-    'url':
-        'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/module/Module/index.html',
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/module/Module/index.html',
     'value': u'.module.Module',
     'values': []}]
 
@@ -392,6 +414,82 @@ Returns a list of all sub-directives:
 
   >>> details.getElements()
   [<Directive (u'http://namespaces.zope.org/zope', u'allow')>]
+
+Other Examples
+~~~~~~~~~~~~~~
+
+Let's look at sub-directive that has a namespace:
+
+  >>> details = browser.zcml.DirectiveDetails()
+  >>> zcml = traverse(cm, 'zope/app/apidoc/ftesting-base.zcml')
+  >>> browser_directive = [x for x in zcml.rootElement.subs if x.name[0].endswith('browser')][0]
+  >>> details.context = browser_directive
+  >>> details.request = TestRequest()
+  >>> details.fullTagName()
+  'browser:menu'
+
+The exact URL will vary depending on what ZCML has been loaded.
+
+  >>> details.url()
+  'http://127.0.0.1/++apidoc++/.../menu/index.html'
+
+Now one that has some tokens:
+
+  >>> details = browser.zcml.DirectiveDetails()
+  >>> zcml = traverse(cm, 'zope/app/apidoc/enabled.zcml')
+  >>> adapter_directive = [x for x in zcml.rootElement.subs if x.name[1] == 'adapter'][0]
+  >>> details.context = adapter_directive
+  >>> details.__parent__ = details.context
+  >>> details.request = TestRequest()
+  >>> pprint(details.attributes())
+  [{'name': 'factory',
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/apidoc/apidocNamespace/index.html',
+    'value': '.apidoc.apidocNamespace',
+    'values': []},
+   {'name': 'provides',
+   'url': 'http://127.0.0.1/++apidoc++/Interface/zope.traversing.interfaces.ITraversable/index.html',
+   'value': 'zope.traversing.interfaces.ITraversable',
+   'values': []},
+   {'name': 'for', 'url': None, 'value': '*', 'values': []},
+   {'name': 'name', 'url': None, 'value': 'apidoc', 'values': []}]
+
+Now one with *multiple* tokens:
+
+  >>> details = browser.zcml.DirectiveDetails()
+  >>> zcml = traverse(cm, 'zope/traversing/configure.zcml')
+  >>> adapter_directive = [x for x in zcml.rootElement.subs if x.name[1] == 'adapter']
+  >>> adapter_directive = [x for x in adapter_directive if ' ' in x.attrs[(None, 'for')]][0]
+  >>> details.context = adapter_directive
+  >>> details.__parent__ = details.context
+  >>> details.request = TestRequest()
+  >>> pprint(details.attributes())
+  [{'name': 'factory',
+    'url': 'http://127.0.0.1/++apidoc++/Code/zope/traversing/namespace/etc/index.html',
+    'value': 'zope.traversing.namespace.etc',
+    'values': []},
+   {'name': 'provides',
+    'url': 'http://127.0.0.1/++apidoc++/Interface/zope.traversing.interfaces.ITraversable/index.html',
+    'value': 'zope.traversing.interfaces.ITraversable',
+    'values': []},
+   {'name': 'for',
+    'url': None,
+    'value': '* zope.publisher.interfaces.IRequest',
+    'values': [{'url': None, 'value': '*'},
+                {'url': 'http://127.0.0.1/++apidoc++/Interface/zope.publisher.interfaces.IRequest/index.html',
+                 'value': 'zope.publisher.interfaces.IRequest'}]},
+   {'name': 'name', 'url': None, 'value': 'etc', 'values': []}]
+
+And now one that is subdirectives:
+
+  >>> details = browser.zcml.DirectiveDetails()
+  >>> zcml = traverse(cm, 'zope/app/apidoc/browser/configure.zcml')
+  >>> adapter_directive = [x for x in zcml.rootElement.subs if x.name[1] == 'pages'][0]
+  >>> details.context = adapter_directive.subs[0]
+  >>> details.__parent__ = details.context
+  >>> details.request = TestRequest()
+  >>> details.url()
+  'http://127.0.0.1/++apidoc++/.../pages/index.html#page'
+
 
 
 The Introspector
@@ -424,8 +522,9 @@ This namespace is used to traverse into the annotations of an object.
   >>> import zope.interface
   >>> from zope.annotation.interfaces import IAttributeAnnotatable
 
-  >>> class Sample(object):
-  ...    zope.interface.implements(IAttributeAnnotatable)
+  >>> @zope.interface.implementer(IAttributeAnnotatable)
+  ... class Sample(object):
+  ...    pass
 
   >>> sample = Sample()
   >>> sample.__annotations__ = {'zope.my.namespace': 'Hello there!'}
@@ -471,7 +570,7 @@ This namespace allows us to traverse the items of any sequence:
   >>> ns.traverse('text', None)
   Traceback (most recent call last):
   ...
-  ValueError: invalid literal for int(): text
+  ValueError: invalid literal for int() with base 10: 'text'
 
 Introspector View
 ~~~~~~~~~~~~~~~~~
@@ -494,7 +593,7 @@ so that we can start looking at the methods. First we should note that the
 class documentation view is directly available:
 
   >>> inspect.klassView
-  <zope.app.apidoc.codemodule.browser.tests.Details object at ...>
+  <zope.browserpage.simpleviewclass.SimpleViewClass from ...>
   >>> inspect.klassView.context
   <zope.app.apidoc.codemodule.class_.Class object at ...>
 
@@ -512,8 +611,7 @@ You can also get the base URL of the request:
 Next you can get a list of all directly provided interfaces:
 
   >>> ifaces = inspect.getDirectlyProvidedInterfaces()
-  >>> ifaces.sort()
-  >>> ifaces
+  >>> sorted(ifaces)
   ['zope.component.interfaces.ISite', 'zope.site.interfaces.IRootFolder']
 
 The ``getProvidedInterfaces()`` and ``getBases()`` method simply forwards its
@@ -524,12 +622,12 @@ object's attributes:
   >>> pprint(list(inspect.getAttributes()))
   [{'interface': None,
     'name': 'data',
-    'read_perm': None,
+    'read_perm': u'n/a',
     'type': 'OOBTree',
     'type_link': 'BTrees/OOBTree/OOBTree',
     'value': '<BTrees.OOBTree.OOBTree object at ...>',
     'value_linkable': True,
-    'write_perm': None}]
+    'write_perm': u'n/a'}]
 
 Of course, the methods are listed as well:
 
@@ -538,22 +636,22 @@ Of course, the methods are listed as well:
    {'doc': u'',
     'interface': 'zope.component.interfaces.IPossibleSite',
     'name': 'getSiteManager',
-    'read_perm': None,
+    'read_perm': 'zope.Public',
     'signature': '()',
-    'write_perm': None},
+    'write_perm': u'n/a'},
    ...
    {'doc': u'',
     'interface': 'zope.container.interfaces.IBTreeContainer',
     'name': 'keys',
-    'read_perm': None,
+    'read_perm': 'zope.View',
     'signature': '(key=None)',
-    'write_perm': None},
+    'write_perm': u'n/a'},
    {'doc': u'',
     'interface': 'zope.component.interfaces.IPossibleSite',
     'name': 'setSiteManager',
-    'read_perm': None,
+    'read_perm': 'zope.ManageServices',
     'signature': '(sm)',
-    'write_perm': None},
+    'write_perm': u'n/a'},
    ...]
 
 The final methods deal with inspecting the objects data further. For exmaple,
@@ -594,11 +692,13 @@ Now let's have a look:
   True
 
   >>> pprint(inspect.getMappingItems())
-  [{'key': u'list',
+  [...
+   {'key': u'list',
     'key_string': "u'list'",
     'value': "['one', 'two']",
     'value_type': 'ContainedProxy',
-    'value_type_link': 'zope/container/contained/ContainedProxy'}]
+    'value_type_link': 'zope/container/contained/ContainedProxy'},
+  ...]
 
 The final two methods doeal with the introspection of the annotations. If an
 object is annotatable,

@@ -13,19 +13,14 @@
 ##############################################################################
 """Component Inspection Utilities
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
+import six
 import types
 import zope.interface.declarations
 
 from zope.component import getGlobalSiteManager
 from zope.component.interfaces import IFactory
-from zope.component.registry import (
-    AdapterRegistration,
-    HandlerRegistration,
-    SubscriptionRegistration,
-    UtilityRegistration)
 from zope.i18nmessageid import ZopeMessageFactory as _
 from zope.interface import Interface
 from zope.interface.interface import InterfaceClass
@@ -43,24 +38,26 @@ GENERIC_INTERFACE_LEVEL = 4
 
 
 def _adapterishRegistrations(registry):
-    for r in registry.registeredAdapters():
-        yield r
-    for r in registry.registeredSubscriptionAdapters():
-        yield r
-    for r in registry.registeredHandlers():
-        yield r
+    for registrations in (registry.registeredAdapters,
+                          registry.registeredSubscriptionAdapters,
+                          registry.registeredHandlers):
+        for r in registrations():
+            yield r
 
+def _ignore_adapter(reg, withViews=False):
+    return (
+        # Ignore adapters that have no required interfaces
+        not reg.required
+        # Ignore views
+        or (not withViews and reg.required[-1].isOrExtends(IRequest)))
 
 def getRequiredAdapters(iface, withViews=False):
     """Get adapter registrations where the specified interface is required."""
     gsm = getGlobalSiteManager()
     for reg in _adapterishRegistrations(gsm):
-        # Ignore adapters that have no required interfaces
-        if len(reg.required) == 0:
+        if _ignore_adapter(reg, withViews):
             continue
-        # Ignore views
-        if not withViews and reg.required[-1].isOrExtends(IRequest):
-            continue
+
         # Only get the adapters for which this interface is required
         for required_iface in reg.required:
             if iface.isOrExtends(required_iface):
@@ -71,14 +68,9 @@ def getProvidedAdapters(iface, withViews=False):
     """Get adapter registrations where this interface is provided."""
     gsm = getGlobalSiteManager()
     for reg in _adapterishRegistrations(gsm):
-        # Only get adapters
-        # Ignore adapters that have no required interfaces
-        if len(reg.required) == 0:
+        if _ignore_adapter(reg, withViews):
             continue
-        # Ignore views
-        if not withViews and reg.required[-1] and \
-               reg.required[-1].isOrExtends(IRequest):
-            continue
+
         # Only get adapters for which this interface is provided
         if reg.provided is None or not reg.provided.isOrExtends(iface):
             continue
@@ -121,14 +113,12 @@ def getFactories(iface):
         if reg.provided is not IFactory:
             continue
         interfaces = reg.component.getInterfaces()
-        try:
-            if interfaces.isOrExtends(iface):
+        if hasattr(interfaces, 'isOrExtends'): # Single interface
+            interfaces = (interfaces,)
+        for interface in interfaces:
+            if interface.isOrExtends(iface):
                 yield reg
-        except AttributeError:
-            for interface in interfaces:
-                if interface.isOrExtends(iface):
-                    yield reg
-                    break
+                break
 
 
 def getUtilities(iface):
@@ -164,17 +154,6 @@ def getParserInfoInfoDictionary(info):
             'eline': info.eline,
             'column': info.column,
             'ecolumn': info.ecolumn}
-
-
-def getInterfaceInfoDictionary(iface):
-    """Return a PT-friendly info dictionary for an interface."""
-    if isinstance(iface, zope.interface.declarations.Implements):
-        iface = iface.inherit
-    if iface is None:
-        return None
-    return {'module': getattr(iface, '__module__', _('<unknown>')),
-            'name': getattr(iface, '__name__', _('<unknown>'))}
-
 
 def getInterfaceInfoDictionary(iface):
     """Return a PT-friendly info dictionary for an interface."""
@@ -215,23 +194,26 @@ def getAdapterInfoDictionary(reg):
     if isReferencable(path):
         url = path.replace('.', '/')
 
-    if isinstance(reg.info, (str, unicode)):
+    if isinstance(reg.info, six.string_types):
         doc = reg.info
         zcml = None
     else:
         doc = None
         zcml = getParserInfoInfoDictionary(reg.info)
 
+    name = getattr(reg, 'name', u'')
+    name = name.decode('utf-8') if isinstance(name, bytes) else name
     return {
         'provided': getInterfaceInfoDictionary(reg.provided),
         'required': [getSpecificationInfoDictionary(iface)
                      for iface in reg.required
                      if iface is not None],
-        'name': unicode(getattr(reg, 'name', u'')),
+        'name': name,
         'factory': path,
         'factory_url': url,
         'doc': doc,
-        'zcml': zcml}
+        'zcml': zcml
+    }
 
 
 def getFactoryInfoDictionary(reg):
@@ -247,7 +229,7 @@ def getFactoryInfoDictionary(reg):
 
     path = getPythonPath(callable)
 
-    return {'name': unicode(reg.name) or _('<i>no name</i>'),
+    return {'name': six.text_type(reg.name) or _('<i>no name</i>'),
             'title': getattr(factory, 'title', u''),
             'description': renderText(getattr(factory, 'description', u''),
                                       module=callable.__module__),
@@ -263,7 +245,7 @@ def getUtilityInfoDictionary(reg):
     # TODO: Once we support passive display of instances, this insanity can go
     #       away.
     if not isinstance(component, (types.MethodType, types.FunctionType,
-                                  types.ClassType, types.TypeType,
+                                  six.class_types,
                                   InterfaceClass)):
         component = getattr(component, '__class__', component)
 
@@ -280,7 +262,7 @@ def getUtilityInfoDictionary(reg):
         if isReferencable(path):
             url = 'Code/%s' % path.replace('.', '/')
 
-    return {'name': unicode(reg.name) or _('<i>no name</i>'),
+    return {'name': six.text_type(reg.name) or _('<i>no name</i>'),
             'url_name': utilitymodule.encodeName(reg.name or '__noname__'),
             'iface_id': iface_id,
             'path': path,

@@ -13,18 +13,23 @@
 ##############################################################################
 """Tests for the Book Documentation Module
 
-$Id$
 """
+
 import unittest
 import doctest
 
-from zope.app.testing.functional import BrowserTestCase
-from zope.app.testing import placelesssetup
+from zope.component import testing
+
+from zope.app.apidoc.tests import BrowserTestCase
+from zope.app.apidoc.tests import standard_checker
+from zope.app.apidoc.tests import standard_option_flags
 from zope.app.apidoc.testing import APIDocLayer
 
 
 class TypeModuleTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
+
+    layer = APIDocLayer
 
     def testMenu(self):
         response = self.publish(
@@ -32,19 +37,23 @@ class TypeModuleTests(BrowserTestCase):
             basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find('IBrowserSkinType') > 0)
+        self.assertIn('IBrowserSkinType', body)
         self.checkForBrokenLinks(body, '/++apidoc++/Type/@@menu.html',
                                  basic='mgr:mgrpw')
 
 
 def test_suite():
-    TypeModuleTests.layer = APIDocLayer
+    checker = standard_checker()
+
     return unittest.TestSuite((
-        doctest.DocTestSuite('zope.app.apidoc.typemodule.type',
-                             setUp=placelesssetup.setUp,
-                             tearDown=placelesssetup.tearDown),
-        unittest.makeSuite(TypeModuleTests),
-        ))
+        doctest.DocTestSuite(
+            'zope.app.apidoc.typemodule.type',
+            setUp=testing.setUp,
+            tearDown=testing.tearDown,
+            checker=checker,
+            optionflags=standard_option_flags),
+        unittest.defaultTestLoader.loadTestsFromName(__name__),
+    ))
 
 if __name__ == '__main__':
-    unittest.main(default='test_suite')
+    unittest.main(defaultTest='test_suite')

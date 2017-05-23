@@ -13,7 +13,6 @@
 ##############################################################################
 """Utilties to make the life of Documentation Modules easier.
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 
@@ -21,10 +20,12 @@ import re
 import sys
 import types
 import inspect
-from os.path import dirname
+import os.path
+
+import six
 
 from zope.component import createObject, getMultiAdapter
-from zope.interface import implements, implementedBy
+from zope.interface import implementer, implementedBy
 from zope.publisher.browser import TestRequest
 from zope.security.checker import getCheckerForInstancesOf, Global
 from zope.security.interfaces import INameBasedChecker
@@ -41,33 +42,43 @@ _ = zope.i18nmessageid.MessageFactory("zope")
 _remove_html_overhead = re.compile(
     r'(?sm)^<html.*<body.*?>\n(.*)</body>\n</html>\n')
 
-space_re = re.compile('\n^( *)\S', re.M)
+space_re = re.compile(r'\n^( *)\S', re.M)
 
 _marker = object()
 
-BASEDIR = dirname(dirname(dirname(dirname(zope.app.__file__))))
 
 def relativizePath(path):
-    return path.replace(BASEDIR, 'Zope3')
-
+    matching_paths = [p for p in sys.path if path.startswith(p)]
+    if not matching_paths: # pragma: no cover
+        return path
+    longest_matching_path = max(matching_paths, key=len)
+    common_prefix = os.path.commonprefix([longest_matching_path, path])
+    return path.replace(common_prefix, 'Zope3') if common_prefix else path
 
 def truncateSysPath(path):
     """Remove the system path prefix from the path."""
-    for syspath in sys.path:
-        if path.startswith(syspath):
-            return path.replace(syspath, '')[1:]
-    return path
+    matching_paths = [p for p in sys.path if path.startswith(p)]
+    if not matching_paths: # pragma: no cover
+        return path
+    longest_matching_path = max(matching_paths, key=len)
+    common_prefix = os.path.commonprefix([longest_matching_path, path])
+    return path.replace(common_prefix, '')[1:] if common_prefix else path
 
-
+@implementer(IReadContainer)
 class ReadContainerBase(object):
     """Base for `IReadContainer` objects."""
-    implements(IReadContainer)
+
+    def __repr__(self):
+        if getattr(self, '__name__', None) is None:
+            return super(ReadContainerBase, self).__repr__()
+        c = type(self)
+        return "<%s.%s '%s' at 0x%x>" % (c.__module__, c.__name__, self.__name__, id(self))
 
     def get(self, key, default=None):
-        raise NotImplemented
+        raise NotImplementedError()
 
     def items(self):
-        raise NotImplemented
+        raise NotImplementedError()
 
     def __getitem__(self, key):
         default = object()
@@ -80,17 +91,29 @@ class ReadContainerBase(object):
         return self.get(key) is not None
 
     def keys(self):
-        return map(lambda x: x[0], self.items())
+        return [k for k, _v in self.items()]
 
     def __iter__(self):
-        return self.values().__iter__()
+        return iter(self.values())
 
     def values(self):
-        return map(lambda x: x[1], self.items())
+        return [v for _k, v in self.items()]
 
     def __len__(self):
         return len(self.items())
 
+class DocumentationModuleBase(ReadContainerBase):
+    """Support for implementing a documentation module."""
+
+    __parent__ = None
+    __name__ = None
+
+    def withParentAndName(self, parent, name):
+        "Subclasses need to override this if they are stateful."
+        located = type(self)()
+        located.__parent__ = parent
+        located.__name__ = name
+        return located
 
 def getPythonPath(obj):
     """Return the path of the object in standard Python notation.
@@ -105,12 +128,22 @@ def getPythonPath(obj):
     # accessed (which is probably not a bad idea). So, we remove the security
     # proxies for this check.
     naked = removeSecurityProxy(obj)
-    if hasattr(naked, "im_class"):
+    qname = ''
+    if hasattr(naked, '__qualname__'):
+        # Python 3. This makes unbound functions inside classes
+        # do the same thing as they do an Python 2: return just their
+        # class name.
+        qname = naked.__qualname__
+        qname = qname.split('.')[0]
+    if hasattr(naked, 'im_class'):
+        # Python 2, unbound methods
         naked = naked.im_class
+    if isinstance(naked, types.MethodType):
+        naked = type(naked.__self__)
     module = getattr(naked, '__module__', _marker)
     if module is _marker:
         return naked.__name__
-    return '%s.%s' %(module, naked.__name__)
+    return '%s.%s' %(module, qname or naked.__name__)
 
 
 def isReferencable(path):
@@ -180,12 +213,20 @@ def getPermissionIds(name, checker=_marker, klass=_marker):
     return entry
 
 
-def getFunctionSignature(func):
+def getFunctionSignature(func, ignore_self=False):
     """Return the signature of a function or method."""
-    if not isinstance(func, (types.FunctionType, types.MethodType)):
-        raise TypeError("func must be a function or method")
+    if not callable(func): #isinstance(func, (types.FunctionType, types.MethodType)):
+        raise TypeError("func must be a function or method not a %s (%r)" % (type(func), func))
 
-    args, varargs, varkw, defaults = inspect.getargspec(func)
+    try:
+        args, varargs, varkw, defaults = inspect.getargspec(func)
+    except TypeError:
+        # On Python 2, inspect.getargspec can't handle certain types
+        # of callable things, like object.__init__ (<slot wrapper '__init__'> is not
+        # a python function), but it *can* handle them on Python 3.
+        # Punt on Python 2
+        return '(<unknown>)'
+
     placeholder = object()
     sig = '('
     # By filling up the default tuple, we now have equal indeces for args and
@@ -200,13 +241,13 @@ def getFunctionSignature(func):
     for name, default in zip(args, defaults):
         # Neglect self, since it is always there and not part of the signature.
         # This way the implementation and interface signatures should match.
-        if name == 'self' and type(func) == types.MethodType:
+        if name == 'self' and (isinstance(func, types.MethodType) or ignore_self):
             continue
 
         # Make sure the name is a string
         if isinstance(name, (tuple, list)):
             name = '(' + ', '.join(name) + ')'
-        elif not isinstance(name, str):
+        elif not isinstance(name, str): # pragma: no cover
             name = repr(name)
 
         if default is placeholder:
@@ -229,7 +270,7 @@ def getPublicAttributes(obj):
     for attr in dir(obj):
         if attr.startswith('_'):
             continue
-        
+
         try:
             getattr(obj, attr)
         except AttributeError:
@@ -267,17 +308,17 @@ def getInterfaceForAttribute(name, interfaces=_marker, klass=_marker,
 
 def columnize(entries, columns=3):
     """Place a list of entries into columns."""
-    if len(entries)%columns == 0:
-        per_col = len(entries)/columns
+    if len(entries) % columns == 0:
+        per_col = len(entries) // columns
         last_full_col = columns
     else:
-        per_col = len(entries)/columns + 1
-        last_full_col = len(entries)%columns
+        per_col = len(entries) // columns + 1
+        last_full_col = len(entries) % columns
     columns = []
     col = []
     in_col = 0
     for entry in entries:
-        if in_col < per_col - int(len(columns)+1 > last_full_col):
+        if in_col < per_col - int(len(columns) + 1 > last_full_col):
             col.append(entry)
             in_col += 1
         else:
@@ -293,7 +334,7 @@ _format_dict = {
     'plaintext': 'zope.source.plaintext',
     'structuredtext': 'zope.source.stx',
     'restructuredtext': 'zope.source.rest'
-    }
+}
 
 def getDocFormat(module):
     """Convert a module's __docformat__ specification to a renderer source
@@ -315,7 +356,7 @@ def renderText(text, module=None, format=None, dedent=True):
         return u''
 
     if module is not None:
-        if isinstance(module, (str, unicode)):
+        if isinstance(module, six.string_types):
             module = sys.modules.get(module, None)
         if format is None:
             format = getDocFormat(module)
@@ -325,10 +366,10 @@ def renderText(text, module=None, format=None, dedent=True):
 
     assert format in _format_dict.values()
 
-    text = dedentString(text)
+    if isinstance(text, bytes):
+        text = text.decode('utf-8', 'replace')
 
-    if not isinstance(text, unicode):
-        text = text.decode('latin-1', 'replace')
+    text = dedentString(text)
     source = createObject(format, text)
 
     renderer = getMultiAdapter((source, TestRequest()))

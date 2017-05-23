@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """Class Registry
-
-$Id$
 """
 __docformat__ = 'restructuredtext'
 
@@ -23,26 +21,39 @@ __import_unknown_modules__ = False
 # TODO: List hard-coded for now.
 IGNORE_MODULES = ['twisted']
 
+import operator
 import sys
+from six import iteritems
+
+_pathgetter = operator.itemgetter(0)
 
 class ClassRegistry(dict):
     """A simple registry for classes."""
+
+    # This is not a WeakValueDictionary; the classes in here
+    # are kept alive almost certainly by the codemodule.class_.Class object,
+    # which in turn is kept alive by a codemodule.module.Module chain going
+    # all the way back to the APIDocumentation object registered with the
+    # global site manager. So they can't go away without clearing all that,
+    # which happens (usually only) with test tear downs.
 
     def getClassesThatImplement(self, iface):
         """Return all class items that implement iface.
 
         Methods returns a list of 2-tuples of the form (path, class).
         """
-        return [(path, klass) for path, klass in self.items()
-                if iface.implementedBy(klass)]
+        return sorted(((path, klass) for path, klass in iteritems(self)
+                       if iface.implementedBy(klass)),
+                      key=_pathgetter)
 
     def getSubclassesOf(self, klass):
         """Return all class items that are proper subclasses of klass.
 
         Methods returns a list of 2-tuples of the form (path, class).
         """
-        return [(path, klass2) for path, klass2 in self.items()
-                if issubclass(klass2, klass) and klass2 is not klass]
+        return sorted(((path, klass2) for path, klass2 in iteritems(self)
+                       if issubclass(klass2, klass) and klass2 is not klass),
+                      key=_pathgetter)
 
 
 classRegistry = ClassRegistry()
@@ -63,10 +74,8 @@ def safe_import(path, default=None):
     if module is default and __import_unknown_modules__:
         try:
             module = __import__(path, {}, {}, ('*',))
-        except ImportError:
-            return default
         # Some software, we cannot control, might raise all sorts of errors;
         # thus catch all exceptions and return the default.
-        except Exception, error:
+        except Exception:
             return default
     return module

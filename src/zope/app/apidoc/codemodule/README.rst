@@ -26,8 +26,8 @@ different:
   >>> cm.isPackage()
   True
 
-  >>> cm.keys()
-  []
+  >>> sorted(cm.keys())
+  [u'BTrees', u'ZConfig', u'ZODB', u'persistent', u'transaction', ...]
 
 
 Module
@@ -71,7 +71,7 @@ soon as you have the object:
   True
 
   >>> import zope.app.apidoc.browser
-  >>> print module['browser'].getPath()
+  >>> print(module['browser'].getPath())
   zope.app.apidoc.browser
 
 Now, the ``get(key, default=None)`` is actually much smarter than you might
@@ -84,13 +84,12 @@ classes hierarchy (since they do not provide or implement any API), we can
 still get to them:
 
   >>> import zope.app.apidoc.tests
-  >>> print module['tests'].getPath()
+  >>> print(module['tests'].getPath())
   zope.app.apidoc.tests
 
-  >>> names = module['tests'].keys()
-  >>> names.sort()
+  >>> names = sorted(module['tests'].keys())
   >>> names
-  ['Root', 'rootLocation', 'setUp', 'tearDown', 'test_suite']
+  ['BrowserTestCase', 'LayerDocFileSuite', 'LayerDocTestSuite', 'Root', ...]
 
 
 Classes
@@ -135,18 +134,23 @@ only includes those subclasses that are registered with the global
   >>> klass.getKnownSubclasses()
   [<class 'APIDocSubclass'>]
 
+.. cleanup
+
+  >>> from zope.app.apidoc.classregistry import classRegistry
+  >>> del classRegistry[klass2.getPath()]
+
 For a more detailed analysis, you can also retrieve the public attributes
 and methods of this class::
 
   >>> klass.getAttributes()
   []
 
-  >>> klass.getMethods()[0] #doctest:+NORMALIZE_WHITESPACE
-  ('get', <unbound method APIDocumentation.get>,
+  >>> klass.getMethods()[0]
+  ('get', <function APIDocumentation.get at ...>,
    <InterfaceClass zope.interface.common.mapping.IReadMapping>)
 
   >>> klass.getConstructor()
-  <unbound method APIDocumentation.__init__>
+  <function APIDocumentation.__init__ at ...>
 
 Let's have a closer look at the `getAttributes()` method. First we create an
 interface called `IBlah` that is implemented by the class `Blah`:
@@ -158,8 +162,8 @@ interface called `IBlah` that is implemented by the class `Blah`:
   >>> class IBlah(IBlie):
   ...      foo = zope.interface.Attribute('Foo')
 
-  >>> class Blah(object):
-  ...      zope.interface.implements(IBlah)
+  >>> @zope.interface.implementer(IBlah)
+  ... class Blah(object):
   ...      foo = 'f'
   ...      bar = 'b'
   ...      bli = 'i'
@@ -189,8 +193,9 @@ implementation `Blah`, which has some other additional methods:
   >>> class IBlah(zope.interface.Interface):
   ...      def foo(): pass
 
-  >>> class Blah(object):
-  ...      zope.interface.implements(IBlah)
+  >>> @zope.interface.implementer(IBlah)
+  ... class Blah(object):
+  ...
   ...
   ...      def foo(self):
   ...          pass
@@ -203,12 +208,17 @@ Now we create the class documentation wrapper:
 
   >>> klass = codemodule.class_.Class(module, 'Blah', Blah)
 
-and get the method documenation:
+and get the method documentation:
 
   >>> pprint(klass.getMethods())
-  [('bar', <unbound method Blah.bar>, None),
-   ('foo', <unbound method Blah.foo>, <InterfaceClass __builtin__.IBlah>)]
+  [('bar', <function Blah.bar at ...>, None),
+   ('foo', <function Blah.foo at ...>, <InterfaceClass __builtin__.IBlah>)]
 
+
+.. cleanup
+
+  >>> from zope.app.apidoc.classregistry import classRegistry
+  >>> del classRegistry[klass.getPath()]
 
 Function
 --------
@@ -265,12 +275,12 @@ Text files represent plain-text documentation files like this one. Once we
 have a text file documentation object
 
   >>> import os
-  >>> path = os.path.join(os.path.dirname(codemodule.__file__), 'README.txt')
-  >>> readme = codemodule.text.TextFile(path, 'README.txt', module)
+  >>> path = os.path.join(os.path.dirname(codemodule.__file__), 'README.rst')
+  >>> readme = codemodule.text.TextFile(path, 'README.rst', module)
 
 we can ask it for the content of the file:
 
-  >>> print readme.getContent()[26:51]
+  >>> print(readme.getContent()[26:51])
   Code Documentation Module
 
 
@@ -314,19 +324,18 @@ the attributes of the XML element,
 the configuration context for the directive, which can be used to resolve
 objects and/or generate absolute paths of files,
 
-  >>> root.context #doctest:+ELLIPSIS
+  >>> root.context
   <zope.configuration.config.ConfigurationMachine object at ...>
 
 the parser info object,
 
-  >>> info = `root.info`
+  >>> info = repr(root.info)
 
   # Windows fix
   >>> info = info.replace('\\', '/')
 
-  >>> print info #doctest:+ELLIPSIS
-  File
-  ".../zope/app/apidoc/codemodule/configure.zcml", line 1.0-54.0
+  >>> print(info)
+  File ".../zope/app/apidoc/codemodule/configure.zcml", ...
 
 the sub-directives,
 
@@ -340,4 +349,3 @@ and finally a list of all prefixes.
   {u'http://namespaces.zope.org/apidoc': u'apidoc',
    u'http://namespaces.zope.org/browser': u'browser',
    u'http://namespaces.zope.org/zope': None}
-

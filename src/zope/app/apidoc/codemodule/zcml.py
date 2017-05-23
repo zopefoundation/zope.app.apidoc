@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """ZCML File Representation
-
-$Id$
 """
 __docformat__ = "reStructuredText"
 import copy
@@ -23,12 +21,15 @@ from xml.sax.handler import feature_namespaces
 
 from zope.cachedescriptors.property import Lazy
 from zope.configuration import xmlconfig, config
-from zope.interface import implements, directlyProvides
+from zope.interface import implementer, directlyProvides
 from zope.location.interfaces import ILocation
+from zope.location.location import LocationProxy
 
 import zope.app.appsetup.appsetup
 
-from interfaces import IDirective, IRootDirective, IZCMLFile
+from zope.app.apidoc.codemodule.interfaces import IDirective
+from zope.app.apidoc.codemodule.interfaces import IRootDirective
+from zope.app.apidoc.codemodule.interfaces import IZCMLFile
 
 
 class MyConfigHandler(xmlconfig.ConfigurationHandler, object):
@@ -44,6 +45,12 @@ class MyConfigHandler(xmlconfig.ConfigurationHandler, object):
 
     def evaluateCondition(self, expression):
         # We always want to process/show all ZCML directives.
+        # The exception needs to be `installed` that evaluates to False;
+        # if we can't load the package, we can't process the file
+        arguments = expression.split(None)
+        verb = arguments.pop(0)
+        if verb in ('installed', 'not-installed'):
+            return super(MyConfigHandler, self).evaluateCondition(expression)
         return True
 
     def startElementNS(self, name, qname, attrs):
@@ -80,9 +87,10 @@ class MyConfigHandler(xmlconfig.ConfigurationHandler, object):
         self.currentElement = self.currentElement.__parent__
 
 
+@implementer(IDirective)
 class Directive(object):
     """Representation of a ZCML directive."""
-    implements(IDirective)
+
 
     def __init__(self, name, schema, attrs, context, info, prefixes):
         self.name = name
@@ -98,9 +106,9 @@ class Directive(object):
         return '<Directive %s>' %str(self.name)
 
 
+@implementer(ILocation, IZCMLFile)
 class ZCMLFile(object):
     """Representation of an entire ZCML file."""
-    implements(ILocation, IZCMLFile)
 
     def __init__(self, filename, package, parent, name):
         # Retrieve the directive registry
@@ -109,6 +117,14 @@ class ZCMLFile(object):
         self.__parent__ = parent
         self.__name__ = name
 
+    def withParentAndName(self, parent, name):
+        located = type(self)(self.filename, self.package, parent, name)
+        # We don't copy the root element; let it parse again if needed, instead
+        # of trying to recurse through all the children and copy them.
+        return located
+
+
+    @Lazy
     def rootElement(self):
         # Get the context that was originally generated during startup and
         # create a new context using its registrations
@@ -143,5 +159,3 @@ class ZCMLFile(object):
         directlyProvides(root, IRootDirective)
         root.__parent__ = self
         return root
-
-    rootElement = Lazy(rootElement)
