@@ -367,7 +367,7 @@ def renderText(text, module=None, format=None, dedent=True):
     assert format in _format_dict.values()
 
     if isinstance(text, bytes):
-        text = text.decode('latin-1', 'replace')
+        text = text.decode('utf-8', 'replace')
 
     text = dedentString(text)
     source = createObject(format, text)

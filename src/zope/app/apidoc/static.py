@@ -131,7 +131,7 @@ class OnlineBrowser(zope.testbrowser.browser.Browser):
         """Specify the username and password to use for the retrieval."""
         user_pw = user + ':' + pw
         if not isinstance(user_pw, bytes):
-            user_pw = user_pw.encode('latin-1')
+            user_pw = user_pw.encode('utf-8')
         encoded = base64.b64encode(user_pw).strip()
         if not isinstance(encoded, str):
             encoded = encoded.decode('ascii')

@@ -10,10 +10,12 @@
 - The long-deprecated layer configuration was removed. It was only
   ever available if the ``deprecatedlayers`` ZCML feature was installed.
 
-- Modernize some of the templates.  An increment towards having
-  zope.app.apidoc compatible with Chameleon.
+- Modernize some of the templates. ``zope.app.apidoc`` can now be used
+  with Chameleon 3.2 via z3c.pt and z3c.ptcompat.
 
 - Declared install dependency on ``zope.app.exception``.
+
+- Docstrings are treated as UTF-8 on Python 2.
 
 3.7.5 (2010-09-12)
 ==================
