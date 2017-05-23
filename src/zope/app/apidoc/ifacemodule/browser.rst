@@ -353,4 +353,4 @@ Return all utilities that provide this interface.
     'name': u'The Foo',
     'path': '__builtin__.Foo',
     'url': None,
-    'url_name': b'VGhlIEZvbw=='}]
+    'url_name': 'VGhlIEZvbw=='}]

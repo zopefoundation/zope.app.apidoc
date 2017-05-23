@@ -31,7 +31,6 @@ import warnings
 import zope.testbrowser.browser
 import zope.testbrowser.wsgi
 
-#from zope.app.testing import functional
 
 from zope.app.apidoc import classregistry
 
@@ -123,8 +122,7 @@ class Link(object):
         # Make sure that only apidoc links are loaded
         allowed_prefixes = ((self.rootURL + '++apidoc++/'),
                             (self.rootURL + '@@/'))
-        if self.absoluteURL.startswith(allowed_prefixes):
-            return True
+        return self.absoluteURL.startswith(allowed_prefixes)
 
 
 class OnlineBrowser(zope.testbrowser.browser.Browser):
@@ -434,8 +432,9 @@ class StaticAPIDocGenerator(object):
             # since the URL misses `index.hml`. ReST can produce strange URLs
             # that produce this problem, and we have little control over it.
 
-            # XXX: That sounds wrong. We don't specify to open the file in
-            # exclusive creation.
+            # In other words, since we don't specify to open the file
+            # in exclusive creation, perhaps it refers to a
+            # directory? Or the disk is getting full?
             pass
 
 
@@ -512,7 +511,7 @@ def _create_arg_parser():
             '/@@/tree_images/plus_vline.png',
         ],
         help="""Add an additional URL to the list of URLs to retrieve. Specifying those is
-        sometimes necessary, if the links are hidden in cryptic JAvascript code."""
+        sometimes necessary, if the links are hidden in cryptic Javascript code."""
     )
 
     retrieval.add_argument(
@@ -523,6 +522,7 @@ def _create_arg_parser():
         the scope of the generated API documentation."""
     )
 
+    # XXX: How can this actually be turned off or disallowed?
     retrieval.add_argument(
         '--load-all', '-l', action="store_true", dest='import_unknown_modules',
         default=True,
@@ -532,8 +532,9 @@ def _create_arg_parser():
 
     retrieval.add_argument(
         '--max-runtime', action='store', type=int, default=0,
-        help="""If given, the program will attempt to run for no longer than this many
-        seconds. This is most helpful for tests."""
+        help="""If given, the program will attempt to run for no longer than this
+        many seconds, terminating after the time limit and leaving
+        output unfinished. This is most helpful for tests."""
     )
 
     ######################################################################

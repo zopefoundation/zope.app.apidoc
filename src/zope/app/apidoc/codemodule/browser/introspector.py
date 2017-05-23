@@ -141,7 +141,11 @@ class Introspector(BrowserView):
         for name in apidoc.utilities.getPublicAttributes(obj):
             value = getattr(obj, name)
             if inspect.ismethod(value) or inspect.ismethoddescriptor(value):
-                # It's not clear why this condition never seems to be taken
+                # Because getPublicAttributes(obj) loops through
+                # dir(obj) which is more or less obj.__dict__, and
+                # when obj is an instance (and not a class), its
+                # __dict__ tends not to have methods in it, so this condition
+                # should typically not be taken.
                 continue  # pragma: no cover
             entry = {
                 'name': name,

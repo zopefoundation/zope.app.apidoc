@@ -177,7 +177,7 @@ class TestUtilities(unittest.TestCase):
         from zope.app.apidoc.utilities import getFunctionSignature
         self.assertEqual("(<unknown>)", getFunctionSignature(object.__init__))
 
-    @unittest.skipIf(str is bytes, "Only on Cpython3")
+    @unittest.skipIf(str is bytes, "Only on CPython3")
     def test_slot_methods3(self):
         from zope.app.apidoc.utilities import getFunctionSignature
         self.assertEqual("(self, *args, **kwargs)", getFunctionSignature(object.__init__))

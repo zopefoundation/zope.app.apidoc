@@ -54,8 +54,6 @@ this was manually changed, so we can't really rely on the default here):
 
   >>> from zope.app.apidoc import classregistry
   >>> classregistry.__import_unknown_modules__ = False
-  >>> classregistry.__import_unknown_modules__
-  False
 
 We can now use the directive to set it to true:
 

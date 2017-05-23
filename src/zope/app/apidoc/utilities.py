@@ -91,13 +91,13 @@ class ReadContainerBase(object):
         return self.get(key) is not None
 
     def keys(self):
-        return [x[0] for x in self.items()]
+        return [k for k, _v in self.items()]
 
     def __iter__(self):
-        return self.values().__iter__()
+        return iter(self.values())
 
     def values(self):
-        return [x[1] for x in self.items()]
+        return [v for _k, v in self.items()]
 
     def __len__(self):
         return len(self.items())
