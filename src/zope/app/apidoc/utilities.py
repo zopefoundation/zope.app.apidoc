@@ -212,11 +212,13 @@ def getPermissionIds(name, checker=_marker, klass=_marker):
 
     return entry
 
-
-def getFunctionSignature(func, ignore_self=False):
-    """Return the signature of a function or method."""
-    if not callable(func): #isinstance(func, (types.FunctionType, types.MethodType)):
+def _checkFunctionType(func):
+    if not callable(func):
         raise TypeError("func must be a function or method not a %s (%r)" % (type(func), func))
+
+def _simpleGetFunctionSignature(func, ignore_self=False):
+    """Return the signature of a function or method."""
+    _checkFunctionType(func)
 
     try:
         args, varargs, varkw, defaults = inspect.getargspec(func)
@@ -232,9 +234,9 @@ def getFunctionSignature(func, ignore_self=False):
     # By filling up the default tuple, we now have equal indeces for args and
     # default.
     if defaults is not None:
-        defaults = (placeholder,)*(len(args)-len(defaults)) + defaults
+        defaults = (placeholder,) * (len(args) - len(defaults)) + defaults
     else:
-        defaults = (placeholder,)*len(args)
+        defaults = (placeholder,) * len(args)
 
     str_args = []
 
@@ -242,7 +244,9 @@ def getFunctionSignature(func, ignore_self=False):
         # Neglect self, since it is always there and not part of the signature.
         # This way the implementation and interface signatures should match.
         if name == 'self' and (isinstance(func, types.MethodType) or ignore_self):
-            continue
+            # NOTE: this is actually covered, and removing the condition will break
+            # tests. The coverage report doesn't show it, though, for some reason.
+            continue # pragma: no cover
 
         # Make sure the name is a string
         if isinstance(name, (tuple, list)):
@@ -256,13 +260,26 @@ def getFunctionSignature(func, ignore_self=False):
             str_args.append(name + '=' + repr(default))
 
     if varargs:
-        str_args.append('*'+varargs)
+        str_args.append('*' + varargs)
     if varkw:
-        str_args.append('**'+varkw)
+        str_args.append('**' + varkw)
 
     sig += ', '.join(str_args)
     return sig + ')'
 
+def _py33GetFunctionSignature(func, ignore_self=False):
+    _checkFunctionType(func)
+    result = str(inspect.signature(func))
+    if ignore_self and result.startswith("(self"):
+        result = result.replace("(self)", "()").replace("(self, ", '(')
+    return result
+
+try:
+    inspect.signature
+except AttributeError:
+    getFunctionSignature = _simpleGetFunctionSignature
+else:
+    getFunctionSignature = _py33GetFunctionSignature
 
 def getPublicAttributes(obj):
     """Return a list of public attribute names."""
