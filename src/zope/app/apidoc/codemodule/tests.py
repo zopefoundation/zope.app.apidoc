@@ -135,6 +135,27 @@ class TestZCML(unittest.TestCase):
         clone = zcml.withParentAndName(self, 'name')
         self.assertEqual(clone.rootElement.__parent__, clone)
 
+class TestClass(unittest.TestCase):
+
+    def test_permission_is_not_method(self):
+        # We don't incorrectly assume that callable objects,
+        # like security proxies, are methods
+        from zope.app.apidoc.codemodule.class_ import Class
+        from zope.security.checker import CheckerPublic
+
+        self.assertTrue(callable(CheckerPublic))
+
+        class Parent(object):
+            def getPath(self):
+                return ''
+
+        class MyClass(object):
+            permission = CheckerPublic
+
+        klass = Class(Parent(), MyClass.__name__, MyClass)
+
+        self.assertEqual([], klass.getMethods())
+
 def test_suite():
     checker = standard_checker()
 

@@ -16,7 +16,9 @@
 
 __docformat__ = 'restructuredtext'
 
-from inspect import ismethod, ismethoddescriptor
+from inspect import isfunction
+from inspect import ismethod
+from inspect import ismethoddescriptor
 
 from zope.interface import implementer, implementedBy
 from zope.security.checker import getCheckerForInstancesOf
@@ -72,16 +74,17 @@ class Class(object):
 
     if str is bytes:
         # Python 2
-        def _ismethod(self, obj):
-            return ismethod(obj)
+        _ismethod = staticmethod(ismethod)
     else:
-        # On Python 3, there is no unbound method.
-        # we treat everything that's callable as a method.
-        # The corner case is where we bind a C
-        # function to an attribute; it's not *technically* a method,
-        # but it acts just like a @staticmethod, so it works out
-        # the same
-        _ismethod = callable
+        # On Python 3, there is no unbound method. But we can't treat
+        # things that are simply callable as methods. Things like the
+        # security proxy are callable, but when `permission =
+        # CheckerPublic` (where zope.security.checker.CheckerPublic is
+        # proxied) is a class attribute, that's *not* a method.
+        # Checking if its actually a function gets us much more accurate
+        # results. (We could also check its qualname to see if it "belongs"
+        # to this class, but this seems to do the trick)
+        _ismethod = staticmethod(isfunction)
 
     def getAttributes(self):
         """See IClassDocumentation."""
