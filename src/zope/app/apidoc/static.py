@@ -185,6 +185,7 @@ class PublisherBrowser(zope.testbrowser.wsgi.Browser):
     def setDebugMode(self, debug):
         self.handleErrors = not debug
 
+
 class ArbitraryLink(zope.testbrowser.browser.Link):
 
     attr_name = 'src'

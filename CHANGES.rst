@@ -17,6 +17,9 @@
 
 - Docstrings are treated as UTF-8 on Python 2.
 
+- Handle keyword only arguments and annotations in function signatures
+  on Python 3.
+
 3.7.5 (2010-09-12)
 ==================
 

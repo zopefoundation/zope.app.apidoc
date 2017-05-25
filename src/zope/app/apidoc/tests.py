@@ -180,7 +180,9 @@ class TestUtilities(unittest.TestCase):
     @unittest.skipIf(str is bytes, "Only on CPython3")
     def test_slot_methods3(self):
         from zope.app.apidoc.utilities import getFunctionSignature
-        self.assertEqual("(self, *args, **kwargs)", getFunctionSignature(object.__init__))
+        self.assertEqual(
+            '(self, /, *args, **kwargs)',
+            getFunctionSignature(object.__init__))
 
     @unittest.skipIf(str is not bytes or not hasattr(sys, 'pypy_version_info'),
                      "Only on PyPy")
@@ -198,6 +200,42 @@ class TestUtilities(unittest.TestCase):
 
         self.assertEqual("((a, b))", getFunctionSignature(locals()['f']))
 
+    def test_keyword_only_arguments(self):
+        from zope.app.apidoc.utilities import getFunctionSignature
+        from zope.app.apidoc.utilities import _simpleGetFunctionSignature
+        from socket import socket
+
+
+        try:
+            simple_sig = _simpleGetFunctionSignature(socket.makefile)
+        except ValueError:
+            # On Python 3, socket.makefile has keyword args, which aren't handled
+            # by the simple function
+            self.assertGreater(sys.version_info, (3,0))
+            self.assertEqual(
+                "(self, mode='r', buffering=None, *, encoding=None, errors=None, newline=None)",
+                getFunctionSignature(socket.makefile))
+            self.assertEqual(
+                "(mode='r', buffering=None, *, encoding=None, errors=None, newline=None)",
+                getFunctionSignature(socket.makefile, ignore_self=True))
+            # Extra coverage to make sure the alternate branches are taken
+            self.assertEqual(
+                '()',
+                getFunctionSignature(self.test_keyword_only_arguments))
+            self.assertEqual(
+                '(self)',
+                # Note the difference with Python 2; this is what ignore_self
+                # is for.
+                getFunctionSignature(TestUtilities.test_keyword_only_arguments))
+        else:
+            self.assertEqual(simple_sig, "(mode='r', bufsize=-1)")
+            # Extra coverage to make sure the alternate branches are taken
+            self.assertEqual(
+                '()',
+                getFunctionSignature(self.test_keyword_only_arguments))
+            self.assertEqual(
+                '()',
+                getFunctionSignature(TestUtilities.test_keyword_only_arguments))
 
 from zope.app.apidoc import static
 
