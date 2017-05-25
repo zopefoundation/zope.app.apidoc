@@ -20,6 +20,10 @@
 - Handle keyword only arguments and annotations in function signatures
   on Python 3.
 
+- Change the default documentation format to ``restructuredtext`` for
+  modules that do not specify a ``__docformat__``. Previously it was
+  ``structuredtext`` (STX).
+
 3.7.5 (2010-09-12)
 ==================
 

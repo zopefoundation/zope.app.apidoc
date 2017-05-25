@@ -645,15 +645,17 @@ to look up the factory id:
   >>> utilities.getDocFormat(apidoc)
   'zope.source.rest'
 
-By default structured text is returned:
+By default restructured text is returned:
 
-  >>> from zope.app.apidoc import tests
-  >>> utilities.getDocFormat(tests)
-  'zope.source.stx'
+  >>> utilities.getDocFormat(object())
+  'zope.source.rest'
 
-This is a sensible default, since we only decided later in development to
-endorse restructured text, so that many files are still in the structured text
-format. All converted and new modules will have the ``__docformat__`` attribute.
+This is a sensible default since much documentation is now written
+with Sphinx in mind (which of course defaults to rendering
+restructured text). As long as docutils' error reporting level is set
+sufficiently high (``severe``), unknown Sphinx directives and slightly
+malformed markup do not produce error messages, either on the console
+or in the generated HTML.
 
 The ``__docformat__`` attribute can also optionally specify a language field. We
 simply ignore it:
@@ -661,9 +663,9 @@ simply ignore it:
   >>> class Module(object):
   ...     pass
   >>> module = Module()
-  >>> module.__docformat__ = 'restructuredtext en'
+  >>> module.__docformat__ = 'structuredtext en'
   >>> utilities.getDocFormat(module)
-  'zope.source.rest'
+  'zope.source.stx'
 
 
 ``dedentString(text)``

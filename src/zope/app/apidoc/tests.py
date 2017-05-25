@@ -149,8 +149,6 @@ def setUp(test):
     zope.component.testing.setUp()
     xmlconfig.file('configure.zcml', zope.app.renderer)
     zope.testing.module.setUp(test, 'zope.app.apidoc.doctest')
-    # Make RST the default for the sake of examples
-    test.globs['__docformat__'] = 'restructuredtext'
 
 def tearDown(test):
     zope.component.testing.tearDown()

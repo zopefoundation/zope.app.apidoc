@@ -356,10 +356,10 @@ _format_dict = {
 def getDocFormat(module):
     """Convert a module's __docformat__ specification to a renderer source
     id"""
-    format = getattr(module, '__docformat__', 'structuredtext').lower()
+    format = getattr(module, '__docformat__', 'restructuredtext').lower()
     # The format can also contain the language, so just get the first part
     format = format.split(' ')[0]
-    return _format_dict.get(format, 'zope.source.stx')
+    return _format_dict.get(format, 'zope.source.rest')
 
 
 def dedentString(text):

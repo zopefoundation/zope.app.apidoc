@@ -106,7 +106,7 @@ example:
       <li>
         <b><code>get(key, default=None)</code>
         </b><br />
-        <div class="inline documentation"><p>See interface `IReadContainer`</p>
+        <div class="inline documentation"><p>See interface <cite>IReadContainer</cite></p>
         </div>
         <span class="small">
           <i>Interface:</i>
