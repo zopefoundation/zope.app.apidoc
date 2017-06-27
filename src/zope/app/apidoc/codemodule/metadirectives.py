@@ -13,7 +13,6 @@
 ##############################################################################
 """``apidoc`` ZCML namespace directive interfaces
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 import zope.interface

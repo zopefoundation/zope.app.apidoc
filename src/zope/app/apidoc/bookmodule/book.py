@@ -11,13 +11,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Interface Documentation Module
-
-The interface documentation module retrieves its information from the
-site manager. Therefore, currently there are no unregsitered interfaces
-listed in the documentation. This might be good, since unregistered interfaces
-are usually private and not of interest to a general developer.
-
+"""Help books.
 """
 __docformat__ = 'restructuredtext'
 import os.path

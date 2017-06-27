@@ -66,7 +66,7 @@ def truncateSysPath(path):
 
 @implementer(IReadContainer)
 class ReadContainerBase(object):
-    """Base for `IReadContainer` objects."""
+    """Base for :class:`zope.container.interfaces.IReadContainer` objects."""
 
     def __repr__(self):
         if getattr(self, '__name__', None) is None:

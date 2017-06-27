@@ -13,7 +13,6 @@
 ##############################################################################
 """Interfaces for code browser
 
-$Id$
 """
 __docformat__ = "reStructuredText"
 import zope.interface

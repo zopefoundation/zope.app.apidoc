@@ -42,7 +42,7 @@ class IInterfaceModule(IDocumentationModule):
 class InterfaceModule(DocumentationModuleBase):
     r"""Represent the Documentation of all Interfaces.
 
-    This documentation is implemented using a simple `IReadContainer`. The
+    This documentation is implemented using a simple :class:`~.IReadContainer`. The
     items of the container are all the interfaces listed in the global
     site manager."""
 
@@ -66,7 +66,7 @@ class InterfaceModule(DocumentationModuleBase):
     """)
 
     def get(self, key, default=None):
-        """See zope.app.interfaces.container.IReadContainer"""
+        """See :class:`zope.container.interfaces.IReadContainer`"""
         iface = queryInterface(key, default)
         if iface is default:
             # Yeah, we find more items than we claim to have! This way we can
@@ -85,7 +85,7 @@ class InterfaceModule(DocumentationModuleBase):
         return iface
 
     def items(self):
-        """See zope.app.interfaces.container.IReadContainer"""
+        """See :class:`zope.container.interfaces.IReadContainer`"""
         items = sorted(searchInterfaceUtilities(self))
         items = [(i[0], LocationProxy(i[1], self, i[0])) for i in items]
         return items

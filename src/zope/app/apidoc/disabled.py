@@ -11,9 +11,8 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Zope 3 API Documentation
+"""Stubs for when documentation is disabled.
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 

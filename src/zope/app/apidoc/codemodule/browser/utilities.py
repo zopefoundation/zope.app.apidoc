@@ -13,7 +13,6 @@
 ##############################################################################
 """Browser utilities for API documentation.
 
-$Id: utilities.py 70020 2006-09-07 09:08:16Z flox $
 """
 __docformat__ = 'restructuredtext'
 

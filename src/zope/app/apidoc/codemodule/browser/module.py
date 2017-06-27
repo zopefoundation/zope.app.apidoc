@@ -13,19 +13,15 @@
 ##############################################################################
 """Module Views
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
-from zope.component import getMultiAdapter
-from zope.i18nmessageid import ZopeMessageFactory as _
+
 from zope.interface.interfaces import IInterface
 from zope.proxy import removeAllProxies
 from zope.publisher.browser import BrowserView
 from zope.security.proxy import isinstance
-from zope.traversing.api import getParent
 from zope.traversing.browser import absoluteURL
 
-from zope.app.apidoc.apidoc import APIDocumentation
 from zope.app.apidoc.utilities import getPythonPath, renderText
 from zope.app.apidoc.codemodule.interfaces import IModuleDocumentation
 from zope.app.apidoc.codemodule.interfaces import IClassDocumentation

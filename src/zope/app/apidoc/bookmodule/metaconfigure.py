@@ -11,10 +11,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Meta-Configuration Handlers for "help" namespace.
-
-These handlers process the `registerTopic()` directive of
-the "help" ZCML namespace.
+"""Meta-Configuration Handlers for "apidoc:bookchapter" directive.
 
 """
 __docformat__ = 'restructuredtext'
@@ -29,7 +26,7 @@ EMPTYPATH = os.path.join(
 
 def bookchapter(_context, id, title, doc_path=EMPTYPATH,
                 parent="", resources=None):
-    """Register an book chapter"""
+    """Register a book chapter"""
 
     _context.action(
         discriminator = ('apidoc:bookchapter', parent, id),
