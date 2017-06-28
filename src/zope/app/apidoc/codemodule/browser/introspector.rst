@@ -3,7 +3,7 @@ Object Introspector View
 ========================
 
 The "Introspector" view provides access to information about the current
-obejct, the context of the introspector view. When in `devmode`, the
+obejct, the context of the introspector view. When in ``devmode``, the
 introspector is simply available as follows:
 
     >>> from zope.testbrowser.wsgi import Browser
@@ -27,9 +27,10 @@ and the name of the object:
 Of course, the root folder does not have a name. As you can see the type links
 directly to the API documentation of the class.
 
-The next section lists all directly provided interfaces. The root folder
-directly provides the ``ISite`` and ``IRootFolder`` interface, so we should
-see those:
+The next section lists all directly provided interfaces. The root
+folder directly provides the :class:`zope.site.interfaces.ISite` and
+:class:`zope.site.interfaces.IRootFolder` interface, so we should see
+those::
 
     >>> browser.getLink('zope.component.interfaces.ISite').url
     '.../++apidoc++/Interface/zope.component.interfaces.ISite/index.html'
@@ -37,10 +38,11 @@ see those:
     >>> browser.getLink('zope.site.interfaces.IRootFolder').url
     '...apidoc++/Interface/zope.site.interfaces.IRootFolder/index.html'
 
-The next two section, the implemented interfaces and the base classes, are not
-instance specific pieces of information, but they are still nice to see at
-this point. For example, a ``Folder`` instance provides the following
-interfaces:
+The next two section, the implemented interfaces and the base classes,
+are not instance specific pieces of information, but they are still
+nice to see at this point. For example, a
+:class:`zope.site.folder.Folder` instance provides the following
+interfaces::
 
     >>> browser.getLink('zope.site.interfaces.IFolder').url
     '.../++apidoc++/Interface/zope.site.interfaces.IFolder/index.html'
@@ -63,7 +65,7 @@ Now that we described the component and class level of the object, the view
 dives into some details. First it lists the attributes/properties of the
 object, including the value of the attribute. This is information can be very
 useful when debugging an application. The only attribute of the folder is the
-data attribute:
+data attribute::
 
     >>> print(browser.contents)
     <!DOCTYPE...
@@ -95,7 +97,7 @@ data attribute:
 There are, however, several methods since the full mapping interface is
 implemented. Like for the class method documentation, the method's signature,
 doc string, permissions and the interface the method is declared in. Here an
-example:
+example::
 
     >>> print(browser.contents)
     <!DOCTYPE...
@@ -129,7 +131,7 @@ Towards the bottom of the page, there are some optional sections. Some
 objects, for example our root folder, are inheritely mappings or
 sequences. Their data then is often hard to see in the attributes section, so
 they are provided in a aseparate section. To see anything useful, we have to
-add an object to the folder first:
+add an object to the folder first::
 
     >>> import re
     >>> browser.getLink(re.compile('^File$')).click()
@@ -139,7 +141,7 @@ add an object to the folder first:
     >>> browser.getControl('Add').click()
     >>> browser.getLink('Introspector').click()
 
-Now the introspector will show the file and allow you to click on it:
+Now the introspector will show the file and allow you to click on it::
 
     >>> print(browser.contents)
     <!DOCTYPE...
@@ -163,7 +165,7 @@ Now the introspector will show the file and allow you to click on it:
 
 The final section of the introspector displays the annotations that are
 declared for the object. The standard annotation that almost every object
-provides is the Dublin Core:
+provides is the Dublin Core::
 
     >>> print(browser.contents)
     <!DOCTYPE...
@@ -193,7 +195,7 @@ provides is the Dublin Core:
 As you can see you can click on the annotation to discover it further;
 the exact constructor signature varies depending on Python version
 (some versions report ``*args, **kwargs``, others report ``dict=None,
-**kwargs``):
+**kwargs``)::
 
     >>> browser.getLink('ZDCAnnotationData').click()
     >>> print(browser.contents)

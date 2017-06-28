@@ -34,12 +34,14 @@ from zope.app.apidoc.utilities import DocumentationModuleBase
 NONAME = '__noname__'
 
 def encodeName(name):
+    "Encode the name in URL safe base 64."
     name = base64.urlsafe_b64encode(name.encode('utf-8'))
     if not isinstance(name, str):
         name = name.decode('ascii')
     return name
 
 def decodeName(name):
+    "Decode the name as encoded by :func:`encodeName`."
     try:
         to_decode = name
         if not isinstance(to_decode, bytes):

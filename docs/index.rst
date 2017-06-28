@@ -8,12 +8,19 @@
    :maxdepth: 1
 
    overview
+   api
+
+Utility Functions
+=================
+
+.. toctree::
+   :maxdepth: 1
+
    component
    classregistry
    interface
    presentation
    utilities
-   api
 
 Browser
 =======
@@ -44,7 +51,7 @@ Interfaces
 
 
 Utilities
-==========
+=========
 
 .. toctree::
    :maxdepth: 1

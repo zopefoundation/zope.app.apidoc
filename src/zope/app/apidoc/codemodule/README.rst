@@ -1,6 +1,8 @@
-=========================
-Code Documentation Module
-=========================
+===========================
+ Code Documentation Module
+===========================
+
+.. currentmodule:: zope.app.apidoc.codemodule
 
 The code documentation module package
 
@@ -15,9 +17,10 @@ Zope 3 related Python packages. The code module can be created like this:
   u'Zope 3 root.'
 
 
-This object extends the `codemodule.module.Module` class, since it can be seen
-as some sort of root package. However, its sementacs are obviously a bit
-different:
+This object extends the
+:class:`zope.app.apidoc.codemodule.module.Module` class, since it can
+be seen as some sort of root package. However, its sementacs are
+obviously a bit different:
 
   >>> cm.getFileName()
   ''
@@ -31,12 +34,12 @@ different:
 
 
 Module
-------
+======
 
-The `Module` class represents a Python module or package in the documentation
-tree. It can be easily setup by simply passing the parent module, the
-module name (not the entire Python path) and the Python module instance
-itself:
+The :class:`module.Module` class represents a Python module or package
+in the documentation tree. It can be easily setup by simply passing
+the parent module, the module name (not the entire Python path) and
+the Python module instance itself:
 
   >>> import zope.app.apidoc
   >>> module = codemodule.module.Module(None, 'apidoc', zope.app.apidoc)
@@ -74,12 +77,12 @@ soon as you have the object:
   >>> print(module['browser'].getPath())
   zope.app.apidoc.browser
 
-Now, the ``get(key, default=None)`` is actually much smarter than you might
+Now, the :meth:`module.Module.get` is actually much smarter than you might
 originally suspect, since it can actually get to more objects than it
 promises. If a key is not found in the module's children, it tries to
 import the key as a module relative to this module.
 
-For example, while `tests` directories are not added to the module and
+For example, while ``tests`` directories are not added to the module and
 classes hierarchy (since they do not provide or implement any API), we can
 still get to them:
 
@@ -93,10 +96,10 @@ still get to them:
 
 
 Classes
--------
+=======
 
 Setting up a class for documentation is not much harder. You only need to
-provide an object providing `IModule` as a parent, the name and the klass
+provide an object providing :class:`~.IModule` as a parent, the name and the klass
 itself:
 
   >>> import zope.app.apidoc.apidoc
@@ -115,8 +118,8 @@ Python path and doc string are easily retrieved using::
   'Represent the complete API Documentation.'
 
 A list of base classes can also be retrieved. The list only includes
-direct bases, so if we have class `Blah`, which extends `Bar`, which
-extends `Foo`, then the base of `Blah` is just `Bar`. In our example this
+direct bases, so if we have class ``Blah``, which extends ``Bar``, which
+extends ``Foo``, then the base of ``Blah`` is just ``Bar``. In our example this
 looks like this:
 
   >>> klass.getBases()
@@ -124,7 +127,7 @@ looks like this:
 
 In the other direction, you can get a list of known subclasses.  The list
 only includes those subclasses that are registered with the global
-`classRegistry` dictionary. In our example:
+:data:`zope.app.apidoc.classregistry.classRegistry` dictionary. In our example:
 
   >>> class APIDocSubclass(zope.app.apidoc.apidoc.APIDocumentation):
   ...   pass
@@ -152,8 +155,8 @@ and methods of this class::
   >>> klass.getConstructor()
   <function APIDocumentation.__init__ at ...>
 
-Let's have a closer look at the `getAttributes()` method. First we create an
-interface called `IBlah` that is implemented by the class `Blah`:
+Let's have a closer look at the :meth:`class_.Class.getAttributes` method. First we create an
+interface called ``IBlah`` that is implemented by the class ``Blah``:
 
   >>> import zope.interface
   >>> class IBlie(zope.interface.Interface):
@@ -169,7 +172,7 @@ interface called `IBlah` that is implemented by the class `Blah`:
   ...      bli = 'i'
   ...      _blah = 'l'
 
-The `Blah` class also implements a public and private attribute that is not
+The ``Blah`` class also implements a public and private attribute that is not
 listed in the interface. Now we create the class documentation wrapper:
 
   >>> klass = codemodule.class_.Class(module, 'Blah', Blah)
@@ -182,13 +185,13 @@ listed in the interface. Now we create the class documentation wrapper:
 
 So, the function returns a list of tuples of the form (name, value,
 interface), where the interface is the interface in which the attribute was
-declared. The interface is `None`, if the attribute was not declared. Also
+declared. The interface is ``None``, if the attribute was not declared. Also
 note that attributes starting with an underscore are ignored.
 
 
 Let's now have a look at how methods are looked up returned. So we create a
-new `IBlah` interface, this time describing methods, and then its
-implementation `Blah`, which has some other additional methods:
+new ``IBlah`` interface, this time describing methods, and then its
+implementation ``Blah``, which has some other additional methods:
 
   >>> class IBlah(zope.interface.Interface):
   ...      def foo(): pass
@@ -221,11 +224,12 @@ and get the method documentation:
   >>> del classRegistry[klass.getPath()]
 
 Function
---------
+========
 
-Function are pretty much documented in the same way as all other code
-documentation objects and provides a similar API to the classes. A function
-documenation object is quickly created:
+Functions are pretty much documented in the same way as all other code
+documentation objects and provides a similar API to the classes. A
+:class:`function documentation object <function.Function>` is quickly
+created:
 
   >>> func = codemodule.function.Function(
   ...     module, 'handleNamespace',
@@ -269,10 +273,10 @@ but if we add an attribute, it will be listed:
 
 
 Text File
----------
+=========
 
-Text files represent plain-text documentation files like this one. Once we
-have a text file documentation object
+:class:`Text files <text.TextFile>` represent plain-text documentation
+files like this one. Once we have a text file documentation object
 
   >>> import os
   >>> path = os.path.join(os.path.dirname(codemodule.__file__), 'README.rst')
@@ -280,15 +284,16 @@ have a text file documentation object
 
 we can ask it for the content of the file:
 
-  >>> print(readme.getContent()[26:51])
-  Code Documentation Module
+  >>> "Code Documentation Module" in readme.getContent()
+  True
 
 
 ZCML File
----------
+=========
 
-ZCML file documentation objects present configuration files and parse the file
-content to provide some advanced markup. The object is easily instantiated:
+ZCML file :class:`documentation objects <zcml.ZCMLFile>` present
+configuration files and parse the file content to provide some
+advanced markup. The object is easily instantiated:
 
   >>> path = os.path.join(os.path.dirname(codemodule.__file__),
   ...                     'configure.zcml')
@@ -297,8 +302,8 @@ content to provide some advanced markup. The object is easily instantiated:
 
   >>> zcml = codemodule.zcml.ZCMLFile(path, module, module, 'configure.zcml')
 
-The interesting attribute of the object is the `rootElement`, since it
-contains the root XML element and thus the entire XML tree. The `rootElement`
+The interesting attribute of the object is the ``rootElement``, since it
+contains the root XML element and thus the entire XML tree. The ``rootElement``
 attribute is a lazy property, so that it is not loaded until accessed for the
 first time:
 
@@ -330,9 +335,7 @@ objects and/or generate absolute paths of files,
 the parser info object,
 
   >>> info = repr(root.info)
-
-  # Windows fix
-  >>> info = info.replace('\\', '/')
+  >>> info = info.replace('\\', '/')   # Windows fix
 
   >>> print(info)
   File ".../zope/app/apidoc/codemodule/configure.zcml", ...

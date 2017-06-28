@@ -1,14 +1,15 @@
-================================
-Utilities Menu and Details Views
-================================
+==================================
+ Utilities Menu and Details Views
+==================================
 
+.. currentmodule:: zope.app.apidoc.utilitymodule.browser
 
-`Menu` class
-------------
+:class:`Menu`
+=============
 
-This is a class that helps building the menu. The `menu_macros` expect the menu
-view class to have the `getMenuTitle(node)` and `getMenuLink(node)` methods
-implemented. `node` is a `zope.app.tree.node.Node` instance.
+This is a class that helps building the menu. The ``menu_macros`` expect the menu
+view class to have the :meth:`Menu.getMenuTitle` and :meth:`Menu.getMenuLink` methods
+implemented. ``node`` is a :class:`zope.app.tree.node.Node` instance.
 
 Let's start by creating the menu:
 
@@ -50,7 +51,9 @@ have to create a utility registration
   ...     {'name': 'FooBar', 'provided': None,
   ...      'component': None, 'info': ''})()
 
-which is then wrapped in a `Utility` documentation class and then in a node:
+which is then wrapped in a
+:class:`~zope.app.apidoc.utilitymodule.utilitymodule.Utility`
+documentation class and then in a node:
 
   >>> from zope.app.apidoc.utilitymodule.utilitymodule import Utility
   >>> util = Utility(uiface, foobar_reg)
@@ -79,13 +82,13 @@ Finally, we get menu title and link for a utility without a name:
   'http://127.0.0.1/++apidoc++/Utility/foo.bar.iface/X19ub25hbWVfXw==/index.html'
 
 
-`UtilityDetails` class
-----------------------
+:class:`UtilityDetails`
+=======================
 
 This class provides presentation-ready data about a particular utility.
 
-`getName()`
------------
+:meth:`UtilityDetails.getName`
+------------------------------
 
 Get the name of the utility.
 
@@ -102,8 +105,8 @@ Return the string ``no name``, if the utility has no name.
   'no name'
 
 
-`getInterface()`
-----------------
+:meth:`UtilityDetails.getInterface`
+-----------------------------------
 
 Return the interface details view for the interface the utility provides.
 
@@ -134,8 +137,8 @@ and get the id (for example):
   '__builtin__.IBlah'
 
 
-`getComponent()`
-----------------
+:meth:`UtilityDetails.getComponent`
+-----------------------------------
 
 Return the Python path and a code browser URL path of the implementation
 class.

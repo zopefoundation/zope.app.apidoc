@@ -357,6 +357,7 @@ intersphinx_mapping = {
     'https://zopecomponent.readthedocs.io/en/latest/': None,
     'https://zopelocation.readthedocs.io/en/latest/': None,
     'https://zopecontainer.readthedocs.io/en/latest/': None,
+    'https://zopesite.readthedocs.io/en/latest/': None,
 }
 
 extlinks = {'issue': ('https://github.com/zopefoundation/zope.app.apidoc/issues/%s',

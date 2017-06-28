@@ -26,11 +26,13 @@ from zope.app.apidoc.utilities import ReadContainerBase
 
 @implementer(ILocation)
 class APIDocumentation(ReadContainerBase):
-    """Represent the complete API Documentation.
+    """
+    Represent the complete API Documentation.
 
-    This documentation is implemented using a simply `IReadContainer`. The
-    items of the container are all registered utilities for
-    `IDocumentationModule`.
+    This documentation is implemented using a simply
+    :class:`~zope.container.interfaces.IReadContainer`. The items of
+    the container are all registered utilities for
+    :class:`~zope.app.apidoc.interfaces.IDocumentationModule`.
     """
 
     def __init__(self, parent, name):
@@ -43,14 +45,12 @@ class APIDocumentation(ReadContainerBase):
     # and even circular parentage.
 
     def get(self, key, default=None):
-        """See zope.container.interfaces.IReadContainer"""
         utility = zope.component.queryUtility(IDocumentationModule, key, default)
         if utility is not default:
             utility = utility.withParentAndName(self, key)
         return utility
 
     def items(self):
-        """See zope.container.interfaces.IReadContainer"""
         items = sorted(zope.component.getUtilitiesFor(IDocumentationModule))
         utils = []
         for key, value in items:
@@ -59,7 +59,11 @@ class APIDocumentation(ReadContainerBase):
 
 
 class apidocNamespace(object):
-    """Used to traverse to an API Documentation."""
+    """Used to traverse to an API Documentation.
+
+    Instantiating this object with a request will apply the
+    :class:`zope.app.apidoc.browser.skin.APIDOC` skin automatically.
+    """
     def __init__(self, ob, request=None):
         if request:
             from zope.app.apidoc.browser.skin import APIDOC

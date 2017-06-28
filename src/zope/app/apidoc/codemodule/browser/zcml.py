@@ -45,6 +45,7 @@ def _compareAttrs(x, nameOrder):
 
 
 class DirectiveDetails(object):
+    """Details about ZCML directives."""
 
     context = None
     request = None

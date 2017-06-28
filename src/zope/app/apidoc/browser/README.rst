@@ -1,6 +1,6 @@
-=====================
-Generic API Doc Views
-=====================
+=======================
+ Generic API Doc Views
+=======================
 
 Get a browser started:
 
@@ -10,7 +10,7 @@ Get a browser started:
 
 
 Not Found View
---------------
+==============
 
 The `APIDOC` skin defines a custom not found view, since it fits the look and
 feel better and does not have all the O-wrap clutter:
@@ -39,7 +39,7 @@ feel better and does not have all the O-wrap clutter:
   ...
 
 Preferences
------------
+===========
 
 The ``APIDOC`` skin also does the same for editing preference groups:
 

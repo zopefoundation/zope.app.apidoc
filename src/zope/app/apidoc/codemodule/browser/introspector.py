@@ -95,6 +95,7 @@ class TraversalRoot(object):
 
 
 class Introspector(BrowserView):
+    "Introspector browser view"
 
     def __init__(self, context, request):
         super(Introspector, self).__init__(context, request)

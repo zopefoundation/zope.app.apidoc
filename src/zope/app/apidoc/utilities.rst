@@ -2,14 +2,16 @@
  Miscellaneous Utilities
 =========================
 
+.. currentmodule:: zope.app.apidoc.utilities
+
 The utilities module provides some useful helper functions and classes that
 make the work of the API doctool and inspection code easier.
 
   >>> from zope.app.apidoc import utilities
 
 
-``relativizePath(path)``
-========================
+:func:`relativizePath`
+======================
 
 When dealing with files, such as page templates and text files, and not with
 Python paths, it is necessary to keep track of the the absolute path of the
@@ -22,9 +24,7 @@ directory and replaces it with "Zope3".
   >>> path = os.path.join(os.path.dirname(utilities.__file__), 'README.txt')
 
   >>> path = utilities.relativizePath(path)
-
-  # Be kind to Windows users
-  >>> path.replace('\\', '/')
+  >>> path.replace('\\', '/') # Be kind to Windows users
   'Zope3/zope/app/apidoc/README.txt'
 
 If the base path is not found in a particular path, the original path is
@@ -35,7 +35,7 @@ returned:
   'foo/bar/blah.txt'
 
 
-``truncateSysPath(path)``
+:func:`truncateSysPath`
 =========================
 
 In some cases it is useful to just know the path after the sys path of a
@@ -55,12 +55,14 @@ If there is no matching system path, then the whole path is returned:
   'some/other/path'
 
 
-``ReadContainerBase`` (Class)
-=============================
+:class:`ReadContainerBase`
+==========================
 
-This class serves as a base class for ``IReadContainer`` objects that minimizes
-the implementation of an ``IReadContainer`` to two methods, ``get()`` and
-``items()``, since the other methods can be implemented using these two.
+This class serves as a base class for
+:class:`zope.container.interfaces.IReadContainer` objects that
+minimizes the implementation of an ``IReadContainer`` to two methods,
+``get()`` and ``items()``, since the other methods can be implemented
+using these two.
 
 Note that this implementation might be very expensive for certain container,
 especially if collecting the items is of high order. However, there are many
@@ -142,8 +144,8 @@ Then naturally, all the other methods work as well:
     2
 
 
-``getPythonPath(obj)``
-======================
+:func:`getPythonPath`
+=====================
 
 Return the path of the object in standard Python dot-notation.
 
@@ -204,8 +206,8 @@ Clearly, instance lookups should fail:
   AttributeError: 'Sample' object has no attribute '__name__'
 
 
-``isReferencable(path)``
-========================
+:func:`isReferencable`
+======================
 
 Determine whether a path can be referenced in the API doc, usually by the code
 browser module. Initially you might think that all objects that have paths can
@@ -293,8 +295,8 @@ then ``False`` is returned.
   True
 
 
-``getPermissionIds(name, checker=_marker, klass=_marker)``
-==========================================================
+:func:`getPermissionIds`
+========================
 
 Get the permissions of a class attribute. The attribute is specified by name.
 
@@ -360,8 +362,8 @@ Finally, the ``Sample`` class' ``attr3`` attribute is public:
   zope.Public
 
 
-``getFunctionSignature(func)``
-==============================
+:func:`getFunctionSignature`
+============================
 
 Return the signature of a function or method. The ``func`` argument *must* be a
 generic function or a method of a class.
@@ -470,8 +472,8 @@ Internal assignment is also not legal::
   SyntaxError: invalid syntax
 
 
-``getPublicAttributes(obj)``
-============================
+:func:`getPublicAttributes`
+===========================
 
 Return a list of public attribute names for a given object.
 
@@ -528,8 +530,8 @@ attributes as well:
   ['attr', 'attr2', 'attr3', 'func']
 
 
-``getInterfaceForAttribute(name, interfaces=_marker, klass=_marker, asPath=True)``
-==================================================================================
+:func:`getInterfaceForAttribute`
+================================
 
 Determine the interface in which an attribute is defined. This function is
 nice, if you have an attribute name which you retrieved from a class and want
@@ -600,8 +602,8 @@ Similarly, it does not make sense if both are specified:
   ValueError: must specify only one of interfaces and klass
 
 
-``columnize(entries, columns=3)``
-=================================
+:func:`columnize`
+=================
 
 This function places a list of entries into columns.
 
@@ -632,8 +634,8 @@ Here are some examples:
   [[1, 2], [3, 4]]
 
 
-``getDocFormat(module)``
-========================
+:func:`getDocFormat`
+====================
 
 This function inspects a module to determine the supported documentation
 format. The function returns a valid renderer source factory id.
@@ -668,8 +670,8 @@ simply ignore it:
   'zope.source.stx'
 
 
-``dedentString(text)``
-======================
+:func:`dedentString`
+====================
 
 Before doc strings can be processed using STX or ReST they must be dendented,
 since otherwise the output will be incorrect. Let's have a look at some
@@ -751,8 +753,8 @@ chosen:
   <BLANKLINE>
 
 
-``renderText(text, module=None, format=None)``
-==============================================
+:func:`renderText`
+==================
 
 A function that quickly renders the given text using the specified format.
 

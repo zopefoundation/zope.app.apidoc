@@ -2,11 +2,18 @@
  The Class Registry
 ====================
 
-This little registry allows us to quickly query a complete list of classes
-that are defined and used by Zope 3. The prime feature of the class is the
-``getClassesThatImplement(iface)`` method that returns all classes that
-implement the passed interface. Another method, ``getSubclassesOf(klass)``
-returns all registered subclassess of the given class.
+.. currentmodule:: zope.app.apidoc.classregistry
+
+This :class:`little registry <ClassRegistry>` allows us to quickly
+query a complete list of classes that are defined and used by Zope 3.
+The prime feature of the class is the
+:meth:`ClassRegistry.getClassesThatImplement` method that returns all
+classes that implement the passed interface. Another method,
+:meth:`ClassRegistry.getSubclassesOf` returns all registered
+subclassess of the given class.
+
+:class:`ClassRegistry`
+======================
 
 The class registry, subclassing the dictionary type, can be instantiated like
 any other dictionary:
@@ -63,8 +70,8 @@ are the names of the classes:
 
 There are two API methods specific to the class registry:
 
-``getClassesThatImplement(iface)``
-==================================
+:meth:`ClassRegistry.getClassesThatImplement`
+---------------------------------------------
 
 This method returns all classes that implement the specified interface:
 
@@ -85,8 +92,8 @@ This method returns all classes that implement the specified interface:
   >>> pprint(reg.getClassesThatImplement(ID))
   []
 
-``getSubclassesOf(klass)``
-==========================
+:meth:`ClassRegistry.getSubclassesOf`
+-------------------------------------
 
 This method will find all classes that inherit the specified class:
 
@@ -100,7 +107,7 @@ This method will find all classes that inherit the specified class:
 Safe Imports
 ============
 
-Using the ``safe_import()`` we can quickly look up modules by minimizing
+Using the :func:`safe_import` function we can quickly look up modules by minimizing
 import calls.
 
   >>> from zope.app.apidoc import classregistry

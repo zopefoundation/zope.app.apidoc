@@ -1,5 +1,6 @@
-API doc when developer mode is disabled
-=======================================
+=========================================
+ API doc when developer mode is disabled
+=========================================
 
 The API docs should not be exposed to anybody as they allow introspection of
 code and files on the file system that should not be exposed through the web.

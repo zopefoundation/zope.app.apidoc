@@ -1,6 +1,6 @@
-===========
- Reference
-===========
+===============
+ API Reference
+===============
 
 APIDoc
 ======
@@ -107,6 +107,7 @@ Browser
 .. automodule:: zope.app.apidoc.codemodule.browser.menu
 .. automodule:: zope.app.apidoc.codemodule.browser.module
 .. automodule:: zope.app.apidoc.codemodule.browser.utilities
+.. automodule:: zope.app.apidoc.codemodule.browser.text
 .. automodule:: zope.app.apidoc.codemodule.browser.zcml
 
 

@@ -1,6 +1,8 @@
-==========================
- Zope 3 API Documentation
-==========================
+==========
+ Overview
+==========
+
+.. currentmodule:: zope.app.apidoc.apidoc
 
 This Zope 3 package provides fully dynamic API documentation of Zope 3 and
 registered add-on components. The package is very extensible and can be easily
@@ -28,8 +30,9 @@ APIs to extract information from various objects used by Zope 3.
 Using the API Dcoumentation
 ===========================
 
-The `APIDocumentation` class provides access to all available documentation
-modules. Documentation modules are utilities providing `IDocumentationModule`:
+The :class:`APIDocumentation` class provides
+access to all available documentation modules. Documentation modules
+are utilities providing :class:`~zope.app.apidoc.interfaces.IDocumentationModule`:
 
 
   >>> from zope import component as ztapi
@@ -58,7 +61,7 @@ Now we can instantiate the class (which is usually done when traversing
 Developing a Module
 ===================
 
-1. Implement a class that realizes the `IDocumentationModule`
+1. Implement a class that realizes the :class:`~zope.app.apidoc.interfaces.IDocumentationModule`
    interface.
 
 2. Register this class as a utility using something like this::
@@ -68,7 +71,7 @@ Developing a Module
          factory=".examplemodule.ExampleModule"
          name="Example" />
 
-3. Take care of security by allowing at least `IDocumentationModule`::
+3. Take care of security by allowing at least :class:`~zope.app.apidoc.interfaces.IDocumentationModule`::
 
      <class class=".ExampleModule">
        <allow interface="zope.app.apidoc.interfaces.IDocumentationModule" />

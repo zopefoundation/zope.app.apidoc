@@ -1,11 +1,11 @@
-========================================
-Code Module specific `apidoc` Directives
-========================================
+==========================================
+ Code Module specific `apidoc` Directives
+==========================================
 
-The `apidoc:rootModule` Directive
----------------------------------
+The ``apidoc:rootModule`` Directive
+===================================
 
-The `rootModule` directive allows you to register a third party Python package
+The ``rootModule`` directive allows you to register a third party Python package
 with apidoc's code browser.
 
 Before we can register a new root module, we need to load the
@@ -37,13 +37,13 @@ and the root module is available:
   [(u'zope', 'zope')]
 
 
-The `apidoc:importModule` Directive
------------------------------------
+The ``apidoc:importModule`` Directive
+=====================================
 
-The `importModule` directive allows you to set the
+The ``importModule`` directive allows you to set the
 ``__import_unknown_modules__`` flag of the class registry. When this flag is
-set to false, paths will only be looked up in ``sys.modules``. When set true,
-and the ``sus.modules`` lookup fails, the import function of the class
+set to false, paths will only be looked up in :data:`sys.modules`. When set true,
+and the :data:`sus.modules` lookup fails, the import function of the class
 registry tries to import the path. The hook was provided for security reasons,
 since uncontrolled importing of modules in a running application is considered
 a security hole.

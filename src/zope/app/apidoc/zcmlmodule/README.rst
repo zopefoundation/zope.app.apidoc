@@ -1,13 +1,15 @@
-=============================
-The ZCML Documentation Module
-=============================
+===============================
+ The ZCML Documentation Module
+===============================
+
+.. currentmodule:: zope.app.apidoc.zcmlmodule
 
 This documentation module provides you with a complete reference of all
 directives available on your Zope 3 installation.
 
 
-`ZCMLModule` class
-------------------
+:class:`ZCMLModule`
+===================
 
 The ZCML module class manages all available ZCML namespaces. Once we
 initialize the module
@@ -31,7 +33,7 @@ and via its short form:
   >>> module.get('browser').getFullName()
   'http://namespaces.zope.org/browser'
 
-If the module does not exist, the usual `None` is returned:
+If the module does not exist, the usual :const:`None` is returned:
 
   >>> module.get('foo') is None
   True
@@ -47,13 +49,14 @@ You can also list all namespaces:
   True
 
 
-`Namespace` class
------------------
+:class:`Namespace`
+==================
 
 Simple namespace object for the ZCML Documentation Module.
 
 The namespace manages a particular ZCML namespace. The object always
-expects the parent to be a `ZCMLModule` instance. So let's create a namespace:
+expects the parent to be a :class:`ZCMLModule` instance. So let's
+create a namespace:
 
   >>> module = ZCMLModule()
   >>> from zope.app.apidoc.zcmlmodule import Namespace, _clear
@@ -88,8 +91,8 @@ One can get a directive using the common mapping interface:
   addform
   containerViews
 
-`quoteNS(ns)`
--------------
+:func:`quoteNS`
+===============
 
 Quotes a namespace to make it URL-secure.
 
@@ -98,8 +101,8 @@ Quotes a namespace to make it URL-secure.
   'http_co__sl__sl_namespaces.zope.org_sl_browser'
 
 
-`unquoteNS(ns)`
----------------
+:func:`unquoteNS`
+=================
 
 Un-quotes a namespace from a URL-secure version.
 

@@ -1,10 +1,13 @@
-==================================
-The Interface Documentation Module
-==================================
+====================================
+ The Interface Documentation Module
+====================================
 
-This documentation module allows you to inspect all aspects of an interface
-and its role within the Zope 3 framework. The module can be instantiated like
-all other documentation modules:
+.. currentmodule:: zope.app.apidoc.ifacemodule.ifacemodule
+
+This documentation module allows you to inspect all aspects of an
+interface and its role within the Zope 3 framework. The :class:`module
+<InterfaceModule>` can be instantiated like all other documentation
+modules:
 
   >>> from zope.app.apidoc.ifacemodule.ifacemodule import InterfaceModule
   >>> module = InterfaceModule()

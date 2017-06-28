@@ -48,6 +48,7 @@ _marker = object()
 
 
 def relativizePath(path):
+    "Convert the path to a relative form."
     matching_paths = [p for p in sys.path if path.startswith(p)]
     if not matching_paths: # pragma: no cover
         return path

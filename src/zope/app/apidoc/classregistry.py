@@ -55,7 +55,8 @@ class ClassRegistry(dict):
                        if issubclass(klass2, klass) and klass2 is not klass),
                       key=_pathgetter)
 
-
+#: The global class registry object. Cleaned up
+#: in tests by :mod:`zope.testing.cleanup`.
 classRegistry = ClassRegistry()
 
 def cleanUp():

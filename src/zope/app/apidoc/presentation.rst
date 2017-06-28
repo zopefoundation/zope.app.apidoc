@@ -2,21 +2,23 @@
  Presentation Inspection Utilities
 ===================================
 
+.. currentmodule:: zope.app.apidoc.presentation
+
 The ``presentation`` module provides some nice utilities to inspect presentation
 registrations.
 
   >>> from zope.app.apidoc import presentation
 
 
-``getViewFactoryData(factory)``
-===============================
+:func:`getViewFactoryData`
+==========================
 
 This function tries really hard to determine the correct information about a
 view factory. For example, when you create a page, a new type is dynamically
 generated upon registration. Let's look at a couple examples.
 
 First, let's inspect a case where a simple browser page was configured without
-a special view class. In these cases the factory is a ``SimpleViewClass``:
+a special view class. In these cases the factory is a :class:`~.SimpleViewClass`:
 
   >>> from zope.browserpage.simpleviewclass import SimpleViewClass
   >>> view = SimpleViewClass('browser/index.pt')
@@ -86,9 +88,7 @@ those cases we just simply return the function path:
 
   >>> def factory():
   ...     pass
-
-  # The testing framework does not set the __module__ correctly
-  >>> factory.__module__ = 'zope.app.apidoc.doctest'
+  >>> factory.__module__ = 'zope.app.apidoc.doctest' # The testing framework does not set the __module__ correctly
 
   >>> info = presentation.getViewFactoryData(factory)
   >>> pprint(info)
@@ -199,12 +199,12 @@ and the result is finally our original factory:
    'url': 'zope/app/apidoc/doctest/Factory'}
 
 
-``getPresentationType(iface)``
-==============================
+:func:`getPresentationType`
+===========================
 
 In Zope 3, presentation types (i.e. browser, ftp, ...) are defined through
-their special request interface, such as ``IBrowserRequest`` or
-``IFTPRequest``. To complicate matters further, layer interfaces are used in
+their special request interface, such as :class:`~.IBrowserRequest` or
+:class:`~.IFTPRequest`. To complicate matters further, layer interfaces are used in
 browser presentations to allow skinning. Layers extend any request type, but
 most commonly ``IBrowserRequest``. This function inspects the request interface
 of any presentation multi-adapter and determines its type, which is returned
@@ -241,8 +241,8 @@ Note that more specific presentation types are considered first. For example,
 presentation type to be an ``IBrowserRequest``.
 
 
-``getViews(iface, type=IRequest)``
-==================================
+:func:`getViews`
+================
 
 This function retrieves all available view registrations for a given interface
 and presentation type. The default argument for the presentation type is
@@ -281,8 +281,8 @@ should be returned:
                        [Interface, IHTTPRequest], Interface, 'bar', None, u'')]
 
 
-``filterViewRegistrations(regs, iface, level=SPECIFC_INTERFACE_LEVEL)``
-=======================================================================
+:func:`filterViewRegistrations`
+===============================
 
 Oftentimes the amount of views that are being returned for a particular
 interface are too much to show at once. It is then good to split the view into
@@ -375,8 +375,8 @@ since all three levels are mutually exclusive.
                 [Interface, IHTTPRequest], Interface, 'view.html', None, u'')]
 
 
-``getViewInfoDictionary(reg)``
-==============================
+:func:`getViewInfoDictionary`
+=============================
 
 Now that we have all these utilities to select the registrations, we need to
 prepare the them for output. For page templates the best data structures are

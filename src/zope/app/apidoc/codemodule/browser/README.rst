@@ -1,6 +1,8 @@
-====================================
-Code Browser Presentation Components
-====================================
+======================================
+ Code Browser Presentation Components
+======================================
+
+.. currentmodule:: zope.app.apidoc.codemodule.browser
 
 This document describes the API of the views complementing the various code
 browser documentation components. The views can be found in
@@ -11,11 +13,11 @@ We will also need the code browser documentation module:
 
   >>> cm = apidoc.get('Code')
 
-The `zope` package is already registered and available with the code module.
+The ``zope`` package is already registered and available with the code module.
 
 
 Module Details
---------------
+==============
 
 The module details are easily created, since we can just use the traversal
 process to get a module documentation object:
@@ -25,8 +27,8 @@ process to get a module documentation object:
   >>> from zope.publisher.browser import TestRequest
   >>> details = browser.module.ModuleDetails(_context, TestRequest())
 
-`getDoc()`
-~~~~~~~~~~
+:meth:`module.ModuleDetails.getDoc`
+-----------------------------------
 
 Get the doc string of the module formatted in STX or ReST.
 
@@ -36,7 +38,7 @@ Get the doc string of the module formatted in STX or ReST.
   documentation for it.</p>
 
 Module data
-~~~~~~~~~~~
+-----------
 
 Return info objects for all classes in this module.
 
@@ -61,8 +63,8 @@ This module doesn't contain anything else.
   >>> pprint(details.getFunctions())
   []
 
-`getBreadCrumbs()`
-~~~~~~~~~~~~~~~~~~
+:func:`utilities.getBreadCrumbs`
+--------------------------------
 
 Create breadcrumbs for the module path.
 
@@ -88,7 +90,7 @@ way up to the root, but we just want to go to the root module.
     'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/codemodule'}]
 
 Module Details With Interfaces
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------
 
 Let's also look at a module that defines interfaces:
 
@@ -101,7 +103,7 @@ Let's also look at a module that defines interfaces:
     'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/interfaces/IDocumentationModule'}]
 
 Module Details With Implementation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------------
 
 Let's also look at a module that implements an interface itself:
 
@@ -113,7 +115,7 @@ Let's also look at a module that implements an interface itself:
 
 
 Class Details
--------------
+=============
 
 The class details are easily created, since we can just use the traversal
 process to get a class documentation object:
@@ -126,8 +128,8 @@ process to get a class documentation object:
 
 Now that we have the details class we can just access the various methods:
 
-`getBases()`
-~~~~~~~~~~~~
+:meth:`class_.ClassDetails.getBases`
+------------------------------------
 
 Get all bases of this class.
 
@@ -135,15 +137,15 @@ Get all bases of this class.
   [{'path': 'zope.app.apidoc.codemodule.module.Module',
     'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/module/Module'}]
 
-`getKnownSubclasses()`
-~~~~~~~~~~~~~~~~~~~~~~
+:meth:`class_.ClassDetails.getKnownSubclasses`
+----------------------------------------------
 Get all known subclasses of this class.
 
   >>> details.getKnownSubclasses()
   []
 
-`_listClasses(classes)`
-~~~~~~~~~~~~~~~~~~~~~~~
+:meth:`class_.ClassDetails._listClasses`
+----------------------------------------
 
 Prepare a list of classes for presentation.
 
@@ -158,8 +160,8 @@ Prepare a list of classes for presentation.
    {'path': 'zope.app.apidoc.codemodule.module.Module',
     'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/module/Module'}]
 
-`getBaseURL()`
-~~~~~~~~~~~~~~
+:meth:`class_.ClassDetails.getBaseURL`
+--------------------------------------
 
 Return the URL for the API Documentation Tool.
 
@@ -169,8 +171,8 @@ we have not setup all path elements.
   >>> details.getBaseURL()
   'http://127.0.0.1/++apidoc++'
 
-`getInterfaces()`
-~~~~~~~~~~~~~~~~~
+:meth:`class_.ClassDetails.getInterfaces`
+-----------------------------------------
 
 Get all implemented interfaces (as paths) of this class.
 
@@ -184,8 +186,8 @@ Get all implemented interfaces (as paths) of this class.
    {'path': 'zope.container.interfaces.IReadContainer',
     'url': 'zope.container.interfaces.IReadContainer'}]
 
-`getConstructor()`
-~~~~~~~~~~~~~~~~~~
+:meth:`class_.ClassDetails.getConstructor`
+------------------------------------------
 
 Get info about the class' __init__ method, which is its constructor.
 
@@ -193,8 +195,8 @@ Get info about the class' __init__ method, which is its constructor.
   {'doc': u'<p>Initialize object.</p>\n',
    'signature': '()'}
 
-`getAttributes()`
-~~~~~~~~~~~~~~~~~
+:meth:`class_.ClassDetails.getAttributes`
+-----------------------------------------
 
 Get all attributes of this class.
 
@@ -208,8 +210,8 @@ Get all attributes of this class.
    'value': "u'Code Browser'",
    'write_perm': u'n/a'}
 
-`getMethods()`
-~~~~~~~~~~~~~~
+:meth:`class_.ClassDetails.getMethods`
+--------------------------------------
 Get all methods of this class.
 
   >>> pprint(details.getMethods()[-3:-1])
@@ -227,8 +229,8 @@ Get all methods of this class.
     'signature': '()',
     'write_perm': u'n/a'}]
 
-`getDoc()`
-~~~~~~~~~~
+:meth:`class_.ClassDetails.getDoc`
+----------------------------------
 
 Get the doc string of the class STX formatted.
 
@@ -237,7 +239,7 @@ Get the doc string of the class STX formatted.
 
 
 Function Details
-----------------
+================
 
 This is the same deal as before, use the path to generate the function
 documentation component:
@@ -249,16 +251,16 @@ documentation component:
 
 Here are the methods:
 
-`getDocString()`
-~~~~~~~~~~~~~~~~
+:meth:`function.FunctionDetails.getDocString`
+---------------------------------------------
 
 Get the doc string of the function in a rendered format.
 
   >>> details.getDocString()
   u'<p>This is the foo function.</p>\n'
 
-`getAttributes()`
-~~~~~~~~~~~~~~~~~
+:meth:`function.FunctionDetails.getAttributes`
+----------------------------------------------
 
 Get all attributes of this function.
 
@@ -269,8 +271,8 @@ Get all attributes of this function.
    'type_link': '__builtin__/bool',
    'value': 'True'}
 
-`getBaseURL()`
-~~~~~~~~~~~~~~
+:meth:`function.FunctionDetails.getBaseURL`
+-------------------------------------------
 
 Return the URL for the API Documentation Tool.
 
@@ -279,10 +281,10 @@ Return the URL for the API Documentation Tool.
 
 
 Text File Details
------------------
+=================
 
-This is the same deal as before, use the path to generate the text file
-documentation component:
+This is the same deal as before, use the path to generate the
+:class:`text file documentation component <text.TextFileDetails>`:
 
   >>> details = browser.text.TextFileDetails()
   >>> details.context = traverse(cm,
@@ -291,8 +293,8 @@ documentation component:
 
 Here are the methods:
 
-`renderedContent()`
-~~~~~~~~~~~~~~~~~~~
+:meth:`text.TextFileDetails.renderedContent`
+--------------------------------------------
 
 Render the file content to HTML.
 
@@ -301,11 +303,12 @@ Render the file content to HTML.
 
 
 ZCML File and Directive Details
--------------------------------
+===============================
 
-The ZCML file details are a bit different, since there is no view class for
-ZCML files, just a template. The template then uses the directive details to
-provide all the view content:
+The ZCML :class:`file details <zcml.DirectiveDetails>` are a bit
+different, since there is no view class for ZCML files, just a
+template. The template then uses the directive details to provide all
+the view content:
 
   >>> details = browser.zcml.DirectiveDetails()
   >>> zcml = traverse(cm, 'zope/app/apidoc/codemodule/configure.zcml')
@@ -315,24 +318,24 @@ provide all the view content:
 
 Here are the methods for the directive details:
 
-`fullTagName()`
-~~~~~~~~~~~~~~~
+:meth:`zcml.DirectiveDetails.fullTagName`
+-----------------------------------------
 
 Return the name of the directive, including prefix, if applicable.
 
   >>> details.fullTagName()
   u'configure'
 
-`line()`
-~~~~~~~~
+:meth:`zcml.DirectiveDetails.line`
+----------------------------------
 
 Return the line (as a string) at which this directive starts.
 
   >>> details.line()
   '1'
 
-`highlight()`
-~~~~~~~~~~~~~
+:meth:`zcml.DirectiveDetails.highlight`
+---------------------------------------
 
 It is possible to highlight a directive by passing the `line` variable as a
 request variable. If the value of `line` matches the output of `line()`, this
@@ -346,8 +349,8 @@ places a colored box around the directive.
   >>> details.highlight()
   'highlight'
 
-`url()`
-~~~~~~~
+:meth:`zcml.DirectiveDetails.url`
+---------------------------------
 
 Returns the URL of the directive docuemntation in the ZCML documentation
 module.
@@ -355,8 +358,8 @@ module.
   >>> details.url()
   u'http://127.0.0.1/++apidoc++/ZCML/ALL/configure/index.html'
 
-`objectURL(value, field, rootURL)`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+:meth:`zcml.DirectiveDetails.objectURL`
+---------------------------------------
 
 This method converts the string value of the field to an object and then
 crafts a documentation URL for it:
@@ -370,8 +373,8 @@ crafts a documentation URL for it:
   >>> details.objectURL('.zcml.ZCMLFile', field, '')
   '/zope/app/apidoc/codemodule/zcml/ZCMLFile/index.html'
 
-`attributes()`
-~~~~~~~~~~~~~~
+:meth:`zcml.DirectiveDetails.attributes`
+----------------------------------------
 
 Returns a list of info dictionaries representing all the attributes in the
 directive. If the directive is the root directive, all namespace declarations
@@ -398,8 +401,8 @@ will be listed too.
     'value': u'.module.Module',
     'values': []}]
 
-`hasSubDirectives()`
-~~~~~~~~~~~~~~~~~~~~
+:meth:`zcml.DirectiveDetails.hasSubDirectives`
+----------------------------------------------
 
 Returns `True`, if the directive has subdirectives; otherwise `False` is
 returned.
@@ -407,8 +410,8 @@ returned.
   >>> details.hasSubDirectives()
   True
 
-`getElements()`
-~~~~~~~~~~~~~~~
+:meth:`zcml.DirectiveDetails.getElements`
+-----------------------------------------
 
 Returns a list of all sub-directives:
 
@@ -416,7 +419,7 @@ Returns a list of all sub-directives:
   [<Directive (u'http://namespaces.zope.org/zope', u'allow')>]
 
 Other Examples
-~~~~~~~~~~~~~~
+--------------
 
 Let's look at sub-directive that has a namespace:
 
@@ -493,14 +496,16 @@ And now one that is subdirectives:
 
 
 The Introspector
-----------------
+================
 
-There are several tools that are used to support the introspector.
+There are several tools that are used to support the :mod:`introspector`.
 
   >>> from zope.app.apidoc.codemodule.browser import introspector
 
-`getTypeLink(type)`
-~~~~~~~~~~~~~~~~~~~
+.. currentmodule:: zope.app.apidoc.codemodule.browser.introspector
+
+:func:`getTypeLink`
+-------------------
 
 This little helper function returns the path to the type class:
 
@@ -514,10 +519,11 @@ This little helper function returns the path to the type class:
   >>> introspector.getTypeLink(type(None)) is None
   True
 
-`++annotations++` Namespace
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``++annotations++`` Namespace
+-----------------------------
 
-This namespace is used to traverse into the annotations of an object.
+This :func:`namespace <annotationsNamespace>` is used to traverse into
+the annotations of an object.
 
   >>> import zope.interface
   >>> from zope.annotation.interfaces import IAttributeAnnotatable
@@ -538,10 +544,11 @@ This namespace is used to traverse into the annotations of an object.
   ...
   KeyError: 'zope.my.unknown'
 
-Mapping `++items++` namespace
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Mapping ``++items++`` namespace
+-------------------------------
 
-This namespace allows us to traverse the items of any mapping:
+This :func:`namespace <mappingItemsNamespace>` allows us to traverse
+the items of any mapping:
 
   >>> ns = introspector.mappingItemsNamespace({'mykey': 'myvalue'})
   >>> ns.traverse('mykey', None)
@@ -553,10 +560,11 @@ This namespace allows us to traverse the items of any mapping:
   KeyError: 'unknown'
 
 
-Sequence `++items++` namespace
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Sequence ``++items++`` namespace
+--------------------------------
 
-This namespace allows us to traverse the items of any sequence:
+This :func:`namespace <sequenceItemsNamespace>` allows us to traverse
+the items of any sequence:
 
   >>> ns = introspector.sequenceItemsNamespace(['value1', 'value2'])
   >>> ns.traverse('0', None)
@@ -573,12 +581,13 @@ This namespace allows us to traverse the items of any sequence:
   ValueError: invalid literal for int() with base 10: 'text'
 
 Introspector View
-~~~~~~~~~~~~~~~~~
+-----------------
 
-The main contents of the introspector view comes from the introspector view
-class. In the following section we are going to demonstrate the methods used
-to collect the data. First we need to create an object though; let's use a
-root folder:
+The main contents of the introspector view comes from the
+:class:`introspector view class <Introspector>`. In the following
+section we are going to demonstrate the methods used to collect the
+data. First we need to create an object though; let's use a root
+folder:
 
   >>> rootFolder
   <zope.site.folder.Folder object at ...>
@@ -717,4 +726,4 @@ then we can get an annotation mapping:
     'value_type': 'PersistentList',
     'value_type_link': 'persistent/list/PersistentList'}]
 
-And that's it. Fur some browser-based demonstration see ``introspector.txt``.
+And that's it. Fur some browser-based demonstration see :doc:`codemodule_browser_introspector`.
