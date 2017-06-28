@@ -33,10 +33,10 @@ from zope.app.apidoc.codemodule.module import Module
 class CodeModule(Module):
     """Represent the code browser documentation root"""
 
-    # See zope.app.apidoc.interfaces.IDocumentationModule
+    #: The title.
     title = _('Code Browser')
 
-    # See zope.app.apidoc.interfaces.IDocumentationModule
+    #: The description.
     description = _("""
     This module allows you to get an overview of the modules and classes
     defined in the Zope 3 framework and its supporting packages. There are
@@ -58,8 +58,9 @@ class CodeModule(Module):
     interface that requires a method or attribute to be implemented and the
     permissions required to access it.
     """)
+
     def __init__(self):
-        """Initialize object."""
+        "Initialize object."
         super(CodeModule, self).__init__(None, '', None, False)
         self.__isSetup = False
 
@@ -85,23 +86,18 @@ class CodeModule(Module):
         return located
 
     def getDocString(self):
-        """See Module class."""
         return _('Zope 3 root.')
 
     def getFileName(self):
-        """See Module class."""
         return ''
 
     def getPath(self):
-        """See Module class."""
         return ''
 
     def isPackage(self):
-        """See Module class."""
         return True
 
     def get(self, key, default=None):
-        """See zope.container.interfaces.IReadContainer."""
         self.setup()
         # TODO: Do we really like that this allows importing things from
         # outside our defined namespace? This can lead to a static
@@ -109,7 +105,6 @@ class CodeModule(Module):
         return super(CodeModule, self).get(key, default)
 
     def items(self):
-        """See zope.container.interfaces.IReadContainer."""
         self.setup()
         return super(CodeModule, self).items()
 

@@ -95,10 +95,10 @@ class TypeModule(DocumentationModuleBase):
       [<InterfaceClass zope.app.apidoc.typemodule.type.IFoo>]
     """
 
-    # See zope.app.apidoc.interfaces.IDocumentationModule
+    #: Title
     title = _('Interface Types')
 
-    # See zope.app.apidoc.interfaces.IDocumentationModule
+    #: Description
     description = _("""
     Here you can see all registered interface types. When you open the subtree
     of a specific interface type, you can see all the interfaces that provide

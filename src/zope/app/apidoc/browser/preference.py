@@ -29,8 +29,7 @@ class APIDocPreferencesTree(CookieTreeView):
 
     def apidocTree(self):
         root = getRoot(self.context)['apidoc']
-        filter = PreferenceGroupFilter()
-        return self.cookieTree(root, filter)
+        return self.cookieTree(root, PreferenceGroupFilter())
 
 
 class ApidocEditPreferenceGroup(EditPreferenceGroup):

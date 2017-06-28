@@ -47,23 +47,23 @@ class Class(object):
         classRegistry[self.getPath()] = klass
 
     def getPath(self):
-        """See IClassDocumentation."""
+        """See :class:`~zope.app.apidoc.codemodule.interfaces.IClassDocumentation`."""
         return self.__parent__.getPath() + '.' + self.__name__
 
     def getDocString(self):
-        """See IClassDocumentation."""
+        """See :class:`~zope.app.apidoc.codemodule.interfaces.IClassDocumentation`."""
         return self.__klass.__doc__
 
     def getBases(self):
-        """See IClassDocumentation."""
+        """See :class:`~zope.app.apidoc.codemodule.interfaces.IClassDocumentation`."""
         return self.__klass.__bases__
 
     def getKnownSubclasses(self):
-        """See IClassDocumentation."""
+        """See :class:`~zope.app.apidoc.codemodule.interfaces.IClassDocumentation`."""
         return [k for n, k in classRegistry.getSubclassesOf(self.__klass)]
 
     def getInterfaces(self):
-        """See IClassDocumentation."""
+        """See :class:`~zope.app.apidoc.codemodule.interfaces.IClassDocumentation`."""
         return self.__interfaces
 
     def _iterAllAttributes(self):
@@ -87,13 +87,13 @@ class Class(object):
         _ismethod = staticmethod(isfunction)
 
     def getAttributes(self):
-        """See IClassDocumentation."""
+        """See :class:`~zope.app.apidoc.codemodule.interfaces.IClassDocumentation`."""
         return [(name, obj, iface)
                 for name, obj, iface in self._iterAllAttributes()
                 if not self._ismethod(obj) and not ismethoddescriptor(obj)]
 
     def getMethods(self):
-        """See IClassDocumentation."""
+        """See :class:`~zope.app.apidoc.codemodule.interfaces.IClassDocumentation`."""
         return [(name, obj, iface)
                 for name, obj, iface in self._iterAllAttributes()
                 if self._ismethod(obj)]
@@ -104,11 +104,11 @@ class Class(object):
                 if ismethoddescriptor(obj)]
 
     def getSecurityChecker(self):
-        """See IClassDocumentation."""
+        """See :class:`~zope.app.apidoc.codemodule.interfaces.IClassDocumentation`."""
         return getCheckerForInstancesOf(self.__klass)
 
     def getConstructor(self):
-        """See IClassDocumentation."""
+        """See :class:`~zope.app.apidoc.codemodule.interfaces.IClassDocumentation`."""
         init = getattr(self.__klass, '__init__', None)
         if callable(init):
             return init

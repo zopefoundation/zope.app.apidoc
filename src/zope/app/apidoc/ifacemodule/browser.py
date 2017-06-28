@@ -20,7 +20,6 @@ __docformat__ = 'restructuredtext'
 import inspect
 
 from zope.i18nmessageid import ZopeMessageFactory as _
-from zope.location.interfaces import LocationError
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.publisher.interfaces.xmlrpc import IXMLRPCRequest
 from zope.publisher.interfaces.http import IHTTPRequest

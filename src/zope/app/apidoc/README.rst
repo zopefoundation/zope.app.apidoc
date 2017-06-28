@@ -89,6 +89,10 @@ in them for some guidance.
 New Static APIDOC-Version
 =========================
 
-An alternative APIDOC-Version is available through ++apidoc++/static.html
-Find and Tree is implemented in Javascript. So it should be possible to do a
-"wget" - Offline-Version of APIDOC
+An alternative APIDOC-Version is available through ``++apidoc++/static.html``
+Find and Tree are implemented in Javascript, so it should be possible to do a
+"wget" - Offline-Version of APIDOC.
+
+In fact, this package comes with a somewhat smarter version of "wget"
+that can load a Zope configuration and export the documentation. For
+more information, see :doc:`static`.

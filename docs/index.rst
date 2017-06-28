@@ -8,6 +8,7 @@
    :maxdepth: 1
 
    overview
+   static
    api
 
 Utility Functions

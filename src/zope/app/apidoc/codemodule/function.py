@@ -37,17 +37,17 @@ class Function(object):
             self.__doc__ = doc
 
     def getPath(self):
-        """See IFunctionDocumentation."""
+        """See :class:`~zope.app.apidoc.codemodule.interfaces.IFunctionDocumentation`."""
         return self.__parent__.getPath() + '.' + self.__name__
 
     def getDocString(self):
-        """See IFunctionDocumentation."""
+        """See :class:`~zope.app.apidoc.codemodule.interfaces.IFunctionDocumentation`."""
         return self.__doc__
 
     def getSignature(self):
-        """See IFunctionDocumentation."""
+        """See :class:`~zope.app.apidoc.codemodule.interfaces.IFunctionDocumentation`."""
         return getFunctionSignature(self.__func)
 
     def getAttributes(self):
-        """See IClassDocumentation."""
+        """See :class:`~zope.app.apidoc.codemodule.interfaces.IFunctionDocumentation`."""
         return list(self.__func.__dict__.items())

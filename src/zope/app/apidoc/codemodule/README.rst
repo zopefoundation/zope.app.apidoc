@@ -114,8 +114,8 @@ Python path and doc string are easily retrieved using::
   >>> klass.getPath()
   'zope.app.apidoc.apidoc.APIDocumentation'
 
-  >>> klass.getDocString()[:41]
-  'Represent the complete API Documentation.'
+  >>> "The collection of all API documentation" in klass.getDocString()
+  True
 
 A list of base classes can also be retrieved. The list only includes
 direct bases, so if we have class ``Blah``, which extends ``Bar``, which

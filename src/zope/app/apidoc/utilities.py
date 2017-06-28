@@ -69,8 +69,11 @@ def truncateSysPath(path):
 class ReadContainerBase(object):
     """Base for :class:`zope.container.interfaces.IReadContainer` objects."""
 
+    __parent__ = None
+    __name__ = None
+
     def __repr__(self):
-        if getattr(self, '__name__', None) is None:
+        if self.__name__ is None:
             return super(ReadContainerBase, self).__repr__()
         c = type(self)
         return "<%s.%s '%s' at 0x%x>" % (c.__module__, c.__name__, self.__name__, id(self))
@@ -105,9 +108,6 @@ class ReadContainerBase(object):
 
 class DocumentationModuleBase(ReadContainerBase):
     """Support for implementing a documentation module."""
-
-    __parent__ = None
-    __name__ = None
 
     def withParentAndName(self, parent, name):
         "Subclasses need to override this if they are stateful."
