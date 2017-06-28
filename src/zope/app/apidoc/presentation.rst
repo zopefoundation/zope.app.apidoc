@@ -236,18 +236,20 @@ is returned:
   >>> presentation.getPresentationType(ILayer3)
   <InterfaceClass zope.app.apidoc.doctest.ILayer3>
 
-Note that more specific presentation types are considered first. For example,
-``IBrowserRequest`` extends ``IHTTPRequest``, but it will always determine the
-presentation type to be an ``IBrowserRequest``.
+Note that more specific presentation types are considered first. For
+example, :class:`zope.publisher.interfaces.browser.IBrowserRequest`
+extends :class:`zope.publisher.interfaces.http.IHTTPRequest`, but it
+will always determine the presentation type to be an
+:class:`~zope.publisher.interfaces.browser.IBrowserRequest`.
 
 
 :func:`getViews`
 ================
 
-This function retrieves all available view registrations for a given interface
-and presentation type. The default argument for the presentation type is
-``IRequest``, which will effectively return all views for the specified
-interface.
+This function retrieves all available view registrations for a given
+interface and presentation type. The default argument for the
+presentation type is :class:`zope.publisher.interfaces.IRequest`,
+which will effectively return all views for the specified interface.
 
 To see how this works, we first have to register some views:
 

@@ -53,9 +53,11 @@ specified interface. So let's create some adapter registrations:
    HandlerRegistration(<BaseGlobalComponents base>,
                        [IFoo], u'', 'stubFactory', u'')]
 
-Note how the adapter requiring an :class:`~.IRequest` at the end of the required
-interfaces is neglected. This is because it is recognized as a view and views
-are not returned by default. But you can simply turn this flag on:
+Note how the adapter requiring an
+:class:`zope.publisher.interfaces.IRequest` at the end of the required
+interfaces is neglected. This is because it is recognized as a view
+and views are not returned by default. But you can simply turn this
+flag on:
 
   >>> regs = list(component.getRequiredAdapters(IFoo, withViews=True))
   >>> regs.sort()
