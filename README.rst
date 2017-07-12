@@ -13,3 +13,5 @@
 This Zope 3 package provides fully dynamic API documentation of Zope 3 and
 registered add-on components. The package is very extensible and can be easily
 extended by implementing new modules.
+
+Documentation is available at  https://zopeappapidoc.readthedocs.io/
