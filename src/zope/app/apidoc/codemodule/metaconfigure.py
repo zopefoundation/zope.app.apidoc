@@ -11,7 +11,8 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""This module handles the 'apidoc' namespace directives.
+"""This module handles the 'apidoc:rootModule' and 'apidoc:moduleImport'
+ namespace directives.
 
 """
 __docformat__ = 'restructuredtext'

@@ -70,7 +70,7 @@ class CodeModuleTests(BrowserTestCase):
             basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assertIn('Represent the complete API Documentation.', body)
+        self.assertIn('The collection of all API documentation', body)
         self.checkForBrokenLinks(
             body, '/++apidoc++/Code/zope/app/apidoc/apidoc/APIDocumentation',
             basic='mgr:mgrpw')

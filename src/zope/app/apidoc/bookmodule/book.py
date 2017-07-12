@@ -11,13 +11,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Interface Documentation Module
-
-The interface documentation module retrieves its information from the
-site manager. Therefore, currently there are no unregsitered interfaces
-listed in the documentation. This might be good, since unregistered interfaces
-are usually private and not of interest to a general developer.
-
+"""Help books.
 """
 __docformat__ = 'restructuredtext'
 import os.path
@@ -40,14 +34,14 @@ class IBookModule(IDocumentationModule):
 
 @implementer(IBookModule)
 class BookModule(OnlineHelp):
-    """Represent a book compiled from various `README.txt` and other `*.txt`
+    """Represent a book compiled from various ``README.rst|txt`` and other ``*.rst|txt``
     documentation files.
     """
 
-    # See zope.app.apidoc.interfaces.IDocumentationModule
+    #: Title.
     title = _('Book')
 
-    # See zope.app.apidoc.interfaces.IDocumentationModule
+    #: Description.
     description = _("""
     This is a developer's book compiled from all existing documentation
     files. It is not meant to be a complete or cohesive work, but each chapter

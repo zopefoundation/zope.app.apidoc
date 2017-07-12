@@ -13,7 +13,6 @@
 ##############################################################################
 """Interface Inspection Utilities
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 

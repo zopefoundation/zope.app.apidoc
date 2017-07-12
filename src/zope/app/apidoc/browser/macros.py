@@ -13,7 +13,6 @@
 ##############################################################################
 """API Documentation macros
 
-$Id$
 """
 from zope.app.basicskin.standardmacros import StandardMacros
 
@@ -21,4 +20,6 @@ BaseMacros = StandardMacros
 
 class APIDocumentationMacros(BaseMacros):
     """Page Template METAL macros for API Documentation"""
+
+    #: Macro pages
     macro_pages = ('menu_macros', 'details_macros','static_menu_macros')

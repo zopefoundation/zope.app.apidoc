@@ -13,7 +13,6 @@
 ##############################################################################
 """Schema for the ``apidoc:bookchapter`` directive
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 

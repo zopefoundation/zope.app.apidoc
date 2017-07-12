@@ -461,21 +461,21 @@ def _create_arg_parser():
         '--publisher', '-p', action="store_const", dest='ret_kind',
         const="publisher", default='publisher',
         help="""Use the publisher directly to retrieve the data. The program will bring up
-        Zope 3 for you.
+        Zope 3 for you. This is the recommended option.
         """
     )
 
     ret_kind.add_argument(
         '--webserver', '-w', action="store_const", dest='ret_kind',
         const="webserver",
-        help="""Use an external Web server that is connected to Zope 3."""
+        help="""Use an external Web server that is connected to Zope 3. This is not tested."""
     )
 
     retrieval.add_argument(
         '--url', '-u', action="store", dest='url',
         default="http://localhost/",
         help="""The URL that will be used to retrieve the HTML pages. This option is
-        meaningless, if you are using the publisher as backend. Also, the value of
+        meaningless if you are using the publisher as backend. Also, the value of
         this option should *not* include the `++apidoc++` namespace."""
     )
 

@@ -3,14 +3,13 @@ Object Introspector View
 ========================
 
 The "Introspector" view provides access to information about the current
-obejct, the context of the introspector view. When in `devmode`, the
+obejct, the context of the introspector view. When in ``devmode``, the
 introspector is simply available as follows:
 
     >>> from zope.testbrowser.wsgi import Browser
     >>> browser = Browser()
     >>> browser.addHeader('Authorization', 'Basic mgr:mgrpw')
     >>> browser.handleErrors = False
-
     >>> browser.open('http://localhost/manage')
     >>> browser.getLink('Introspector').click()
 
@@ -27,30 +26,28 @@ and the name of the object:
 Of course, the root folder does not have a name. As you can see the type links
 directly to the API documentation of the class.
 
-The next section lists all directly provided interfaces. The root folder
-directly provides the ``ISite`` and ``IRootFolder`` interface, so we should
-see those:
+The next section lists all directly provided interfaces. The root
+folder directly provides the :class:`zope.site.interfaces.ISite` and
+:class:`zope.site.interfaces.IRootFolder` interface, so we should see
+those:
 
     >>> browser.getLink('zope.component.interfaces.ISite').url
     '.../++apidoc++/Interface/zope.component.interfaces.ISite/index.html'
-
     >>> browser.getLink('zope.site.interfaces.IRootFolder').url
     '...apidoc++/Interface/zope.site.interfaces.IRootFolder/index.html'
 
-The next two section, the implemented interfaces and the base classes, are not
-instance specific pieces of information, but they are still nice to see at
-this point. For example, a ``Folder`` instance provides the following
+The next two section, the implemented interfaces and the base classes,
+are not instance specific pieces of information, but they are still
+nice to see at this point. For example, a
+:class:`zope.site.folder.Folder` instance provides the following
 interfaces:
 
     >>> browser.getLink('zope.site.interfaces.IFolder').url
     '.../++apidoc++/Interface/zope.site.interfaces.IFolder/index.html'
-
     >>> browser.getLink('persistent.interfaces.IPersistent').url
     '.../++apidoc++/Interface/persistent.interfaces.IPersistent/index.html'
-
     >>> browser.getLink('zope.component.interfaces.IPossibleSite').url
     '.../Interface/zope.component.interfaces.IPossibleSite/index.html'
-
     >>> browser.getLink('zope.location.interfaces.IContained').url
     '...doc++/Interface/zope.location.interfaces.IContained/index.html'
 

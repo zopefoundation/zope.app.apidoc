@@ -16,8 +16,8 @@
 
 """
 __docformat__ = 'restructuredtext'
-import six
 import inspect
+import six
 
 import zope.interface
 import zope.security.proxy
@@ -35,7 +35,7 @@ def getTypeLink(type_):
         return None
     path = apidoc.utilities.getPythonPath(type_)
     importable = apidoc.utilities.isReferencable(path)
-    return importable and path.replace('.', '/') or None
+    return path.replace('.', '/') if importable else None
 
 
 class annotationsNamespace(object):
@@ -95,6 +95,7 @@ class TraversalRoot(object):
 
 
 class Introspector(BrowserView):
+    """Introspector browser view"""
 
     def __init__(self, context, request):
         super(Introspector, self).__init__(context, request)
@@ -154,7 +155,7 @@ class Introspector(BrowserView):
                 'type': type(value).__name__,
                 'type_link': getTypeLink(type(value)),
                 'interface': apidoc.utilities.getInterfaceForAttribute(
-                                 name, klass._Class__all_ifaces)
+                    name, klass._Class__all_ifaces)
                 }
             entry.update(apidoc.utilities.getPermissionIds(
                 name, klass.getSecurityChecker()))
@@ -180,10 +181,10 @@ class Introspector(BrowserView):
                 'name': name,
                 'signature': signature,
                 'doc': apidoc.utilities.renderText(
-                     val.__doc__ or '',
-                     getParent(self.klassView.context).getPath()),
+                    val.__doc__ or '',
+                    getParent(self.klassView.context).getPath()),
                 'interface': apidoc.utilities.getInterfaceForAttribute(
-                     name, klass._Class__all_ifaces)}
+                    name, klass._Class__all_ifaces)}
 
             entry.update(apidoc.utilities.getPermissionIds(
                 name, klass.getSecurityChecker()))

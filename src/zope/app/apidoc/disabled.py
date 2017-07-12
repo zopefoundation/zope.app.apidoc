@@ -11,21 +11,18 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Zope 3 API Documentation
+"""Stubs for when documentation is disabled.
 
-$Id$
 """
 __docformat__ = 'restructuredtext'
 
-from zope.app.apidoc.interfaces import IDocumentationModule
-from zope.app.apidoc.utilities import ReadContainerBase
 
 class APIDocStub(object):
     """A stub to use as display context when APIDoc is disabled.
     """
 
 class apidocNamespace(object):
-    """Used to traverse to an API Documentation."""
+    """Used to traverse to an API Documentation when it is disabled."""
 
     def __init__(self, ob, request=None):
         self.request = request

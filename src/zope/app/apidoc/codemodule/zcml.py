@@ -23,7 +23,6 @@ from zope.cachedescriptors.property import Lazy
 from zope.configuration import xmlconfig, config
 from zope.interface import implementer, directlyProvides
 from zope.location.interfaces import ILocation
-from zope.location.location import LocationProxy
 
 import zope.app.appsetup.appsetup
 

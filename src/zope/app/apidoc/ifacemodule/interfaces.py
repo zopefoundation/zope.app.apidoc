@@ -13,7 +13,6 @@
 ##############################################################################
 """Interface Documentation Module Interfaces
 
-$Id$
 """
 
 __docformat__ = "reStructuredText"

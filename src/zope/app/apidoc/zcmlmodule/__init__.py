@@ -50,7 +50,10 @@ def unquoteNS(ns):
 
 @implementer(ILocation)
 class Namespace(ReadContainerBase):
-    """Simple namespace object for the ZCML Documentation Module."""
+    """Simple namespace object for the ZCML Documentation Module.
+
+    This container has :class:`Directive` items as its values.
+    """
 
 
     def __init__(self, parent, name):
@@ -76,7 +79,6 @@ class Namespace(ReadContainerBase):
         return name
 
     def get(self, key, default=None):
-        """See zope.container.interfaces.IReadContainer"""
         _makeDocStructure()
         ns = self.getFullName()
         if key not in namespaces[ns]:
@@ -87,7 +89,6 @@ class Namespace(ReadContainerBase):
         return directive
 
     def items(self):
-        """See zope.container.interfaces.IReadContainer"""
         _makeDocStructure()
         return sorted(((key, self.get(key))
                        for key
@@ -109,15 +110,18 @@ class Directive(object):
 
 @implementer(IDocumentationModule)
 class ZCMLModule(DocumentationModuleBase):
-    r"""Represent the Documentation of all ZCML namespaces.
+    r"""
+    Represent the Documentation of all ZCML namespaces.
 
-    This documentation is implemented using a simple `IReadContainer`. The
-    items of the container."""
+    The items of the container are tuples of globally known namespaces
+    found in the :func:`appsetup config context
+    <zope.app.appsetup.appsetup.getConfigContext>`.
+    """
 
-    # See zope.app.apidoc.interfaces.IDocumentationModule
+    #: Title.
     title = _('ZCML Reference')
 
-    # See zope.app.apidoc.interfaces.IDocumentationModule
+    #: Description.
     description = _("""
     This module presents you with a complete list of ZCML directives and
     serves therefore well as reference. The menu provides you with a tree that
@@ -133,9 +137,7 @@ class ZCMLModule(DocumentationModuleBase):
 
 
     def get(self, key, default=None):
-        """See zope.container.interfaces.IReadContainer
-
-        Get the namespace by name; long and abbreviated names work.
+        """Get the namespace by name; long and abbreviated names work.
         """
         _makeDocStructure()
 
@@ -143,15 +145,14 @@ class ZCMLModule(DocumentationModuleBase):
         if key in namespaces:
             return Namespace(self, key)
 
+        # TODO: Search for other packages outside this root.
         full_key = 'http://namespaces.zope.org/' + key
         if full_key in namespaces:
             return Namespace(self, full_key)
 
         return default
 
-
     def items(self):
-        """See zope.container.interfaces.IReadContainer"""
         _makeDocStructure()
         result = []
         for key in namespaces:

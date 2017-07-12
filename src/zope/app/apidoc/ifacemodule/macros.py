@@ -13,10 +13,11 @@
 ##############################################################################
 """API Documentation macros
 
-$Id$
 """
 from zope.app.basicskin.standardmacros import StandardMacros
 
 class InterfaceDetailsMacros(StandardMacros):
     """Page Template METAL macros for Interfaces"""
+
+    #: Macro pages.
     macro_pages = ('iface_macros', 'component_macros', 'presentation_macros')

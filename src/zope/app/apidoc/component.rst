@@ -2,6 +2,8 @@
  Component Inspection Utilities
 ================================
 
+.. currentmodule:: zope.app.apidoc.component
+
 Once you have an interface, you really want to discover on how this interface
 interacts with other components in Zope 3. The functions in
 
@@ -28,8 +30,8 @@ some interfaces to work with:
   ...     pass
 
 
-``getRequiredAdapters(iface, withViews=False)``
-===============================================
+:func:`getRequiredAdapters`
+===========================
 
 This function returns adapter registrations for adapters that require the
 specified interface. So let's create some adapter registrations:
@@ -51,9 +53,11 @@ specified interface. So let's create some adapter registrations:
    HandlerRegistration(<BaseGlobalComponents base>,
                        [IFoo], u'', 'stubFactory', u'')]
 
-Note how the adapter requiring an ``IRequest`` at the end of the required
-interfaces is neglected. This is because it is recognized as a view and views
-are not returned by default. But you can simply turn this flag on:
+Note how the adapter requiring an
+:class:`zope.publisher.interfaces.IRequest` at the end of the required
+interfaces is neglected. This is because it is recognized as a view
+and views are not returned by default. But you can simply turn this
+flag on:
 
   >>> regs = list(component.getRequiredAdapters(IFoo, withViews=True))
   >>> regs.sort()
@@ -89,8 +93,8 @@ And all of the required interfaces are considered, of course:
                        [IFoo, IBar], ISpecialResult, u'', None, u'')]
 
 
-``getProvidedAdapters(iface, withViews=False)``
-===============================================
+:func:`getProvidedAdapters`
+===========================
 
 Of course, we are also interested in the adapters that provide a certain
 interface. This function returns those adapter registrations, again ignoring
@@ -125,11 +129,11 @@ We can of course also ask for adapters specifying ``IResult``:
                        [IFoo], IResult, u'', None, u'')]
 
 
-``getClasses(iface)``
-=====================
+:func:`getClasses`
+==================
 
 This package comes with a little tool called the class registry
-(see ``classregistry.txt``). It provides a dictionary of all classes in the
+(see :doc:`classregistry`). It provides a dictionary of all classes in the
 visible packages. This function utilizes the registry to retrieve all classes
 that implement the specified interface.
 
@@ -167,8 +171,8 @@ Let's now see whether what results we get:
    ('MyFooBar', <class 'zope.app.apidoc.doctest.MyFooBar'>)]
 
 
-``getFactories(ifaces)``
-========================
+:func:`getFactories`
+====================
 
 Return the factory registrations of the factories that will return objects
 providing this interface.
@@ -200,8 +204,8 @@ Let's see whether we will be able to get them:
             <Factory for <class 'zope.app.apidoc.doctest.MyFooBar'>>, None, u'')]
 
 
-``getUtilities(iface)``
-=======================
+:func:`getUtilities`
+====================
 
 Return all utility registrations for utilities that provide the specified
 interface.
@@ -229,8 +233,8 @@ Now let's have a look what we have:
                        <zope.app.apidoc.doctest.MyFooBar object at ...>, None, u'')]
 
 
-``getRealFactory(factory)``
-===========================
+:func:`getRealFactory`
+======================
 
 During registration, factories are commonly masked by wrapper functions. Also,
 factories are sometimes also ``IFactory`` instances, which are not referencable,
@@ -284,8 +288,8 @@ Even, if the factory instance is wrapped, we should get the factory class:
   <class 'zope.app.apidoc.doctest.Factory'>
 
 
-``getInterfaceInfoDictionary(iface)``
-=====================================
+:func:`getInterfaceInfoDictionary`
+==================================
 
 This function returns a small info dictionary for an interface. It only
 reports the module and the name. This is useful for cases when we only want to
@@ -315,8 +319,8 @@ object references.  This may change.
   {'module': 'zope.app.apidoc.doctest', 'name': 'MyFoo'}
 
 
-``getTypeInfoDictionary(type)``
-===============================
+:func:`getTypeInfoDictionary`
+=============================
 
 This function returns the info dictionary of a type.
 
@@ -326,8 +330,8 @@ This function returns the info dictionary of a type.
    'url': '__builtin__/tuple'}
 
 
-``getSpecificationInfoDictionary(spec)``
-========================================
+:func:`getSpecificationInfoDictionary`
+======================================
 
 Thsi function returns an info dictionary for the given specification. A
 specification can either be an interface or class. If it is an interface, it
@@ -358,8 +362,8 @@ Let's now look at the behavior when passing a type:
 For the type, we simply reuse the type info dictionary function.
 
 
-``getAdapterInfoDictionary(reg)``
-=================================
+:func:`getAdapterInfoDictionary`
+================================
 
 This function returns a page-template-friendly dictionary representing the
 data of an adapter registration in an output-friendly format.
@@ -444,8 +448,8 @@ see how the function handles subscriptions:
    'zcml': None}
 
 
-``getFactoryInfoDictionary(reg)``
-=================================
+:func:`getFactoryInfoDictionary`
+================================
 
 This function returns a page-template-friendly dictionary representing the
 data of a factory (utility) registration in an output-friendly format.
@@ -483,8 +487,8 @@ will be ``None``:
    'url': None}
 
 
-``getUtilityInfoDictionary(name, factory)``
-===========================================
+:func:`getUtilityInfoDictionary`
+================================
 
 This function returns a page-template-friendly dictionary representing the
 data of a utility registration in an output-friendly format.

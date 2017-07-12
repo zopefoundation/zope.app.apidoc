@@ -21,7 +21,6 @@ from zope.interface.interfaces import IInterface
 from zope.schema import getFieldNamesInOrder
 from zope.security.proxy import isinstance, removeSecurityProxy
 from zope.traversing.api import getParent
-from zope.traversing.api import traverse
 from zope.traversing.browser import absoluteURL
 
 from zope.app.apidoc.interfaces import IDocumentationModule
@@ -46,6 +45,7 @@ def _compareAttrs(x, nameOrder):
 
 
 class DirectiveDetails(object):
+    """Details about ZCML directives."""
 
     context = None
     request = None

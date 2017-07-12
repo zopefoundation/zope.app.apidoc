@@ -1,12 +1,13 @@
-======================================
-Module Menu and ZCML Directive Details
-======================================
+========================================
+ Module Menu and ZCML Directive Details
+========================================
 
+.. currentmodule:: zope.app.apidoc.zcmlmodule.browser
 
-`Menu` class
-------------
+:class:`Menu`
+=============
 
-Let's start out by creating a menu. First we isntantiate the class:
+Let's start out by creating a menu. First we instantiate the class:
 
   >>> from zope.app.apidoc.zcmlmodule.browser import Menu
   >>> menu = Menu()
@@ -51,7 +52,7 @@ And again we can get its title and menu link:
   >>> menu.getMenuLink(node) is None
   True
 
-Now we add the `page` directive to the browser namespace:
+Now we add the ``page`` directive to the browser namespace:
 
   >>> from zope.app.apidoc.zcmlmodule import Directive
   >>> dir = Directive(ns, 'page', None, None, None, None)
@@ -68,8 +69,8 @@ Note that the directive's namespace URL is encoded, so it can be used in a
 URL.
 
 
-`DirectiveDetails` class
-------------------------
+:class:`DirectiveDetails`
+=========================
 
 A browser view class that provides support for the ZCML directive overview.
 
@@ -95,8 +96,8 @@ Now we can isntantiate the view:
 We are now ready to see what the details class has to offer.
 
 
-`getSchema()`
-~~~~~~~~~~~~~
+:meth:`DirectiveDetails.getSchema`
+----------------------------------
 
 Returns the interface details class for the schema.
 
@@ -108,7 +109,7 @@ Returns the interface details class for the schema.
   >>> iface_details.context
   <InterfaceClass __builtin__.IFoo>
 
-The `_getFieldName()` method of the interface details has been overridden to
+The :meth:`DirectiveDetails._getFieldName` method of the interface details has been overridden to
 neglect trailing underscores in the field name. This is necessary, since
 Python keywords cannot be used as field names:
 
@@ -116,8 +117,8 @@ Python keywords cannot be used as field names:
   'class'
 
 
-`getNamespaceName()`
-~~~~~~~~~~~~~~~~~~~~
+:meth:`DirectiveDetails.getNamespaceName`
+-----------------------------------------
 
 Return the name of the namespace.
 
@@ -134,11 +135,11 @@ If the directive is in the 'ALL' namespace, a special string is returned:
   '<i>all namespaces</i>'
 
 
-`getFileInfo()`
-~~~~~~~~~~~~~~~
+:meth:`getFileInfo`
+-------------------
 
 Get the file where the directive was declared. If the info attribute is not
-set, return `None`:
+set, return ``None``:
 
   >>> details.getFileInfo() is None
   True
@@ -156,15 +157,15 @@ If the info attribute is a parser info, then return the details:
    'file': 'foo.zcml',
    'line': 2}
 
-If the info is a string, `None` should be returned again:
+If the info is a string, ``None`` should be returned again:
 
   >>> details.context.info = 'info here'
   >>> details.getFileInfo() is None
   True
 
 
-`getInfo()`
-~~~~~~~~~~~
+:meth:`DirectiveDetails.getInfo`
+--------------------------------
 
 Get the configuration information string of the directive:
 
@@ -172,15 +173,15 @@ Get the configuration information string of the directive:
   >>> details.getInfo()
   'info here'
 
-Return `None`, if the info attribute is a parser info:
+Return ``None``, if the info attribute is a parser info:
 
   >>> details.context.info = ParserInfo('foo.zcml', 2, 3)
   >>> details.getInfo() is None
   True
 
 
-`getHandler()`
-~~~~~~~~~~~~~~
+:meth:`DirectiveDetails.getHandler`
+-----------------------------------
 
 Return information about the directive handler object.
 
@@ -189,8 +190,8 @@ Return information about the directive handler object.
    'url': None}
 
 
-`getSubdirectives()`
-~~~~~~~~~~~~~~~~~~~~
+:meth:`DirectiveDetails.getSubdirectives`
+-----------------------------------------
 
 Create a list of subdirectives. Currently, we have not specifiedany
 subdirectives

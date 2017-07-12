@@ -52,7 +52,7 @@ def _ignore_adapter(reg, withViews=False):
         or (not withViews and reg.required[-1].isOrExtends(IRequest)))
 
 def getRequiredAdapters(iface, withViews=False):
-    """Get adapter registrations where the specified interface is required."""
+    """Get global adapter registrations where the specified interface is required."""
     gsm = getGlobalSiteManager()
     for reg in _adapterishRegistrations(gsm):
         if _ignore_adapter(reg, withViews):
@@ -65,7 +65,7 @@ def getRequiredAdapters(iface, withViews=False):
 
 
 def getProvidedAdapters(iface, withViews=False):
-    """Get adapter registrations where this interface is provided."""
+    """Get global adapter registrations where this interface is provided."""
     gsm = getGlobalSiteManager()
     for reg in _adapterishRegistrations(gsm):
         if _ignore_adapter(reg, withViews):
@@ -106,7 +106,7 @@ def getClasses(iface):
 
 
 def getFactories(iface):
-    """Return the factory registrations, who will return objects providing this
+    """Return the global factory registrations, who will return objects providing this
     interface."""
     gsm = getGlobalSiteManager()
     for reg in gsm.registeredUtilities():
@@ -122,7 +122,7 @@ def getFactories(iface):
 
 
 def getUtilities(iface):
-    """Return all utility registrations that provide the interface."""
+    """Return all global utility registrations that provide the interface."""
     gsm = getGlobalSiteManager()
     for reg in gsm.registeredUtilities():
         if reg.provided.isOrExtends(iface):

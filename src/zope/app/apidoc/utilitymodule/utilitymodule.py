@@ -34,12 +34,14 @@ from zope.app.apidoc.utilities import DocumentationModuleBase
 NONAME = '__noname__'
 
 def encodeName(name):
+    """Encode the name in URL safe base 64."""
     name = base64.urlsafe_b64encode(name.encode('utf-8'))
     if not isinstance(name, str):
         name = name.decode('ascii')
     return name
 
 def decodeName(name):
+    """Decode the name as encoded by :func:`encodeName`."""
     try:
         to_decode = name
         if not isinstance(to_decode, bytes):
@@ -97,16 +99,17 @@ class UtilityInterface(ReadContainerBase):
 
 @implementer(IDocumentationModule)
 class UtilityModule(DocumentationModuleBase):
-    """Represent the Documentation of all Interfaces.
+    """
+    Represent the Documentation of all Interfaces.
 
-    This documentation is implemented using a simple `IReadContainer`. The
-    items of the container are all utility interfaces.
+    The items of the container are all utility interfaces registered in the
+    site manager.
     """
 
-    # See zope.app.apidoc.interfaces.IDocumentationModule
+    #: Title.
     title = _('Utilities')
 
-    # See zope.app.apidoc.interfaces.IDocumentationModule
+    #: Description.
     description = _("""
     Utilities are also nicely registered in a site manager, so that it is easy
     to create a listing of available utilities. A utility is identified by the

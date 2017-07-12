@@ -1,12 +1,14 @@
-======================================
-Module Menu and ZCML Directive Details
-======================================
+========================================
+ Module Menu and ZCML Directive Details
+========================================
 
 This document provides an overview of all browser-presentation related
 objects.
 
-`getAllTextOfInterface(iface)`
-------------------------------
+.. currentmodule:: zope.app.apidoc.ifacemodule
+
+:func:`menu.getAllTextOfInterface`
+==================================
 
 Get all searchable text from an interface
 
@@ -42,15 +44,18 @@ collection.
   True
 
 
-`Menu` class
-------------
+``Menu`` class
+==============
 
-This is the menu class for the Interface Documentation Module.
+This is the :class:`menu class <menu.Menu>` for the Interface
+Documentation Module.
 
-The menu allows one to look for interfaces by full-text search or partial
-names. The `findInterfaces()` function provides a simple search mechanism.
+The menu allows one to look for interfaces by full-text search or
+partial names. The :meth:`findInterfaces <menu.Menu.findInterfaces>`
+method provides a simple search mechanism.
 
-Before we can test the method, let's create a `Menu` instance:
+Before we can test the method, let's create a :class:`menu.Menu`
+instance:
 
   >>> from zope.interface.interfaces import IElement, IAttribute
 
@@ -91,11 +96,13 @@ Now using the full text search:
     'url': './IAttribute/index.html'}]
 
 
-`InterfaceDetails` class
-------------------------
+``InterfaceDetails`` class
+==========================
+.. currentmodule:: zope.app.apidoc.ifacemodule.browser
 
-This view provides many details about an interface. Most methods of the class
-actually use the public inspection API.
+:class:`This view <InterfaceDetails>` provides many details
+about an interface. Most methods of the class actually use the public
+inspection API.
 
 Before we can test the view, we need to create an interesting setup, so that
 the view can provide some useful data. Let's start by defining a complex
@@ -125,8 +132,8 @@ interface:
   ...     def get(key, default=None):
   ...         """This is get."""
 
-Let's now create another interface `IBar` and make `Foo` an adapter from
-`IBar` to `IFoo`:
+Let's now create another interface ``IBar`` and make ``Foo`` an adapter from
+``IBar`` to ``IFoo``:
 
   >>> class IBar(zope.interface.Interface):
   ...     pass
@@ -141,14 +148,14 @@ Let's now create another interface `IBar` and make `Foo` an adapter from
   >>> from zope.app.apidoc.classregistry import classRegistry
   >>> classRegistry['__builtin__.Foo'] = Foo
 
-Let's also register a factory for `Foo`
+Let's also register a factory for ``Foo``
 
   >>> from zope.component.interfaces import IFactory
   >>> from zope.component.factory import Factory
   >>> ztapi.provideUtility(Factory(Foo, title='Foo Factory'), IFactory,
   ...                      'FooFactory')
 
-and a utility providing `IFoo`:
+and a utility providing ``IFoo``:
 
   >>> ztapi.provideUtility(Foo(), IFoo, 'The Foo')
 
@@ -166,8 +173,8 @@ and finally the details view:
   >>> details = InterfaceDetails(iface, TestRequest())
 
 
-`getId()`
----------
+:meth:`InterfaceDetails.getId`
+------------------------------
 
 Return the id of the field as it is defined for the interface
 utility.
@@ -175,8 +182,8 @@ utility.
   >>> details.getId()
   'IFoo'
 
-`getDoc()`
-----------
+:meth:`InterfaceDetails.getDoc`
+-------------------------------
 
 Return the main documentation string of the interface.
 
@@ -184,8 +191,8 @@ Return the main documentation string of the interface.
   u'<p>This is the Foo interface</p>'
 
 
-`getBases()`
-------------
+:meth:`InterfaceDetails.getBases`
+---------------------------------
 
 Get all bases of this class
 
@@ -193,8 +200,8 @@ Get all bases of this class
   ['zope.interface.Interface']
 
 
-`getTypes()`
-------------
+:meth:`InterfaceDetails.getTypes`
+---------------------------------
 
 Return a list of interface types that are specified for this interface.
 
@@ -217,8 +224,8 @@ we get a result:
     'path': '__builtin__.IMyType'}]
 
 
-`getAttributes()`
------------------
+:meth:`InterfaceDetails.getAttributes`
+--------------------------------------
 
 Return a list of attributes in the order they were specified.
 
@@ -229,8 +236,8 @@ Return a list of attributes in the order they were specified.
     'name': 'foo'}]
 
 
-`getMethods()`
---------------
+:meth:`InterfaceDetails.getMethods`
+-----------------------------------
 
 Return a list of methods in the order they were specified.
 
@@ -243,8 +250,8 @@ Return a list of methods in the order they were specified.
     'signature': '(key, default=None)'}]
 
 
-`getFields()`
--------------
+:meth:`InterfaceDetails.getFields`
+----------------------------------
 
 Return a list of fields in required + alphabetical order.
 
@@ -272,16 +279,16 @@ The required attributes are listed first, then the optional attributes.
     'required_string': u'optional',
     'title': u''}]
 
-`getSpecificRequiredAdapters()`
--------------------------------
+:meth:`InterfaceDetails.getSpecificRequiredAdapters`
+----------------------------------------------------
 
 Get adapters where this interface is required.
 
   >>> pprint(details.getSpecificRequiredAdapters())
   []
 
-`getExtendedRequiredAdapters()`
--------------------------------
+:meth:`InterfaceDetails.getExtendedRequiredAdapters`
+----------------------------------------------------
 
 Get adapters where this interface is required.
 
@@ -289,11 +296,11 @@ Get adapters where this interface is required.
   []
 
 Note that this includes all interfaces registered for
-interface.Interface.
+:class:`zope.interface.interface.Interface`.
 
 
-`getGenericRequiredAdapters()`
-------------------------------
+:meth:`InterfaceDetails.getGenericRequiredAdapters`
+---------------------------------------------------
 
 Get adapters where this interface is required.
 
@@ -302,8 +309,8 @@ Get adapters where this interface is required.
   True
 
 
-`getProvidedAdapters()`
------------------------
+:meth:`InterfaceDetails.getProvidedAdapters`
+--------------------------------------------
 
 Get adapters where this interface is provided.
 
@@ -322,8 +329,8 @@ Get adapters where this interface is provided.
 
 
 
-`getClasses()`
----------------
+:meth:`InterfaceDetails.getClasses`
+-----------------------------------
 
 Get the classes that implement this interface.
 
@@ -331,8 +338,8 @@ Get the classes that implement this interface.
   [{'path': '__builtin__.Foo',
     'url': '__builtin__/Foo'}]
 
-`getFactories()`
-----------------
+:meth:`InterfaceDetails.getFactories`
+-------------------------------------
 
 Return the factories, who will provide objects implementing this
 interface.
@@ -343,8 +350,8 @@ interface.
     'title': 'Foo Factory',
     'url': None}]
 
-`getUtilities()`
-----------------
+:meth:`InterfaceDetails.getUtilities`
+-------------------------------------
 
 Return all utilities that provide this interface.
 

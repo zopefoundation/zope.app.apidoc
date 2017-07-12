@@ -40,7 +40,7 @@ class ClassRegistry(dict):
     def getClassesThatImplement(self, iface):
         """Return all class items that implement iface.
 
-        Methods returns a list of 2-tuples of the form (path, class).
+        Methods returns a sorted list of 2-tuples of the form (path, class).
         """
         return sorted(((path, klass) for path, klass in iteritems(self)
                        if iface.implementedBy(klass)),
@@ -49,13 +49,14 @@ class ClassRegistry(dict):
     def getSubclassesOf(self, klass):
         """Return all class items that are proper subclasses of klass.
 
-        Methods returns a list of 2-tuples of the form (path, class).
+        Methods returns a sorted list of 2-tuples of the form (path, class).
         """
         return sorted(((path, klass2) for path, klass2 in iteritems(self)
                        if issubclass(klass2, klass) and klass2 is not klass),
                       key=_pathgetter)
 
-
+#: The global class registry object. Cleaned up
+#: in tests by :mod:`zope.testing.cleanup`.
 classRegistry = ClassRegistry()
 
 def cleanUp():
