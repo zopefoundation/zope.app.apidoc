@@ -1,5 +1,5 @@
 .. image:: https://readthedocs.org/projects/zopeappapidoc/badge/?version=latest
-        :target: http://zopeappapidoc.readthedocs.io/en/latest/?badge=latest
+        :target: https://zopeappapidoc.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
 .. image:: https://travis-ci.org/zopefoundation/zope.app.apidoc.svg?branch=master

@@ -5,7 +5,7 @@
 4.0.1 (unreleased)
 ==================
 
-- Host documentation at http://zopeappapidoc.readthedocs.io/
+- Host documentation at https://zopeappapidoc.readthedocs.io/
 
 
 4.0.0 (2017-05-25)

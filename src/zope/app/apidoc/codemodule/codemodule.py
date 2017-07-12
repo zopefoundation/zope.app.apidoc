@@ -60,7 +60,7 @@ class CodeModule(Module):
     """)
 
     def __init__(self):
-        "Initialize object."
+        """Initialize object."""
         super(CodeModule, self).__init__(None, '', None, False)
         self.__isSetup = False
 

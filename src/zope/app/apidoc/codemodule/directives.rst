@@ -43,7 +43,7 @@ The ``apidoc:importModule`` Directive
 The ``importModule`` directive allows you to set the
 ``__import_unknown_modules__`` flag of the class registry. When this flag is
 set to false, paths will only be looked up in :data:`sys.modules`. When set true,
-and the :data:`sus.modules` lookup fails, the import function of the class
+and the :data:`sys.modules` lookup fails, the import function of the class
 registry tries to import the path. The hook was provided for security reasons,
 since uncontrolled importing of modules in a running application is considered
 a security hole.
