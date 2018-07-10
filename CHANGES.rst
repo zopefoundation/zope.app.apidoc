@@ -7,6 +7,7 @@
 
 - Host documentation at https://zopeappapidoc.readthedocs.io/
 
+- Add arguments to ``bin/static-apidoc`` for loading a specific ZCML file.
 
 4.0.0 (2017-05-25)
 ==================

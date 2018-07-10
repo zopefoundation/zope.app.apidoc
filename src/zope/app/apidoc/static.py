@@ -152,7 +152,8 @@ class OnlineBrowser(zope.testbrowser.browser.Browser):
 class PublisherBrowser(zope.testbrowser.wsgi.Browser):
 
     old_appsetup_context = None
-
+    target_package = None
+    zcml_file = None
 
     def setUserAndPassword(self, user, pw):
         """Specify the username and password to use for the retrieval."""
@@ -160,11 +161,33 @@ class PublisherBrowser(zope.testbrowser.wsgi.Browser):
 
     @classmethod
     def begin(cls):
-        # TODO: We need to let this define what config file to execute.
         from zope.app.apidoc.testing import APIDocLayer
         from zope.app.appsetup import appsetup
+
+        # Contains ZCML directive documentation
+        _docRegistry = []
+
+        if cls.target_package:
+            from zope.configuration import xmlconfig
+            _docRegistry = xmlconfig.file('ftesting.zcml', zope.app.apidoc)._docRegistry
+
+            import importlib
+            package = importlib.import_module(cls.target_package)
+            from zope.app.apidoc.testing import _BrowserLayer
+            APIDocLayer = _BrowserLayer(
+                package,
+                name="APIDocLayer",
+                zcml_file=cls.zcml_file,
+                allowTearDown=True
+            )
+
         APIDocLayer.setUp()
         APIDocLayer.testSetUp()
+
+        # APIDocLayer only has the directives used by its zcml_file,
+        # so if we use a custom ZCML file we need to merge in the
+        # _docRegistry containing apidoc's ZCML directives
+        APIDocLayer.context._docRegistry += _docRegistry
 
         self = cls()
 
@@ -225,6 +248,8 @@ class StaticAPIDocGenerator(object):
             assert self.options.ret_kind == 'publisher', self.options.ret_kind
             self.browser = PublisherBrowser
             self.base_url = 'http://localhost/'
+            self.browser.target_package = self.options.target_package
+            self.browser.zcml_file = self.options.zcml_file
 
         for url in self.options.additional_urls + [self.options.startpage]:
             link = Link(url, self.base_url)
@@ -448,6 +473,27 @@ def _create_arg_parser():
 
     parser.add_argument("target_dir",
                         help="The directory to contain the output files")
+
+    ######################################################################
+    # ZCML
+
+    zcml = parser.add_argument_group(title='ZCML',
+                                          description='Options that specify what ZCML file to load')
+    
+    zcml.add_argument(
+        'target_package',
+        default='',
+        help="""The package containing the ZCML file to execute when setting up the publisher backend.
+        This option is meaningless if you are using the webserver backend.""",
+        nargs='?'
+    )
+
+    zcml.add_argument(
+        'zcml_file',
+        default='configure.zcml',
+        help="""The ZCML file to execute, relative to the target package.""",
+        nargs='?'
+    )
 
     ######################################################################
     # Retrieval
