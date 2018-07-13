@@ -35,4 +35,5 @@ APIDocNoDevModeLayer = _BrowserLayer(
 APIDocLayer = _BrowserLayer(
     zope.app.apidoc,
     name="APIDocLayer",
+    features=['static-apidoc']
     allowTearDown=True)
