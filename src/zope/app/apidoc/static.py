@@ -164,13 +164,7 @@ class PublisherBrowser(zope.testbrowser.wsgi.Browser):
         from zope.app.apidoc.testing import APIDocLayer
         from zope.app.appsetup import appsetup
 
-        # Contains ZCML directive documentation
-        _docRegistry = []
-
         if cls.target_package:
-            from zope.configuration import xmlconfig
-            _docRegistry = xmlconfig.file('ftesting.zcml', zope.app.apidoc)._docRegistry
-
             import importlib
             package = importlib.import_module(cls.target_package)
             from zope.app.apidoc.testing import _BrowserLayer
@@ -183,11 +177,6 @@ class PublisherBrowser(zope.testbrowser.wsgi.Browser):
 
         APIDocLayer.setUp()
         APIDocLayer.testSetUp()
-
-        # APIDocLayer only has the directives used by its zcml_file,
-        # so if we use a custom ZCML file we need to merge in the
-        # _docRegistry containing apidoc's ZCML directives
-        APIDocLayer.context._docRegistry += _docRegistry
 
         self = cls()
 
