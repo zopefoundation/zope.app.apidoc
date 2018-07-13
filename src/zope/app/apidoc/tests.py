@@ -274,12 +274,12 @@ class TestStatic(unittest.TestCase):
         # Make sure the directive isn't listed by default
         static.main(['--max-runtime', '10', os.path.join(tmpdir, 'default')])
         with open(os.path.join(tmpdir, 'default', '++apidoc++/ZCML/@@staticmenu.html')) as document:
-            self.assertFalse(directive in document.read())
+            self.assertNotIn(directive, document.read())
         
         # Make sure that the directive is listed when we specify our custom ZCML file
         static.main(['--max-runtime', '10', os.path.join(tmpdir, 'custom'), package_name, zcml_file])
         with open(os.path.join(tmpdir, 'custom', '++apidoc++/ZCML/@@staticmenu.html')) as document:
-            self.assertTrue(directive in document.read(), "The %s directive isn't listed in zcmlmodule" % directive)
+            self.assertIn(directive, document.read(), "The %s directive isn't listed in zcmlmodule" % directive)
 
     def test_processLink_errors(self):
         tmpdir = self._tempdir()
