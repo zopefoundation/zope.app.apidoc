@@ -276,8 +276,10 @@ class TestStatic(unittest.TestCase):
         with open(os.path.join(tmpdir, 'default', '++apidoc++/ZCML/@@staticmenu.html')) as document:
             self.assertNotIn(directive, document.read())
         
+        xmlconfig.file('ftesting.zcml', zope.app.apidoc)
+        
         # Make sure that the directive is listed when we specify our custom ZCML file
-        static.main(['--max-runtime', '10', os.path.join(tmpdir, 'custom'), package_name, zcml_file])
+        static.main(['--max-runtime', '10', os.path.join(tmpdir, 'custom'), '%s:%s' % (package_name, zcml_file)])
         with open(os.path.join(tmpdir, 'custom', '++apidoc++/ZCML/@@staticmenu.html')) as document:
             self.assertIn(directive, document.read(), "The %s directive isn't listed in zcmlmodule" % directive)
 

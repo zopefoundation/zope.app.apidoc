@@ -153,7 +153,7 @@ class PublisherBrowser(zope.testbrowser.wsgi.Browser):
 
     old_appsetup_context = None
     target_package = None
-    zcml_file = None
+    zcml_file = 'configure.zcml'
 
     def setUserAndPassword(self, user, pw):
         """Specify the username and password to use for the retrieval."""
@@ -237,8 +237,12 @@ class StaticAPIDocGenerator(object):
             assert self.options.ret_kind == 'publisher', self.options.ret_kind
             self.browser = PublisherBrowser
             self.base_url = 'http://localhost/'
-            self.browser.target_package = self.options.target_package
-            self.browser.zcml_file = self.options.zcml_file
+
+            if self.options.zcml_file:
+                target = self.options.zcml_file.split(':')
+                self.browser.target_package = target[0]
+                if len(target) == 2 and target[1]:
+                    self.browser.zcml_file = target[1]
 
         for url in self.options.additional_urls + [self.options.startpage]:
             link = Link(url, self.base_url)
@@ -462,26 +466,16 @@ def _create_arg_parser():
 
     parser.add_argument("target_dir",
                         help="The directory to contain the output files")
-
-    ######################################################################
-    # ZCML
-
-    zcml = parser.add_argument_group(title='ZCML',
-                                          description='Options that specify what ZCML file to load')
     
-    zcml.add_argument(
-        'target_package',
-        default='',
-        help="""The package containing the ZCML file to execute when setting up the publisher backend.
-        This option is meaningless if you are using the webserver backend.""",
-        nargs='?'
-    )
-
-    zcml.add_argument(
+    parser.add_argument(
         'zcml_file',
-        default='configure.zcml',
-        help="""The ZCML file to execute, relative to the target package.""",
-        nargs='?'
+        help="""The ZCML file to load in the form of the.package[:the_file.zcml],
+        where the package name and ZCML filename relative to the package are separated by a colon.
+        If the ZCML filename is omitted, `configure.zcml` is assumed.
+        The specified ZCML file needs to include
+        `<include package='zope.app.apidoc' file='ftesting.zcml' condition='have static-apidoc' />`.
+        """,
+        nargs='?',
     )
 
     ######################################################################
