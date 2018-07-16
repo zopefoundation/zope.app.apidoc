@@ -267,7 +267,7 @@ class TestStatic(unittest.TestCase):
         # This test uses the ZCML directive list to determine if a custom ZCML file was successfully loaded
         
         tmpdir = self._tempdir()
-        directive = 'registerTranslations'
+        directive = 'fakeModuleImport'
         package_name = 'zope.app.apidoc'
         zcml_file = 'test.zcml'
 

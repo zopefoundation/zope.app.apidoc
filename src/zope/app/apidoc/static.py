@@ -172,6 +172,7 @@ class PublisherBrowser(zope.testbrowser.wsgi.Browser):
                 package,
                 name="APIDocLayer",
                 zcml_file=cls.zcml_file,
+                features=['static-apidoc'],
                 allowTearDown=True
             )
 

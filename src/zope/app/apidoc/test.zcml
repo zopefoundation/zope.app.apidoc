@@ -9,7 +9,7 @@
     <meta:directives namespace="http://namespaces.zope.org/fake">
         <!-- Copy of a directive in codemodule/meta.zcml just for testing -->
         <meta:directive
-            name="moduleImport"
+            name="fakeModuleImport"
             schema="zope.app.apidoc.codemodule.metadirectives.IModuleImport"
             handler="zope.app.apidoc.codemodule.metaconfigure.moduleImport"
         />
