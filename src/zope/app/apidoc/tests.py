@@ -277,7 +277,7 @@ class TestStatic(unittest.TestCase):
             self.assertNotIn(directive, document.read())
         
         # Make sure that the directive is listed when we specify our custom ZCML file
-        static.main(['--max-runtime', '10', os.path.join(tmpdir, 'custom'), '%s:%s' % (package_name, zcml_file)])
+        static.main(['--max-runtime', '10', os.path.join(tmpdir, 'custom'), '-c', '%s:%s' % (package_name, zcml_file)])
         with open(os.path.join(tmpdir, 'custom', '++apidoc++/ZCML/@@staticmenu.html')) as document:
             self.assertIn(directive, document.read(), "The %s directive isn't listed in zcmlmodule" % directive)
 
@@ -341,7 +341,7 @@ class TestStatic(unittest.TestCase):
         self.assertEqual(x, 'False')
 
         browser.end()
-
+    
 
 # Generally useful classes and functions
 

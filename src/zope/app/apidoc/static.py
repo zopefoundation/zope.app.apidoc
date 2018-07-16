@@ -235,12 +235,11 @@ class StaticAPIDocGenerator(object):
             if self.base_url[-1] != '/':
                 self.base_url += '/'
         else:
-            assert self.options.ret_kind == 'publisher', self.options.ret_kind
             self.browser = PublisherBrowser
             self.base_url = 'http://localhost/'
 
-            if self.options.zcml_file:
-                target = self.options.zcml_file.split(':')
+            if self.options.ret_kind != 'publisher': # the.package[:the_file.zcml]
+                target = self.options.ret_kind.split(':')
                 self.browser.target_package = target[0]
                 if len(target) == 2 and target[1]:
                     self.browser.zcml_file = target[1]
@@ -467,17 +466,6 @@ def _create_arg_parser():
 
     parser.add_argument("target_dir",
                         help="The directory to contain the output files")
-    
-    parser.add_argument(
-        'zcml_file',
-        help="""The ZCML file to load in the form of the.package[:the_file.zcml],
-        where the package name and ZCML filename relative to the package are separated by a colon.
-        If the ZCML filename is omitted, `configure.zcml` is assumed.
-        The specified ZCML file needs to include
-        `<include package='zope.app.apidoc' file='ftesting.zcml' condition='have static-apidoc' />`.
-        """,
-        nargs='?',
-    )
 
     ######################################################################
     # Retrieval
@@ -492,6 +480,18 @@ def _create_arg_parser():
         const="publisher", default='publisher',
         help="""Use the publisher directly to retrieve the data. The program will bring up
         Zope 3 for you. This is the recommended option.
+        """
+    )
+
+    ret_kind.add_argument(
+        '--custom-publisher', '-c', dest='ret_kind',
+        help="""Use the publisher directly to retrieve the data and specify
+        a custom ZCML file to load in the form of the.package[:the_file.zcml].
+        The package name and ZCML filename relative to the package are separated by a colon.
+        If the ZCML filename is omitted, `configure.zcml` is assumed.
+        The specified ZCML file needs to include
+        `<include package='zope.app.apidoc' file='ftesting.zcml' condition='have static-apidoc' />`
+        or something else equivalent to `site.zcml`.
         """
     )
 
