@@ -268,15 +268,13 @@ class TestStatic(unittest.TestCase):
         
         tmpdir = self._tempdir()
         directive = 'registerTranslations'
-        package_name = 'zope.i18n'
-        zcml_file = 'meta.zcml'
+        package_name = 'zope.app.apidoc'
+        zcml_file = 'test.zcml'
 
         # Make sure the directive isn't listed by default
         static.main(['--max-runtime', '10', os.path.join(tmpdir, 'default')])
         with open(os.path.join(tmpdir, 'default', '++apidoc++/ZCML/@@staticmenu.html')) as document:
             self.assertNotIn(directive, document.read())
-        
-        xmlconfig.file('ftesting.zcml', zope.app.apidoc)
         
         # Make sure that the directive is listed when we specify our custom ZCML file
         static.main(['--max-runtime', '10', os.path.join(tmpdir, 'custom'), '%s:%s' % (package_name, zcml_file)])
