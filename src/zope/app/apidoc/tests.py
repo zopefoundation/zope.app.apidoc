@@ -341,7 +341,19 @@ class TestStatic(unittest.TestCase):
         self.assertEqual(x, 'False')
 
         browser.end()
-    
+
+    def test_mutually_exclusive_group(self):
+        tmpdir = self._tempdir()
+
+        with self.assertRaises(SystemExit):
+            static._create_arg_parser().parse_args([tmpdir, '--publisher', '---custom-publisher', 'fake'])
+        
+        with self.assertRaises(SystemExit):
+            static._create_arg_parser().parse_args([tmpdir, '-publisher', '--webserver'])
+        
+        with self.assertRaises(SystemExit):
+            static._create_arg_parser().parse_args([tmpdir, '--webserver', '--custom-publisher', 'fake'])
+        
 
 # Generally useful classes and functions
 
