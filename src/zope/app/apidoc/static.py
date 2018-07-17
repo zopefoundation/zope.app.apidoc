@@ -239,7 +239,7 @@ class StaticAPIDocGenerator(object):
             self.base_url = 'http://localhost/'
 
             if self.options.ret_kind != 'publisher': # the.package[:the_file.zcml]
-                target = self.options.ret_kind.split(':')
+                target = self.options.ret_kind.split(':', 1)
                 self.browser.target_package = target[0]
                 if len(target) == 2 and target[1]:
                     self.browser.zcml_file = target[1]
