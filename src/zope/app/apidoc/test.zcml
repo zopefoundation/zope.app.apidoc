@@ -4,7 +4,7 @@
     xmlns:zcml="http://namespaces.zope.org/zcml"
     >
 
-    <include package='zope.app.apidoc' file='ftesting.zcml' zcml:condition='have static-apidoc' />
+    <include package='zope.app.apidoc' file='static.zcml' zcml:condition='have static-apidoc' />
 
     <meta:directives namespace="http://namespaces.zope.org/fake">
         <!-- Copy of a directive in codemodule/meta.zcml just for testing -->

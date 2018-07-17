@@ -490,7 +490,7 @@ def _create_arg_parser():
         The package name and ZCML filename relative to the package are separated by a colon.
         If the ZCML filename is omitted, `configure.zcml` is assumed.
         The specified ZCML file needs to include
-        `<include package='zope.app.apidoc' file='ftesting.zcml' condition='have static-apidoc' />`
+        `<include package='zope.app.apidoc' file='static.zcml' condition='have static-apidoc' />`
         or something else equivalent to `site.zcml`.
         """
     )
