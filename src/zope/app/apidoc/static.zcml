@@ -5,6 +5,9 @@
     package="zope.app.apidoc"
     >
     
-    <include file="ftesting.zcml" />
+    <!-- Turn on the devmode -->
+    <meta:provides feature="devmode" />
+
+    <include file="ftesting-base.zcml" />
 
 </configure>
