@@ -262,6 +262,24 @@ class TestStatic(unittest.TestCase):
                              tmpdir])
         self.assertEqual(9, maker.counter) # our six default images, plus scripts
         self.assertEqual(1, maker.linkErrors)
+    
+    def test_custom_zcml(self):
+        # This test uses the ZCML directive list to determine if a custom ZCML file was successfully loaded
+        
+        tmpdir = self._tempdir()
+        directive = 'fakeModuleImport'
+        package_name = 'zope.app.apidoc'
+        zcml_file = 'test.zcml'
+
+        # Make sure the directive isn't listed by default
+        static.main(['--max-runtime', '10', os.path.join(tmpdir, 'default')])
+        with open(os.path.join(tmpdir, 'default', '++apidoc++/ZCML/@@staticmenu.html')) as document:
+            self.assertNotIn(directive, document.read())
+        
+        # Make sure that the directive is listed when we specify our custom ZCML file
+        static.main(['--max-runtime', '10', os.path.join(tmpdir, 'custom'), '-c', '%s:%s' % (package_name, zcml_file)])
+        with open(os.path.join(tmpdir, 'custom', '++apidoc++/ZCML/@@staticmenu.html')) as document:
+            self.assertIn(directive, document.read(), "The %s directive isn't listed in zcmlmodule" % directive)
 
     def test_processLink_errors(self):
         tmpdir = self._tempdir()
@@ -323,6 +341,19 @@ class TestStatic(unittest.TestCase):
         self.assertEqual(x, 'False')
 
         browser.end()
+
+    def test_mutually_exclusive_group(self):
+        tmpdir = self._tempdir()
+
+        with self.assertRaises(SystemExit):
+            static._create_arg_parser().parse_args([tmpdir, '--publisher', '---custom-publisher', 'fake'])
+        
+        with self.assertRaises(SystemExit):
+            static._create_arg_parser().parse_args([tmpdir, '-publisher', '--webserver'])
+        
+        with self.assertRaises(SystemExit):
+            static._create_arg_parser().parse_args([tmpdir, '--webserver', '--custom-publisher', 'fake'])
+        
 
 # Generally useful classes and functions
 

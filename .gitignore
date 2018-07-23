@@ -1,7 +1,10 @@
 bin/
 eggs/
 develop-eggs/
+include/
+lib/
 parts/
+share/
 .installed.cfg
 *.py[co]
 __pycache__/
@@ -11,5 +14,10 @@ dist/
 .tox/
 .coverage
 htmlcov/
+pip-selfcheck.json
+pyvenv.cfg
+.DS_Store
 
 docs/_build
+++apidoc++/
+@@/

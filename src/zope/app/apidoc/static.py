@@ -152,7 +152,8 @@ class OnlineBrowser(zope.testbrowser.browser.Browser):
 class PublisherBrowser(zope.testbrowser.wsgi.Browser):
 
     old_appsetup_context = None
-
+    target_package = None
+    zcml_file = 'configure.zcml'
 
     def setUserAndPassword(self, user, pw):
         """Specify the username and password to use for the retrieval."""
@@ -160,9 +161,21 @@ class PublisherBrowser(zope.testbrowser.wsgi.Browser):
 
     @classmethod
     def begin(cls):
-        # TODO: We need to let this define what config file to execute.
         from zope.app.apidoc.testing import APIDocLayer
         from zope.app.appsetup import appsetup
+
+        if cls.target_package:
+            import importlib
+            package = importlib.import_module(cls.target_package)
+            from zope.app.apidoc.testing import _BrowserLayer
+            APIDocLayer = _BrowserLayer(
+                package,
+                name="APIDocLayer",
+                zcml_file=cls.zcml_file,
+                features=['static-apidoc'],
+                allowTearDown=True
+            )
+
         APIDocLayer.setUp()
         APIDocLayer.testSetUp()
 
@@ -222,9 +235,14 @@ class StaticAPIDocGenerator(object):
             if self.base_url[-1] != '/':
                 self.base_url += '/'
         else:
-            assert self.options.ret_kind == 'publisher', self.options.ret_kind
             self.browser = PublisherBrowser
             self.base_url = 'http://localhost/'
+
+            if self.options.ret_kind != 'publisher': # the.package[:the_file.zcml]
+                target = self.options.ret_kind.split(':', 1)
+                self.browser.target_package = target[0]
+                if len(target) == 2 and target[1]:
+                    self.browser.zcml_file = target[1]
 
         for url in self.options.additional_urls + [self.options.startpage]:
             link = Link(url, self.base_url)
@@ -462,6 +480,18 @@ def _create_arg_parser():
         const="publisher", default='publisher',
         help="""Use the publisher directly to retrieve the data. The program will bring up
         Zope 3 for you. This is the recommended option.
+        """
+    )
+
+    ret_kind.add_argument(
+        '--custom-publisher', '-c', dest='ret_kind',
+        help="""Use the publisher directly to retrieve the data and specify
+        a custom ZCML file to load in the form of the.package[:the_file.zcml].
+        The package name and ZCML filename relative to the package are separated by a colon.
+        If the ZCML filename is omitted, `configure.zcml` is assumed.
+        The specified ZCML file needs to include
+        `<include package='zope.app.apidoc' file='static.zcml' condition='have static-apidoc' />`
+        or something else equivalent to `site.zcml`.
         """
     )
 
