@@ -22,13 +22,14 @@
 
     <div tal:define="classes view/findClasses"
          tal:condition="classes">
-
-      <a href="" target="main"
-         tal:repeat="info classes"
-         tal:attributes="href info/url"
-         tal:content="info/path">
-        /zope/app/Application
-      </a>
+      <tal:omit-tag tal:repeat="info classes">
+        <a href="" target="main"
+          tal:attributes="href info/url"
+          tal:content="info/path">
+          /zope/app/Application
+        </a>
+        <br />
+      </tal:omit-tag>
     </div>
 
   </div>

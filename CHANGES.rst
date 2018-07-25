@@ -11,6 +11,8 @@
   establish a working Zope 3 publication environment. The easiest way to do so is to include this line in the ZCML:
   ``<include package='zope.app.apidoc' file='static.zcml' condition='have static-apidoc' />``. 
   See `PR #13 <https://github.com/zopefoundation/zope.app.apidoc/pull/13/>`_.
+- Class Finder entries in live apidoc are now displayed on separate lines, like in static exports. 
+  See `PR #14 <https://github.com/zopefoundation/zope.app.apidoc/pull/14/>`_.
 
 4.0.0 (2017-05-25)
 ==================
