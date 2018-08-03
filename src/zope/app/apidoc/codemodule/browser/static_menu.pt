@@ -5,7 +5,7 @@
   <div metal:fill-slot="menu" class="small">
 
     <div>
-      <span i18n:translate="">Class Finder:</span><br />
+      <span i18n:translate="">Class Finder:</span>
       <span><i i18n:translate="">(Enter partial Python path)</i></span>
 	</div>
     <form action="" method="post" name="searchform"
