@@ -13,6 +13,8 @@
   See `PR #13 <https://github.com/zopefoundation/zope.app.apidoc/pull/13/>`_.
 - Class Finder entries in live apidoc are now displayed on separate lines, like in static exports. 
   See `PR #14 <https://github.com/zopefoundation/zope.app.apidoc/pull/14/>`_.
+- Class Finder search in static exports will search on Enter, not just when clicking "Find". 
+  See `PR #15 <https://github.com/zopefoundation/zope.app.apidoc/pull/15/>`_.
 
 4.0.0 (2017-05-25)
 ==================
