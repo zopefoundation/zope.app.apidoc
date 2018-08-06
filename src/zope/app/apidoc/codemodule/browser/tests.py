@@ -15,6 +15,7 @@
 
 """
 import unittest
+from BTrees import OOBTree
 
 from zope.traversing.api import traverse
 
@@ -107,7 +108,7 @@ class CodeModuleTests(BrowserTestCase):
             body, '/++apidoc++/Code/zope/app/apidoc/configure.zcml/index.html',
             basic='mgr:mgrpw')
 
-from BTrees import OOBTree
+
 class TestClass(unittest.TestCase):
 
     layer = APIDocLayer
@@ -127,6 +128,26 @@ class TestClass(unittest.TestCase):
 
         info = details._listClasses([items_class])
         self.assertIsNone(info[0]['url'], None)
+
+    def test_not_fail_with_doc_property(self):
+        from zope.app.apidoc.codemodule.browser.class_ import ClassDetails
+        from zope.app.apidoc.codemodule.class_ import Class
+
+        # Such as in zope.hookable._py_hookable
+        class WithProperty(object):
+            @property
+            def __doc__(self):
+                return "Some Docs"
+
+        class Parent(object):
+            def getPath(self):
+                return '/'
+
+        details = ClassDetails()
+        details.context = Class(Parent(), WithProperty.__name__, WithProperty)
+
+        self.assertIn('Failed to render non-text', details.getDoc())
+
 
 class TestIntrospectorNS(unittest.TestCase):
 

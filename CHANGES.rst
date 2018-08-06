@@ -11,6 +11,10 @@
   ``None``. This can be the case with namespace packages, especially
   under Python 3.7. See `issue #17 <https://github.com/zopefoundation/zope.app.apidoc/issues/17>`_.
 
+- Rendering documentation for a class that has a ``__doc__`` property
+  no longer fails but produces a descriptive message. See `issue 16
+  <https://github.com/zopefoundation/zope.app.apidoc/issues/16>`_.
+
 - Host documentation at https://zopeappapidoc.readthedocs.io/
 
 - Add argument to ``static-apidoc`` for loading a specific ZCML file. To use this feature, the ZCML file you specify needs to

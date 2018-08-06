@@ -370,6 +370,7 @@ def dedentString(text):
 
 
 def renderText(text, module=None, format=None, dedent=True):
+    # dedent is ignored, we always dedent
     if not text:
         return u''
 
@@ -387,7 +388,11 @@ def renderText(text, module=None, format=None, dedent=True):
     if isinstance(text, bytes):
         text = text.decode('utf-8', 'replace')
 
-    text = dedentString(text)
+    try:
+        text = dedentString(text)
+    except TypeError as e:
+        return u'Failed to render non-text (%r): %s' % (text, e,)
+
     source = createObject(format, text)
 
     renderer = getMultiAdapter((source, TestRequest()))

@@ -236,6 +236,15 @@ class TestUtilities(unittest.TestCase):
                 '()',
                 getFunctionSignature(TestUtilities.test_keyword_only_arguments))
 
+    def test_renderText_non_text(self):
+        # If we pass something that isn't actually text, we get a
+        # descriptive error back.
+        from zope.app.apidoc.utilities import renderText
+
+        text = renderText(self)
+        self.assertIn("Failed to render non-text", text)
+
+
 from zope.app.apidoc import static
 
 class TestStatic(unittest.TestCase):
