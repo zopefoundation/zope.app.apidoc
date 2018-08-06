@@ -113,10 +113,12 @@ class TestModule(unittest.TestCase):
         class Mod(object):
             __file__ = None
             __name__ = 'name'
-        Mod.__doc__ = "A module"
 
-        mod = Module(None, 'name', Mod())
-        self.assertEqual(Mod.__doc__, mod.getDocString())
+        mod = Mod()
+        mod.__doc__ = 'A module'
+
+        inst = Module(None, 'name', mod)
+        self.assertEqual(mod.__doc__, inst.getDocString())
 
 
 class TestZCML(unittest.TestCase):
