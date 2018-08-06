@@ -72,7 +72,9 @@ class Module(ReadContainerBase):
 
     def __setup_package(self):
         # Detect packages
-        module_file = getattr(self._module, '__file__', '')
+        # __file__ can be None, especially with namespace packages on
+        # Python 3.7
+        module_file = getattr(self._module, '__file__', None) or ''
         module_path = getattr(self._module, '__path__', None)
         if module_file.endswith(('__init__.py', '__init__.pyc', '__init__.pyo')):
             self._package = True

@@ -1,11 +1,18 @@
 language: python
 sudo: false
-python:
-  - 2.7
-  - 3.4
-  - 3.5
-  - 3.6
-  - pypy-5.4.1
+group: travis_latest
+language: python
+jobs:
+    include:
+      - python: 2.7
+      - python: 3.4
+      - python: 3.5
+      - python: 3.6
+      - python: 3.7
+        dist: xenial
+        sudo: true
+      - python: pypy
+      - python: pypy3
 script:
 # Coverage slows this old pypy down to several minutes
   - if [[ $TRAVIS_PYTHON_VERSION == pypy* ]]; then zope-testrunner --test-path=src; fi

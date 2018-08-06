@@ -107,6 +107,18 @@ class TestModule(unittest.TestCase):
         self.assertEqual(mod['app']._module, zope.app)
         self.assertEqual(mod['app']['apidoc']._module, zope.app.apidoc)
 
+    def test_module_with_file_of_none(self):
+        # Sometimes namespace packages have this,
+        # especially on Python 3.7.
+        class Mod(object):
+            __file__ = None
+            __name__ = 'name'
+        Mod.__doc__ = "A module"
+
+        mod = Module(None, 'name', Mod())
+        self.assertEqual(Mod.__doc__, mod.getDocString())
+
+
 class TestZCML(unittest.TestCase):
 
     def setUp(self):
