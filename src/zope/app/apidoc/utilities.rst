@@ -461,7 +461,7 @@ However, lists of this type are not allowed inside the argument list::
   ...     pass
   Traceback (most recent call last):
   ...
-  SyntaxError: invalid syntax
+  SyntaxError: invalid syntax...
 
 Internal assignment is also not legal::
 

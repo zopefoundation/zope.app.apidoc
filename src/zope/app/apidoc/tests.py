@@ -167,7 +167,7 @@ class TestPresentation(unittest.TestCase):
 
 class TestUtilities(unittest.TestCase):
 
-    # All three implementations (Py2, PyPy2, Python 3) do different
+    # All four implementations (Py2, PyPy2, Python 3, PyPy3) do different
     # things with slot method descriptors
     @unittest.skipIf(str is not bytes or hasattr(sys, 'pypy_version_info'),
                      "Only on CPython2")
@@ -175,7 +175,8 @@ class TestUtilities(unittest.TestCase):
         from zope.app.apidoc.utilities import getFunctionSignature
         self.assertEqual("(<unknown>)", getFunctionSignature(object.__init__))
 
-    @unittest.skipIf(str is bytes, "Only on CPython3")
+    @unittest.skipIf(str is bytes or hasattr(sys, 'pypy_version_info'),
+                     "Only on CPython3")
     def test_slot_methods3(self):
         from zope.app.apidoc.utilities import getFunctionSignature
         self.assertEqual(
@@ -183,7 +184,7 @@ class TestUtilities(unittest.TestCase):
             getFunctionSignature(object.__init__))
 
     @unittest.skipIf(str is not bytes or not hasattr(sys, 'pypy_version_info'),
-                     "Only on PyPy")
+                     "Only on PyPy2")
     def test_slot_methodspypy2(self): # pragma: no cover (we don't run coverage on pypy)
         from zope.app.apidoc.utilities import getFunctionSignature
         self.assertEqual("(obj, *args, **keywords)", getFunctionSignature(object.__init__))
@@ -262,10 +263,10 @@ class TestStatic(unittest.TestCase):
                              tmpdir])
         self.assertEqual(9, maker.counter) # our six default images, plus scripts
         self.assertEqual(1, maker.linkErrors)
-    
+
     def test_custom_zcml(self):
         # This test uses the ZCML directive list to determine if a custom ZCML file was successfully loaded
-        
+
         tmpdir = self._tempdir()
         directive = 'fakeModuleImport'
         package_name = 'zope.app.apidoc'
@@ -275,7 +276,7 @@ class TestStatic(unittest.TestCase):
         static.main(['--max-runtime', '10', os.path.join(tmpdir, 'default')])
         with open(os.path.join(tmpdir, 'default', '++apidoc++/ZCML/@@staticmenu.html')) as document:
             self.assertNotIn(directive, document.read())
-        
+
         # Make sure that the directive is listed when we specify our custom ZCML file
         static.main(['--max-runtime', '10', os.path.join(tmpdir, 'custom'), '-c', '%s:%s' % (package_name, zcml_file)])
         with open(os.path.join(tmpdir, 'custom', '++apidoc++/ZCML/@@staticmenu.html')) as document:
@@ -347,13 +348,13 @@ class TestStatic(unittest.TestCase):
 
         with self.assertRaises(SystemExit):
             static._create_arg_parser().parse_args([tmpdir, '--publisher', '---custom-publisher', 'fake'])
-        
+
         with self.assertRaises(SystemExit):
             static._create_arg_parser().parse_args([tmpdir, '-publisher', '--webserver'])
-        
+
         with self.assertRaises(SystemExit):
             static._create_arg_parser().parse_args([tmpdir, '--webserver', '--custom-publisher', 'fake'])
-        
+
 
 # Generally useful classes and functions
 
