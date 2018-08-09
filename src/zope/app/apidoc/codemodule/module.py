@@ -238,20 +238,28 @@ class Module(ReadContainerBase):
         if obj is not default:
             return obj
 
-        # We are actually able to find much more than we promise
-        if self.getPath():
-            path = self.getPath() + '.' + key
-        else:
-            path = key
-        obj = safe_import(path)
 
-        if obj is not None:
-            child = Module(self, key, obj)
-            # But note that we don't hold on to it. This is a transient
-            # object, almost certainly not actually in our namespace.
-            # TODO: Why do we even allow this? It leads to much larger static exports
-            # and things that aren't even reachable from the menus.
-            return child
+        if self.getPath():
+            # Look for a nested module we didn't previously discover.
+
+            # Note that when path is empty, that means we are the global
+            # module (CodeModule) and if we get here, we're asking to find
+            # a module outside of the registered root modules. We don't
+            # look for those things.
+
+            # A common case for this to come up is 'menus' for the 'zope.app'
+            # module. The 'menus' module is dynamically generated through ZCML.
+
+            path = self.getPath() + '.' + key
+
+            obj = safe_import(path)
+
+            if obj is not None:
+                self._children[key] = child = Module(self, key, obj)
+                # Caching this in _children may be pointless, we were
+                # most likely a copy using withParentAndName in the
+                # first place.
+                return child
 
         # Maybe it is a simple attribute of the module
         obj = getattr(self._module, key, default)
@@ -267,6 +275,11 @@ class Module(ReadContainerBase):
         return [(name, value)
                 for name, value in self._children.items()
                 if not name.startswith('_')]
+
+    def __repr__(self):
+        return '<Module %r name %r parent %r at 0x%x>' % (
+            self._module, self.__name__, self.__parent__, id(self)
+        )
 
 class _LazyModule(Module):
 

@@ -75,6 +75,15 @@ class CodeModule(Module):
             if module is not None:
                 self._children[name] = Module(self, name, module)
 
+        # And the builtins are always available, since that's the
+        # most common root module linked to from docs.
+        builtin_module = safe_import('__builtin__') or safe_import('builtins')
+        assert builtin_module is not None
+        builtin_module = Module(self, builtin_module.__name__, builtin_module)
+        # Register with both names for consistency in the tests between Py2 and Py3
+        self._children['builtins'] = self._children['__builtin__'] = builtin_module
+
+
     def withParentAndName(self, parent, name):
         located = type(self)()
         located.__parent__ = parent
@@ -99,9 +108,6 @@ class CodeModule(Module):
 
     def get(self, key, default=None):
         self.setup()
-        # TODO: Do we really like that this allows importing things from
-        # outside our defined namespace? This can lead to a static
-        # export with unreachable objects (not in the menu)
         return super(CodeModule, self).get(key, default)
 
     def items(self):

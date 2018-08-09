@@ -121,6 +121,23 @@ class TestModule(unittest.TestCase):
         self.assertEqual(mod.__doc__, inst.getDocString())
 
 
+class TestCodeModule(unittest.TestCase):
+
+    def test_find_builtins(self):
+        # CodeModule can always find builtins
+        # root modules.
+        import zope.app.apidoc.codemodule.codemodule
+        cm = zope.app.apidoc.codemodule.codemodule.CodeModule()
+        self.assertIsNotNone(cm.get('builtins'))
+
+    def test_not_find_logging(self):
+        # CodeModule other unregistered root modules,
+        # like logging, are not implicitly found.
+        import zope.app.apidoc.codemodule.codemodule
+        cm = zope.app.apidoc.codemodule.codemodule.CodeModule()
+        self.assertIsNone(cm.get('logging'))
+
+
 class TestZCML(unittest.TestCase):
 
     def setUp(self):
