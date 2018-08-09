@@ -5,13 +5,21 @@
 4.0.1 (unreleased)
 ==================
 
+- Add support for Python 3.7.
+
+- Fix ``codemodule.Module`` for modules that have a ``__file__`` of
+  ``None``. This can be the case with namespace packages, especially
+  under Python 3.7. See `issue #17 <https://github.com/zopefoundation/zope.app.apidoc/issues/17>`_.
+
 - Host documentation at https://zopeappapidoc.readthedocs.io/
 
-- Add argument to ``static-apidoc`` for loading a specific ZCML file. To use this feature, the ZCML file you specify needs to 
+- Add argument to ``static-apidoc`` for loading a specific ZCML file. To use this feature, the ZCML file you specify needs to
   establish a working Zope 3 publication environment. The easiest way to do so is to include this line in the ZCML:
-  ``<include package='zope.app.apidoc' file='static.zcml' condition='have static-apidoc' />``. 
-  See `PR #13 <https://github.com/zopefoundation/zope.app.apidoc/pull/13/>`_.
-- Class Finder entries in live apidoc are now displayed on separate lines, like in static exports. 
+  ``<include package='zope.app.apidoc' file='static.zcml' condition='have static-apidoc' />``.
+  See `PR #13
+  <https://github.com/zopefoundation/zope.app.apidoc/pull/13/>`_.
+
+- Class Finder entries in live apidoc are now displayed on separate lines, like in static exports.
   See `PR #14 <https://github.com/zopefoundation/zope.app.apidoc/pull/14/>`_.
 
 4.0.0 (2017-05-25)
