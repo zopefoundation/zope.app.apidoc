@@ -7,6 +7,15 @@
 
 - Add support for Python 3.7.
 
+- The root ``Code`` documentation node no longer allows incidental
+  traversal and documentation of unregistered root modules such as
+  ``re`` and ``logging`` (``builtins`` is special cased). These were
+  not listed in the tables of contents or menus, and mostly served to
+  slow down static exports. To document a root module, explicitly
+  include it in ZCML with ``<apidoc:rootModule module="MODULE" />``.
+  See `issue #20
+  <https://github.com/zopefoundation/zope.app.apidoc/issues/20>`_.
+
 - Fix ``codemodule.Module`` for modules that have a ``__file__`` of
   ``None``. This can be the case with namespace packages, especially
   under Python 3.7. See `issue #17 <https://github.com/zopefoundation/zope.app.apidoc/issues/17>`_.

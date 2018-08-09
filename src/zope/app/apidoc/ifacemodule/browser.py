@@ -287,7 +287,11 @@ class InterfaceBreadCrumbs(object):
         mod_names = iface.__module__.split('.')
         obj = codeModule
         for name in mod_names:
-            obj = traverse(obj, name)
+            try:
+                obj = traverse(obj, name)
+            except KeyError: # pragma: no cover
+                # An unknown (root) module, such as logging
+                continue
             crumbs.append({
                 'name': name,
                 'url': absoluteURL(obj, self.request)

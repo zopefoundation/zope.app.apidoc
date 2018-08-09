@@ -83,6 +83,9 @@ class ClassDetails(object):
             except TraversalError:
                 # If one of the classes is implemented in C, we will not
                 # be able to find it.
+                # Likewise, if we are attempting to get a root module that
+                # was not a registered root, the CodeModule will not be able to
+                # find it either.
                 pass
             info.append({'path': path or None, 'url': url})
         return info
