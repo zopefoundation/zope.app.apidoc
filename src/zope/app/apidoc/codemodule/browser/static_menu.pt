@@ -8,16 +8,15 @@
       <span i18n:translate="">Class Finder:</span>
       <span><i i18n:translate="">(Enter partial Python path)</i></span>
 	</div>
-    <form action="#" method="post" name="searchform" >
-	  <br />
+    <form action="" method="post" name="searchform"
+          onsubmit="simplegetSearchResult(document.searchform.path.value);
+                    return false">
       <input type="text" name="path"
-             style="font-size: 80%; width=95%" />
+             style="font-size: 80%; width: 95%" />
 
 	  <br />
-      <input type="button" name="Find" value="Find"
-	     onClick="
-               javascript:simplegetSearchResult(document.searchform.path.value)"
-             i18n:attributes="value find-button" style="font-size: 80%"/>
+      <input type="submit" name="Find" value="Find"
+             i18n:attributes="value find-button" style="font-size: 80%" />
 
 <!--
       <input type="submit" name="SUBMIT" value="Find"
