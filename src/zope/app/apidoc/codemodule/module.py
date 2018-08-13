@@ -51,7 +51,8 @@ IGNORE_FILES = frozenset((
     'gadfly',
     'setup.py',
     'introspection.py',
-    'Mount.py'
+    'Mount.py',
+    '__main__.py',
 ))
 
 @implementer(ILocation, IModuleDocumentation)
