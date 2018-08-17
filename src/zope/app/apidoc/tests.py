@@ -244,6 +244,55 @@ class TestUtilities(unittest.TestCase):
         text = renderText(self)
         self.assertIn("Failed to render non-text", text)
 
+    def test__qualname__descriptor_path(self):
+        # When the __qualname__ is not a string but a descriptor object,
+        # getPythonPath does not raise an AttributeError
+        # https://github.com/zopefoundation/zope.app.apidoc/issues/25
+
+        from zope.app.apidoc.utilities import getPythonPath
+
+        class O(object):
+            "namespace object"
+
+        o = O()
+        o.__qualname__ = object()
+        o.__name__ = 'foo'
+
+        self.assertEqual('zope.app.apidoc.tests.foo', getPythonPath(o))
+
+    def test__qualname__descriptor_referencable(self):
+        # When the __qualname__ is not a string but a descriptor object,
+        # isReferencable does not raise an AttributeError
+        # https://github.com/zopefoundation/zope.app.apidoc/issues/25
+
+        from zope.app.apidoc import utilities
+
+        # Set up an object that will return itself when looked up
+        # as a module attribute via patching safe_import and when
+        # asked for its __class__ so we can control the __qualname__
+        # on all versions of Python.
+
+        class O(object):
+            "namespace object"
+
+            def __getattribute__(self, name):
+                if name in object.__getattribute__(self, '__dict__'):
+                    return object.__getattribute__(self, '__dict__')[name]
+                return self
+
+        o = O()
+        o.__qualname__ = object()
+
+        def safe_import(path):
+            return o
+
+        old_safe_import = utilities.safe_import
+        utilities.safe_import = safe_import
+        try:
+            self.assertTrue(utilities.isReferencable('a.module.object'))
+        finally:
+            utilities.safe_import = old_safe_import
+
 
 from zope.app.apidoc import static
 

@@ -39,7 +39,12 @@
   See `PR #15 <https://github.com/zopefoundation/zope.app.apidoc/pull/15/>`_.
 
 - ``__main__.py`` files are no longer imported by the code documentation module.
-  See `issue #22 <https://github.com/zopefoundation/zope.app.apidoc/issues/22>`_.
+  See `issue #22
+  <https://github.com/zopefoundation/zope.app.apidoc/issues/22>`_.
+
+- Cython functions registered as adapters on Python 2 no longer break
+  page generation with an ``AttributeError``. See `issue 25
+  <https://github.com/zopefoundation/zope.app.apidoc/issues/25>`_.
 
 4.0.0 (2017-05-25)
 ==================

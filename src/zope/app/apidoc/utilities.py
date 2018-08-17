@@ -130,10 +130,12 @@ def getPythonPath(obj):
     # proxies for this check.
     naked = removeSecurityProxy(obj)
     qname = ''
-    if hasattr(naked, '__qualname__'):
-        # Python 3. This makes unbound functions inside classes
-        # do the same thing as they do an Python 2: return just their
-        # class name.
+    if isinstance(getattr(naked, '__qualname__', None), str):
+        # Python 3 (being sure to protect against non-str __qualname__
+        # that we could get on some versions of Cython. See
+        # https://github.com/zopefoundation/zope.app.apidoc/issues/25).
+        # This makes unbound functions inside classes do the same
+        # thing as they do an Python 2: return just their class name.
         qname = naked.__qualname__
         qname = qname.split('.')[0]
     if hasattr(naked, 'im_class'):
