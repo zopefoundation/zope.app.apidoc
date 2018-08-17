@@ -100,9 +100,8 @@ class Link(object):
         self.originalURL = url
 
         absolute_url = urlparse.urljoin(rootURL, url)
-        self.callableURL = absolute_url
         self.url = completeURL(cleanURL(url))
-        self.absoluteURL = completeURL(cleanURL(self.callableURL))
+        self.absoluteURL = completeURL(cleanURL(absolute_url))
 
     def isLocalURL(self):
         """Determine whether the passed in URL is local and accessible."""
@@ -339,22 +338,22 @@ class StaticAPIDocGenerator(object):
 
         # Retrieve the content
         try:
-            self.browser.open(link.callableURL)
+            self.browser.open(link.absoluteURL)
         except urllib2.HTTPError as error:
             # Something went wrong with retrieving the page.
             self.linkErrors += 1
             self.sendMessage(
-                '%s (%i): %s' % (error.msg, error.code, link.callableURL), 2)
+                '%s (%i): %s' % (error.msg, error.code, link.absoluteURL), 2)
             self.sendMessage('+-> Reference: ' + link.referenceURL, 2)
         except (urllib2.URLError, ValueError):
             # We had a bad URL running the publisher browser
             self.linkErrors += 1
-            self.sendMessage('Bad URL: ' + link.callableURL, 2)
+            self.sendMessage('Bad URL: ' + link.absoluteURL, 2)
             self.sendMessage('+-> Reference: ' + link.referenceURL, 2)
         except BaseException as error:
             # This should never happen outside the debug mode. We really want
             # to catch all exceptions, so that we can investigate them.
-            self.sendMessage('Bad URL: ' + link.callableURL, 2)
+            self.sendMessage('Bad URL: ' + link.absoluteURL, 2)
             self.sendMessage('+-> Reference: ' + link.referenceURL, 2)
             self.otherErrors += 1
 
