@@ -64,18 +64,6 @@ setup(
     description='API Documentation and Component Inspection for Zope 3',
     long_description=(
         read('README.rst')
-        + '\n\n.. contents::\n\n' +
-        read('src', 'zope', 'app', 'apidoc', 'README.rst')
-        + '\n\n' +
-        read('src', 'zope', 'app', 'apidoc', 'component.rst')
-        + '\n\n' +
-        read('src', 'zope', 'app', 'apidoc', 'interface.rst')
-        + '\n\n' +
-        read('src', 'zope', 'app', 'apidoc', 'presentation.rst')
-        + '\n\n' +
-        read('src', 'zope', 'app', 'apidoc', 'utilities.rst')
-        + '\n\n' +
-        read('src', 'zope', 'app', 'apidoc', 'classregistry.rst')
         + '\n\n' +
         read('CHANGES.rst')
     ),
