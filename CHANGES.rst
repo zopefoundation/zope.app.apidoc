@@ -46,6 +46,9 @@
   page generation with an ``AttributeError``. See `issue 25
   <https://github.com/zopefoundation/zope.app.apidoc/issues/25>`_.
 
+- Static exports no longer highlight lines in ZCML files. See `issue #24 
+  <https://github.com/zopefoundation/zope.app.apidoc/issues/24>`_.
+
 4.0.0 (2017-05-25)
 ==================
 
