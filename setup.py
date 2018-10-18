@@ -87,7 +87,7 @@ setup(
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Topic :: Internet :: WWW/HTTP',
-        'Framework :: Zope3',
+        'Framework :: Zope :: 3',
     ],
     url='http://github.com/zopefoundation/zope.app.apidoc',
     packages=find_packages('src'),
