@@ -374,7 +374,7 @@ Let's first create an adapter registration:
   ... class MyResult(object):
   ...    pass
 
-  >>> from zope.component.registry import AdapterRegistration
+  >>> from zope.interface.registry import AdapterRegistration
   >>> reg = AdapterRegistration(None, (IFoo, IBar), IResult, 'FooToResult',
   ...                            MyResult, 'doc info')
 
@@ -428,7 +428,7 @@ This function can also handle subscription registrations, which are pretty
 much like adapter registrations, except that they do not have a name. So let's
 see how the function handles subscriptions:
 
-  >>> from zope.component.registry import HandlerRegistration
+  >>> from zope.interface.registry import HandlerRegistration
   >>> reg = HandlerRegistration(None, (IFoo, IBar), '', MyResult, 'doc info')
 
   >>> pprint(component.getAdapterInfoDictionary(reg))

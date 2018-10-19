@@ -590,7 +590,7 @@ data. First we need to create an object though; let's use a root
 folder:
 
   >>> rootFolder
-  <zope.site.folder.Folder object at ...>
+  <...Folder object at ...>
 
 Now we instantiate the view
 

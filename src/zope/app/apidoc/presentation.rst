@@ -387,7 +387,7 @@ dictionary for the specified registration.
 
 Let's first create a registration:
 
-  >>> from zope.component.registry import AdapterRegistration
+  >>> from zope.interface.registry import AdapterRegistration
   >>> reg = AdapterRegistration(None, (IFile, Interface, IHTTPRequest),
   ...                           Interface, 'view.html', Factory, 'reg info')
 

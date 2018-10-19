@@ -151,7 +151,7 @@ Now the introspector will show the file and allow you to click on it:
               </b>
               <br />
               <a href="++items++file.txt/@@introspector.html">
-                <code>&lt;zope.app.file.file.File object at ...&gt;</code>
+                <code>&lt;...File object at ...&gt;</code>
               </a>
                 (<span>type:</span>
                 <a href="http://localhost/++apidoc++/Code/zope/container/contained/ContainedProxy/index.html">
