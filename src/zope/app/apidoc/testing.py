@@ -14,17 +14,14 @@
 """zope.app.apidoc common test related classes/functions/objects.
 
 """
-
-__docformat__ = "reStructuredText"
-
-import os
-
 import zope.app.apidoc
 from zope.app.wsgi.testlayer import BrowserLayer
 from zope.testbrowser.wsgi import TestBrowserLayer
 
+
 class _BrowserLayer(TestBrowserLayer, BrowserLayer):
     pass
+
 
 APIDocNoDevModeLayer = _BrowserLayer(
     zope.app.apidoc,

@@ -18,6 +18,7 @@ __docformat__ = 'restructuredtext'
 import zope.interface
 import zope.schema
 
+
 class IRootModule(zope.interface.Interface):
     """Declares a new root module to be available for the class documentation
     module."""
@@ -26,7 +27,8 @@ class IRootModule(zope.interface.Interface):
         title=u"Root Module Name",
         description=u"This is the Python path of the new root module.",
         required=True
-        )
+    )
+
 
 class IModuleImport(zope.interface.Interface):
     """Set a flag whether new modules can be imported to the class registry or
@@ -37,4 +39,4 @@ class IModuleImport(zope.interface.Interface):
         description=u"When set to true, new modules will be imported by path.",
         required=True,
         default=False
-        )
+    )

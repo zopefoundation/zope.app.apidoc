@@ -24,13 +24,14 @@ EMPTYPATH = os.path.join(
     os.path.dirname(zope.app.apidoc.bookmodule.__file__),
     'empty.txt')
 
+
 def bookchapter(_context, id, title, doc_path=EMPTYPATH,
                 parent="", resources=None):
     """Register a book chapter"""
 
     _context.action(
-        discriminator = ('apidoc:bookchapter', parent, id),
-        callable = book.registerHelpTopic,
-        args = (parent, id, title, doc_path),
-        kw = {'resources': resources, 'class_': RESTOnlineHelpTopic},
+        discriminator=('apidoc:bookchapter', parent, id),
+        callable=book.registerHelpTopic,
+        args=(parent, id, title, doc_path),
+        kw={'resources': resources, 'class_': RESTOnlineHelpTopic},
         order=999999)

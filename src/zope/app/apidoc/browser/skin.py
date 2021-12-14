@@ -19,8 +19,10 @@ __docformat__ = "reStructuredText"
 from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 
+
 class apidoc(IBrowserRequest):
     """The `apidoc` layer."""
+
 
 class APIDOC(apidoc, IDefaultBrowserLayer):
     """The `APIDOC` skin."""

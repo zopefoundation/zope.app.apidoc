@@ -13,6 +13,10 @@
 ##############################################################################
 """Class Registry
 """
+from zope.testing.cleanup import addCleanUp
+from six import iteritems
+import sys
+import operator
 __docformat__ = 'restructuredtext'
 
 __import_unknown_modules__ = False
@@ -21,11 +25,9 @@ __import_unknown_modules__ = False
 # TODO: List hard-coded for now.
 IGNORE_MODULES = ['twisted']
 
-import operator
-import sys
-from six import iteritems
 
 _pathgetter = operator.itemgetter(0)
+
 
 class ClassRegistry(dict):
     """A simple registry for classes."""
@@ -55,14 +57,16 @@ class ClassRegistry(dict):
                        if issubclass(klass2, klass) and klass2 is not klass),
                       key=_pathgetter)
 
+
 #: The global class registry object. Cleaned up
 #: in tests by :mod:`zope.testing.cleanup`.
 classRegistry = ClassRegistry()
 
+
 def cleanUp():
     classRegistry.clear()
 
-from zope.testing.cleanup import addCleanUp
+
 addCleanUp(cleanUp)
 
 

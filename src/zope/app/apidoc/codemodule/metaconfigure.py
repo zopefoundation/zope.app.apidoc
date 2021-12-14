@@ -22,9 +22,11 @@ from zope.component.zcml import utility
 from zope.app.apidoc import classregistry
 from zope.app.apidoc.codemodule.interfaces import IAPIDocRootModule
 
+
 @implementer(IAPIDocRootModule)
 class RootModule(str):
     pass
+
 
 def rootModule(_context, module):
     """Register a new module as a root module for the class browser."""
@@ -33,6 +35,7 @@ def rootModule(_context, module):
 
 def setModuleImport(flag):
     classregistry.__import_unknown_modules__ = flag
+
 
 def moduleImport(_context, allow):
     """Set the __import_unknown_modules__ flag"""

@@ -20,6 +20,7 @@ import doctest
 from zope.app.apidoc.tests import standard_checker
 from zope.app.apidoc.tests import standard_option_flags
 
+
 def test_suite():
     return unittest.TestSuite((
         doctest.DocTestSuite(
@@ -27,6 +28,3 @@ def test_suite():
             checker=standard_checker(),
             optionflags=standard_option_flags),
     ))
-
-if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')

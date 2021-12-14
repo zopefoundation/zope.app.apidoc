@@ -25,6 +25,7 @@ from zope.app.apidoc.tests import BrowserTestCase
 from zope.app.apidoc.tests import standard_checker
 from zope.app.apidoc.tests import standard_option_flags
 
+
 class APIDocTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
 
@@ -90,7 +91,3 @@ def test_suite():
         nodevmode,
         unittest.defaultTestLoader.loadTestsFromName(__name__),
     ))
-
-
-if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')

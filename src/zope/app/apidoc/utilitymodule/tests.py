@@ -25,6 +25,7 @@ from zope.app.apidoc.tests import BrowserTestCase
 from zope.app.apidoc.tests import LayerDocFileSuite
 import zope.app.apidoc.utilitymodule
 
+
 class UtilityModuleTests(BrowserTestCase):
     """Just a couple of tests ensuring that the templates render."""
 
@@ -82,6 +83,3 @@ def test_suite():
         browser,
         unittest.defaultTestLoader.loadTestsFromName(__name__),
     ))
-
-if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')

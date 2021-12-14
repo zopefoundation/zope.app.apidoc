@@ -29,6 +29,7 @@ from zope.app.apidoc.utilities import getPythonPath, isReferencable
 from zope.app.apidoc.utilities import relativizePath
 from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
 
+
 class Menu(object):
     """Menu View Helper Class"""
     context = None
@@ -49,7 +50,8 @@ class Menu(object):
         obj = node.context
         if isinstance(obj, Directive):
             ns = getParent(obj)
-            apidoc_url = findAPIDocumentationRootURL(self.context, self.request)
+            apidoc_url = findAPIDocumentationRootURL(
+                self.context, self.request)
             return '%s/ZCML/%s/%s/index.html' % (
                 apidoc_url, getName(ns), getName(obj))
         return None
@@ -130,5 +132,5 @@ class DirectiveDetails(object):
                 'schema': details,
                 'handler': {'path': path, 'url': url},
                 'info': info,
-                })
+            })
         return dirs

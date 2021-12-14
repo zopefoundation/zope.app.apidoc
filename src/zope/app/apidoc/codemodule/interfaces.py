@@ -30,6 +30,7 @@ class IAPIDocRootModule(zope.interface.Interface):
     dotted name.
     """
 
+
 class IModuleDocumentation(IReadContainer):
     """Representation of a Python module for documentation.
 
@@ -54,6 +55,7 @@ class IModuleDocumentation(IReadContainer):
         To get the list of interfaces, iterate over the returned value.
         The list will be empty if the module does not provide any interfaces.
         """
+
 
 class IClassDocumentation(zope.interface.Interface):
     """Representation of a class or type for documentation."""
@@ -137,48 +139,49 @@ class IFunctionDocumentation(zope.interface.Interface):
         second is the attribute object itself.
         """
 
+
 class IDirective(zope.interface.Interface):
     """Representation of a directive in IZCMLFile."""
 
     name = zope.schema.Tuple(
         title=u'Name',
         description=u'Name of the directive in the form (Namespace. Name)',
-        required = True)
+        required=True)
 
     schema = zope.schema.Field(
         title=u'Schema',
         description=u'Schema describing the directive attributes',
-        required = True)
+        required=True)
 
     attrs = zope.schema.Field(
         title=u'Attributes',
-        description=u'SAX parser representation of the directive\'s attributes',
-        required = True)
+        description=u"SAX parser representation of the directive's attributes",
+        required=True)
 
     context = zope.schema.Field(
         title=u'Configuration Context',
         description=u'Configuration context while the directive was parsed.',
-        required = True)
+        required=True)
 
     prefixes = zope.schema.Dict(
         title=u'Prefixes',
         description=u'Mapping from namespace URIs to prefixes.',
-        required = True)
+        required=True)
 
     info = zope.schema.Field(
         title=u'Info',
         description=u'ParserInfo objects containing line and column info.',
-        required = True)
+        required=True)
 
     __parent__ = zope.schema.Field(
         title=u'Parent',
         description=u'Parent Directive',
-        required = True)
+        required=True)
 
     subs = zope.schema.List(
         title=u'Sub-Directives',
         description=u'List of sub-directives',
-        required = True)
+        required=True)
 
 
 class IRootDirective(IDirective):
@@ -188,8 +191,8 @@ class IRootDirective(IDirective):
 class IZCMLFile(zope.interface.Interface):
     """ZCML File Object
 
-    This is the main object that will manage the configuration of one particular
-    ZCML configuration file.
+    This is the main object that will manage the configuration of one
+    particular ZCML configuration file.
     """
 
     filename = zope.schema.BytesLine(
@@ -200,9 +203,10 @@ class IZCMLFile(zope.interface.Interface):
     package = zope.schema.BytesLine(
         title=_('Configuration Package'),
         description=_(
-        '''Specifies the package from which the configuration file will be
+            '''Specifies the package from which the configuration file will be
         executed. If you do not specify the package, then the configuration
-        cannot be fully validated and improper ZCML files might be written.'''),
+        cannot be fully validated and improper ZCML files might be written.'''
+        ),
         required=False)
 
     rootElement = zope.schema.Field(

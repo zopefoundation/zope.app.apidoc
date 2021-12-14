@@ -27,6 +27,7 @@ from zope.app.apidoc.utilitymodule.utilitymodule import NONAME, Utility
 from zope.app.apidoc.utilitymodule.utilitymodule import UtilityInterface
 from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
 
+
 class UtilityDetails(object):
     """Utility Details View."""
 
@@ -80,6 +81,7 @@ class Menu(object):
         apidoc_url = findAPIDocumentationRootURL(self.context, self.request)
         if isinstance(obj, Utility):
             iface = getParent(obj)
-            return '%s/Utility/%s/%s/index.html' % (apidoc_url, getName(iface), getName(obj))
+            return '%s/Utility/%s/%s/index.html' % (
+                apidoc_url, getName(iface), getName(obj))
         if isinstance(obj, UtilityInterface):
             return '%s/Interface/%s/index.html' % (apidoc_url, getName(obj))

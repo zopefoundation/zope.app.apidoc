@@ -44,6 +44,7 @@ def _adapterishRegistrations(registry):
         for r in registrations():
             yield r
 
+
 def _ignore_adapter(reg, withViews=False):
     return (
         # Ignore adapters that have no required interfaces
@@ -51,8 +52,10 @@ def _ignore_adapter(reg, withViews=False):
         # Ignore views
         or (not withViews and reg.required[-1].isOrExtends(IRequest)))
 
+
 def getRequiredAdapters(iface, withViews=False):
-    """Get global adapter registrations where the specified interface is required."""
+    """Get global adapter registrations where the specified interface is
+    required."""
     gsm = getGlobalSiteManager()
     for reg in _adapterishRegistrations(gsm):
         if _ignore_adapter(reg, withViews):
@@ -89,7 +92,7 @@ def filterAdapterRegistrations(regs, iface, level=SPECIFIC_INTERFACE_LEVEL):
         if level & EXTENDED_INTERFACE_LEVEL:
             for required_iface in reg.required:
                 if required_iface is not Interface and \
-                       iface.extends(required_iface):
+                        iface.extends(required_iface):
                     yield reg
                     continue
 
@@ -106,14 +109,14 @@ def getClasses(iface):
 
 
 def getFactories(iface):
-    """Return the global factory registrations, who will return objects providing this
-    interface."""
+    """Return the global factory registrations, who will return objects
+    providing this interface."""
     gsm = getGlobalSiteManager()
     for reg in gsm.registeredUtilities():
         if reg.provided is not IFactory:
             continue
         interfaces = reg.component.getInterfaces()
-        if hasattr(interfaces, 'isOrExtends'): # Single interface
+        if hasattr(interfaces, 'isOrExtends'):  # Single interface
             interfaces = (interfaces,)
         for interface in interfaces:
             if interface.isOrExtends(iface):
@@ -154,6 +157,7 @@ def getParserInfoInfoDictionary(info):
             'eline': info.eline,
             'column': info.column,
             'ecolumn': info.ecolumn}
+
 
 def getInterfaceInfoDictionary(iface):
     """Return a PT-friendly info dictionary for an interface."""

@@ -27,6 +27,7 @@ from zope.app.apidoc.classregistry import classRegistry
 
 _pathgetter = operator.itemgetter("path")
 
+
 class Menu(object):
     """Menu for the Class Documentation Module.
 
@@ -41,14 +42,14 @@ class Menu(object):
         """Find the classes that match a partial path.
 
         Examples::
-          >>> from zope.app.apidoc.codemodule.class_ import Class
-
           Setup the view.
 
           >>> from zope.app.apidoc.codemodule.browser.menu import Menu
           >>> from zope.publisher.browser import TestRequest
           >>> menu = Menu()
-          >>> menu.context = apidoc['Code']
+
+          (In the following line flake8 sees a NameError, but the test passes.)
+          >>> menu.context = apidoc['Code']  # noqa: F821 undefined name
 
           Testing the method with various inputs.
 
@@ -58,15 +59,14 @@ class Menu(object):
           >>> from pprint import pprint
           >>> pprint(info)
           [{'path': 'zope.app.apidoc.codemodule.browser.menu.Men',
-            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/browser/menu/Menu/'},
+            'url': 'http://.../zope/app/apidoc/codemodule/browser/menu/Menu/'},
            {'path': 'zope.app.apidoc.ifacemodule.menu.Men',
-            'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/ifacemodule/menu/Menu/'}...]
+            'url': 'http://...Code/zope/app/apidoc/ifacemodule/menu/Menu/'}...]
 
           >>> menu.request = TestRequest(form={'path': 'illegal name'})
           >>> info = menu.findClasses()
           >>> pprint(info)
           []
-
         """
         path = self.request.get('path', None)
         if path is None:
@@ -85,7 +85,6 @@ class Menu(object):
         return results
 
     def findAllClasses(self):
-
         """Find all classes
 
         Examples::
@@ -95,11 +94,14 @@ class Menu(object):
           >>> from zope.app.apidoc.codemodule.browser.menu import Menu
           >>> from zope.publisher.browser import TestRequest
           >>> menu = Menu()
-          >>> menu.context = apidoc['Code']
+
+          (In the following line flake8 sees a NameError, but the test passes.)
+          >>> menu.context = apidoc['Code']  # noqa: F821 undefined name
 
           Make sure we're registered.
 
-          >>> traverse(menu.context, 'zope/app/apidoc/codemodule/browser/menu/Menu')
+          >>> traverse(menu.context,
+          ...          'zope/app/apidoc/codemodule/browser/menu/Menu')
           <zope.app.apidoc.codemodule.class_.Class object at ...>
 
           Testing the method with various inputs.
@@ -107,16 +109,19 @@ class Menu(object):
           >>> menu.request = TestRequest(form={'path': 'Foo'})
           >>> info = menu.findAllClasses()
 
-          >>> info = [x for x in info if x['path'] == 'zope.app.apidoc.codemodule.browser.menu.Menu']
+          >>> info = [x for x in info
+          ...         if x['path']
+          ...         == 'zope.app.apidoc.codemodule.browser.menu.Menu']
           >>> len(info)
           1
         """
         classModule = findAPIDocumentationRoot(self.context)['Code']
-        removeSecurityProxy(classModule).setup() # run setup if not yet done
+        removeSecurityProxy(classModule).setup()  # run setup if not yet done
         results = []
         counter = 0
 
-        for p in list(classRegistry): # Traversing can potentially change the registry
+        # Traversing can potentially change the registry:
+        for p in list(classRegistry):
             klass = traverse(classModule, p.replace('.', '/'))
             results.append({
                 'path': p,

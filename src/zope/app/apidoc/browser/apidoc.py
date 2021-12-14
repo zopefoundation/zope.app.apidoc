@@ -20,6 +20,7 @@ from zope.i18n import translate
 from zope.security.proxy import removeSecurityProxy
 from zope.app.apidoc.utilities import renderText
 
+
 class APIDocumentationView(object):
     """View for the API Documentation"""
 

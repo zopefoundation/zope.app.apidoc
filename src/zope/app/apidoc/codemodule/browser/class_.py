@@ -37,12 +37,14 @@ def getTypeLink(type, _NoneType=type(None)):
     path = getPythonPath(type)
     return path.replace('.', '/') if isReferencable(path) else None
 
+
 def getInterfaceInfo(iface):
     if iface is None:
         return None
     path = getPythonPath(iface)
     return {'path': path,
             'url': isReferencable(path) and path or None}
+
 
 class ClassDetails(object):
     """Represents the details of the class."""
@@ -53,7 +55,6 @@ class ClassDetails(object):
     def getBases(self):
         """Get all bases of this class."""
         return self._listClasses(self.context.getBases())
-
 
     def getKnownSubclasses(self):
         """Get all known subclasses of this class."""
@@ -90,18 +91,15 @@ class ClassDetails(object):
             info.append({'path': path or None, 'url': url})
         return info
 
-
     def getBaseURL(self):
         """Return the URL for the API Documentation Tool."""
         m = self._getCodeModule()
         return absoluteURL(getParent(m), self.request)
 
-
     def getInterfaces(self):
         """Get all implemented interfaces (as paths) of this class."""
         return [getInterfaceInfo(iface)
                 for iface in self.context.getInterfaces()]
-
 
     def getAttributes(self):
         """Get all attributes of this class."""
@@ -121,7 +119,6 @@ class ClassDetails(object):
             entry.update(getPermissionIds(name, klass.getSecurityChecker()))
             attrs.append(entry)
         return attrs
-
 
     def getMethods(self):
         """Get all methods of this class."""
@@ -150,7 +147,6 @@ class ClassDetails(object):
             entry.update(getPermissionIds(name, klass.getSecurityChecker()))
             methods.append(entry)
         return methods
-
 
     def getDoc(self):
         """Get the doc string of the class STX formatted."""

@@ -67,6 +67,7 @@ class InterfaceModuleTests(BrowserTestCase):
                                  # This page is slow, only do a few
                                  max_links=5)
 
+
 def test_suite():
 
     readme = LayerDocFileSuite(
@@ -82,6 +83,3 @@ def test_suite():
         browser,
         unittest.defaultTestLoader.loadTestsFromName(__name__)
     ))
-
-if __name__ == '__main__':
-    unittest.main(defaultTest="test_suite")

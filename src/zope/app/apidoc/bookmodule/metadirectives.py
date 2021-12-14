@@ -20,6 +20,7 @@ from zope.configuration.fields import Path, MessageID, Tokens
 from zope.interface import Interface
 from zope.schema import NativeStringLine, TextLine
 
+
 class IBookChapterDirective(Interface):
     """Register a new Book Chapter"""
 
@@ -52,4 +53,4 @@ class IBookChapterDirective(Interface):
         """,
         value_type=TextLine(),
         required=False
-        )
+    )

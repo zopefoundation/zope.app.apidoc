@@ -14,6 +14,7 @@
 """Tests for the Interface Documentation Module
 
 """
+from zope.app.apidoc import static
 import doctest
 import os
 import re
@@ -39,6 +40,7 @@ from zope.traversing.interfaces import IContainmentRoot
 
 _old_appsetup_context = None
 
+
 def _setUp_AppSetup(filename='configure.zcml', execute=False):
     config_file = os.path.join(
         os.path.dirname(zope.app.apidoc.__file__), filename)
@@ -49,11 +51,11 @@ def _setUp_AppSetup(filename='configure.zcml', execute=False):
     zope.app.appsetup.appsetup.__config_context = xmlconfig.file(
         config_file, zope.app.apidoc, execute=execute)
 
+
 def _tearDown_AppSetup():
     global _old_appsetup_context
     zope.app.appsetup.appsetup.__config_context = _old_appsetup_context
     _old_appsetup_context = None
-
 
 
 def _setUp_LayerPlace(test):
@@ -69,13 +71,13 @@ def _setUp_LayerPlace(test):
     _old_appsetup_context = zope.app.appsetup.appsetup.getConfigContext()
     zope.app.appsetup.appsetup.__config_context = APIDocLayer.context
 
-
     # Set up apidoc module
     test.globs['apidoc'] = APIDocumentation(root_folder, '++apidoc++')
     test.globs['rootFolder'] = root_folder
 
     from zope.app.apidoc.codemodule import codemodule
     codemodule._cleanUp()
+
 
 def _tearDown_LayerPlace(test):
     _tearDown_AppSetup()
@@ -93,7 +95,6 @@ class BrowserTestCase(unittest.TestCase):
     def tearDown(self):
         _tearDown_AppSetup()
         super(BrowserTestCase, self).tearDown()
-
 
     def checkForBrokenLinks(self, orig_response, path,
                             basic=None, max_links=None):
@@ -136,7 +137,8 @@ class BrowserTestCase(unittest.TestCase):
             response = self._testapp.post(path, params=form,
                                           extra_environ=env, headers=headers)
         else:
-            response = self._testapp.get(path, extra_environ=env, headers=headers)
+            response = self._testapp.get(
+                path, extra_environ=env, headers=headers)
 
         response.getBody = lambda: response.unicode_normal_body
         response.getStatus = lambda: response.status_int
@@ -144,11 +146,11 @@ class BrowserTestCase(unittest.TestCase):
         return response
 
 
-
 def setUp(test):
     zope.component.testing.setUp()
     xmlconfig.file('configure.zcml', zope.app.renderer)
     zope.testing.module.setUp(test, 'zope.app.apidoc.doctest')
+
 
 def tearDown(test):
     zope.component.testing.tearDown()
@@ -164,6 +166,7 @@ class TestPresentation(unittest.TestCase):
 
         data = getViewFactoryData(factory)
         self.assertEqual(data['resource'], factory.rname)
+
 
 class TestUtilities(unittest.TestCase):
 
@@ -185,10 +188,12 @@ class TestUtilities(unittest.TestCase):
 
     @unittest.skipIf(str is not bytes or not hasattr(sys, 'pypy_version_info'),
                      "Only on PyPy2")
-    def test_slot_methodspypy2(self): # pragma: no cover (we don't run coverage on pypy)
+    def test_slot_methodspypy2(self):  # pragma: no cover (no coverage on pypy)
         from zope.app.apidoc.utilities import getFunctionSignature
-        self.assertEqual("(obj, *args, **keywords)", getFunctionSignature(object.__init__))
-
+        self.assertEqual(
+            "(obj, *args, **keywords)",
+            getFunctionSignature(
+                object.__init__))
 
     @unittest.skipUnless(str is bytes, "Only on py2")
     def test_unpack_methods(self):
@@ -204,19 +209,23 @@ class TestUtilities(unittest.TestCase):
         from zope.app.apidoc.utilities import _simpleGetFunctionSignature
         from socket import socket
 
-
         try:
             simple_sig = _simpleGetFunctionSignature(socket.makefile)
         except ValueError:
-            # On Python 3, socket.makefile has keyword args, which aren't handled
-            # by the simple function
-            self.assertGreater(sys.version_info, (3,0))
+            # On Python 3, socket.makefile has keyword args, which aren't
+            # handled by the simple function
+            self.assertGreater(sys.version_info, (3, 0))
             self.assertEqual(
-                "(self, mode='r', buffering=None, *, encoding=None, errors=None, newline=None)",
-                getFunctionSignature(socket.makefile))
+                "(self, mode='r', buffering=None, *, encoding=None,"
+                " errors=None, newline=None)",
+                getFunctionSignature(
+                    socket.makefile))
             self.assertEqual(
-                "(mode='r', buffering=None, *, encoding=None, errors=None, newline=None)",
-                getFunctionSignature(socket.makefile, ignore_self=True))
+                "(mode='r', buffering=None, *, encoding=None, errors=None,"
+                " newline=None)",
+                getFunctionSignature(
+                    socket.makefile,
+                    ignore_self=True))
             # Extra coverage to make sure the alternate branches are taken
             self.assertEqual(
                 '()',
@@ -225,7 +234,8 @@ class TestUtilities(unittest.TestCase):
                 '(self)',
                 # Note the difference with Python 2; this is what ignore_self
                 # is for.
-                getFunctionSignature(TestUtilities.test_keyword_only_arguments))
+                getFunctionSignature(
+                    TestUtilities.test_keyword_only_arguments))
         else:
             self.assertEqual(simple_sig, "(mode='r', bufsize=-1)")
             # Extra coverage to make sure the alternate branches are taken
@@ -233,8 +243,8 @@ class TestUtilities(unittest.TestCase):
                 '()',
                 getFunctionSignature(self.test_keyword_only_arguments))
             self.assertEqual(
-                '()',
-                getFunctionSignature(TestUtilities.test_keyword_only_arguments))
+                '()', getFunctionSignature(
+                    TestUtilities.test_keyword_only_arguments))
 
     def test_renderText_non_text(self):
         # If we pass something that isn't actually text, we get a
@@ -251,10 +261,10 @@ class TestUtilities(unittest.TestCase):
 
         from zope.app.apidoc.utilities import getPythonPath
 
-        class O(object):
+        class Obj(object):
             "namespace object"
 
-        o = O()
+        o = Obj()
         o.__qualname__ = object()
         o.__name__ = 'foo'
 
@@ -272,7 +282,7 @@ class TestUtilities(unittest.TestCase):
         # asked for its __class__ so we can control the __qualname__
         # on all versions of Python.
 
-        class O(object):
+        class Obj(object):
             "namespace object"
 
             def __getattribute__(self, name):
@@ -280,7 +290,7 @@ class TestUtilities(unittest.TestCase):
                     return object.__getattribute__(self, '__dict__')[name]
                 return self
 
-        o = O()
+        o = Obj()
         o.__qualname__ = object()
 
         def safe_import(path):
@@ -293,8 +303,6 @@ class TestUtilities(unittest.TestCase):
         finally:
             utilities.safe_import = old_safe_import
 
-
-from zope.app.apidoc import static
 
 class TestStatic(unittest.TestCase):
 
@@ -316,14 +324,16 @@ class TestStatic(unittest.TestCase):
         tmpdir = self._tempdir()
         # Fetch a 404 page
         bad_url = '/++apidoc++/Code/zope/formlib/form/PageEditForm/index.html'
-        maker = static.main(['--max-runtime', '10', # allow for old slow pypy
+        maker = static.main(['--max-runtime', '10',  # allow for old slow pypy
                              '--startpage', bad_url,
                              tmpdir])
-        self.assertEqual(9, maker.counter) # our six default images, plus scripts
+        # our six default images, plus scripts
+        self.assertEqual(9, maker.counter)
         self.assertEqual(1, maker.linkErrors)
 
     def test_custom_zcml(self):
-        # This test uses the ZCML directive list to determine if a custom ZCML file was successfully loaded
+        # This test uses the ZCML directive list to determine if a custom ZCML
+        # file was successfully loaded
 
         tmpdir = self._tempdir()
         directive = 'fakeModuleImport'
@@ -332,13 +342,23 @@ class TestStatic(unittest.TestCase):
 
         # Make sure the directive isn't listed by default
         static.main(['--max-runtime', '10', os.path.join(tmpdir, 'default')])
-        with open(os.path.join(tmpdir, 'default', '++apidoc++/ZCML/@@staticmenu.html')) as document:
+        path = os.path.join(
+            tmpdir, 'default', '++apidoc++/ZCML/@@staticmenu.html')
+        with open(path) as document:
             self.assertNotIn(directive, document.read())
 
-        # Make sure that the directive is listed when we specify our custom ZCML file
-        static.main(['--max-runtime', '10', os.path.join(tmpdir, 'custom'), '-c', '%s:%s' % (package_name, zcml_file)])
-        with open(os.path.join(tmpdir, 'custom', '++apidoc++/ZCML/@@staticmenu.html')) as document:
-            self.assertIn(directive, document.read(), "The %s directive isn't listed in zcmlmodule" % directive)
+        # Make sure that the directive is listed when we specify our custom
+        # ZCML file
+        static.main(['--max-runtime', '10', os.path.join(tmpdir,
+                    'custom'), '-c', '%s:%s' % (package_name, zcml_file)])
+        path = os.path.join(
+            tmpdir, 'custom', '++apidoc++/ZCML/@@staticmenu.html')
+        with open(path) as document:
+            self.assertIn(
+                directive,
+                document.read(),
+                "The %s directive isn't listed in zcmlmodule" %
+                directive)
 
     def test_processLink_errors(self):
         tmpdir = self._tempdir()
@@ -347,6 +367,7 @@ class TestStatic(unittest.TestCase):
             error_kind = ValueError
             contents = ''
             isHtml = False
+
             def open(self, url):
                 raise self.error_kind(url)
 
@@ -360,17 +381,18 @@ class TestStatic(unittest.TestCase):
                 super(ErrorGenerator, self).processLink(link)
                 self.browser = b
 
-        maker = static.main(['--max-runtime', '10', os.path.join(tmpdir, 'dir')],
-                            generator=ErrorGenerator)
+        maker = static.main(
+            ['--max-runtime', '10', os.path.join(tmpdir, 'dir')],
+            generator=ErrorGenerator)
         self.assertEqual(7, maker.counter)
         self.assertEqual(7, maker.linkErrors)
-
 
         class BadErrorGenerator(ErrorGenerator):
             error_kind = Exception
 
-        maker = static.main(['--max-runtime', '10', os.path.join(tmpdir, 'dir')],
-                            generator=BadErrorGenerator)
+        maker = static.main(
+            ['--max-runtime', '10', os.path.join(tmpdir, 'dir')],
+            generator=BadErrorGenerator)
         self.assertEqual(7, maker.counter)
         self.assertEqual(0, maker.linkErrors)
         self.assertEqual(7, maker.otherErrors)
@@ -387,7 +409,10 @@ class TestStatic(unittest.TestCase):
 
         self.assertFalse(static.Link('javascript:alert()', '').isLocalURL())
         self.assertFalse(static.Link('mailto:person@company', '').isLocalURL())
-        self.assertFalse(static.Link("http://external.site/", "http://localhost/").isLocalURL())
+        self.assertFalse(
+            static.Link(
+                "http://external.site/",
+                "http://localhost/").isLocalURL())
 
     def test_OnlineBrowser(self):
         browser = static.OnlineBrowser.begin()
@@ -405,13 +430,16 @@ class TestStatic(unittest.TestCase):
         tmpdir = self._tempdir()
 
         with self.assertRaises(SystemExit):
-            static._create_arg_parser().parse_args([tmpdir, '--publisher', '---custom-publisher', 'fake'])
+            static._create_arg_parser().parse_args(
+                [tmpdir, '--publisher', '---custom-publisher', 'fake'])
 
         with self.assertRaises(SystemExit):
-            static._create_arg_parser().parse_args([tmpdir, '-publisher', '--webserver'])
+            static._create_arg_parser().parse_args(
+                [tmpdir, '-publisher', '--webserver'])
 
         with self.assertRaises(SystemExit):
-            static._create_arg_parser().parse_args([tmpdir, '--webserver', '--custom-publisher', 'fake'])
+            static._create_arg_parser().parse_args(
+                [tmpdir, '--webserver', '--custom-publisher', 'fake'])
 
 
 # Generally useful classes and functions
@@ -421,6 +449,7 @@ class Root(object):
 
     __parent__ = None
     __name__ = ''
+
 
 standard_checker_patterns = (
     (re.compile(r"u('[^']*')"), r"\1"),
@@ -434,12 +463,16 @@ standard_checker_patterns = (
      r"<function \1 at 0xabc>")
 )
 
+
 def standard_checker(*extra_patterns):
-    return renormalizing.RENormalizing(standard_checker_patterns + extra_patterns)
+    return renormalizing.RENormalizing(
+        standard_checker_patterns + extra_patterns)
+
 
 standard_option_flags = (doctest.NORMALIZE_WHITESPACE
                          | doctest.ELLIPSIS
                          | renormalizing.IGNORE_EXCEPTION_MODULE_IN_PYTHON2)
+
 
 def LayerDocFileSuite(filename, package):
     test = doctest.DocFileSuite(
@@ -452,6 +485,7 @@ def LayerDocFileSuite(filename, package):
     test.layer = APIDocLayer
     return test
 
+
 def LayerDocTestSuite(modulename):
     test = doctest.DocTestSuite(
         modulename,
@@ -461,6 +495,7 @@ def LayerDocTestSuite(modulename):
         optionflags=standard_option_flags)
     test.layer = APIDocLayer
     return test
+
 
 def test_suite():
     checker = standard_checker()
@@ -486,6 +521,3 @@ def test_suite():
         file_test('utilities.rst'),
         unittest.defaultTestLoader.loadTestsFromName(__name__),
     ))
-
-if __name__ == '__main__':
-    unittest.main(defaultTest="test_suite")

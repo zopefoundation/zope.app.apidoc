@@ -37,17 +37,17 @@ class Function(object):
             self.__doc__ = doc
 
     def getPath(self):
-        """See :class:`~zope.app.apidoc.codemodule.interfaces.IFunctionDocumentation`."""
+        """See :class:`~zope.app.apidoc.codemodule.interfaces.IFunctionDocumentation`."""  # noqa: E501 line too long
         return self.__parent__.getPath() + '.' + self.__name__
 
     def getDocString(self):
-        """See :class:`~zope.app.apidoc.codemodule.interfaces.IFunctionDocumentation`."""
+        """See :class:`~zope.app.apidoc.codemodule.interfaces.IFunctionDocumentation`."""  # noqa: E501 line too long
         return self.__doc__
 
     def getSignature(self):
-        """See :class:`~zope.app.apidoc.codemodule.interfaces.IFunctionDocumentation`."""
+        """See :class:`~zope.app.apidoc.codemodule.interfaces.IFunctionDocumentation`."""  # noqa: E501 line too long
         return getFunctionSignature(self.__func)
 
     def getAttributes(self):
-        """See :class:`~zope.app.apidoc.codemodule.interfaces.IFunctionDocumentation`."""
+        """See :class:`~zope.app.apidoc.codemodule.interfaces.IFunctionDocumentation`."""  # noqa: E501 line too long
         return list(self.__func.__dict__.items())

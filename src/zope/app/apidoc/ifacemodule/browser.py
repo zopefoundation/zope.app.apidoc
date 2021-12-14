@@ -36,6 +36,7 @@ from zope.app.apidoc import interface, component, presentation
 from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
 from zope.app.apidoc.browser.utilities import findAPIDocumentationRoot
 
+
 class InterfaceDetails(BrowserView):
     """View class for an Interface."""
 
@@ -133,7 +134,7 @@ class InterfaceDetails(BrowserView):
         # returned.
         iface = removeAllProxies(self.context)
         # Make sure that the required fields are shown first
-        sorter = lambda x: (not x[1].required, x[0].lower())
+        def sorter(x): return (not x[1].required, x[0].lower())
         return [interface.getFieldInfoDictionary(field)
                 for name, field in interface.getFieldsInOrder(iface, sorter)]
 
@@ -147,7 +148,7 @@ class InterfaceDetails(BrowserView):
             regs, iface,
             level=component.SPECIFIC_INTERFACE_LEVEL)
         regs = [component.getAdapterInfoDictionary(reg)
-                  for reg in regs]
+                for reg in regs]
         return regs
 
     def getExtendedRequiredAdapters(self):
@@ -160,7 +161,7 @@ class InterfaceDetails(BrowserView):
             regs, iface,
             level=component.EXTENDED_INTERFACE_LEVEL)
         regs = [component.getAdapterInfoDictionary(reg)
-                  for reg in regs]
+                for reg in regs]
         return regs
 
     def getGenericRequiredAdapters(self):
@@ -221,7 +222,6 @@ class InterfaceDetails(BrowserView):
         return [component.getUtilityInfoDictionary(reg)
                 for reg in regs]
 
-
     def _prepareViews(self):
         views = {IBrowserRequest: [], IXMLRPCRequest: [], IHTTPRequest: [],
                  IFTPRequest: [], None: []}
@@ -245,14 +245,14 @@ class InterfaceDetails(BrowserView):
                 infos = [presentation.getViewInfoDictionary(reg)
                          for reg in regs]
 
-                setattr(self, level+type_map[type]+'Views', infos)
+                setattr(self, level + type_map[type] + 'Views', infos)
 
     def getViewClassTitles(self):
         return {
             "specific": _("Specific views"),
             "extended": _("Extended views"),
             "generic": _("Generic views"),
-            }
+        }
 
     def getViewTypeTitles(self):
         return {
@@ -261,7 +261,7 @@ class InterfaceDetails(BrowserView):
             "http": _("HTTP"),
             "ftp": _("FTP"),
             "other": _("Other"),
-            }
+        }
 
 
 class InterfaceBreadCrumbs(object):
@@ -289,7 +289,7 @@ class InterfaceBreadCrumbs(object):
         for name in mod_names:
             try:
                 obj = traverse(obj, name)
-            except KeyError: # pragma: no cover
+            except KeyError:  # pragma: no cover
                 # An unknown (root) module, such as logging
                 continue
             crumbs.append({

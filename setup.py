@@ -22,9 +22,11 @@
 import os
 from setuptools import setup, find_packages
 
+
 def read(*rnames):
     with open(os.path.join(os.path.dirname(__file__), *rnames)) as f:
         return f.read()
+
 
 tests_require = [
     'zope.app.authentication >= 4.0.0',
@@ -50,7 +52,7 @@ tests_require = [
     # need to be loaded to avoid errors running the
     # full static export.
     'zope.app.component[test]',
-    'zope.app.form[test]', # zc.sourcefactory
+    'zope.app.form[test]',  # zc.sourcefactory
     'zope.app.schema[test]',
 ]
 
@@ -58,7 +60,7 @@ static_requires = tests_require
 
 setup(
     name='zope.app.apidoc',
-    version='4.2.1.dev0',
+    version='4.3.0.dev0',
     author='Zope Corporation and Contributors',
     author_email='zope-dev@zope.org',
     description='API Documentation and Component Inspection for Zope 3',
@@ -78,10 +80,12 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Natural Language :: English',
@@ -128,6 +132,12 @@ setup(
     extras_require={
         'test': tests_require,
         'static': static_requires,
+        'docs': [
+            'repoze.sphinx.autointerface',
+            'sphinx',
+            'sphinx_rtd_theme',
+            'sphinxcontrib-programoutput >= 0.11',
+        ]
     },
     entry_points="""
         [console_scripts]

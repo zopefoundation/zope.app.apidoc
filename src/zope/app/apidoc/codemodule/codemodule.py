@@ -17,6 +17,7 @@ This module is able to take a dotted name of any class and display
 documentation for it.
 
 """
+from zope.testing.cleanup import addCleanUp
 __docformat__ = 'restructuredtext'
 
 import zope.component
@@ -80,9 +81,10 @@ class CodeModule(Module):
         builtin_module = safe_import('__builtin__') or safe_import('builtins')
         assert builtin_module is not None
         builtin_module = Module(self, builtin_module.__name__, builtin_module)
-        # Register with both names for consistency in the tests between Py2 and Py3
-        self._children['builtins'] = self._children['__builtin__'] = builtin_module
-
+        # Register with both names for consistency in the tests between Py2 and
+        # Py3
+        self._children['builtins'] = self._children['__builtin__'] = (
+            builtin_module)
 
     def withParentAndName(self, parent, name):
         located = type(self)()
@@ -114,11 +116,13 @@ class CodeModule(Module):
         self.setup()
         return super(CodeModule, self).items()
 
+
 def _cleanUp():
     from zope.component import getGlobalSiteManager
-    code = getGlobalSiteManager().queryUtility(IDocumentationModule, name='Code')
+    code = getGlobalSiteManager().queryUtility(
+        IDocumentationModule, name='Code')
     if code is not None:
         code.__init__()
 
-from zope.testing.cleanup import addCleanUp
+
 addCleanUp(_cleanUp)
