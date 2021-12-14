@@ -21,6 +21,7 @@ class APIDocStub(object):
     """A stub to use as display context when APIDoc is disabled.
     """
 
+
 class apidocNamespace(object):
     """Used to traverse to an API Documentation when it is disabled."""
 

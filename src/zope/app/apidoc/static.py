@@ -48,10 +48,11 @@ urltags = {
     "script": "src",
 }
 
+
 def getMaxWidth():
     try:
         import curses
-    except ImportError: # pragma: no cover
+    except ImportError:  # pragma: no cover
         pass
     else:
         try:
@@ -59,9 +60,10 @@ def getMaxWidth():
             cols = curses.tigetnum('cols')
             if cols > 0:
                 return cols
-        except curses.error: # pragma: no cover
+        except curses.error:  # pragma: no cover
             pass
-    return 80 # pragma: no cover
+    return 80  # pragma: no cover
+
 
 def cleanURL(url):
     """Clean a URL from parameters."""
@@ -76,7 +78,6 @@ def cleanURL(url):
     fragments[2].replace('//', '/')
     norm = urlparse.urlunparse(fragments)
     return norm
-
 
 
 def completeURL(url):
@@ -113,7 +114,7 @@ class Link(object):
             return False
         # External Link
         if self.url.startswith('http://') and \
-               not self.url.startswith(self.rootURL):
+                not self.url.startswith(self.rootURL):
             return False
         return True
 
@@ -160,7 +161,6 @@ class PublisherBrowser(zope.testbrowser.wsgi.Browser):
 
     @classmethod
     def begin(cls):
-        from zope.app.apidoc.testing import APIDocLayer
         from zope.app.appsetup import appsetup
 
         if cls.target_package:
@@ -174,6 +174,8 @@ class PublisherBrowser(zope.testbrowser.wsgi.Browser):
                 features=['static-apidoc'],
                 allowTearDown=True
             )
+        else:
+            from zope.app.apidoc.testing import APIDocLayer
 
         APIDocLayer.setUp()
         APIDocLayer.testSetUp()
@@ -212,6 +214,7 @@ class ArbitraryLink(zope.testbrowser.browser.Link):
         relurl = self._link[self.attr_name]
         return self.browser._absoluteUrl(relurl)
 
+
 class StaticAPIDocGenerator(object):
     """Static API doc Maker"""
 
@@ -228,7 +231,7 @@ class StaticAPIDocGenerator(object):
         self.options = options
         self.linkQueue = []
 
-        if self.options.ret_kind == 'webserver': # pragma: no cover
+        if self.options.ret_kind == 'webserver':  # pragma: no cover
             self.browser = OnlineBrowser
             self.base_url = self.options.url
             if self.base_url[-1] != '/':
@@ -237,7 +240,8 @@ class StaticAPIDocGenerator(object):
             self.browser = PublisherBrowser
             self.base_url = 'http://localhost/'
 
-            if self.options.ret_kind != 'publisher': # the.package[:the_file.zcml]
+            # the.package[:the_file.zcml]
+            if self.options.ret_kind != 'publisher':
                 target = self.options.ret_kind.split(':', 1)
                 self.browser.target_package = target[0]
                 if len(target) == 2 and target[1]:
@@ -264,15 +268,16 @@ class StaticAPIDocGenerator(object):
         self._old_ignore_modules = classregistry.IGNORE_MODULES
         classregistry.IGNORE_MODULES = set(self.options.ignore_modules)
 
-        self._old_import_unknown_modules = classregistry.__import_unknown_modules__
+        self._old_import_unknown_modules = (
+            classregistry.__import_unknown_modules__)
         if self.options.import_unknown_modules:
             classregistry.__import_unknown_modules__ = True
-
 
     def __exit__(self, *args):
         self.browser.end()
         classregistry.IGNORE_MODULES = self._old_ignore_modules
-        classregistry.__import_unknown_modules__ = self._old_import_unknown_modules
+        classregistry.__import_unknown_modules__ = (
+            self._old_import_unknown_modules)
 
     def retrieve(self):
         """Start the retrieval of the apidoc."""
@@ -286,14 +291,14 @@ class StaticAPIDocGenerator(object):
         # Turn off deprecation warnings
         warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-
         # Work through all links until there are no more to work on.
         self.sendMessage('Starting retrieval.')
         while self.linkQueue:
             link = self.linkQueue.pop()
-            # Sometimes things are placed many times into the queue, for example
-            # if the same link appears twice in a page. In those cases, we can
-            # check at this point whether the URL has been already handled.
+            # Sometimes things are placed many times into the queue, for
+            # example if the same link appears twice in a page. In those cases,
+            # we can check at this point whether the URL has been already
+            # handled.
             if link.absoluteURL not in self.visited:
                 self.showProgress(link)
                 self.processLink(link)
@@ -302,7 +307,7 @@ class StaticAPIDocGenerator(object):
 
         t1 = time.time()
 
-        self.sendMessage("Run time: %.3f sec" % (t1-t0))
+        self.sendMessage("Run time: %.3f sec" % (t1 - t0))
         self.sendMessage("Links: %i" % self.counter)
         if self.linkQueue:
             self.sendMessage("Unprocessed links: %d" % len(self.linkQueue))
@@ -322,7 +327,7 @@ class StaticAPIDocGenerator(object):
         if self.options.verbosity >= verbosity:
             if self.needNewLine:
                 sys.stdout.write('\n')
-            sys.stdout.write(VERBOSITY_MAP.get(verbosity, 'INFO')+': ')
+            sys.stdout.write(VERBOSITY_MAP.get(verbosity, 'INFO') + ': ')
             sys.stdout.write(msg)
             sys.stdout.write('\n')
             sys.stdout.flush()
@@ -350,15 +355,16 @@ class StaticAPIDocGenerator(object):
             self.linkErrors += 1
             self.sendMessage('Bad URL: ' + link.absoluteURL, 2)
             self.sendMessage('+-> Reference: ' + link.referenceURL, 2)
-        except BaseException as error:
+        except BaseException:
             # This should never happen outside the debug mode. We really want
             # to catch all exceptions, so that we can investigate them.
             self.sendMessage('Bad URL: ' + link.absoluteURL, 2)
             self.sendMessage('+-> Reference: ' + link.referenceURL, 2)
             self.otherErrors += 1
 
-            if self.options.debug: # pragma: no cover
-                import pdb; pdb.set_trace()
+            if self.options.debug:  # pragma: no cover
+                import pdb
+                pdb.set_trace()
             return
 
         self._handleOneResponse(link)
@@ -389,8 +395,8 @@ class StaticAPIDocGenerator(object):
             return contents
 
         url = link.absoluteURL
-        html = self.browser._response.html # pylint:disable=protected-access
-        baseUrl = self.browser._getBaseUrl() # pylint:disable=protected-access
+        html = self.browser._response.html  # pylint:disable=protected-access
+        baseUrl = self.browser._getBaseUrl()  # pylint:disable=protected-access
 
         links = html.find_all('a')
         links = [zope.testbrowser.browser.Link(a, self.browser, baseUrl)
@@ -403,9 +409,9 @@ class StaticAPIDocGenerator(object):
             links.extend(tag_links)
 
         mylinks = []
-        for l in links:
+        for link in links:
             try:
-                mylinks.append(Link(l.url, self.base_url, url))
+                mylinks.append(Link(link.url, self.base_url, url))
             except KeyError:
                 # Very occasionally we get a tag that doesn't have the expected
                 # attribute.
@@ -414,11 +420,12 @@ class StaticAPIDocGenerator(object):
 
         relativeURL = url.replace(self.base_url, '')
         segments = relativeURL.split('/')
-        segments.pop() # filename
+        segments.pop()  # filename
 
         for page_link in links:
             # Make sure we do not handle unwanted links.
-            if not page_link.isLocalURL() or not page_link.isApidocLink(): # pragma: no cover
+            if (not page_link.isLocalURL()
+                    or not page_link.isApidocLink()):  # pragma: no cover
                 continue
 
             # Add link to the queue
@@ -445,7 +452,7 @@ class StaticAPIDocGenerator(object):
         try:
             with open(filepath, 'wb') as f:
                 f.write(contents)
-        except IOError: # pragma: no cover
+        except IOError:  # pragma: no cover
             # The file already exists, so it is a duplicate and a bad one,
             # since the URL misses `index.hml`. ReST can produce strange URLs
             # that produce this problem, and we have little control over it.
@@ -469,53 +476,66 @@ def _create_arg_parser():
     ######################################################################
     # Retrieval
 
-    retrieval = parser.add_argument_group(title="Retrieval",
-                                          description="Options that deal with setting up the generator")
+    retrieval = parser.add_argument_group(
+        title="Retrieval",
+        description="Options that deal with setting up the generator")
 
     ret_kind = retrieval.add_mutually_exclusive_group()
 
     ret_kind.add_argument(
-        '--publisher', '-p', action="store_const", dest='ret_kind',
-        const="publisher", default='publisher',
+        '--publisher',
+        '-p',
+        action="store_const",
+        dest='ret_kind',
+        const="publisher",
+        default='publisher',
         help="""Use the publisher directly to retrieve the data. The program will bring up
         Zope 3 for you. This is the recommended option.
-        """
-    )
+        """)
 
     ret_kind.add_argument(
         '--custom-publisher', '-c', dest='ret_kind',
         help="""Use the publisher directly to retrieve the data and specify
         a custom ZCML file to load in the form of the.package[:the_file.zcml].
-        The package name and ZCML filename relative to the package are separated by a colon.
+        The package name and ZCML filename relative to the package are
+        separated by a colon.
         If the ZCML filename is omitted, `configure.zcml` is assumed.
         The specified ZCML file needs to include
-        `<include package='zope.app.apidoc' file='static.zcml' condition='have static-apidoc' />`
+        `<include package='zope.app.apidoc'
+                  file='static.zcml'
+                  condition='have static-apidoc' />`
         or something else equivalent to `site.zcml`.
         """
     )
 
     ret_kind.add_argument(
-        '--webserver', '-w', action="store_const", dest='ret_kind',
+        '--webserver',
+        '-w',
+        action="store_const",
+        dest='ret_kind',
         const="webserver",
-        help="""Use an external Web server that is connected to Zope 3. This is not tested."""
-    )
+        help="Use an external Web server that is connected to Zope 3."
+             " This is not tested.")
 
     retrieval.add_argument(
         '--url', '-u', action="store", dest='url',
         default="http://localhost/",
-        help="""The URL that will be used to retrieve the HTML pages. This option is
-        meaningless if you are using the publisher as backend. Also, the value of
-        this option should *not* include the `++apidoc++` namespace."""
+        help="""The URL that will be used to retrieve the HTML pages. This
+        option is meaningless if you are using the publisher as backend. Also,
+        the value of this option should *not* include the `++apidoc++`
+        namespace."""
     )
 
     retrieval.add_argument(
-        '--startpage', '-s', action="store", dest='startpage',
+        '--startpage',
+        '-s',
+        action="store",
+        dest='startpage',
         default='/++apidoc++/static.html',
-        help="""The startpage specifies the path (after the URL) that is used as the starting
-        point to retrieve the contents. This
+        help="""The startpage specifies the path (after the URL) that is used
+        as the starting point to retrieve the contents. This
         option can be very useful for debugging, since it allows you to select
-        specific pages. """
-    )
+        specific pages. """)
 
     retrieval.add_argument(
         '--username', '--user', action="store", dest='username',
@@ -540,25 +560,28 @@ def _create_arg_parser():
             '/@@/tree_images/minus_vline.png',
             '/@@/tree_images/plus_vline.png',
         ],
-        help="""Add an additional URL to the list of URLs to retrieve. Specifying those is
-        sometimes necessary, if the links are hidden in cryptic Javascript code."""
+        help="""Add an additional URL to the list of URLs to retrieve.
+        Specifying those is sometimes necessary, if the links are hidden in
+        cryptic Javascript code."""
     )
 
     retrieval.add_argument(
         '--ignore', '-i', action="append", dest='ignore_modules',
         nargs="*",
         default=['twisted', 'zope.app.twisted.ftp.test'],
-        help="""Add modules that should be ignored during retrieval. That allows you to limit
-        the scope of the generated API documentation."""
+        help="""Add modules that should be ignored during retrieval. That
+        allows you to limit the scope of the generated API documentation."""
     )
 
     # XXX: How can this actually be turned off or disallowed?
     retrieval.add_argument(
-        '--load-all', '-l', action="store_true", dest='import_unknown_modules',
+        '--load-all',
+        '-l',
+        action="store_true",
+        dest='import_unknown_modules',
         default=True,
         help="""Retrieve all referenced modules, even if they have not been imported during
-        the startup process."""
-    )
+        the startup process.""")
 
     retrieval.add_argument(
         '--max-runtime', action='store', type=int, default=0,
@@ -570,8 +593,9 @@ def _create_arg_parser():
     ######################################################################
     # Reporting
 
-    reporting = parser.add_argument_group(title="Reporting",
-                                          description="Options that configure the user output information.")
+    reporting = parser.add_argument_group(
+        title="Reporting",
+        description="Options that configure the user output information.")
 
     reporting.add_argument(
         '--verbosity', '-v', type=int, dest='verbosity',
@@ -586,28 +610,30 @@ def _create_arg_parser():
     )
 
     reporting.add_argument(
-        '--debug', '-d', action="store_true", dest='debug',
+        '--debug',
+        '-d',
+        action="store_true",
+        dest='debug',
         help="""Run in debug mode. This will allow you to use the debugger, if the publisher
-        experienced an error."""
-    )
+        experienced an error.""")
 
     return parser
 
-######################################################################
+# #####################################################################
 # Command-line processing
 
 
 def get_options(args=None):
-    #original_testrunner_args = args
+    # original_testrunner_args = args
 
     options = _create_arg_parser().parse_args(args)
 
-    #options.original_testrunner_args = original_testrunner_args
+    # options.original_testrunner_args = original_testrunner_args
 
     return options
 
 # Command-line UI
-###############################################################################
+# #####################################################################
 
 
 def main(args=None, generator=StaticAPIDocGenerator):
@@ -623,6 +649,7 @@ def main(args=None, generator=StaticAPIDocGenerator):
         sys.argv = ['program', '--help']
 
         old_exit = sys.exit
+
         def exit(_arg):
             pass
         sys.exit = exit

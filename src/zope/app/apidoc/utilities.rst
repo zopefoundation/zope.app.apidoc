@@ -203,7 +203,7 @@ Clearly, instance lookups should fail:
   >>> utilities.getPythonPath(Sample())
   Traceback (most recent call last):
   ...
-  AttributeError: 'Sample' object has no attribute '__name__'
+  AttributeError: 'Sample' object has no attribute '__name__'...
 
 
 :func:`isReferencable`
@@ -469,7 +469,7 @@ Internal assignment is also not legal::
   ...     pass
   Traceback (most recent call last):
   ...
-  SyntaxError: invalid syntax
+  SyntaxError: invalid syntax...
 
 
 :func:`getPublicAttributes`

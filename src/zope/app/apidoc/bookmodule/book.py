@@ -13,6 +13,7 @@
 ##############################################################################
 """Help books.
 """
+from zope.testing import cleanup
 __docformat__ = 'restructuredtext'
 import os.path
 
@@ -34,8 +35,8 @@ class IBookModule(IDocumentationModule):
 
 @implementer(IBookModule)
 class BookModule(OnlineHelp):
-    """Represent a book compiled from various ``README.rst|txt`` and other ``*.rst|txt``
-    documentation files.
+    """Represent a book compiled from various ``README.rst|txt`` and other
+    ``*.rst|txt`` documentation files.
     """
 
     #: Title.
@@ -64,8 +65,9 @@ path = os.path.join(os.path.dirname(zope.app.apidoc.bookmodule.__file__),
                     'intro.txt')
 book = BookModule(_('Book'), path)
 
+
 def _clear():
     book.__init__(book.title, book.path)
 
-from zope.testing import cleanup
+
 cleanup.addCleanUp(_clear)

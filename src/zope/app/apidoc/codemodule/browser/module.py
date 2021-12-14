@@ -19,7 +19,6 @@ __docformat__ = 'restructuredtext'
 from zope.interface.interfaces import IInterface
 from zope.proxy import removeAllProxies
 from zope.publisher.browser import BrowserView
-from zope.security.proxy import isinstance
 from zope.traversing.browser import absoluteURL
 
 from zope.app.apidoc.utilities import getPythonPath, renderText
@@ -60,8 +59,7 @@ class ModuleDetails(BrowserView):
 
     def __init__(self, context, request):
         super(ModuleDetails, self).__init__(context, request)
-        items = list(self.context.items())
-        items.sort()
+        items = sorted(self.context.items())
         self.text_files = []
         self.zcml_files = []
         self.modules = []

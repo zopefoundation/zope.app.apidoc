@@ -70,16 +70,17 @@ def getViewFactoryData(factory):
             info['path'] = getPythonPath(factory.__bases__[0])
         # XML-RPC view factory, generated during registration
         elif (factory.__module__.startswith(XMLRPC_DIRECTIVES_MODULE)
-            # JSON-RPC view factory, generated during registration
-            # This is needed for the 3rd party jsonserver implementation
-            # TODO: See issue http://www.zope.org/Collectors/Zope3-dev/504, ri
-            or factory.__module__.startswith(JSONRPC_DIRECTIVES_MODULE)):
+              # JSON-RPC view factory, generated during registration
+              # This is needed for the 3rd party jsonserver implementation
+              # TODO: See issue http://www.zope.org/Collectors/Zope3-dev/504,
+              # ri
+              or factory.__module__.startswith(JSONRPC_DIRECTIVES_MODULE)):
             # Those factories are method publisher and security wrapped
             info['path'] = getPythonPath(factory.__bases__[0].__bases__[0])
 
     if not info['path'] and not hasattr(factory, '__name__'):
-        # A factory that is a class instance; since we cannot reference instances,
-        # reference the class.
+        # A factory that is a class instance; since we cannot reference
+        # instances, reference the class.
         info['path'] = getPythonPath(factory.__class__)
 
     if not info['path']:
@@ -114,7 +115,7 @@ def getViews(iface, type=IRequest):
     for reg in gsm.registeredAdapters():
         if (reg.required and
             reg.required[-1] is not None and
-            reg.required[-1].isOrExtends(type)):
+                reg.required[-1].isOrExtends(type)):
 
             for required_iface in reg.required[:-1]:
                 if required_iface is None or iface.isOrExtends(required_iface):
@@ -133,7 +134,7 @@ def filterViewRegistrations(regs, iface, level=SPECIFIC_INTERFACE_LEVEL):
         if level & EXTENDED_INTERFACE_LEVEL:
             for required_iface in reg.required[:-1]:
                 if required_iface is not Interface and \
-                       iface.extends(required_iface):
+                        iface.extends(required_iface):
                     yield reg
                     continue
 
@@ -154,12 +155,12 @@ def getViewInfoDictionary(reg):
         doc = None
         zcml = getParserInfoInfoDictionary(reg.info)
 
-    info = {'name' : six.text_type(reg.name) or _('<i>no name</i>'),
-            'type' : getPythonPath(getPresentationType(reg.required[-1])),
-            'factory' : getViewFactoryData(reg.factory),
+    info = {'name': six.text_type(reg.name) or _('<i>no name</i>'),
+            'type': getPythonPath(getPresentationType(reg.required[-1])),
+            'factory': getViewFactoryData(reg.factory),
             'required': [getInterfaceInfoDictionary(iface)
                          for iface in reg.required],
-            'provided' : getInterfaceInfoDictionary(reg.provided),
+            'provided': getInterfaceInfoDictionary(reg.provided),
             'doc': doc,
             'zcml': zcml
             }

@@ -23,6 +23,7 @@ import re
 whitepattern = re.compile(r'\s{2,}')
 namegetter = operator.itemgetter('name')
 
+
 def getAllTextOfInterface(iface):
     """Get all searchable text from an interface"""
     iface = removeSecurityProxy(iface)
@@ -50,11 +51,12 @@ class Menu(object):
         if search_str is None:
             return results
         for name, iface in self.context.items():
-            if (search_str in name or
-                (not name_only and search_str in getAllTextOfInterface(iface))):
+            if (search_str in name or (
+                    not name_only
+                    and search_str in getAllTextOfInterface(iface))):
                 results.append({
                     'name': name,
-                     'url': './%s/index.html' %name
+                    'url': './%s/index.html' % name
                 })
         results.sort(key=namegetter)
         return results

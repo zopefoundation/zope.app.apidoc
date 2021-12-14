@@ -19,10 +19,12 @@ from zope.traversing.browser import absoluteURL
 from zope.traversing.api import getParent
 from zope.security.proxy import isinstance
 
+
 def findAPIDocumentationRoot(context, request=None):
     if isinstance(context, APIDocumentation):
         return context
     return findAPIDocumentationRoot(getParent(context), request)
+
 
 def findAPIDocumentationRootURL(context, request):
     return absoluteURL(findAPIDocumentationRoot(context, request), request)

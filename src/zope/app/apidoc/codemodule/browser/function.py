@@ -23,6 +23,7 @@ from zope.app.apidoc.utilities import renderText
 from zope.app.apidoc.browser.utilities import findAPIDocumentationRoot
 from zope.app.apidoc.codemodule.browser.class_ import getTypeLink
 
+
 class FunctionDetails(object):
     """Represents the details of the function."""
 
@@ -34,7 +35,6 @@ class FunctionDetails(object):
         return renderText(self.context.getDocString() or '',
                           getParent(self.context).getPath())
 
-
     def getAttributes(self):
         """Get all attributes of this function."""
         return [{'name': name,
@@ -43,7 +43,6 @@ class FunctionDetails(object):
                  'type_link': getTypeLink(type(attr))}
 
                 for name, attr in self.context.getAttributes()]
-
 
     def getBaseURL(self):
         """Return the URL for the API Documentation Tool."""

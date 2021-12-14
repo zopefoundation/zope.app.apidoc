@@ -50,20 +50,22 @@ _marker = object()
 def relativizePath(path):
     """Convert the path to a relative form."""
     matching_paths = [p for p in sys.path if path.startswith(p)]
-    if not matching_paths: # pragma: no cover
+    if not matching_paths:  # pragma: no cover
         return path
     longest_matching_path = max(matching_paths, key=len)
     common_prefix = os.path.commonprefix([longest_matching_path, path])
     return path.replace(common_prefix, 'Zope3') if common_prefix else path
 
+
 def truncateSysPath(path):
     """Remove the system path prefix from the path."""
     matching_paths = [p for p in sys.path if path.startswith(p)]
-    if not matching_paths: # pragma: no cover
+    if not matching_paths:  # pragma: no cover
         return path
     longest_matching_path = max(matching_paths, key=len)
     common_prefix = os.path.commonprefix([longest_matching_path, path])
     return path.replace(common_prefix, '')[1:] if common_prefix else path
+
 
 @implementer(IReadContainer)
 class ReadContainerBase(object):
@@ -76,7 +78,8 @@ class ReadContainerBase(object):
         if self.__name__ is None:
             return super(ReadContainerBase, self).__repr__()
         c = type(self)
-        return "<%s.%s '%s' at 0x%x>" % (c.__module__, c.__name__, self.__name__, id(self))
+        return "<%s.%s '%s' at 0x%x>" % (
+            c.__module__, c.__name__, self.__name__, id(self))
 
     def get(self, key, default=None):
         raise NotImplementedError()
@@ -106,6 +109,7 @@ class ReadContainerBase(object):
     def __len__(self):
         return len(self.items())
 
+
 class DocumentationModuleBase(ReadContainerBase):
     """Support for implementing a documentation module."""
 
@@ -115,6 +119,7 @@ class DocumentationModuleBase(ReadContainerBase):
         located.__parent__ = parent
         located.__name__ = name
         return located
+
 
 def getPythonPath(obj):
     """Return the path of the object in standard Python notation.
@@ -146,7 +151,7 @@ def getPythonPath(obj):
     module = getattr(naked, '__module__', _marker)
     if module is _marker:
         return naked.__name__
-    return '%s.%s' %(module, qname or naked.__name__)
+    return '%s.%s' % (module, qname or naked.__name__)
 
 
 def isReferencable(path):
@@ -169,7 +174,7 @@ def isReferencable(path):
     # Do not allow private attributes to be accessible
     if (obj_name is not None and
         obj_name.startswith('_') and
-        not (obj_name.startswith('__') and obj_name.endswith('__'))):
+            not (obj_name.startswith('__') and obj_name.endswith('__'))):
         return False
     module = safe_import(module_name)
     if module is None:
@@ -207,17 +212,21 @@ def getPermissionIds(name, checker=_marker, klass=_marker):
 
     if checker is not None and INameBasedChecker.providedBy(checker):
         entry['read_perm'] = _evalId(checker.permission_id(name)) \
-                             or _('n/a')
+            or _('n/a')
         entry['write_perm'] = _evalId(checker.setattr_permission_id(name)) \
-                              or _('n/a')
+            or _('n/a')
     else:
         entry['read_perm'] = entry['write_perm'] = None
 
     return entry
 
+
 def _checkFunctionType(func):
     if not callable(func):
-        raise TypeError("func must be a function or method not a %s (%r)" % (type(func), func))
+        raise TypeError(
+            "func must be a function or method not a %s (%r)" %
+            (type(func), func))
+
 
 def _simpleGetFunctionSignature(func, ignore_self=False):
     """Return the signature of a function or method."""
@@ -227,8 +236,8 @@ def _simpleGetFunctionSignature(func, ignore_self=False):
         args, varargs, varkw, defaults = inspect.getargspec(func)
     except TypeError:
         # On Python 2, inspect.getargspec can't handle certain types
-        # of callable things, like object.__init__ (<slot wrapper '__init__'> is not
-        # a python function), but it *can* handle them on Python 3.
+        # of callable things, like object.__init__ (<slot wrapper '__init__'>
+        # is not a python function), but it *can* handle them on Python 3.
         # Punt on Python 2
         return '(<unknown>)'
 
@@ -246,15 +255,19 @@ def _simpleGetFunctionSignature(func, ignore_self=False):
     for name, default in zip(args, defaults):
         # Neglect self, since it is always there and not part of the signature.
         # This way the implementation and interface signatures should match.
-        if name == 'self' and (isinstance(func, types.MethodType) or ignore_self):
-            # NOTE: this is actually covered, and removing the condition will break
-            # tests. The coverage report doesn't show it, though, for some reason.
-            continue # pragma: no cover
+        if name == 'self' and (
+            isinstance(
+                func,
+                types.MethodType) or ignore_self):
+            # NOTE: this is actually covered, and removing the condition will
+            # break tests. The coverage report doesn't show it, though, for
+            # some reason.
+            continue  # pragma: no cover
 
         # Make sure the name is a string
         if isinstance(name, (tuple, list)):
             name = '(' + ', '.join(name) + ')'
-        elif not isinstance(name, str): # pragma: no cover
+        elif not isinstance(name, str):  # pragma: no cover
             name = repr(name)
 
         if default is placeholder:
@@ -270,6 +283,7 @@ def _simpleGetFunctionSignature(func, ignore_self=False):
     sig += ', '.join(str_args)
     return sig + ')'
 
+
 def _py33GetFunctionSignature(func, ignore_self=False):
     _checkFunctionType(func)
     result = str(inspect.signature(func))
@@ -277,12 +291,14 @@ def _py33GetFunctionSignature(func, ignore_self=False):
         result = result.replace("(self)", "()").replace("(self, ", '(')
     return result
 
+
 try:
     inspect.signature
 except AttributeError:
     getFunctionSignature = _simpleGetFunctionSignature
 else:
     getFunctionSignature = _py33GetFunctionSignature
+
 
 def getPublicAttributes(obj):
     """Return a list of public attribute names."""
@@ -299,6 +315,7 @@ def getPublicAttributes(obj):
         attrs.append(attr)
 
     return attrs
+
 
 def getInterfaceForAttribute(name, interfaces=_marker, klass=_marker,
                              asPath=True):
@@ -355,6 +372,7 @@ _format_dict = {
     'structuredtext': 'zope.source.stx',
     'restructuredtext': 'zope.source.rest'
 }
+
 
 def getDocFormat(module):
     """Convert a module's __docformat__ specification to a renderer source

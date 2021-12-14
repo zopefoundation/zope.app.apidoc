@@ -31,12 +31,14 @@ from zope.location.interfaces import ILocation
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import DocumentationModuleBase
 
+
 class IInterfaceModule(IDocumentationModule):
     """Interface API Documentation Module
 
     This is a marker interface, so that we can write adapters for objects
     implementing this interface.
     """
+
 
 @implementer(ILocation, IInterfaceModule)
 class InterfaceModule(DocumentationModuleBase):
@@ -76,7 +78,7 @@ class InterfaceModule(DocumentationModuleBase):
             else:
                 iface = getattr(mod, parts[-1], default)
 
-        if not iface is default:
+        if iface is not default:
             iface = LocationProxy(iface, self, key)
 
         return iface

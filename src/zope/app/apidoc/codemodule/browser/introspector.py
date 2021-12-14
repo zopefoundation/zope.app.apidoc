@@ -30,8 +30,9 @@ from zope.traversing.api import getParent, traverse
 
 from zope.app import apidoc
 
+
 def getTypeLink(type_):
-    if type_ is type(None):
+    if isinstance(None, type_):
         return None
     path = apidoc.utilities.getPythonPath(type_)
     importable = apidoc.utilities.isReferencable(path)
@@ -52,7 +53,7 @@ class annotationsNamespace(object):
         obj = annotations[name] if name else annotations
         if not IPhysicallyLocatable(obj, False):
             obj = location.LocationProxy(
-                obj, self.context, '++annotations++'+name)
+                obj, self.context, '++annotations++' + name)
         return obj
 
 
@@ -65,7 +66,7 @@ class sequenceItemsNamespace(object):
     def traverse(self, name, ignore):
         obj = self.context[int(name)]
         if not IPhysicallyLocatable(obj, False):
-            obj = location.LocationProxy(obj, self.context, '++items++'+name)
+            obj = location.LocationProxy(obj, self.context, '++items++' + name)
         return obj
 
 
@@ -84,7 +85,7 @@ class mappingItemsNamespace(object):
     def traverse(self, name, ignore):
         obj = self.context[name]
         if not IPhysicallyLocatable(obj, False):
-            obj = location.LocationProxy(obj, self.context, '++items++'+name)
+            obj = location.LocationProxy(obj, self.context, '++items++' + name)
         return obj
 
 
@@ -108,7 +109,7 @@ class Introspector(BrowserView):
 
         self.klassView = traverse(
             TraversalRoot(),
-            '/++apidoc++/Code/%s/@@index.html' %path, request=request)
+            '/++apidoc++/Code/%s/@@index.html' % path, request=request)
 
         directlyProvides(request, direct)
 
@@ -156,7 +157,7 @@ class Introspector(BrowserView):
                 'type_link': getTypeLink(type(value)),
                 'interface': apidoc.utilities.getInterfaceForAttribute(
                     name, klass._Class__all_ifaces)
-                }
+            }
             entry.update(apidoc.utilities.getPermissionIds(
                 name, klass.getSecurityChecker()))
             yield entry
@@ -206,7 +207,7 @@ class Introspector(BrowserView):
                 'value': repr(value),
                 'value_type': type(value).__name__,
                 'value_type_link': getTypeLink(type(value))
-                })
+            })
         return ann
 
     def isMapping(self):
@@ -224,7 +225,7 @@ class Introspector(BrowserView):
                 'value': repr(value),
                 'value_type': type(value).__name__,
                 'value_type_link': getTypeLink(type(value))
-                })
+            })
         return ann
 
     def isAnnotatable(self):

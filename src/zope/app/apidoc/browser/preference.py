@@ -24,6 +24,7 @@ from zope.app.tree.browser.cookie import CookieTreeView
 from zope.app.preference.browser import PreferenceGroupFilter
 from zope.app.preference.browser import EditPreferenceGroup
 
+
 class APIDocPreferencesTree(CookieTreeView):
     """Preferences Tree using the stateful cookie tree."""
 

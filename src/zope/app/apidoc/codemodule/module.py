@@ -55,6 +55,7 @@ IGNORE_FILES = frozenset((
     '__main__.py',
 ))
 
+
 @implementer(ILocation, IModuleDocumentation)
 class Module(ReadContainerBase):
     """This class represents a Python module."""
@@ -77,7 +78,8 @@ class Module(ReadContainerBase):
         # Python 3.7
         module_file = getattr(self._module, '__file__', None) or ''
         module_path = getattr(self._module, '__path__', None)
-        if module_file.endswith(('__init__.py', '__init__.pyc', '__init__.pyo')):
+        if module_file.endswith(
+                ('__init__.py', '__init__.pyc', '__init__.pyo')):
             self._package = True
         elif hasattr(self._module, '__package__'):
             # Detect namespace packages, especially (but not limited
@@ -99,7 +101,7 @@ class Module(ReadContainerBase):
             # indexable.
             if (module_file == ''
                 and module_path
-                and os.path.isdir(list(module_path)[0])):
+                    and os.path.isdir(list(module_path)[0])):
                 self._package = True
 
         if not self._package:
@@ -125,9 +127,11 @@ class Module(ReadContainerBase):
                     fullname = self._module.__name__ + '.' + mod_file
                     module = safe_import(fullname)
                     if module is not None:
-                        self._children[mod_file] = Module(self, mod_file, module)
+                        self._children[mod_file] = Module(
+                            self, mod_file, module)
                 elif os.path.isfile(path):
-                    if mod_file.endswith('.py') and not mod_file.startswith('__init__'):
+                    if mod_file.endswith(
+                            '.py') and not mod_file.startswith('__init__'):
                         # module
                         name = mod_file[:-3]
                         fullname = self._module.__name__ + '.' + name
@@ -139,8 +143,9 @@ class Module(ReadContainerBase):
                         self._children[mod_file] = ZCMLFile(path, self._module,
                                                             self, mod_file)
 
-                    elif  mod_file.endswith(('.txt', '.rst')):
-                        self._children[mod_file] = TextFile(path, mod_file, self)
+                    elif mod_file.endswith(('.txt', '.rst')):
+                        self._children[mod_file] = TextFile(
+                            path, mod_file, self)
 
     def __setup_classes_and_functions(self):
         # List the classes and functions in module, if any are available.
@@ -210,7 +215,8 @@ class Module(ReadContainerBase):
         # initializing it lazily the first time one specific level's _children
         # is accessed has a *major* performance benefit.
         # A plain @Lazy attribute won't work since we need to copy from self;
-        # we use a subclass, with the provisio that it can be the *only* subclass
+        # we use a subclass, with the provisio that it can be the *only*
+        # subclass
         return located
 
     def getDocString(self):
@@ -238,7 +244,6 @@ class Module(ReadContainerBase):
         obj = self._children.get(key, default)
         if obj is not default:
             return obj
-
 
         if self.getPath():
             # Look for a nested module we didn't previously discover.
@@ -282,13 +287,14 @@ class Module(ReadContainerBase):
             self._module, self.__name__, self.__parent__, id(self)
         )
 
+
 class _LazyModule(Module):
 
     copy_from = None
 
     def __init__(self, copy_from, parent, name, module):
         Module.__init__(self, parent, name, module, False)
-        del self._children # get our @Lazy back
+        del self._children  # get our @Lazy back
         self._copy_from = copy_from
 
     @Lazy
@@ -299,7 +305,8 @@ class _LazyModule(Module):
                 new_child = x.withParentAndName(self, x.__name__)
             except AttributeError:
                 if isinstance(x, LocationProxy):
-                    new_child = LocationProxy(getProxiedObject(x), self, x.__name__)
+                    new_child = LocationProxy(
+                        getProxiedObject(x), self, x.__name__)
                 else:
                     new_child = LocationProxy(x, self, x.__name__)
 

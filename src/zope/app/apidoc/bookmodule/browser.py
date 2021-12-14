@@ -17,6 +17,7 @@
 __docformat__ = 'restructuredtext'
 from zope.app.apidoc.bookmodule.metaconfigure import EMPTYPATH
 
+
 class Menu(object):
     """Menu View Helper Class
 

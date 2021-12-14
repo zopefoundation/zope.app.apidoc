@@ -17,6 +17,7 @@
 __docformat__ = 'restructuredtext'
 from zope.app.apidoc.utilities import renderText
 
+
 class TextFileDetails(object):
     """Represents the details of the text file."""
 
@@ -26,5 +27,6 @@ class TextFileDetails(object):
     def renderedContent(self):
         """Render the file content to HTML."""
         ctx = self.context
-        format = 'zope.source.stx' if ctx.path.endswith('.stx') else 'zope.source.rest'
+        format = 'zope.source.stx' if ctx.path.endswith(
+            '.stx') else 'zope.source.rest'
         return renderText(ctx.getContent(), format=format)

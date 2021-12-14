@@ -31,10 +31,12 @@ from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
 from zope.app.apidoc.zcmlmodule import quoteNS
 from zope.app.apidoc.codemodule.interfaces import IRootDirective
 
+
 def findDocModule(obj):
     if IDocumentationModule.providedBy(obj):
         return obj
     return findDocModule(getParent(obj))
+
 
 def _compareAttrs(x, nameOrder):
     if x['name'] in nameOrder:
@@ -54,7 +56,7 @@ class DirectiveDetails(object):
         context = removeSecurityProxy(self.context)
         ns, name = context.name
         if context.prefixes.get(ns):
-            return '%s:%s' %(context.prefixes[ns], name)
+            return '%s:%s' % (context.prefixes[ns], name)
         return name
 
     def line(self):
@@ -95,30 +97,32 @@ class DirectiveDetails(object):
             return
         try:
             isInterface = IInterface.providedBy(obj)
-        except (AttributeError, TypeError): # pragma: no cover
+        except (AttributeError, TypeError):  # pragma: no cover
             # probably an object that does not like to play nice with the CA
             isInterface = False
 
         # The object might be an instance; in this case get a link to the class
-        if not hasattr(obj, '__name__'): # pragma: no cover
+        if not hasattr(obj, '__name__'):  # pragma: no cover
             obj = getattr(obj, '__class__')
         path = getPythonPath(obj)
         if isInterface:
-            apidoc_url = findAPIDocumentationRootURL(self.context, self.request)
+            apidoc_url = findAPIDocumentationRootURL(
+                self.context, self.request)
             return '%s/Interface/%s/index.html' % (apidoc_url, path)
         if isReferencable(path):
-            return rootURL + '/%s/index.html' %(path.replace('.', '/'))
+            return rootURL + '/%s/index.html' % (path.replace('.', '/'))
 
     def attributes(self):
         context = removeSecurityProxy(self.context)
-        attrs = [{'name': (ns and context.prefixes[ns]+':' or '') + name,
+        attrs = [{'name': (ns and context.prefixes[ns] + ':' or '') + name,
                   'value': value, 'url': None, 'values': []}
                  for (ns, name), value in context.attrs.items()]
 
         names = context.schema.names(True)
         rootURL = absoluteURL(findDocModule(self), self.request)
         for attr in attrs:
-            name = attr['name'] if attr['name'] in names else attr['name'] + '_'
+            name = (
+                attr['name'] if attr['name'] in names else attr['name'] + '_')
             field = context.schema.get(name)
 
             if isinstance(field, (GlobalObject, GlobalInterface)):
@@ -133,9 +137,9 @@ class DirectiveDetails(object):
                 else:
                     for value in values:
                         if isinstance(field,
-                                           (GlobalObject, GlobalInterface)):
+                                      (GlobalObject, GlobalInterface)):
                             url = self.objectURL(value, field, rootURL)
-                        else: # pragma: no cover
+                        else:  # pragma: no cover
                             break
                         attr['values'].append({'value': value, 'url': url})
 

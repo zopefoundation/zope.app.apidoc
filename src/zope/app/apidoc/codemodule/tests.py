@@ -30,6 +30,7 @@ import zope.app.apidoc.codemodule
 
 here = os.path.dirname(__file__)
 
+
 class TestText(unittest.TestCase):
 
     def _read_via_text(self, path):
@@ -52,6 +53,7 @@ class TestText(unittest.TestCase):
 
         self.assertEqual(self._read_via_text('_test_cr.txt'),
                          u'This file\nuses \nMac \nline endings.')
+
 
 class TestModule(unittest.TestCase):
 
@@ -166,6 +168,7 @@ class TestZCML(unittest.TestCase):
         clone = zcml.withParentAndName(self, 'name')
         self.assertEqual(clone.rootElement.__parent__, clone)
 
+
 class TestClass(unittest.TestCase):
 
     def test_permission_is_not_method(self):
@@ -187,6 +190,7 @@ class TestClass(unittest.TestCase):
 
         self.assertEqual([], klass.getMethods())
 
+
 def test_suite():
     checker = standard_checker()
 
@@ -202,6 +206,3 @@ def test_suite():
             optionflags=standard_option_flags),
         unittest.defaultTestLoader.loadTestsFromName(__name__),
     ))
-
-if __name__ == '__main__':
-    unittest.main(defaultTest="test_suite")

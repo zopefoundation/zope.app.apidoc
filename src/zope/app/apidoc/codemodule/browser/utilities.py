@@ -37,12 +37,12 @@ class CodeBreadCrumbs(object):
             crumbs.append(
                 {'name': getName(obj),
                  'url': absoluteURL(obj, self.request)}
-                )
+            )
             obj = getParent(obj)
 
         crumbs.append(
             {'name': _('[top]'),
              'url': absoluteURL(obj, self.request)}
-            )
+        )
         crumbs.reverse()
         return crumbs

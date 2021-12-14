@@ -19,6 +19,7 @@ the evaluation is stored in thread-global variables, so that we have to parse
 the files only once.
 
 """
+from zope.testing.cleanup import addCleanUp
 __docformat__ = 'restructuredtext'
 
 from zope.configuration import docutils
@@ -35,11 +36,13 @@ from zope.app.apidoc.utilities import DocumentationModuleBase
 namespaces = None
 subdirs = None
 
+
 def quoteNS(ns):
     """Quotes a namespace to make it URL-secure."""
     ns = ns.replace(':', '_co_')
     ns = ns.replace('/', '_sl_')
     return ns
+
 
 def unquoteNS(ns):
     """Un-quotes a namespace from a URL-secure version."""
@@ -54,7 +57,6 @@ class Namespace(ReadContainerBase):
 
     This container has :class:`Directive` items as its values.
     """
-
 
     def __init__(self, parent, name):
         self.__parent__ = parent
@@ -135,7 +137,6 @@ class ZCMLModule(DocumentationModuleBase):
     available attributes.
     """)
 
-
     def get(self, key, default=None):
         """Get the namespace by name; long and abbreviated names work.
         """
@@ -179,11 +180,12 @@ def _makeDocStructure():
         namespaces['ALL'] = namespaces['']
         del namespaces['']
 
+
 def _clear():
     global namespaces
     global subdirs
     namespaces = None
     subdirs = None
 
-from zope.testing.cleanup import addCleanUp
+
 addCleanUp(_clear)

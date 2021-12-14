@@ -80,7 +80,6 @@ class MyConfigHandler(xmlconfig.ConfigurationHandler, object):
         element.__parent__ = self.currentElement
         self.currentElement = element
 
-
     def endElementNS(self, name, qname):
         super(MyConfigHandler, self).endElementNS(name, qname)
         self.currentElement = self.currentElement.__parent__
@@ -89,7 +88,6 @@ class MyConfigHandler(xmlconfig.ConfigurationHandler, object):
 @implementer(IDirective)
 class Directive(object):
     """Representation of a ZCML directive."""
-
 
     def __init__(self, name, schema, attrs, context, info, prefixes):
         self.name = name
@@ -102,7 +100,7 @@ class Directive(object):
         self.prefixes = prefixes
 
     def __repr__(self):
-        return '<Directive %s>' %str(self.name)
+        return '<Directive %s>' % str(self.name)
 
 
 @implementer(ILocation, IZCMLFile)
@@ -121,7 +119,6 @@ class ZCMLFile(object):
         # We don't copy the root element; let it parse again if needed, instead
         # of trying to recurse through all the children and copy them.
         return located
-
 
     @Lazy
     def rootElement(self):

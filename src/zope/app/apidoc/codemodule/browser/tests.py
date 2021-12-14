@@ -27,8 +27,10 @@ from zope.app.apidoc.tests import LayerDocTestSuite
 import zope.app.apidoc.codemodule
 
 
-def foo(cls, bar=1, *args): # used in README.rst
+def foo(cls, bar=1, *args):  # used in README.rst
     """This is the foo function."""
+
+
 foo.deprecated = True
 
 
@@ -84,9 +86,9 @@ class CodeModuleTests(BrowserTestCase):
         body = response.getBody()
         self.assertIn('handleNamespace(ob, name)', body)
         self.checkForBrokenLinks(
-             body,
+            body,
             '/++apidoc++/Code/zope/app/apidoc/apidoc/handleNamespace',
-             basic='mgr:mgrpw')
+            basic='mgr:mgrpw')
 
     def testTextFileDetailsView(self):
         response = self.publish(
@@ -183,7 +185,8 @@ class TestIntrospector(unittest.TestCase):
     classAttr = 1
 
     def testIntrospector(self):
-        from zope.app.apidoc.codemodule.browser.introspector import Introspector
+        from zope.app.apidoc.codemodule.browser.introspector import (
+            Introspector)
         from zope.publisher.browser import TestRequest
 
         ispect = Introspector(self, TestRequest())
@@ -205,6 +208,3 @@ def test_suite():
             zope.app.apidoc.codemodule.browser),
         unittest.defaultTestLoader.loadTestsFromName(__name__),
     ))
-
-if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')

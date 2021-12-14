@@ -24,6 +24,7 @@ from zope.location.interfaces import ILocation
 from zope.app.apidoc.interfaces import IDocumentationModule
 from zope.app.apidoc.utilities import ReadContainerBase
 
+
 @implementer(ILocation)
 class APIDocumentation(ReadContainerBase):
     """
@@ -40,10 +41,11 @@ class APIDocumentation(ReadContainerBase):
         self.__name__ = name
 
     # We must always be careful to return copies that are located beneath us.
-    # We can't return the original because they're expected to be shared in memory
-    # and mutating their parentage causes issues with crossing ZODB connections
-    # and even circular parentage. Returning a :class:`~.LocationProxy` doesn't work
-    # because URLs the utility wants to generate can't find a parent.
+    # We can't return the original because they're expected to be shared in
+    # memory and mutating their parentage causes issues with crossing ZODB
+    # connections and even circular parentage. Returning a
+    # :class:`~.LocationProxy` doesn't work because URLs the utility wants to
+    # generate can't find a parent.
 
     def get(self, key, default=None):
         """
@@ -53,8 +55,9 @@ class APIDocumentation(ReadContainerBase):
         parent, created by
         :meth:`~zope.app.apidoc.interfaces.IDocumentationModule.withParentAndName`,
         will be returned.
-        """
-        utility = zope.component.queryUtility(IDocumentationModule, key, default)
+        """  # noqa: E501 line too long
+        utility = zope.component.queryUtility(
+            IDocumentationModule, key, default)
         if utility is not default:
             utility = utility.withParentAndName(self, key)
         return utility
@@ -79,6 +82,7 @@ class apidocNamespace(object):
     Instantiating this object with a request will apply the
     :class:`zope.app.apidoc.browser.skin.APIDOC` skin automatically.
     """
+
     def __init__(self, ob, request=None):
         if request:
             from zope.app.apidoc.browser.skin import APIDOC
@@ -87,6 +91,7 @@ class apidocNamespace(object):
 
     def traverse(self, name, ignore):
         return handleNamespace(self.context, name)
+
 
 def handleNamespace(ob, name):
     """Used to traverse to an API Documentation."""

@@ -33,12 +33,14 @@ from zope.app.apidoc.utilities import DocumentationModuleBase
 # Constant used when the utility has no name
 NONAME = '__noname__'
 
+
 def encodeName(name):
     """Encode the name in URL safe base 64."""
     name = base64.urlsafe_b64encode(name.encode('utf-8'))
     if not isinstance(name, str):
         name = name.decode('ascii')
     return name
+
 
 def decodeName(name):
     """Decode the name as encoded by :func:`encodeName`."""
@@ -128,7 +130,8 @@ class UtilityModule(DocumentationModuleBase):
         except ImportError:
             return default
         else:
-            return UtilityInterface(self, key, getattr(mod, parts[-1], default))
+            return UtilityInterface(
+                self, key, getattr(mod, parts[-1], default))
 
     def items(self):
         # Use a list of site managers, since we want to support multiple bases
@@ -139,7 +142,7 @@ class UtilityModule(DocumentationModuleBase):
             # Get the next site manager
             sm = smlist.pop()
             # If we have already looked at this site manager, then skip it
-            if sm in seen: # pragma: no cover
+            if sm in seen:  # pragma: no cover
                 continue
             # Add the current site manager to the list of seen ones
             seen.append(sm)

@@ -54,6 +54,3 @@ def test_suite():
             optionflags=standard_option_flags),
         unittest.defaultTestLoader.loadTestsFromName(__name__),
     ))
-
-if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
