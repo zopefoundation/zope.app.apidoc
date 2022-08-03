@@ -15,15 +15,15 @@
 
 """
 
-import unittest
 import doctest
+import unittest
 
 from zope.component import testing
 
+from zope.app.apidoc.testing import APIDocLayer
 from zope.app.apidoc.tests import BrowserTestCase
 from zope.app.apidoc.tests import standard_checker
 from zope.app.apidoc.tests import standard_option_flags
-from zope.app.apidoc.testing import APIDocLayer
 
 
 class TypeModuleTests(BrowserTestCase):

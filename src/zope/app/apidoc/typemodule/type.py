@@ -16,9 +16,10 @@
 """
 __docformat__ = 'restructuredtext'
 
-from zope.interface import implementer
-from zope.component import queryUtility, getUtilitiesFor
+from zope.component import getUtilitiesFor
+from zope.component import queryUtility
 from zope.i18nmessageid import ZopeMessageFactory as _
+from zope.interface import implementer
 from zope.interface.interfaces import IInterface
 from zope.location import LocationProxy
 from zope.location.interfaces import ILocation

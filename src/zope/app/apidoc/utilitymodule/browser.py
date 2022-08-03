@@ -16,16 +16,19 @@
 """
 __docformat__ = 'restructuredtext'
 
-from zope.security.proxy import isinstance, removeSecurityProxy
 from zope.location import LocationProxy
-from zope.traversing.api import getName, getParent
+from zope.security.proxy import isinstance
+from zope.security.proxy import removeSecurityProxy
+from zope.traversing.api import getName
+from zope.traversing.api import getParent
 
-from zope.app.apidoc.ifacemodule.browser import InterfaceDetails
-from zope.app.apidoc.component import getUtilityInfoDictionary
-from zope.app.apidoc.utilities import getPythonPath
-from zope.app.apidoc.utilitymodule.utilitymodule import NONAME, Utility
-from zope.app.apidoc.utilitymodule.utilitymodule import UtilityInterface
 from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
+from zope.app.apidoc.component import getUtilityInfoDictionary
+from zope.app.apidoc.ifacemodule.browser import InterfaceDetails
+from zope.app.apidoc.utilities import getPythonPath
+from zope.app.apidoc.utilitymodule.utilitymodule import NONAME
+from zope.app.apidoc.utilitymodule.utilitymodule import Utility
+from zope.app.apidoc.utilitymodule.utilitymodule import UtilityInterface
 
 
 class UtilityDetails(object):

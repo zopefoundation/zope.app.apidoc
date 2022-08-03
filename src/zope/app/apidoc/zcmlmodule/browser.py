@@ -15,19 +15,24 @@
 
 """
 __docformat__ = 'restructuredtext'
-import six
 import keyword
 
-from zope.configuration.xmlconfig import ParserInfo
-from zope.security.proxy import isinstance, removeSecurityProxy
-from zope.location import LocationProxy
-from zope.traversing.api import getName, getParent
+import six
 
-from zope.app.apidoc.zcmlmodule import Directive, Namespace
-from zope.app.apidoc.ifacemodule.browser import InterfaceDetails
-from zope.app.apidoc.utilities import getPythonPath, isReferencable
-from zope.app.apidoc.utilities import relativizePath
+from zope.configuration.xmlconfig import ParserInfo
+from zope.location import LocationProxy
+from zope.security.proxy import isinstance
+from zope.security.proxy import removeSecurityProxy
+from zope.traversing.api import getName
+from zope.traversing.api import getParent
+
 from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
+from zope.app.apidoc.ifacemodule.browser import InterfaceDetails
+from zope.app.apidoc.utilities import getPythonPath
+from zope.app.apidoc.utilities import isReferencable
+from zope.app.apidoc.utilities import relativizePath
+from zope.app.apidoc.zcmlmodule import Directive
+from zope.app.apidoc.zcmlmodule import Namespace
 
 
 class Menu(object):

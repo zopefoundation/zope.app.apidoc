@@ -17,8 +17,10 @@
 __docformat__ = 'restructuredtext'
 
 from zope.i18nmessageid import ZopeMessageFactory as _
-from zope.traversing.api import getName, getParent
+from zope.traversing.api import getName
+from zope.traversing.api import getParent
 from zope.traversing.browser import absoluteURL
+
 from zope.app.apidoc.interfaces import IDocumentationModule
 
 

@@ -17,8 +17,10 @@
 """
 __docformat__ = 'restructuredtext'
 import operator
-from zope.security.proxy import removeSecurityProxy
 import re
+
+from zope.security.proxy import removeSecurityProxy
+
 
 whitepattern = re.compile(r'\s{2,}')
 namegetter = operator.itemgetter('name')

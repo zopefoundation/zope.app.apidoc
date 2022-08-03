@@ -15,16 +15,15 @@
 
 """
 import unittest
-from BTrees import OOBTree
 
+from BTrees import OOBTree
 from zope.traversing.api import traverse
 
+import zope.app.apidoc.codemodule
 from zope.app.apidoc.testing import APIDocLayer
 from zope.app.apidoc.tests import BrowserTestCase
 from zope.app.apidoc.tests import LayerDocFileSuite
 from zope.app.apidoc.tests import LayerDocTestSuite
-
-import zope.app.apidoc.codemodule
 
 
 def foo(cls, bar=1, *args):  # used in README.rst
@@ -118,8 +117,10 @@ class TestClass(unittest.TestCase):
     @unittest.skipIf(OOBTree.OOBTree is OOBTree.OOBTreePy,
                      "Only in the C implementation")
     def test_listClasses_C(self):
-        from zope.app.apidoc.codemodule.browser.class_ import ClassDetails
         from zope.publisher.browser import TestRequest
+
+        from zope.app.apidoc.codemodule.browser.class_ import ClassDetails
+
         # BTree items doesn't set a module.
 
         items_class = type(OOBTree.OOBTree({1: 2}).items())
@@ -154,8 +155,9 @@ class TestClass(unittest.TestCase):
 class TestIntrospectorNS(unittest.TestCase):
 
     def _check_namespace(self, kind, context, name):
-        from zope.app.apidoc.codemodule.browser import introspector
         from zope.location import LocationProxy
+
+        from zope.app.apidoc.codemodule.browser import introspector
 
         namespace = getattr(introspector, kind + 'Namespace')
         traverser = namespace(context)
@@ -185,9 +187,10 @@ class TestIntrospector(unittest.TestCase):
     classAttr = 1
 
     def testIntrospector(self):
-        from zope.app.apidoc.codemodule.browser.introspector import (
-            Introspector)
         from zope.publisher.browser import TestRequest
+
+        from zope.app.apidoc.codemodule.browser.introspector import \
+            Introspector
 
         ispect = Introspector(self, TestRequest())
         atts = list(ispect.getAttributes())

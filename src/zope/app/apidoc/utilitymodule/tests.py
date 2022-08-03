@@ -19,11 +19,10 @@ import unittest
 
 import zope.deprecation
 
+import zope.app.apidoc.utilitymodule
 from zope.app.apidoc.testing import APIDocLayer
-
 from zope.app.apidoc.tests import BrowserTestCase
 from zope.app.apidoc.tests import LayerDocFileSuite
-import zope.app.apidoc.utilitymodule
 
 
 class UtilityModuleTests(BrowserTestCase):

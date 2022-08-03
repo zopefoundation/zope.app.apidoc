@@ -16,8 +16,9 @@
 __docformat__ = 'restructuredtext'
 
 
-from zope.schema import TextLine, Text
 from zope.location.interfaces import ILocation
+from zope.schema import Text
+from zope.schema import TextLine
 
 
 class IDocumentationModule(ILocation):

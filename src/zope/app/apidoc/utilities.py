@@ -16,26 +16,31 @@
 """
 __docformat__ = 'restructuredtext'
 
+import inspect
+import os.path
 import re
 import sys
 import types
-import inspect
-import os.path
 
 import six
 
-from zope.component import createObject, getMultiAdapter
-from zope.interface import implementer, implementedBy
+import zope.i18nmessageid
+from zope.component import createObject
+from zope.component import getMultiAdapter
+from zope.container.interfaces import IReadContainer
+from zope.interface import implementedBy
+from zope.interface import implementer
 from zope.publisher.browser import TestRequest
-from zope.security.checker import getCheckerForInstancesOf, Global
+from zope.security.checker import Global
+from zope.security.checker import getCheckerForInstancesOf
 from zope.security.interfaces import INameBasedChecker
-from zope.security.proxy import isinstance, removeSecurityProxy
+from zope.security.proxy import isinstance
+from zope.security.proxy import removeSecurityProxy
 
 import zope.app
-import zope.i18nmessageid
-from zope.container.interfaces import IReadContainer
+from zope.app.apidoc.classregistry import IGNORE_MODULES
+from zope.app.apidoc.classregistry import safe_import
 
-from zope.app.apidoc.classregistry import safe_import, IGNORE_MODULES
 
 _ = zope.i18nmessageid.MessageFactory("zope")
 

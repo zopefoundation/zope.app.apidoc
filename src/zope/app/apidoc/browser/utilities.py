@@ -14,10 +14,11 @@
 """Common Utilities for Browser View
 
 """
-from zope.app.apidoc.apidoc import APIDocumentation
-from zope.traversing.browser import absoluteURL
-from zope.traversing.api import getParent
 from zope.security.proxy import isinstance
+from zope.traversing.api import getParent
+from zope.traversing.browser import absoluteURL
+
+from zope.app.apidoc.apidoc import APIDocumentation
 
 
 def findAPIDocumentationRoot(context, request=None):

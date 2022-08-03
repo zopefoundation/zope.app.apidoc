@@ -16,13 +16,13 @@
 """
 __docformat__ = "reStructuredText"
 
+from zope.app.preference.browser import EditPreferenceGroup
+from zope.app.preference.browser import PreferenceGroupFilter
+from zope.app.tree.browser.cookie import CookieTreeView
 from zope.publisher.browser import applySkin
 from zope.traversing.api import getRoot
 
 from zope.app.apidoc.browser.skin import APIDOC
-from zope.app.tree.browser.cookie import CookieTreeView
-from zope.app.preference.browser import PreferenceGroupFilter
-from zope.app.preference.browser import EditPreferenceGroup
 
 
 class APIDocPreferencesTree(CookieTreeView):

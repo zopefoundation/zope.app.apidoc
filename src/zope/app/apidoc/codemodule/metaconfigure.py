@@ -16,8 +16,8 @@
 
 """
 __docformat__ = 'restructuredtext'
-from zope.interface import implementer
 from zope.component.zcml import utility
+from zope.interface import implementer
 
 from zope.app.apidoc import classregistry
 from zope.app.apidoc.codemodule.interfaces import IAPIDocRootModule

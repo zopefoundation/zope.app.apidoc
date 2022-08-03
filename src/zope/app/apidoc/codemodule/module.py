@@ -17,26 +17,27 @@
 __docformat__ = 'restructuredtext'
 import os
 import types
+
 import six
 
-import zope
 from zope.cachedescriptors.property import Lazy
-from zope.proxy import getProxiedObject
+from zope.hookable import hookable
 from zope.interface import implementer
 from zope.interface import providedBy
 from zope.interface.interface import InterfaceClass
-from zope.location.interfaces import ILocation
 from zope.location import LocationProxy
-from zope.hookable import hookable
+from zope.location.interfaces import ILocation
+from zope.proxy import getProxiedObject
 
+import zope
 from zope.app.apidoc.classregistry import safe_import
-from zope.app.apidoc.utilities import ReadContainerBase
-from zope.app.apidoc.codemodule.interfaces import IModuleDocumentation
-
 from zope.app.apidoc.codemodule.class_ import Class
 from zope.app.apidoc.codemodule.function import Function
+from zope.app.apidoc.codemodule.interfaces import IModuleDocumentation
 from zope.app.apidoc.codemodule.text import TextFile
 from zope.app.apidoc.codemodule.zcml import ZCMLFile
+from zope.app.apidoc.utilities import ReadContainerBase
+
 
 # Ignore these files, since they are not necessary or cannot be imported
 # correctly.

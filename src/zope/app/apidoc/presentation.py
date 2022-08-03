@@ -15,21 +15,22 @@
 
 """
 import six
-from zope.component import getGlobalSiteManager
-from zope.interface import Interface
 
-from zope.i18nmessageid import ZopeMessageFactory as _
-from zope.app.apidoc.utilities import getPythonPath, relativizePath
-from zope.app.apidoc.utilities import getPermissionIds
-from zope.app.apidoc.component import getParserInfoInfoDictionary
-from zope.app.apidoc.component import getInterfaceInfoDictionary
 from zope.browserresource.icon import IconViewFactory
-
+from zope.component import getGlobalSiteManager
+from zope.i18nmessageid import ZopeMessageFactory as _
+from zope.interface import Interface
 from zope.publisher.interfaces import IRequest
 from zope.publisher.interfaces.browser import IBrowserRequest
-from zope.publisher.interfaces.xmlrpc import IXMLRPCRequest
-from zope.publisher.interfaces.http import IHTTPRequest
 from zope.publisher.interfaces.ftp import IFTPRequest
+from zope.publisher.interfaces.http import IHTTPRequest
+from zope.publisher.interfaces.xmlrpc import IXMLRPCRequest
+
+from zope.app.apidoc.component import getInterfaceInfoDictionary
+from zope.app.apidoc.component import getParserInfoInfoDictionary
+from zope.app.apidoc.utilities import getPermissionIds
+from zope.app.apidoc.utilities import getPythonPath
+from zope.app.apidoc.utilities import relativizePath
 
 
 SPECIFIC_INTERFACE_LEVEL = 1

@@ -16,9 +16,12 @@
 """
 __docformat__ = 'restructuredtext'
 import os.path
-import zope.app.apidoc.bookmodule
+
 from zope.app.onlinehelp.onlinehelptopic import RESTOnlineHelpTopic
+
+import zope.app.apidoc.bookmodule
 from zope.app.apidoc.bookmodule.book import book
+
 
 EMPTYPATH = os.path.join(
     os.path.dirname(zope.app.apidoc.bookmodule.__file__),

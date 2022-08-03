@@ -14,13 +14,12 @@
 """Functional Tests for API Documentation.
 
 """
+import doctest
 import re
 import unittest
-import doctest
 
-
-from zope.app.apidoc.testing import APIDocLayer, APIDocNoDevModeLayer
-
+from zope.app.apidoc.testing import APIDocLayer
+from zope.app.apidoc.testing import APIDocNoDevModeLayer
 from zope.app.apidoc.tests import BrowserTestCase
 from zope.app.apidoc.tests import standard_checker
 from zope.app.apidoc.tests import standard_option_flags

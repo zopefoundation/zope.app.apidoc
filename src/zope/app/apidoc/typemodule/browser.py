@@ -15,11 +15,12 @@
 
 """
 __docformat__ = 'restructuredtext'
-from zope.app.apidoc.typemodule.type import TypeInterface
-
-from zope.security.proxy import isinstance, removeSecurityProxy
+from zope.security.proxy import isinstance
+from zope.security.proxy import removeSecurityProxy
 from zope.traversing.api import getName
+
 from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
+from zope.app.apidoc.typemodule.type import TypeInterface
 
 
 class Menu(object):

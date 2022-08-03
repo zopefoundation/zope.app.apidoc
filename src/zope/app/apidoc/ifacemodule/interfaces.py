@@ -19,7 +19,6 @@ __docformat__ = "reStructuredText"
 
 import zope.interface
 import zope.schema
-
 from zope.i18nmessageid import ZopeMessageFactory as _
 
 

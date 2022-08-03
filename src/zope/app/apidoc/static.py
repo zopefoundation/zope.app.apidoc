@@ -17,22 +17,22 @@
 """
 __docformat__ = "reStructuredText"
 
+import argparse
 import base64
 import os
 import os.path
 import sys
 import time
-import argparse
+import warnings
+
 from six.moves.urllib import error as urllib2
 from six.moves.urllib import parse as urlparse
-
-import warnings
 
 import zope.testbrowser.browser
 import zope.testbrowser.wsgi
 
-
 from zope.app.apidoc import classregistry
+
 
 VERBOSITY_MAP = {1: 'ERROR', 2: 'WARNING', 3: 'INFO'}
 
@@ -189,8 +189,9 @@ class PublisherBrowser(zope.testbrowser.wsgi.Browser):
         return self
 
     def end(self):
-        from zope.app.apidoc.testing import APIDocLayer
         from zope.app.appsetup import appsetup
+
+        from zope.app.apidoc.testing import APIDocLayer
         APIDocLayer.testTearDown()
         APIDocLayer.tearDown()
         setattr(appsetup, '__config_context', self.old_appsetup_context)
@@ -489,8 +490,9 @@ def _create_arg_parser():
         dest='ret_kind',
         const="publisher",
         default='publisher',
-        help="""Use the publisher directly to retrieve the data. The program will bring up
-        Zope 3 for you. This is the recommended option.
+        help="""Use the publisher directly to retrieve the data.
+        The program will bring up Zope 3 for you. This is the recommended
+        option.
         """)
 
     ret_kind.add_argument(
@@ -580,13 +582,13 @@ def _create_arg_parser():
         action="store_true",
         dest='import_unknown_modules',
         default=True,
-        help="""Retrieve all referenced modules, even if they have not been imported during
-        the startup process.""")
+        help="""Retrieve all referenced modules, even if they have not been
+        imported during the startup process.""")
 
     retrieval.add_argument(
         '--max-runtime', action='store', type=int, default=0,
-        help="""If given, the program will attempt to run for no longer than this
-        many seconds, terminating after the time limit and leaving
+        help="""If given, the program will attempt to run for no longer than
+        this many seconds, terminating after the time limit and leaving
         output unfinished. This is most helpful for tests."""
     )
 
@@ -614,8 +616,8 @@ def _create_arg_parser():
         '-d',
         action="store_true",
         dest='debug',
-        help="""Run in debug mode. This will allow you to use the debugger, if the publisher
-        experienced an error.""")
+        help="""Run in debug mode. This will allow you to use the debugger,
+        if the publisher experienced an error.""")
 
     return parser
 

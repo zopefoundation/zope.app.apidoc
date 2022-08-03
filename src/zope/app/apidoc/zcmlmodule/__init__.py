@@ -20,17 +20,20 @@ the files only once.
 
 """
 from zope.testing.cleanup import addCleanUp
+
+
 __docformat__ = 'restructuredtext'
 
+import zope.app.appsetup.appsetup
 from zope.configuration import docutils
 from zope.i18nmessageid import ZopeMessageFactory as _
 from zope.interface import implementer
 from zope.location.interfaces import ILocation
 
-import zope.app.appsetup.appsetup
 from zope.app.apidoc.interfaces import IDocumentationModule
-from zope.app.apidoc.utilities import ReadContainerBase
 from zope.app.apidoc.utilities import DocumentationModuleBase
+from zope.app.apidoc.utilities import ReadContainerBase
+
 
 # Caching variables, so that the meta-ZCML files need to be read only once
 namespaces = None

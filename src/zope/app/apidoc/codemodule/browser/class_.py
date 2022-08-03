@@ -20,15 +20,17 @@ import inspect
 
 from zope.proxy import removeAllProxies
 from zope.security.proxy import removeSecurityProxy
-from zope.traversing.api import getParent, traverse
+from zope.traversing.api import getParent
+from zope.traversing.api import traverse
 from zope.traversing.browser import absoluteURL
 from zope.traversing.interfaces import TraversalError
 
-from zope.app.apidoc.utilities import getPythonPath, getPermissionIds
-from zope.app.apidoc.utilities import renderText, getFunctionSignature
-from zope.app.apidoc.utilities import isReferencable
-
 from zope.app.apidoc.browser.utilities import findAPIDocumentationRoot
+from zope.app.apidoc.utilities import getFunctionSignature
+from zope.app.apidoc.utilities import getPermissionIds
+from zope.app.apidoc.utilities import getPythonPath
+from zope.app.apidoc.utilities import isReferencable
+from zope.app.apidoc.utilities import renderText
 
 
 def getTypeLink(type, _NoneType=type(None)):

@@ -17,17 +17,21 @@
 """
 __docformat__ = 'restructuredtext'
 import inspect
+
 import six
 
 import zope.interface
 import zope.security.proxy
-from zope import annotation
-from zope.interface import directlyProvidedBy, directlyProvides
-from zope.traversing.interfaces import IPhysicallyLocatable, IContainmentRoot
+from zope.interface import directlyProvidedBy
+from zope.interface import directlyProvides
 from zope.location import location
 from zope.publisher.browser import BrowserView
-from zope.traversing.api import getParent, traverse
+from zope.traversing.api import getParent
+from zope.traversing.api import traverse
+from zope.traversing.interfaces import IContainmentRoot
+from zope.traversing.interfaces import IPhysicallyLocatable
 
+from zope import annotation
 from zope.app import apidoc
 
 

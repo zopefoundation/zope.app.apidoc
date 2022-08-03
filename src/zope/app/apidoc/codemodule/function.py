@@ -19,8 +19,8 @@ __docformat__ = 'restructuredtext'
 from zope.interface import implementer
 from zope.location.interfaces import ILocation
 
-from zope.app.apidoc.utilities import getFunctionSignature
 from zope.app.apidoc.codemodule.interfaces import IFunctionDocumentation
+from zope.app.apidoc.utilities import getFunctionSignature
 
 
 @implementer(ILocation, IFunctionDocumentation)

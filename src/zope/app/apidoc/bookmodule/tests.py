@@ -14,8 +14,8 @@
 """Tests for the Book Documentation Module
 
 """
-import unittest
 import doctest
+import unittest
 
 from zope.app.apidoc.tests import standard_checker
 from zope.app.apidoc.tests import standard_option_flags

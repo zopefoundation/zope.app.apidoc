@@ -14,7 +14,6 @@
 """Tests for the Interface Documentation Module
 
 """
-from zope.app.apidoc import static
 import doctest
 import os
 import re
@@ -24,19 +23,18 @@ import unittest
 import zope.app.renderer
 import zope.component.testing
 import zope.testing.module
-
 from webtest import TestApp
-
-from zope.app.apidoc.apidoc import APIDocumentation
-from zope.app.apidoc.testing import APIDocLayer
-
 from zope.app.component.testing import PlacefulSetup
 from zope.app.component.testing import setUpTraversal
-
 from zope.configuration import xmlconfig
 from zope.interface import implementer
 from zope.testing import renormalizing
 from zope.traversing.interfaces import IContainmentRoot
+
+from zope.app.apidoc import static
+from zope.app.apidoc.apidoc import APIDocumentation
+from zope.app.apidoc.testing import APIDocLayer
+
 
 _old_appsetup_context = None
 
@@ -161,6 +159,7 @@ class TestPresentation(unittest.TestCase):
 
     def test_iconviewfactory(self):
         from zope.browserresource.icon import IconViewFactory
+
         from .presentation import getViewFactoryData
         factory = IconViewFactory('rname', 'alt', 0, 0)
 
@@ -197,17 +196,19 @@ class TestUtilities(unittest.TestCase):
 
     @unittest.skipUnless(str is bytes, "Only on py2")
     def test_unpack_methods(self):
-        from zope.app.apidoc.utilities import getFunctionSignature
         import six
+
+        from zope.app.apidoc.utilities import getFunctionSignature
 
         six.exec_("def f((a, b)): pass")
 
         self.assertEqual("((a, b))", getFunctionSignature(locals()['f']))
 
     def test_keyword_only_arguments(self):
-        from zope.app.apidoc.utilities import getFunctionSignature
-        from zope.app.apidoc.utilities import _simpleGetFunctionSignature
         from socket import socket
+
+        from zope.app.apidoc.utilities import _simpleGetFunctionSignature
+        from zope.app.apidoc.utilities import getFunctionSignature
 
         try:
             simple_sig = _simpleGetFunctionSignature(socket.makefile)
@@ -307,8 +308,8 @@ class TestUtilities(unittest.TestCase):
 class TestStatic(unittest.TestCase):
 
     def _tempdir(self):
-        import tempfile
         import shutil
+        import tempfile
         tmpdir = tempfile.mkdtemp(suffix='.apidoc.TestStatic')
         self.addCleanup(shutil.rmtree, tmpdir)
         return tmpdir

@@ -21,13 +21,14 @@ from zope.proxy import removeAllProxies
 from zope.publisher.browser import BrowserView
 from zope.traversing.browser import absoluteURL
 
-from zope.app.apidoc.utilities import getPythonPath, renderText
-from zope.app.apidoc.codemodule.interfaces import IModuleDocumentation
+from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
 from zope.app.apidoc.codemodule.interfaces import IClassDocumentation
 from zope.app.apidoc.codemodule.interfaces import IFunctionDocumentation
-from zope.app.apidoc.codemodule.interfaces import IZCMLFile
+from zope.app.apidoc.codemodule.interfaces import IModuleDocumentation
 from zope.app.apidoc.codemodule.interfaces import ITextFile
-from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
+from zope.app.apidoc.codemodule.interfaces import IZCMLFile
+from zope.app.apidoc.utilities import getPythonPath
+from zope.app.apidoc.utilities import renderText
 
 
 def formatDocString(text, module=None, summary=False):
