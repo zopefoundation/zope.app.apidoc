@@ -16,9 +16,12 @@
 """
 __docformat__ = 'restructuredtext'
 
-from zope.configuration.fields import Path, MessageID, Tokens
+from zope.configuration.fields import MessageID
+from zope.configuration.fields import Path
+from zope.configuration.fields import Tokens
 from zope.interface import Interface
-from zope.schema import NativeStringLine, TextLine
+from zope.schema import NativeStringLine
+from zope.schema import TextLine
 
 
 class IBookChapterDirective(Interface):

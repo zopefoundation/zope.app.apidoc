@@ -18,6 +18,7 @@ __docformat__ = 'restructuredtext'
 
 from zope.i18n import translate
 from zope.security.proxy import removeSecurityProxy
+
 from zope.app.apidoc.utilities import renderText
 
 

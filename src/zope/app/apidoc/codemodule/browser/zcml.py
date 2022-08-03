@@ -16,20 +16,23 @@
 """
 __docformat__ = "reStructuredText"
 
-from zope.configuration.fields import GlobalObject, GlobalInterface, Tokens
+from zope.configuration.fields import GlobalInterface
+from zope.configuration.fields import GlobalObject
+from zope.configuration.fields import Tokens
 from zope.interface.interfaces import IInterface
 from zope.schema import getFieldNamesInOrder
-from zope.security.proxy import isinstance, removeSecurityProxy
+from zope.security.proxy import isinstance
+from zope.security.proxy import removeSecurityProxy
 from zope.traversing.api import getParent
 from zope.traversing.browser import absoluteURL
 
-from zope.app.apidoc.interfaces import IDocumentationModule
-from zope.app.apidoc.utilities import getPythonPath, isReferencable
 from zope.app.apidoc.browser.utilities import findAPIDocumentationRoot
 from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
-
-from zope.app.apidoc.zcmlmodule import quoteNS
 from zope.app.apidoc.codemodule.interfaces import IRootDirective
+from zope.app.apidoc.interfaces import IDocumentationModule
+from zope.app.apidoc.utilities import getPythonPath
+from zope.app.apidoc.utilities import isReferencable
+from zope.app.apidoc.zcmlmodule import quoteNS
 
 
 def findDocModule(obj):

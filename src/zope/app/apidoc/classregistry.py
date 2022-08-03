@@ -13,10 +13,14 @@
 ##############################################################################
 """Class Registry
 """
-from zope.testing.cleanup import addCleanUp
-from six import iteritems
-import sys
 import operator
+import sys
+
+from six import iteritems
+
+from zope.testing.cleanup import addCleanUp
+
+
 __docformat__ = 'restructuredtext'
 
 __import_unknown_modules__ = False

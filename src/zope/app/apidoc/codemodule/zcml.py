@@ -16,15 +16,16 @@
 __docformat__ = "reStructuredText"
 import copy
 from xml.sax import make_parser
-from xml.sax.xmlreader import InputSource
 from xml.sax.handler import feature_namespaces
-
-from zope.cachedescriptors.property import Lazy
-from zope.configuration import xmlconfig, config
-from zope.interface import implementer, directlyProvides
-from zope.location.interfaces import ILocation
+from xml.sax.xmlreader import InputSource
 
 import zope.app.appsetup.appsetup
+from zope.cachedescriptors.property import Lazy
+from zope.configuration import config
+from zope.configuration import xmlconfig
+from zope.interface import directlyProvides
+from zope.interface import implementer
+from zope.location.interfaces import ILocation
 
 from zope.app.apidoc.codemodule.interfaces import IDirective
 from zope.app.apidoc.codemodule.interfaces import IRootDirective

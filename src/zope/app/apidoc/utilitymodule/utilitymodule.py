@@ -21,14 +21,15 @@ import base64
 import binascii
 
 import zope.component
-
+from zope.i18nmessageid import ZopeMessageFactory as _
 from zope.interface import implementer
 from zope.location.interfaces import ILocation
 
-from zope.i18nmessageid import ZopeMessageFactory as _
 from zope.app.apidoc.interfaces import IDocumentationModule
-from zope.app.apidoc.utilities import ReadContainerBase, getPythonPath
 from zope.app.apidoc.utilities import DocumentationModuleBase
+from zope.app.apidoc.utilities import ReadContainerBase
+from zope.app.apidoc.utilities import getPythonPath
+
 
 # Constant used when the utility has no name
 NONAME = '__noname__'

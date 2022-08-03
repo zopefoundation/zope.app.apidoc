@@ -18,12 +18,12 @@ __docformat__ = 'restructuredtext'
 import operator
 
 from zope.security.proxy import removeSecurityProxy
-
 from zope.traversing.api import traverse
 from zope.traversing.browser import absoluteURL
 
 from zope.app.apidoc.browser.utilities import findAPIDocumentationRoot
 from zope.app.apidoc.classregistry import classRegistry
+
 
 _pathgetter = operator.itemgetter("path")
 

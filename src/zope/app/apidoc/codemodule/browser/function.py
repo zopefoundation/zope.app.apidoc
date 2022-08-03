@@ -19,9 +19,9 @@ __docformat__ = 'restructuredtext'
 from zope.traversing.api import getParent
 from zope.traversing.browser import absoluteURL
 
-from zope.app.apidoc.utilities import renderText
 from zope.app.apidoc.browser.utilities import findAPIDocumentationRoot
 from zope.app.apidoc.codemodule.browser.class_ import getTypeLink
+from zope.app.apidoc.utilities import renderText
 
 
 class FunctionDetails(object):

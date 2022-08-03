@@ -15,10 +15,11 @@
 
 """
 __docformat__ = 'restructuredtext'
-import six
 import types
-import zope.interface.declarations
 
+import six
+
+import zope.interface.declarations
 from zope.component import getGlobalSiteManager
 from zope.component.interfaces import IFactory
 from zope.i18nmessageid import ZopeMessageFactory as _
@@ -27,8 +28,11 @@ from zope.interface.interface import InterfaceClass
 from zope.publisher.interfaces import IRequest
 
 from zope.app.apidoc.classregistry import classRegistry
-from zope.app.apidoc.utilities import relativizePath, truncateSysPath
-from zope.app.apidoc.utilities import getPythonPath, isReferencable, renderText
+from zope.app.apidoc.utilities import getPythonPath
+from zope.app.apidoc.utilities import isReferencable
+from zope.app.apidoc.utilities import relativizePath
+from zope.app.apidoc.utilities import renderText
+from zope.app.apidoc.utilities import truncateSysPath
 from zope.app.apidoc.utilitymodule import utilitymodule
 
 

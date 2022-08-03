@@ -14,15 +14,17 @@
 """Help books.
 """
 from zope.testing import cleanup
+
+
 __docformat__ = 'restructuredtext'
 import os.path
 
+from zope.app.onlinehelp.onlinehelp import OnlineHelp
 from zope.i18nmessageid import ZopeMessageFactory as _
 from zope.interface import implementer
 
 import zope.app.apidoc.bookmodule
 from zope.app.apidoc.interfaces import IDocumentationModule
-from zope.app.onlinehelp.onlinehelp import OnlineHelp
 
 
 class IBookModule(IDocumentationModule):

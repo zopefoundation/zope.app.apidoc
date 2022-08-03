@@ -18,10 +18,9 @@
 import unittest
 
 import zope.app.apidoc.ifacemodule
-
 from zope.app.apidoc.testing import APIDocLayer
-from zope.app.apidoc.tests import LayerDocFileSuite
 from zope.app.apidoc.tests import BrowserTestCase
+from zope.app.apidoc.tests import LayerDocFileSuite
 
 
 class InterfaceModuleTests(BrowserTestCase):

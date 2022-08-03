@@ -18,12 +18,18 @@ __docformat__ = 'restructuredtext'
 
 import inspect
 
-from zope.interface import Interface, providedBy
-from zope.interface.interfaces import IInterface, ISpecification
-from zope.interface.interfaces import IElement, IAttribute, IMethod
+from zope.interface import Interface
+from zope.interface import providedBy
+from zope.interface.interfaces import IAttribute
+from zope.interface.interfaces import IElement
+from zope.interface.interfaces import IInterface
+from zope.interface.interfaces import IMethod
+from zope.interface.interfaces import ISpecification
 from zope.schema.interfaces import IField
 
-from zope.app.apidoc.utilities import getPythonPath, renderText, getDocFormat
+from zope.app.apidoc.utilities import getDocFormat
+from zope.app.apidoc.utilities import getPythonPath
+from zope.app.apidoc.utilities import renderText
 
 
 def getElements(iface, type=IElement):

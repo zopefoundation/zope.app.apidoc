@@ -14,19 +14,19 @@
 """Tests for the Code Documentation Module
 
 """
+import doctest
 import os.path
 import unittest
-import doctest
 
 from zope.component import testing
 
-from zope.app.apidoc.codemodule.text import TextFile
+import zope.app.apidoc.codemodule
 from zope.app.apidoc.codemodule.module import Module
-
+from zope.app.apidoc.codemodule.text import TextFile
+from zope.app.apidoc.tests import LayerDocFileSuite
 from zope.app.apidoc.tests import standard_checker
 from zope.app.apidoc.tests import standard_option_flags
-from zope.app.apidoc.tests import LayerDocFileSuite
-import zope.app.apidoc.codemodule
+
 
 here = os.path.dirname(__file__)
 
@@ -100,9 +100,10 @@ class TestModule(unittest.TestCase):
 
     def test_zope_loaded_correctly(self):
         # Zope is guaranteed to be a namespace package, as is zope.app.
+        import zope.annotation
+
         import zope
         import zope.app
-        import zope.annotation
         import zope.app.apidoc
         mod = Module(None, 'zope', zope)
         self.assertEqual(mod['annotation']._module, zope.annotation)
@@ -174,8 +175,9 @@ class TestClass(unittest.TestCase):
     def test_permission_is_not_method(self):
         # We don't incorrectly assume that callable objects,
         # like security proxies, are methods
-        from zope.app.apidoc.codemodule.class_ import Class
         from zope.security.checker import CheckerPublic
+
+        from zope.app.apidoc.codemodule.class_ import Class
 
         self.assertTrue(callable(CheckerPublic))
 

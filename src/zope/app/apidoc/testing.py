@@ -14,9 +14,10 @@
 """zope.app.apidoc common test related classes/functions/objects.
 
 """
-import zope.app.apidoc
 from zope.app.wsgi.testlayer import BrowserLayer
 from zope.testbrowser.wsgi import TestBrowserLayer
+
+import zope.app.apidoc
 
 
 class _BrowserLayer(TestBrowserLayer, BrowserLayer):

@@ -20,14 +20,15 @@ from inspect import isfunction
 from inspect import ismethod
 from inspect import ismethoddescriptor
 
-from zope.interface import implementer, implementedBy
-from zope.security.checker import getCheckerForInstancesOf
+from zope.interface import implementedBy
+from zope.interface import implementer
 from zope.location.interfaces import ILocation
+from zope.security.checker import getCheckerForInstancesOf
 
 from zope.app.apidoc.classregistry import classRegistry
+from zope.app.apidoc.codemodule.interfaces import IClassDocumentation
 from zope.app.apidoc.utilities import getInterfaceForAttribute
 from zope.app.apidoc.utilities import getPublicAttributes
-from zope.app.apidoc.codemodule.interfaces import IClassDocumentation
 
 
 @implementer(ILocation, IClassDocumentation)

@@ -20,21 +20,25 @@ __docformat__ = 'restructuredtext'
 import inspect
 
 from zope.i18nmessageid import ZopeMessageFactory as _
-from zope.publisher.interfaces.browser import IBrowserRequest
-from zope.publisher.interfaces.xmlrpc import IXMLRPCRequest
-from zope.publisher.interfaces.http import IHTTPRequest
-from zope.publisher.interfaces.ftp import IFTPRequest
-from zope.publisher.browser import BrowserView
-from zope.security.proxy import removeSecurityProxy
 from zope.proxy import removeAllProxies
-from zope.traversing.api import getName, traverse
+from zope.publisher.browser import BrowserView
+from zope.publisher.interfaces.browser import IBrowserRequest
+from zope.publisher.interfaces.ftp import IFTPRequest
+from zope.publisher.interfaces.http import IHTTPRequest
+from zope.publisher.interfaces.xmlrpc import IXMLRPCRequest
+from zope.security.proxy import removeSecurityProxy
+from zope.traversing.api import getName
+from zope.traversing.api import traverse
 from zope.traversing.browser import absoluteURL
 
-from zope.app.apidoc.utilities import getPythonPath, renderText
 from zope.app.apidoc import classregistry
-from zope.app.apidoc import interface, component, presentation
-from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
+from zope.app.apidoc import component
+from zope.app.apidoc import interface
+from zope.app.apidoc import presentation
 from zope.app.apidoc.browser.utilities import findAPIDocumentationRoot
+from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
+from zope.app.apidoc.utilities import getPythonPath
+from zope.app.apidoc.utilities import renderText
 
 
 class InterfaceDetails(BrowserView):
