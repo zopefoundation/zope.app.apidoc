@@ -2,10 +2,10 @@
  CHANGES
 =========
 
-4.3.1 (unreleased)
-==================
+4.4 (unreleased)
+================
 
-- Nothing changed yet.
+- Add support for Python 3.11.
 
 
 4.3.0 (2021-12-15)

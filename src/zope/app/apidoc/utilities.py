@@ -238,7 +238,11 @@ def _simpleGetFunctionSignature(func, ignore_self=False):
     _checkFunctionType(func)
 
     try:
-        args, varargs, varkw, defaults = inspect.getargspec(func)
+        if six.PY3:
+            (args, varargs, varkw, defaults, kwonlyargs, kwonlydefaults,
+             annotations) = inspect.getfullargspec(func)
+        else:
+            args, varargs, varkw, defaults = inspect.getargspec(func)
     except TypeError:
         # On Python 2, inspect.getargspec can't handle certain types
         # of callable things, like object.__init__ (<slot wrapper '__init__'>

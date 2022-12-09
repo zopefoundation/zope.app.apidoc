@@ -20,6 +20,8 @@ import re
 import sys
 import unittest
 
+import six
+
 import zope.app.renderer
 import zope.component.testing
 import zope.testing.module
@@ -238,14 +240,21 @@ class TestUtilities(unittest.TestCase):
                 getFunctionSignature(
                     TestUtilities.test_keyword_only_arguments))
         else:
-            self.assertEqual(simple_sig, "(mode='r', bufsize=-1)")
+            if six.PY3:
+                self.assertEqual(
+                    simple_sig, "(self, mode='r', buffering=None)")
+                self.assertEqual(
+                    '(self)', getFunctionSignature(
+                        TestUtilities.test_keyword_only_arguments))
+            else:
+                self.assertEqual(simple_sig, "(mode='r', bufsize=-1)")
+                self.assertEqual(
+                    '()', getFunctionSignature(
+                        TestUtilities.test_keyword_only_arguments))
             # Extra coverage to make sure the alternate branches are taken
             self.assertEqual(
                 '()',
                 getFunctionSignature(self.test_keyword_only_arguments))
-            self.assertEqual(
-                '()', getFunctionSignature(
-                    TestUtilities.test_keyword_only_arguments))
 
     def test_renderText_non_text(self):
         # If we pass something that isn't actually text, we get a

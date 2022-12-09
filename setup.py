@@ -62,7 +62,7 @@ static_requires = tests_require
 
 setup(
     name='zope.app.apidoc',
-    version='4.3.1.dev0',
+    version='4.4.dev0',
     author='Zope Corporation and Contributors',
     author_email='zope-dev@zope.org',
     description='API Documentation and Component Inspection for Zope 3',
@@ -88,6 +88,7 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Natural Language :: English',
@@ -104,6 +105,7 @@ setup(
         'persistent',
         'ZODB',
         'setuptools',
+        'six',
         'zope.annotation',
         'zope.app.appsetup >= 4.0.0',
         'zope.app.basicskin >= 4.0.0',
