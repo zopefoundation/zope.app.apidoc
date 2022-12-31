@@ -233,16 +233,12 @@ def _checkFunctionType(func):
             (type(func), func))
 
 
-def _simpleGetFunctionSignature(func, ignore_self=False):
-    """Return the signature of a function or method."""
+def _simpleGetFunctionSignature(func, ignore_self=False):  # pragma: no cover
+    """Return the signature of a function or method. (PY2 only)"""
     _checkFunctionType(func)
 
     try:
-        if six.PY3:
-            (args, varargs, varkw, defaults, kwonlyargs, kwonlydefaults,
-             annotations) = inspect.getfullargspec(func)
-        else:
-            args, varargs, varkw, defaults = inspect.getargspec(func)
+        args, varargs, varkw, defaults = inspect.getargspec(func)
     except TypeError:
         # On Python 2, inspect.getargspec can't handle certain types
         # of callable things, like object.__init__ (<slot wrapper '__init__'>
@@ -304,7 +300,7 @@ def _py33GetFunctionSignature(func, ignore_self=False):
 try:
     inspect.signature
 except AttributeError:
-    getFunctionSignature = _simpleGetFunctionSignature
+    getFunctionSignature = _simpleGetFunctionSignature  # PY2
 else:
     getFunctionSignature = _py33GetFunctionSignature
 

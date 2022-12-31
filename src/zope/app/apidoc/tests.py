@@ -196,7 +196,7 @@ class TestUtilities(unittest.TestCase):
             getFunctionSignature(
                 object.__init__))
 
-    @unittest.skipUnless(str is bytes, "Only on py2")
+    @unittest.skipUnless(str is bytes, "Only on PY2")
     def test_unpack_methods(self):
         import six
 
@@ -206,55 +206,45 @@ class TestUtilities(unittest.TestCase):
 
         self.assertEqual("((a, b))", getFunctionSignature(locals()['f']))
 
-    def test_keyword_only_arguments(self):
+    @unittest.skipIf(six.PY2, reason="Testing the PY3 only parts.")
+    def test_keyword_only_arguments_PY3(self):
+        from socket import socket
+
+        from zope.app.apidoc.utilities import getFunctionSignature
+
+        self.assertEqual(
+            "(self, mode='r', buffering=None, *, encoding=None,"
+            " errors=None, newline=None)",
+            getFunctionSignature(socket.makefile))
+        self.assertEqual(
+            "(mode='r', buffering=None, *, encoding=None, errors=None,"
+            " newline=None)",
+            getFunctionSignature(socket.makefile, ignore_self=True))
+        # Extra coverage to make sure the alternate branches are taken
+        self.assertEqual(
+            '()',
+            getFunctionSignature(self.test_keyword_only_arguments_PY3))
+        self.assertEqual(
+            '(self)',
+            getFunctionSignature(
+                TestUtilities.test_keyword_only_arguments_PY3))
+
+    @unittest.skipIf(six.PY3, reason="_simpleGetFunctionSignature is PY2 only")
+    def test_keyword_only_arguments_PY2(self):
         from socket import socket
 
         from zope.app.apidoc.utilities import _simpleGetFunctionSignature
         from zope.app.apidoc.utilities import getFunctionSignature
 
-        try:
-            simple_sig = _simpleGetFunctionSignature(socket.makefile)
-        except ValueError:
-            # On Python 3, socket.makefile has keyword args, which aren't
-            # handled by the simple function
-            self.assertGreater(sys.version_info, (3, 0))
-            self.assertEqual(
-                "(self, mode='r', buffering=None, *, encoding=None,"
-                " errors=None, newline=None)",
-                getFunctionSignature(
-                    socket.makefile))
-            self.assertEqual(
-                "(mode='r', buffering=None, *, encoding=None, errors=None,"
-                " newline=None)",
-                getFunctionSignature(
-                    socket.makefile,
-                    ignore_self=True))
-            # Extra coverage to make sure the alternate branches are taken
-            self.assertEqual(
-                '()',
-                getFunctionSignature(self.test_keyword_only_arguments))
-            self.assertEqual(
-                '(self)',
-                # Note the difference with Python 2; this is what ignore_self
-                # is for.
-                getFunctionSignature(
-                    TestUtilities.test_keyword_only_arguments))
-        else:
-            if six.PY3:
-                self.assertEqual(
-                    simple_sig, "(self, mode='r', buffering=None)")
-                self.assertEqual(
-                    '(self)', getFunctionSignature(
-                        TestUtilities.test_keyword_only_arguments))
-            else:
-                self.assertEqual(simple_sig, "(mode='r', bufsize=-1)")
-                self.assertEqual(
-                    '()', getFunctionSignature(
-                        TestUtilities.test_keyword_only_arguments))
-            # Extra coverage to make sure the alternate branches are taken
-            self.assertEqual(
-                '()',
-                getFunctionSignature(self.test_keyword_only_arguments))
+        simple_sig = _simpleGetFunctionSignature(socket.makefile)
+        self.assertEqual(simple_sig, "(mode='r', bufsize=-1)")
+        self.assertEqual(
+            '()', getFunctionSignature(
+                TestUtilities.test_keyword_only_arguments))
+        # Extra coverage to make sure the alternate branches are taken
+        self.assertEqual(
+            '()',
+            getFunctionSignature(self.test_keyword_only_arguments))
 
     def test_renderText_non_text(self):
         # If we pass something that isn't actually text, we get a
