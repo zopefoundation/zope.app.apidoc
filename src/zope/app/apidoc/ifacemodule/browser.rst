@@ -23,24 +23,24 @@ Get all searchable text from an interface
   ...     blah = zope.interface.Attribute('blah', 'blah')
   ...
   ...     field = zope.schema.Field(
-  ...         title = u'title', description = u'description')
+  ...         title = 'title', description = 'description')
 
 Now get the text. Note that there is no particular order during the text
 collection.
 
   >>> from zope.app.apidoc.ifacemodule.menu import getAllTextOfInterface
   >>> text = getAllTextOfInterface(IFoo)
-  >>> u'foo' in text
+  >>> 'foo' in text
   True
-  >>> u'bar' in text
+  >>> 'bar' in text
   True
-  >>> u'blah' in text
+  >>> 'blah' in text
   True
-  >>> u'field' in text
+  >>> 'field' in text
   True
-  >>> u'title' in text
+  >>> 'title' in text
   True
-  >>> u'description' in text
+  >>> 'description' in text
   True
 
 
@@ -117,14 +117,14 @@ interface:
   ...     bar = zope.interface.Attribute('This is bar.')
   ...
   ...     title = zope.schema.TextLine(
-  ...         description=u'Title',
+  ...         description='Title',
   ...         required=True,
-  ...         default=u'Foo')
+  ...         default='Foo')
   ...
   ...     description = zope.schema.Text(
-  ...         description=u'Desc',
+  ...         description='Desc',
   ...         required=False,
-  ...         default=u'Foo.')
+  ...         default='Foo.')
   ...
   ...     def blah():
   ...         """This is blah."""
@@ -146,7 +146,7 @@ Let's now create another interface ``IBar`` and make ``Foo`` an adapter from
   >>> ztapi.provideAdapter(adapts=(IBar,), provides=IFoo, factory=Foo)
 
   >>> from zope.app.apidoc.classregistry import classRegistry
-  >>> classRegistry['__builtin__.Foo'] = Foo
+  >>> classRegistry['builtins.Foo'] = Foo
 
 Let's also register a factory for ``Foo``
 
@@ -188,7 +188,7 @@ utility.
 Return the main documentation string of the interface.
 
   >>> details.getDoc()[:32]
-  u'<p>This is the Foo interface</p>'
+  '<p>This is the Foo interface</p>'
 
 
 :meth:`InterfaceDetails.getBases`
@@ -221,7 +221,7 @@ we get a result:
 
   >>> pprint(details.getTypes(), width=1)
   [{'name': 'IMyType',
-    'path': '__builtin__.IMyType'}]
+    'path': 'builtins.IMyType'}]
 
 
 :meth:`InterfaceDetails.getAttributes`
@@ -230,9 +230,9 @@ we get a result:
 Return a list of attributes in the order they were specified.
 
   >>> pprint(sorted(details.getAttributes(), key=lambda x: x['name']))
-  [{'doc': u'<p>This is bar.</p>\n',
+  [{'doc': '<p>This is bar.</p>\n',
     'name': 'bar'},
-   {'doc': u'<p>This is foo.</p>\n',
+   {'doc': '<p>This is foo.</p>\n',
     'name': 'foo'}]
 
 
@@ -242,10 +242,10 @@ Return a list of attributes in the order they were specified.
 Return a list of methods in the order they were specified.
 
   >>> pprint(sorted(details.getMethods(), key=lambda x: x['name']))
-  [{'doc': u'<p>This is blah.</p>\n',
+  [{'doc': '<p>This is blah.</p>\n',
     'name': 'blah',
     'signature': '()'},
-   {'doc': u'<p>This is get.</p>\n',
+   {'doc': '<p>This is get.</p>\n',
     'name': 'get',
     'signature': '(key, default=None)'}]
 
@@ -260,24 +260,24 @@ The required attributes are listed first, then the optional attributes.
   >>> pprint(details.getFields(), width=1)
   [{'class': {'name': 'TextLine',
               'path': 'zope/schema/_bootstrapfields/TextLine'},
-    'default': "u'Foo'",
-    'description': u'<p>Title</p>\n',
+    'default': "'Foo'",
+    'description': '<p>Title</p>\n',
     'iface': {'id': 'zope.schema.interfaces.ITextLine',
               'name': 'ITextLine'},
     'name': 'title',
     'required': True,
-    'required_string': u'required',
-    'title': u''},
+    'required_string': 'required',
+    'title': ''},
    {'class': {'name': 'Text',
               'path': 'zope/schema/_bootstrapfields/Text'},
-    'default': "u'Foo.'",
-    'description': u'<p>Desc</p>\n',
+    'default': "'Foo.'",
+    'description': '<p>Desc</p>\n',
     'iface': {'id': 'zope.schema.interfaces.IText',
               'name': 'IText'},
     'name': 'description',
     'required': False,
-    'required_string': u'optional',
-    'title': u''}]
+    'required_string': 'optional',
+    'title': ''}]
 
 :meth:`InterfaceDetails.getSpecificRequiredAdapters`
 ----------------------------------------------------
@@ -315,15 +315,15 @@ Get adapters where this interface is required.
 Get adapters where this interface is provided.
 
   >>> pprint(details.getProvidedAdapters(), width=1)
-  [{'doc': u'',
-    'factory': '__builtin__.Foo',
+  [{'doc': '',
+    'factory': 'builtins.Foo',
     'factory_url': None,
-    'name': u'',
-    'provided': {'module': '__builtin__',
+    'name': '',
+    'provided': {'module': 'builtins',
                  'name': 'IFoo'},
     'required': [{'isInterface': True,
                   'isType': False,
-                  'module': '__builtin__',
+                  'module': 'builtins',
                   'name': 'IBar'}],
     'zcml': None}]
 
@@ -335,8 +335,8 @@ Get adapters where this interface is provided.
 Get the classes that implement this interface.
 
   >>> pprint(details.getClasses(), width=1)
-  [{'path': '__builtin__.Foo',
-    'url': '__builtin__/Foo'}]
+  [{'path': 'builtins.Foo',
+    'url': 'builtins/Foo'}]
 
 :meth:`InterfaceDetails.getFactories`
 -------------------------------------
@@ -345,8 +345,8 @@ Return the factories, who will provide objects implementing this
 interface.
 
   >>> pprint(details.getFactories())
-  [{'description': u'',
-    'name': u'FooFactory',
+  [{'description': '',
+    'name': 'FooFactory',
     'title': 'Foo Factory',
     'url': None}]
 
@@ -356,8 +356,8 @@ interface.
 Return all utilities that provide this interface.
 
   >>> pprint(details.getUtilities())
-  [{'iface_id': '__builtin__.IFoo',
-    'name': u'The Foo',
-    'path': '__builtin__.Foo',
+  [{'iface_id': 'builtins.IFoo',
+    'name': 'The Foo',
+    'path': 'builtins.Foo',
     'url': None,
     'url_name': 'VGhlIEZvbw=='}]

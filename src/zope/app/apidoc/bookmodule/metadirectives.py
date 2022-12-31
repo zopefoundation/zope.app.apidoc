@@ -28,29 +28,29 @@ class IBookChapterDirective(Interface):
     """Register a new Book Chapter"""
 
     id = NativeStringLine(
-        title=u"Topic Id",
-        description=u"Id of the chapter as it will appear in the URL.",
+        title="Topic Id",
+        description="Id of the chapter as it will appear in the URL.",
         required=True)
 
     title = MessageID(
-        title=u"Title",
-        description=u"Provides a title for the chapter.",
+        title="Title",
+        description="Provides a title for the chapter.",
         required=True)
 
     doc_path = Path(
-        title=u"Path to File",
-        description=u"Path to the file that contains the chapter content.",
+        title="Path to File",
+        description="Path to the file that contains the chapter content.",
         required=False)
 
     parent = NativeStringLine(
-        title=u"Parent Chapter",
-        description=u"Id of the parent chapter.",
+        title="Parent Chapter",
+        description="Id of the parent chapter.",
         default="",
         required=False)
 
     resources = Tokens(
-        title=u"A list of resources.",
-        description=u"""
+        title="A list of resources.",
+        description="""
         A list of resources which shall be user for the chapter. The
         resources must be located in the same directory as the chapter.
         """,

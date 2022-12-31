@@ -38,4 +38,4 @@ class ApidocEditPreferenceGroup(EditPreferenceGroup):
     def __init__(self, context, request):
         # Make sure we enter APIDOC territory.
         applySkin(request, APIDOC)
-        super(ApidocEditPreferenceGroup, self).__init__(context, request)
+        super().__init__(context, request)

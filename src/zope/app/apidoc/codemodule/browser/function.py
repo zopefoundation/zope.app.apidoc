@@ -24,7 +24,7 @@ from zope.app.apidoc.codemodule.browser.class_ import getTypeLink
 from zope.app.apidoc.utilities import renderText
 
 
-class FunctionDetails(object):
+class FunctionDetails:
     """Represents the details of the function."""
 
     context = None

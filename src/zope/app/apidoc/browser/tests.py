@@ -15,13 +15,11 @@
 
 """
 import doctest
-import re
 import unittest
 
 from zope.app.apidoc.testing import APIDocLayer
 from zope.app.apidoc.testing import APIDocNoDevModeLayer
 from zope.app.apidoc.tests import BrowserTestCase
-from zope.app.apidoc.tests import standard_checker
 from zope.app.apidoc.tests import standard_option_flags
 
 
@@ -35,7 +33,7 @@ class APIDocTests(BrowserTestCase):
                                 basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find('Click on one of the Documentation') > 0)
+        self.assertTrue(body.find('Click on one of the Documentation') > 0)
         self.checkForBrokenLinks(body, '/++apidoc++/menu.html',
                                  basic='mgr:mgrpw')
 
@@ -44,7 +42,7 @@ class APIDocTests(BrowserTestCase):
                                 basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find('Zope 3 API Documentation') > 0)
+        self.assertTrue(body.find('Zope 3 API Documentation') > 0)
         self.checkForBrokenLinks(body, '/++apidoc++/index.html',
                                  basic='mgr:mgrpw')
 
@@ -53,7 +51,7 @@ class APIDocTests(BrowserTestCase):
                                 basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find('<h1>Zope 3 API Documentation</h1>') > 0)
+        self.assertTrue(body.find('<h1>Zope 3 API Documentation</h1>') > 0)
         self.checkForBrokenLinks(body, '/++apidoc++/contents.html',
                                  basic='mgr:mgrpw')
 
@@ -62,27 +60,21 @@ class APIDocTests(BrowserTestCase):
                                 basic='mgr:mgrpw')
         self.assertEqual(response.getStatus(), 200)
         body = response.getBody()
-        self.assert_(body.find(
+        self.assertTrue(body.find(
             '<a href="contents.html" target="main">Zope') > 0)
         self.checkForBrokenLinks(body, '/++apidoc++/modulelist.html',
                                  basic='mgr:mgrpw')
 
 
 def test_suite():
-    checker = standard_checker(
-        (re.compile(r'httperror_seek_wrapper:', re.M), 'HTTPError:'),
-    )
-
     apidoc_doctest = doctest.DocFileSuite(
         "README.rst",
-        optionflags=standard_option_flags,
-        checker=checker)
+        optionflags=standard_option_flags)
     apidoc_doctest.layer = APIDocLayer
 
     nodevmode = doctest.DocFileSuite(
         "nodevmode.rst",
-        optionflags=standard_option_flags,
-        checker=checker)
+        optionflags=standard_option_flags)
     nodevmode.layer = APIDocNoDevModeLayer
 
     return unittest.TestSuite((

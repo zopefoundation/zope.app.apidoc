@@ -171,10 +171,7 @@ and for classes we get the name of the class
   >>> utilities.getPythonPath(Sample)
   'zope.app.apidoc.doctest.Sample'
 
-If a method is passed in, its class path is returned. This works for
-both bound and unbound methods (note that there is no such thing as an
-unbound method in Python 3, just functions, but we still get the same
-results):
+If a method is passed in, its class path is returned:
 
   >>> utilities.getPythonPath(Sample().sample)
   'zope.app.apidoc.doctest.Sample'
@@ -407,9 +404,7 @@ any positional arguments:
 
 Next we test whether the signature is correctly determined for class
 methods. Note that the ``self`` argument is removed from the signature, since it
-is not essential for documentation; this happens by default on Python
-2 for unbound methods, but since Python 3 doesn't have such a concept
-we have to explicitly ask for that behaviour:
+is not essential for documentation:
 
 We start out with a simple positional argument:
 
@@ -438,22 +433,6 @@ If you do not pass a function or method to the function, it will fail:
   Traceback (most recent call last):
   ...
   TypeError: func must be a function or method not a ...
-
-A very uncommon, but perfectly valid (in Python 2), case is that tuple arguments are
-unpacked inside the argument list of the function. Here is an example
-(we can't actually test it because it fails on Python 3)::
-
-  def func((arg1, arg2)):
-       pass
-  utilities.getFunctionSignature(func)
-  '((arg1, arg2))'
-
-Even default assignment is allowed::
-
-  def func((arg1, arg2)=(1, 2)):
-       pass
-  utilities.getFunctionSignature(func)
-  '((arg1, arg2)=(1, 2))'
 
 However, lists of this type are not allowed inside the argument list::
 
@@ -765,16 +744,16 @@ used. Clearly, you cannot specify both, the ``module`` and ``format`` argument.
 You specify the format as follows:
 
   >>> utilities.renderText(u'Hello!\n', format='zope.source.rest')
-  u'<p>Hello!</p>\n'
+  '<p>Hello!</p>\n'
 
 Note that the format string must be a valid source factory id; if the factory
 id is not given, 'zope.source.stx' is used. Thus, specifying the module is
 often safer (if available):
 
   >>> utilities.renderText(u'Hello!\n', module=apidoc)
-  u'<p>Hello!</p>\n'
+  '<p>Hello!</p>\n'
 
 Byte input is accepted, so long as it can be decoded:
 
   >>> utilities.renderText(b'Hello!\n', module=apidoc)
-  u'<p>Hello!</p>\n'
+  '<p>Hello!</p>\n'

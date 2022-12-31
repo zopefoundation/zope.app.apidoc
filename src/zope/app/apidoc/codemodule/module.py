@@ -18,8 +18,6 @@ __docformat__ = 'restructuredtext'
 import os
 import types
 
-import six
-
 from zope.cachedescriptors.property import Lazy
 from zope.hookable import hookable
 from zope.interface import implementer
@@ -82,9 +80,8 @@ class Module(ReadContainerBase):
         if module_file.endswith(
                 ('__init__.py', '__init__.pyc', '__init__.pyo')):
             self._package = True
-        elif hasattr(self._module, '__package__'):
-            # Detect namespace packages, especially (but not limited
-            # to) Python 3 with implicit namespace packages:
+        else:
+            # Detect namespace packages with implicit namespace packages:
 
             # "When the module is a package, its
             # __package__ value should be set to its __name__. When
@@ -92,18 +89,8 @@ class Module(ReadContainerBase):
             # to the empty string for top-level modules, or for
             # submodules, to the parent package's "
 
-            # Note that everything has __package__ on Python 3, but not
-            # necessarily on Python 2.
             pkg_name = self._module.__package__
             self._package = pkg_name and self._module.__name__ == pkg_name
-        else:
-            # Python 2. Lets do some introspection. Namespace packages
-            # often have an empty file. Note that path isn't necessarily
-            # indexable.
-            if (module_file == ''
-                and module_path
-                    and os.path.isdir(list(module_path)[0])):
-                self._package = True
 
         if not self._package:
             return
@@ -123,7 +110,7 @@ class Module(ReadContainerBase):
 
                 if os.path.isdir(path) and '__init__.py' in os.listdir(path):
                     # subpackage
-                    # XXX Python 3 implicit packages don't have __init__.py
+                    # XXX Implicit packages don't have __init__.py
 
                     fullname = self._module.__name__ + '.' + mod_file
                     module = safe_import(fullname)
@@ -186,7 +173,7 @@ class Module(ReadContainerBase):
             if isinstance(attr, hookable):
                 attr = attr.implementation
 
-            if isinstance(attr, six.class_types):
+            if isinstance(attr, type):
                 self._children[name] = Class(self, name, attr)
 
             elif isinstance(attr, InterfaceClass):
@@ -284,7 +271,7 @@ class Module(ReadContainerBase):
                 if not name.startswith('_')]
 
     def __repr__(self):
-        return '<Module %r name %r parent %r at 0x%x>' % (
+        return '<Module {!r} name {!r} parent {!r} at 0x{:x}>'.format(
             self._module, self.__name__, self.__parent__, id(self)
         )
 

@@ -16,11 +16,8 @@
 """
 import doctest
 import os
-import re
 import sys
 import unittest
-
-import six
 
 import zope.app.renderer
 import zope.component.testing
@@ -30,7 +27,6 @@ from zope.app.component.testing import PlacefulSetup
 from zope.app.component.testing import setUpTraversal
 from zope.configuration import xmlconfig
 from zope.interface import implementer
-from zope.testing import renormalizing
 from zope.traversing.interfaces import IContainmentRoot
 
 from zope.app.apidoc import static
@@ -88,13 +84,13 @@ class BrowserTestCase(unittest.TestCase):
     layer = APIDocLayer
 
     def setUp(self):
-        super(BrowserTestCase, self).setUp()
+        super().setUp()
         _setUp_AppSetup()
         self._testapp = TestApp(self.layer.make_wsgi_app())
 
     def tearDown(self):
         _tearDown_AppSetup()
-        super(BrowserTestCase, self).tearDown()
+        super().tearDown()
 
     def checkForBrokenLinks(self, orig_response, path,
                             basic=None, max_links=None):
@@ -171,43 +167,22 @@ class TestPresentation(unittest.TestCase):
 
 class TestUtilities(unittest.TestCase):
 
-    # All four implementations (Py2, PyPy2, Python 3, PyPy3) do different
-    # things with slot method descriptors
-    @unittest.skipIf(str is not bytes or hasattr(sys, 'pypy_version_info'),
-                     "Only on CPython2")
-    def test_slot_methods2(self):
-        from zope.app.apidoc.utilities import getFunctionSignature
-        self.assertEqual("(<unknown>)", getFunctionSignature(object.__init__))
-
-    @unittest.skipIf(str is bytes or hasattr(sys, 'pypy_version_info'),
-                     "Only on CPython3")
-    def test_slot_methods3(self):
+    # CPython and PyPy do different things with slot method descriptors
+    @unittest.skipIf(hasattr(sys, 'pypy_version_info'), "Only on CPython")
+    def test_slot_methods_cpython(self):
         from zope.app.apidoc.utilities import getFunctionSignature
         self.assertEqual(
             '(self, /, *args, **kwargs)',
             getFunctionSignature(object.__init__))
 
-    @unittest.skipIf(str is not bytes or not hasattr(sys, 'pypy_version_info'),
-                     "Only on PyPy2")
-    def test_slot_methodspypy2(self):  # pragma: no cover (no coverage on pypy)
+    @unittest.skipIf(not hasattr(sys, 'pypy_version_info'), "Only on PyPy")
+    def test_slot_methods_pypy(self):
         from zope.app.apidoc.utilities import getFunctionSignature
         self.assertEqual(
             "(obj, *args, **keywords)",
-            getFunctionSignature(
-                object.__init__))
+            getFunctionSignature(object.__init__))
 
-    @unittest.skipUnless(str is bytes, "Only on PY2")
-    def test_unpack_methods(self):
-        import six
-
-        from zope.app.apidoc.utilities import getFunctionSignature
-
-        six.exec_("def f((a, b)): pass")
-
-        self.assertEqual("((a, b))", getFunctionSignature(locals()['f']))
-
-    @unittest.skipIf(six.PY2, reason="Testing the PY3 only parts.")
-    def test_keyword_only_arguments_PY3(self):
+    def test_keyword_only_arguments(self):
         from socket import socket
 
         from zope.app.apidoc.utilities import getFunctionSignature
@@ -223,28 +198,11 @@ class TestUtilities(unittest.TestCase):
         # Extra coverage to make sure the alternate branches are taken
         self.assertEqual(
             '()',
-            getFunctionSignature(self.test_keyword_only_arguments_PY3))
+            getFunctionSignature(self.test_keyword_only_arguments))
         self.assertEqual(
             '(self)',
             getFunctionSignature(
-                TestUtilities.test_keyword_only_arguments_PY3))
-
-    @unittest.skipIf(six.PY3, reason="_simpleGetFunctionSignature is PY2 only")
-    def test_keyword_only_arguments_PY2(self):
-        from socket import socket
-
-        from zope.app.apidoc.utilities import _simpleGetFunctionSignature
-        from zope.app.apidoc.utilities import getFunctionSignature
-
-        simple_sig = _simpleGetFunctionSignature(socket.makefile)
-        self.assertEqual(simple_sig, "(mode='r', bufsize=-1)")
-        self.assertEqual(
-            '()', getFunctionSignature(
                 TestUtilities.test_keyword_only_arguments))
-        # Extra coverage to make sure the alternate branches are taken
-        self.assertEqual(
-            '()',
-            getFunctionSignature(self.test_keyword_only_arguments))
 
     def test_renderText_non_text(self):
         # If we pass something that isn't actually text, we get a
@@ -261,7 +219,7 @@ class TestUtilities(unittest.TestCase):
 
         from zope.app.apidoc.utilities import getPythonPath
 
-        class Obj(object):
+        class Obj:
             "namespace object"
 
         o = Obj()
@@ -282,7 +240,7 @@ class TestUtilities(unittest.TestCase):
         # asked for its __class__ so we can control the __qualname__
         # on all versions of Python.
 
-        class Obj(object):
+        class Obj:
             "namespace object"
 
             def __getattribute__(self, name):
@@ -350,7 +308,7 @@ class TestStatic(unittest.TestCase):
         # Make sure that the directive is listed when we specify our custom
         # ZCML file
         static.main(['--max-runtime', '10', os.path.join(tmpdir,
-                    'custom'), '-c', '%s:%s' % (package_name, zcml_file)])
+                    'custom'), '-c', '{}:{}'.format(package_name, zcml_file)])
         path = os.path.join(
             tmpdir, 'custom', '++apidoc++/ZCML/@@staticmenu.html')
         with open(path) as document:
@@ -363,7 +321,7 @@ class TestStatic(unittest.TestCase):
     def test_processLink_errors(self):
         tmpdir = self._tempdir()
 
-        class ErrorBrowser(object):
+        class ErrorBrowser:
             error_kind = ValueError
             contents = ''
             isHtml = False
@@ -378,7 +336,7 @@ class TestStatic(unittest.TestCase):
                 b = self.browser
                 self.browser = ErrorBrowser()
                 self.browser.error_kind = self.error_kind
-                super(ErrorGenerator, self).processLink(link)
+                super().processLink(link)
                 self.browser = b
 
         maker = static.main(
@@ -445,33 +403,14 @@ class TestStatic(unittest.TestCase):
 # Generally useful classes and functions
 
 @implementer(IContainmentRoot)
-class Root(object):
+class Root:
 
     __parent__ = None
     __name__ = ''
 
 
-standard_checker_patterns = (
-    (re.compile(r"u('[^']*')"), r"\1"),
-    (re.compile(r"b('[^']*')"), r"\1"),
-    (re.compile("__builtin__"), 'builtins'),
-    # repr of old style class is different on py2
-    (re.compile("<class zope.app.apidoc.doctest.B.*>"),
-     "<class 'zope.app.apidoc.doctest.B'>"),
-    # there are no unbound methods on python 3
-    (re.compile("<unbound method ([^>]*)>"),
-     r"<function \1 at 0xabc>")
-)
-
-
-def standard_checker(*extra_patterns):
-    return renormalizing.RENormalizing(
-        standard_checker_patterns + extra_patterns)
-
-
 standard_option_flags = (doctest.NORMALIZE_WHITESPACE
-                         | doctest.ELLIPSIS
-                         | renormalizing.IGNORE_EXCEPTION_MODULE_IN_PYTHON2)
+                         | doctest.ELLIPSIS)
 
 
 def LayerDocFileSuite(filename, package):
@@ -480,7 +419,6 @@ def LayerDocFileSuite(filename, package):
         package=package,
         setUp=_setUp_LayerPlace,
         tearDown=_tearDown_LayerPlace,
-        checker=standard_checker(),
         optionflags=standard_option_flags)
     test.layer = APIDocLayer
     return test
@@ -491,21 +429,18 @@ def LayerDocTestSuite(modulename):
         modulename,
         setUp=_setUp_LayerPlace,
         tearDown=_tearDown_LayerPlace,
-        checker=standard_checker(),
         optionflags=standard_option_flags)
     test.layer = APIDocLayer
     return test
 
 
 def test_suite():
-    checker = standard_checker()
 
     def file_test(name, **kwargs):
         return doctest.DocFileSuite(
             name,
             setUp=setUp,
             tearDown=tearDown,
-            checker=checker,
             optionflags=standard_option_flags,
             **kwargs)
 

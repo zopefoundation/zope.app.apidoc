@@ -18,8 +18,6 @@
 __docformat__ = 'restructuredtext'
 import inspect
 
-import six
-
 import zope.interface
 import zope.security.proxy
 from zope.interface import directlyProvidedBy
@@ -43,7 +41,7 @@ def getTypeLink(type_):
     return path.replace('.', '/') if importable else None
 
 
-class annotationsNamespace(object):
+class annotationsNamespace:
     """Used to traverse to the annotations of an object."""
 
     def __init__(self, ob, request=None):
@@ -61,7 +59,7 @@ class annotationsNamespace(object):
         return obj
 
 
-class sequenceItemsNamespace(object):
+class sequenceItemsNamespace:
     """Used to traverse to the values of a sequence."""
 
     def __init__(self, ob, request=None):
@@ -74,7 +72,7 @@ class sequenceItemsNamespace(object):
         return obj
 
 
-class mappingItemsNamespace(object):
+class mappingItemsNamespace:
     """Used to traverse to the values of a mapping.
 
     Important: This might seem like overkill, but we do not know that (1)
@@ -95,7 +93,7 @@ class mappingItemsNamespace(object):
 
 # Small hack to simulate a traversal root.
 @zope.interface.implementer(IContainmentRoot)
-class TraversalRoot(object):
+class TraversalRoot:
     pass
 
 
@@ -103,7 +101,7 @@ class Introspector(BrowserView):
     """Introspector browser view"""
 
     def __init__(self, context, request):
-        super(Introspector, self).__init__(context, request)
+        super().__init__(context, request)
         path = apidoc.utilities.getPythonPath(
             context.__class__).replace('.', '/')
 
@@ -204,7 +202,7 @@ class Introspector(BrowserView):
         ann = []
         # Make the object naked, so that we can inspect the value types.
         naked = zope.security.proxy.removeSecurityProxy(self.context)
-        for index in six.moves.xrange(0, len(self.context)):
+        for index in range(0, len(self.context)):
             value = naked[index]
             ann.append({
                 'index': index,

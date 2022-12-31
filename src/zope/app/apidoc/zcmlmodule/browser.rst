@@ -107,7 +107,7 @@ Returns the interface details class for the schema.
   <zope.app.apidoc.ifacemodule.browser.InterfaceDetails object at ...>
 
   >>> iface_details.context
-  <InterfaceClass __builtin__.IFoo>
+  <InterfaceClass builtins.IFoo>
 
 The :meth:`DirectiveDetails._getFieldName` method of the interface details has been overridden to
 neglect trailing underscores in the field name. This is necessary, since

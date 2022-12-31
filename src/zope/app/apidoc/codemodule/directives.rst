@@ -34,7 +34,7 @@ Now run the registration code:
 and the root module is available:
 
   >>> list(getUtilitiesFor(IAPIDocRootModule))
-  [(u'zope', 'zope')]
+  [('zope', 'zope')]
 
 
 The ``apidoc:importModule`` Directive

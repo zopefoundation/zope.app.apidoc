@@ -41,14 +41,9 @@ some interfaces, so that we can test all methods on the class registry:
   >>> reg['A'] = A
 
   >>> @implementer(IB)
-  ... class B: # Old style on Python 2
+  ... class B:
   ...    pass
   >>> reg['B'] = B
-
-  >>> @implementer(IB)
-  ... class B2(object):
-  ...    pass
-  >>> reg['B2'] = B2
 
   >>> @implementer(IC)
   ... class C(object):
@@ -63,7 +58,7 @@ are the names of the classes:
 
   >>> names = sorted(reg.keys())
   >>> names
-  ['A', 'A2', 'B', 'B2', 'C']
+  ['A', 'A2', 'B', 'C']
 
   >>> reg['A'] is A
   True
@@ -79,12 +74,10 @@ This method returns all classes that implement the specified interface:
   >>> pprint(reg.getClassesThatImplement(IA))
   [('A', <class 'zope.app.apidoc.doctest.A'>),
    ('A2', <class 'zope.app.apidoc.doctest.A2'>),
-   ('B', <class 'zope.app.apidoc.doctest.B'>),
-   ('B2', <class 'zope.app.apidoc.doctest.B2'>)]
+   ('B', <class 'zope.app.apidoc.doctest.B'>)]
 
   >>> pprint(reg.getClassesThatImplement(IB))
-  [('B', <class 'zope.app.apidoc.doctest.B'>),
-   ('B2', <class 'zope.app.apidoc.doctest.B2'>)]
+  [('B', <class 'zope.app.apidoc.doctest.B'>)]
 
   >>> pprint(reg.getClassesThatImplement(IC))
   [('C', <class 'zope.app.apidoc.doctest.C'>)]

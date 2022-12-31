@@ -49,7 +49,7 @@ def _compareAttrs(x, nameOrder):
     return valueX
 
 
-class DirectiveDetails(object):
+class DirectiveDetails:
     """Details about ZCML directives."""
 
     context = None
@@ -59,7 +59,7 @@ class DirectiveDetails(object):
         context = removeSecurityProxy(self.context)
         ns, name = context.name
         if context.prefixes.get(ns):
-            return '%s:%s' % (context.prefixes[ns], name)
+            return '{}:{}'.format(context.prefixes[ns], name)
         return name
 
     def line(self):
@@ -86,7 +86,7 @@ class DirectiveDetails(object):
         zcml = findAPIDocumentationRoot(self.context, self.request)['ZCML']
         if name not in zcml[ns]:
             ns = 'ALL'
-        link = '%s/ZCML/%s/%s/index.html' % (
+        link = '{}/ZCML/{}/{}/index.html'.format(
             findAPIDocumentationRootURL(self.context, self.request), ns, name)
         if subDirective:
             link += '#' + subDirective.name[1]
@@ -111,7 +111,7 @@ class DirectiveDetails(object):
         if isInterface:
             apidoc_url = findAPIDocumentationRootURL(
                 self.context, self.request)
-            return '%s/Interface/%s/index.html' % (apidoc_url, path)
+            return '{}/Interface/{}/index.html'.format(apidoc_url, path)
         if isReferencable(path):
             return rootURL + '/%s/index.html' % (path.replace('.', '/'))
 

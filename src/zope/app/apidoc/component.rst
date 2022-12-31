@@ -47,11 +47,11 @@ specified interface. So let's create some adapter registrations:
   >>> regs.sort()
   >>> regs
   [AdapterRegistration(<BaseGlobalComponents base>,
-                       [IFoo, IBar], ISpecialResult, u'', None, u''),
+                       [IFoo, IBar], ISpecialResult, '', None, ''),
    AdapterRegistration(<BaseGlobalComponents base>,
-                       [IFoo], IResult, u'', None, u''),
+                       [IFoo], IResult, '', None, ''),
    HandlerRegistration(<BaseGlobalComponents base>,
-                       [IFoo], u'', 'stubFactory', u'')]
+                       [IFoo], '', 'stubFactory', '')]
 
 Note how the adapter requiring an
 :class:`zope.publisher.interfaces.IRequest` at the end of the required
@@ -63,13 +63,13 @@ flag on:
   >>> regs.sort()
   >>> regs
   [AdapterRegistration(<BaseGlobalComponents base>,
-                       [IFoo, IBar], ISpecialResult, u'', None, u''),
+                       [IFoo, IBar], ISpecialResult, '', None, ''),
    AdapterRegistration(<BaseGlobalComponents base>,
-                       [IFoo, IRequest], ISpecialResult, u'', None, u''),
+                       [IFoo, IRequest], ISpecialResult, '', None, ''),
    AdapterRegistration(<BaseGlobalComponents base>,
-                       [IFoo], IResult, u'', None, u''),
+                       [IFoo], IResult, '', None, ''),
    HandlerRegistration(<BaseGlobalComponents base>,
-                       [IFoo], u'', 'stubFactory', u'')]
+                       [IFoo], '', 'stubFactory', '')]
 
 The function will also pick up registrations that have required interfaces the
 specified interface extends:
@@ -78,11 +78,11 @@ specified interface extends:
   >>> regs.sort()
   >>> regs
   [AdapterRegistration(<BaseGlobalComponents base>,
-                       [IFoo, IBar], ISpecialResult, u'', None, u''),
+                       [IFoo, IBar], ISpecialResult, '', None, ''),
    AdapterRegistration(<BaseGlobalComponents base>,
-                       [IFoo], IResult, u'', None, u''),
+                       [IFoo], IResult, '', None, ''),
    HandlerRegistration(<BaseGlobalComponents base>,
-                       [IFoo], u'', 'stubFactory', u'')]
+                       [IFoo], '', 'stubFactory', '')]
 
 And all of the required interfaces are considered, of course:
 
@@ -90,7 +90,7 @@ And all of the required interfaces are considered, of course:
   >>> regs.sort()
   >>> regs
   [AdapterRegistration(<BaseGlobalComponents base>,
-                       [IFoo, IBar], ISpecialResult, u'', None, u'')]
+                       [IFoo, IBar], ISpecialResult, '', None, '')]
 
 
 :func:`getProvidedAdapters`
@@ -104,7 +104,7 @@ views by default.
   >>> regs.sort()
   >>> regs
   [AdapterRegistration(<BaseGlobalComponents base>,
-                       [IFoo, IBar], ISpecialResult, u'', None, u'')]
+                       [IFoo, IBar], ISpecialResult, '', None, '')]
 
 And by specifying the ``withView`` flag, we get views as well:
 
@@ -112,9 +112,9 @@ And by specifying the ``withView`` flag, we get views as well:
   >>> regs.sort()
   >>> regs
   [AdapterRegistration(<BaseGlobalComponents base>,
-                       [IFoo, IBar], ISpecialResult, u'', None, u''),
+                       [IFoo, IBar], ISpecialResult, '', None, ''),
    AdapterRegistration(<BaseGlobalComponents base>,
-                       [IFoo, IRequest], ISpecialResult, u'', None, u'')]
+                       [IFoo, IRequest], ISpecialResult, '', None, '')]
 
 We can of course also ask for adapters specifying ``IResult``:
 
@@ -122,11 +122,11 @@ We can of course also ask for adapters specifying ``IResult``:
   >>> regs.sort()
   >>> regs
   [AdapterRegistration(<BaseGlobalComponents base>,
-                       [IFoo, IBar], ISpecialResult, u'', None, u''),
+                       [IFoo, IBar], ISpecialResult, '', None, ''),
    AdapterRegistration(<BaseGlobalComponents base>,
-                       [IFoo, IRequest], ISpecialResult, u'', None, u''),
+                       [IFoo, IRequest], ISpecialResult, '', None, ''),
    AdapterRegistration(<BaseGlobalComponents base>,
-                       [IFoo], IResult, u'', None, u'')]
+                       [IFoo], IResult, '', None, '')]
 
 
 :func:`getClasses`
@@ -193,15 +193,15 @@ Let's see whether we will be able to get them:
   >>> regs
   [UtilityRegistration(<BaseGlobalComponents base>,
       IFactory, 'MyFooBar',
-      <Factory for <class 'zope.app.apidoc.doctest.MyFooBar'>>, None, u'')]
+      <Factory for <class 'zope.app.apidoc.doctest.MyFooBar'>>, None, '')]
 
   >>> regs = list(component.getFactories(IFoo))
   >>> regs.sort()
   >>> regs
   [UtilityRegistration(<BaseGlobalComponents base>, IFactory, 'MyFoo',
-               <Factory for <class 'zope.app.apidoc.doctest.MyFoo'>>, None, u''),
+               <Factory for <class 'zope.app.apidoc.doctest.MyFoo'>>, None, ''),
    UtilityRegistration(<BaseGlobalComponents base>, IFactory, 'MyFooBar',
-            <Factory for <class 'zope.app.apidoc.doctest.MyFooBar'>>, None, u'')]
+            <Factory for <class 'zope.app.apidoc.doctest.MyFooBar'>>, None, '')]
 
 
 :func:`getUtilities`
@@ -221,16 +221,16 @@ Now let's have a look what we have:
   >>> regs = list(component.getUtilities(IFooBar))
   >>> regs.sort()
   >>> regs
-  [UtilityRegistration(<BaseGlobalComponents base>, IFooBar, u'',
-                       <zope.app.apidoc.doctest.MyFooBar object at ...>, None, u'')]
+  [UtilityRegistration(<BaseGlobalComponents base>, IFooBar, '',
+                       <zope.app.apidoc.doctest.MyFooBar object at ...>, None, '')]
 
   >>> regs = list(component.getUtilities(IFoo))
   >>> regs.sort()
   >>> regs
-  [UtilityRegistration(<BaseGlobalComponents base>, IFoo, u'',
-                       <zope.app.apidoc.doctest.MyFoo object at ...>, None, u''),
-   UtilityRegistration(<BaseGlobalComponents base>, IFooBar, u'',
-                       <zope.app.apidoc.doctest.MyFooBar object at ...>, None, u'')]
+  [UtilityRegistration(<BaseGlobalComponents base>, IFoo, '',
+                       <zope.app.apidoc.doctest.MyFoo object at ...>, None, ''),
+   UtilityRegistration(<BaseGlobalComponents base>, IFooBar, '',
+                       <zope.app.apidoc.doctest.MyFooBar object at ...>, None, '')]
 
 
 :func:`getRealFactory`
@@ -325,9 +325,9 @@ object references.  This may change.
 This function returns the info dictionary of a type.
 
   >>> pprint(component.getTypeInfoDictionary(tuple), width=1)
-  {'module': '__builtin__',
+  {'module': 'builtins',
    'name': 'tuple',
-   'url': '__builtin__/tuple'}
+   'url': 'builtins/tuple'}
 
 
 :func:`getSpecificationInfoDictionary`
@@ -355,9 +355,9 @@ Let's now look at the behavior when passing a type:
   >>> pprint(component.getSpecificationInfoDictionary(tupleSpec))
   {'isInterface': False,
    'isType': True,
-   'module': '__builtin__',
+   'module': 'builtins',
    'name': 'tuple',
-   'url': '__builtin__/tuple'}
+   'url': 'builtins/tuple'}
 
 For the type, we simply reuse the type info dictionary function.
 
@@ -384,7 +384,7 @@ And now get the info dictionary:
   {'doc': 'doc info',
    'factory': 'zope.app.apidoc.doctest.MyResult',
    'factory_url': 'zope/app/apidoc/doctest/MyResult',
-   'name': u'FooToResult',
+   'name': 'FooToResult',
    'provided': {'module': 'zope.app.apidoc.doctest',
                 'name': 'IResult'},
    'required': [{'isInterface': True,
@@ -411,7 +411,7 @@ will be ``None``:
   {'doc': 'doc info',
    'factory': 'zope.app.apidoc.doctest.MyResult2',
    'factory_url': None,
-   'name': u'FooToResult',
+   'name': 'FooToResult',
    'provided': {'module': 'zope.app.apidoc.doctest',
                 'name': 'IResult'},
    'required': [{'isInterface': True,
@@ -435,7 +435,7 @@ see how the function handles subscriptions:
   {'doc': 'doc info',
    'factory': 'zope.app.apidoc.doctest.MyResult',
    'factory_url': 'zope/app/apidoc/doctest/MyResult',
-   'name': u'',
+   'name': '',
    'provided': None,
    'required': [{'isInterface': True,
                  'isType': False,
@@ -459,8 +459,8 @@ registrations:
 
   >>> pprint(component.getFactoryInfoDictionary(
   ...     next(component.getFactories(IFooBar))))
-  {'description': u'<p>My Foo Bar</p>\n',
-   'name': u'MyFooBar',
+  {'description': '<p>My Foo Bar</p>\n',
+   'name': 'MyFooBar',
    'title': 'MyFooBar',
    'url': 'zope/app/apidoc/doctest/MyFooBar'}
 
@@ -481,9 +481,9 @@ will be ``None``:
 
   >>> pprint(component.getFactoryInfoDictionary(
   ...     next(component.getFactories(IMine))), width=50)
-  {'description': u'',
-   'name': u'MyFactory',
-   'title': u'',
+  {'description': '',
+   'name': 'MyFactory',
+   'title': '',
    'url': None}
 
 
@@ -499,7 +499,7 @@ registrations:
   >>> pprint(component.getUtilityInfoDictionary(
   ...     next(component.getUtilities(IFooBar))))
   {'iface_id': 'zope.app.apidoc.doctest.IFooBar',
-   'name': u'<i>no name</i>',
+   'name': '<i>no name</i>',
    'path': 'zope.app.apidoc.doctest.MyFooBar',
    'url': 'Code/zope/app/apidoc/doctest/MyFooBar',
-   'url_name': b'X19ub25hbWVfXw=='}
+   'url_name': 'X19ub25hbWVfXw=='}

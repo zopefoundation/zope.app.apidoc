@@ -22,7 +22,7 @@ from zope.security.proxy import removeSecurityProxy
 from zope.app.apidoc.utilities import renderText
 
 
-class APIDocumentationView(object):
+class APIDocumentationView:
     """View for the API Documentation"""
 
     context = None

@@ -24,7 +24,7 @@ from zope.app.apidoc.utilities import getFunctionSignature
 
 
 @implementer(ILocation, IFunctionDocumentation)
-class Function(object):
+class Function:
     """This class represents a function declared in the module."""
 
     def __init__(self, module, name, func, doc=None):

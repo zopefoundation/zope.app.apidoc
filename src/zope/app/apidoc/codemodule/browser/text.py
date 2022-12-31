@@ -18,7 +18,7 @@ __docformat__ = 'restructuredtext'
 from zope.app.apidoc.utilities import renderText
 
 
-class TextFileDetails(object):
+class TextFileDetails:
     """Represents the details of the text file."""
 
     context = None

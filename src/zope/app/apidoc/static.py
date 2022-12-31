@@ -24,9 +24,8 @@ import os.path
 import sys
 import time
 import warnings
-
-from six.moves.urllib import error as urllib2
-from six.moves.urllib import parse as urlparse
+from urllib import error as urllib2
+from urllib import parse as urlparse
 
 import zope.testbrowser.browser
 import zope.testbrowser.wsgi
@@ -92,7 +91,7 @@ def completeURL(url):
     return urlparse.urlunparse(fragments)
 
 
-class Link(object):
+class Link:
     """A link in the page."""
 
     def __init__(self, url, rootURL, referenceURL='None'):
@@ -157,7 +156,7 @@ class PublisherBrowser(zope.testbrowser.wsgi.Browser):
 
     def setUserAndPassword(self, user, pw):
         """Specify the username and password to use for the retrieval."""
-        self.addHeader('Authorization', 'Basic %s:%s' % (user, pw))
+        self.addHeader('Authorization', 'Basic {}:{}'.format(user, pw))
 
     @classmethod
     def begin(cls):
@@ -206,7 +205,7 @@ class ArbitraryLink(zope.testbrowser.browser.Link):
     attr_name = 'src'
 
     def __init__(self, elem, browser, base, attr_name=None):
-        super(ArbitraryLink, self).__init__(elem, browser, base)
+        super().__init__(elem, browser, base)
         if attr_name:
             self.attr_name = attr_name
 
@@ -216,7 +215,7 @@ class ArbitraryLink(zope.testbrowser.browser.Link):
         return self.browser._absoluteUrl(relurl)
 
 
-class StaticAPIDocGenerator(object):
+class StaticAPIDocGenerator:
     """Static API doc Maker"""
 
     counter = 0
@@ -453,7 +452,7 @@ class StaticAPIDocGenerator(object):
         try:
             with open(filepath, 'wb') as f:
                 f.write(contents)
-        except IOError:  # pragma: no cover
+        except OSError:  # pragma: no cover
             # The file already exists, so it is a duplicate and a bad one,
             # since the URL misses `index.hml`. ReST can produce strange URLs
             # that produce this problem, and we have little control over it.

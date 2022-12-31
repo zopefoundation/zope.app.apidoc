@@ -24,7 +24,7 @@ from zope.traversing.browser import absoluteURL
 from zope.app.apidoc.interfaces import IDocumentationModule
 
 
-class CodeBreadCrumbs(object):
+class CodeBreadCrumbs:
     """View that provides breadcrumbs for code objects"""
 
     def __call__(self):

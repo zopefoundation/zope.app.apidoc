@@ -95,13 +95,13 @@ class Namespace(ReadContainerBase):
 
     def items(self):
         _makeDocStructure()
-        return sorted(((key, self.get(key))
-                       for key
-                       in namespaces[self.getFullName()].keys()))
+        return sorted((key, self.get(key))
+                      for key
+                      in namespaces[self.getFullName()].keys())
 
 
 @implementer(ILocation)
-class Directive(object):
+class Directive:
     """Represents a ZCML Directive."""
 
     def __init__(self, ns, name, schema, handler, info, subdirs):

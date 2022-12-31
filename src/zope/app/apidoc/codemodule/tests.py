@@ -24,7 +24,6 @@ import zope.app.apidoc.codemodule
 from zope.app.apidoc.codemodule.module import Module
 from zope.app.apidoc.codemodule.text import TextFile
 from zope.app.apidoc.tests import LayerDocFileSuite
-from zope.app.apidoc.tests import standard_checker
 from zope.app.apidoc.tests import standard_option_flags
 
 
@@ -45,14 +44,14 @@ class TestText(unittest.TestCase):
                          b'This file\r\nuses \r\nWindows \r\nline endings.')
 
         self.assertEqual(self._read_via_text('_test_crlf.txt'),
-                         u'This file\nuses \nWindows \nline endings.')
+                         'This file\nuses \nWindows \nline endings.')
 
     def test_cr(self):
         self.assertEqual(self._read_bytes('_test_cr.txt'),
                          b'This file\ruses \rMac \rline endings.')
 
         self.assertEqual(self._read_via_text('_test_cr.txt'),
-                         u'This file\nuses \nMac \nline endings.')
+                         'This file\nuses \nMac \nline endings.')
 
 
 class TestModule(unittest.TestCase):
@@ -113,9 +112,10 @@ class TestModule(unittest.TestCase):
     def test_module_with_file_of_none(self):
         # Sometimes namespace packages have this,
         # especially on Python 3.7.
-        class Mod(object):
+        class Mod:
             __file__ = None
             __name__ = 'name'
+            __package__ = None
 
         mod = Mod()
         mod.__doc__ = 'A module'
@@ -181,11 +181,11 @@ class TestClass(unittest.TestCase):
 
         self.assertTrue(callable(CheckerPublic))
 
-        class Parent(object):
+        class Parent:
             def getPath(self):
                 return ''
 
-        class MyClass(object):
+        class MyClass:
             permission = CheckerPublic
 
         klass = Class(Parent(), MyClass.__name__, MyClass)
@@ -194,8 +194,6 @@ class TestClass(unittest.TestCase):
 
 
 def test_suite():
-    checker = standard_checker()
-
     return unittest.TestSuite((
         LayerDocFileSuite(
             'README.rst',
@@ -204,7 +202,6 @@ def test_suite():
             'directives.rst',
             setUp=testing.setUp,
             tearDown=testing.tearDown,
-            checker=checker,
             optionflags=standard_option_flags),
         unittest.defaultTestLoader.loadTestsFromName(__name__),
     ))

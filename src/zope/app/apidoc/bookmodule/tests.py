@@ -17,7 +17,6 @@
 import doctest
 import unittest
 
-from zope.app.apidoc.tests import standard_checker
 from zope.app.apidoc.tests import standard_option_flags
 
 
@@ -25,6 +24,5 @@ def test_suite():
     return unittest.TestSuite((
         doctest.DocTestSuite(
             'zope.app.apidoc.bookmodule.browser',
-            checker=standard_checker(),
             optionflags=standard_option_flags),
     ))

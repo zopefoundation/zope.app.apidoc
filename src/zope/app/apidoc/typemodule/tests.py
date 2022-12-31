@@ -22,7 +22,6 @@ from zope.component import testing
 
 from zope.app.apidoc.testing import APIDocLayer
 from zope.app.apidoc.tests import BrowserTestCase
-from zope.app.apidoc.tests import standard_checker
 from zope.app.apidoc.tests import standard_option_flags
 
 
@@ -43,14 +42,11 @@ class TypeModuleTests(BrowserTestCase):
 
 
 def test_suite():
-    checker = standard_checker()
-
     return unittest.TestSuite((
         doctest.DocTestSuite(
             'zope.app.apidoc.typemodule.type',
             setUp=testing.setUp,
             tearDown=testing.tearDown,
-            checker=checker,
             optionflags=standard_option_flags),
         unittest.defaultTestLoader.loadTestsFromName(__name__),
     ))

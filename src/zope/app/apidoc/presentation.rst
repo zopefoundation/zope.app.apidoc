@@ -52,7 +52,7 @@ cases we cannot retrieve any useful information:
 
   >>> info = presentation.getViewFactoryData(3)
   >>> pprint(info)
-  {'path': '__builtin__.int',
+  {'path': 'builtins.int',
    'referencable': False,
    'resource': None,
    'template': None,
@@ -270,17 +270,17 @@ should be returned:
   >>> regs.sort()
   >>> regs
   [AdapterRegistration(<BaseGlobalComponents base>,
-                       [IFoo, IBrowserRequest], Interface, 'blah', None, u''),
+                       [IFoo, IBrowserRequest], Interface, 'blah', None, ''),
    AdapterRegistration(<BaseGlobalComponents base>,
-                       [IFoo, IHTTPRequest], Interface, 'foo', None, u''),
+                       [IFoo, IHTTPRequest], Interface, 'foo', None, ''),
    AdapterRegistration(<BaseGlobalComponents base>,
-                       [Interface, IHTTPRequest], Interface, 'bar', None, u'')]
+                       [Interface, IHTTPRequest], Interface, 'bar', None, '')]
 
   >>> regs = list(presentation.getViews(Interface, IHTTPRequest))
   >>> regs.sort()
   >>> regs
   [AdapterRegistration(<BaseGlobalComponents base>,
-                       [Interface, IHTTPRequest], Interface, 'bar', None, u'')]
+                       [Interface, IHTTPRequest], Interface, 'bar', None, '')]
 
 
 :func:`filterViewRegistrations`
@@ -333,23 +333,23 @@ Let's now filter those registrations:
   >>> result.sort()
   >>> result
   [AdapterRegistration(<BaseGlobalComponents base>,
-                     [IFile, IHTTPRequest], Interface, 'view.html', None, u'')]
+                     [IFile, IHTTPRequest], Interface, 'view.html', None, '')]
 
   >>> result = list(presentation.filterViewRegistrations(
   ...     regs, IFile, level=presentation.EXTENDED_INTERFACE_LEVEL))
   >>> result.sort()
   >>> result
   [AdapterRegistration(<BaseGlobalComponents base>,
-                  [IContent, IHTTPRequest], Interface, 'edit.html', None, u''),
+                  [IContent, IHTTPRequest], Interface, 'edit.html', None, ''),
    AdapterRegistration(<BaseGlobalComponents base>,
-                  [IContent, IHTTPRequest], Interface, 'view.html', None, u'')]
+                  [IContent, IHTTPRequest], Interface, 'view.html', None, '')]
 
   >>> result = list(presentation.filterViewRegistrations(
   ...     regs, IFile, level=presentation.GENERIC_INTERFACE_LEVEL))
   >>> result.sort()
   >>> result
   [AdapterRegistration(<BaseGlobalComponents base>,
-                 [Interface, IHTTPRequest], Interface, 'view.html', None, u'')]
+                 [Interface, IHTTPRequest], Interface, 'view.html', None, '')]
 
 You can also specify multiple levels at once using the Boolean OR operator,
 since all three levels are mutually exclusive.
@@ -360,11 +360,11 @@ since all three levels are mutually exclusive.
   >>> result.sort()
   >>> result
   [AdapterRegistration(<BaseGlobalComponents base>,
-                  [IContent, IHTTPRequest], Interface, 'edit.html', None, u''),
+                  [IContent, IHTTPRequest], Interface, 'edit.html', None, ''),
    AdapterRegistration(<BaseGlobalComponents base>,
-                  [IContent, IHTTPRequest], Interface, 'view.html', None, u''),
+                  [IContent, IHTTPRequest], Interface, 'view.html', None, ''),
    AdapterRegistration(<BaseGlobalComponents base>,
-                  [IFile, IHTTPRequest], Interface, 'view.html', None, u'')]
+                  [IFile, IHTTPRequest], Interface, 'view.html', None, '')]
 
   >>> result = list(presentation.filterViewRegistrations(
   ...     regs, IFile, level=presentation.SPECIFIC_INTERFACE_LEVEL |
@@ -372,9 +372,9 @@ since all three levels are mutually exclusive.
   >>> result.sort()
   >>> result
   [AdapterRegistration(<BaseGlobalComponents base>,
-                [IFile, IHTTPRequest], Interface, 'view.html', None, u''),
+                [IFile, IHTTPRequest], Interface, 'view.html', None, ''),
    AdapterRegistration(<BaseGlobalComponents base>,
-                [Interface, IHTTPRequest], Interface, 'view.html', None, u'')]
+                [Interface, IHTTPRequest], Interface, 'view.html', None, '')]
 
 
 :func:`getViewInfoDictionary`
@@ -398,7 +398,7 @@ Let's first create a registration:
                'resource': None,
                'template': None,
                'url': 'zope/app/apidoc/doctest/Factory'},
-   'name': u'view.html',
+   'name': 'view.html',
    'provided': {'module': 'zope.interface',
                 'name': 'Interface'},
    'read_perm': None,

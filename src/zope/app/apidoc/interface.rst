@@ -216,7 +216,7 @@ attribute:
 
   >>> from pprint import pprint
   >>> pprint(interface.getAttributeInfoDictionary(IFoo['baz']))
-  {'doc': u'<p>This is the baz attribute</p>\n',
+  {'doc': '<p>This is the baz attribute</p>\n',
    'name': 'baz'}
 
 
@@ -225,9 +225,8 @@ attribute:
 
 This function returns a page-template-friendly dictionary for a method:
 
-  >>> pprint(interface.getMethodInfoDictionary(IFoo['blah'])) #doc
-  {'doc':
-     u'<p>This is the <cite>blah</cite> method.</p>\n',
+  >>> pprint(interface.getMethodInfoDictionary(IFoo['blah']))
+  {'doc': '<p>This is the <cite>blah</cite> method.</p>\n',
    'name': 'blah',
    'signature': '(one, two, three=None, *args, **kwargs)'}
 
@@ -240,11 +239,11 @@ This function returns a page-template-friendly dictionary for a field:
   >>> pprint(interface.getFieldInfoDictionary(IFoo['bar']), width=50)
   {'class': {'name': 'TextLine',
              'path': 'zope/schema/_bootstrapfields/TextLine'},
-   'default': "u'My Bar'",
-   'description': u'<p>The Bar</p>\n',
+   'default': "'My Bar'",
+   'description': '<p>The Bar</p>\n',
    'iface': {'id': 'zope.schema.interfaces.ITextLine',
              'name': 'ITextLine'},
    'name': 'bar',
    'required': True,
-   'required_string': u'required',
-   'title': u'Bar'}
+   'required_string': 'required',
+   'title': 'Bar'}

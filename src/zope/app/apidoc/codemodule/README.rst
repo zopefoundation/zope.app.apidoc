@@ -14,7 +14,7 @@ Zope 3 related Python packages. The code module can be created like this:
   >>> cm = codemodule.codemodule.CodeModule()
 
   >>> cm.getDocString()
-  u'Zope 3 root.'
+  'Zope 3 root.'
 
 
 This object extends the
@@ -30,7 +30,7 @@ obviously a bit different:
   True
 
   >>> sorted(cm.keys())
-  [u'BTrees', u'ZConfig', u'ZODB', u'builtins', u'persistent', u'transaction', ...]
+  ['BTrees', 'ZConfig', 'ZODB', 'builtins', 'persistent', 'transaction', ...]
 
 
 Module
@@ -180,8 +180,8 @@ listed in the interface. Now we create the class documentation wrapper:
   >>> from pprint import pprint
   >>> pprint(klass.getAttributes())
   [('bar', 'b', None),
-   ('bli', 'i', <InterfaceClass __builtin__.IBlie>),
-   ('foo', 'f', <InterfaceClass __builtin__.IBlah>)]
+   ('bli', 'i', <InterfaceClass builtins.IBlie>),
+   ('foo', 'f', <InterfaceClass builtins.IBlah>)]
 
 So, the function returns a list of tuples of the form (name, value,
 interface), where the interface is the interface in which the attribute was
@@ -215,7 +215,7 @@ and get the method documentation:
 
   >>> pprint(klass.getMethods())
   [('bar', <function Blah.bar at ...>, None),
-   ('foo', <function Blah.foo at ...>, <InterfaceClass __builtin__.IBlah>)]
+   ('foo', <function Blah.foo at ...>, <InterfaceClass builtins.IBlah>)]
 
 
 .. cleanup
@@ -309,12 +309,12 @@ first time:
 
   >>> root = zcml.rootElement
   >>> root
-  <Directive (u'http://namespaces.zope.org/zope', u'configure')>
+  <Directive ('http://namespaces.zope.org/zope', 'configure')>
 
 A directive component has some interesting atrributes, such as the name,
 
   >>> root.name
-  (u'http://namespaces.zope.org/zope', u'configure')
+  ('http://namespaces.zope.org/zope', 'configure')
 
 the schema that describes the directive,
 
@@ -343,12 +343,12 @@ the parser info object,
 the sub-directives,
 
   >>> root.subs[:2]
-  [<Directive (u'http://namespaces.zope.org/zope', u'class')>,
-   <Directive (u'http://namespaces.zope.org/zope', u'class')>]
+  [<Directive ('http://namespaces.zope.org/zope', 'class')>,
+   <Directive ('http://namespaces.zope.org/zope', 'class')>]
 
 and finally a list of all prefixes.
 
   >>> pprint(root.prefixes)
-  {u'http://namespaces.zope.org/apidoc': u'apidoc',
-   u'http://namespaces.zope.org/browser': u'browser',
-   u'http://namespaces.zope.org/zope': None}
+  {'http://namespaces.zope.org/apidoc': 'apidoc',
+   'http://namespaces.zope.org/browser': 'browser',
+   'http://namespaces.zope.org/zope': None}

@@ -17,12 +17,12 @@
 __docformat__ = 'restructuredtext'
 
 
-class APIDocStub(object):
+class APIDocStub:
     """A stub to use as display context when APIDoc is disabled.
     """
 
 
-class apidocNamespace(object):
+class apidocNamespace:
     """Used to traverse to an API Documentation when it is disabled."""
 
     def __init__(self, ob, request=None):

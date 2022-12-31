@@ -28,7 +28,7 @@ from zope.app.apidoc.classregistry import classRegistry
 _pathgetter = operator.itemgetter("path")
 
 
-class Menu(object):
+class Menu:
     """Menu for the Class Documentation Module.
 
     The menu allows for looking for classes by partial names. See
@@ -58,9 +58,9 @@ class Menu(object):
 
           >>> from pprint import pprint
           >>> pprint(info)
-          [{'path': 'zope.app.apidoc.codemodule.browser.menu.Men',
+          [{'path': 'zope.app.apidoc.codemodule.browser.menu.Menu',
             'url': 'http://.../zope/app/apidoc/codemodule/browser/menu/Menu/'},
-           {'path': 'zope.app.apidoc.ifacemodule.menu.Men',
+           {'path': 'zope.app.apidoc.ifacemodule.menu.Menu',
             'url': 'http://...Code/zope/app/apidoc/ifacemodule/menu/Menu/'}...]
 
           >>> menu.request = TestRequest(form={'path': 'illegal name'})

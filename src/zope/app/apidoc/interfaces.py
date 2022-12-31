@@ -31,13 +31,13 @@ class IDocumentationModule(ILocation):
     """
 
     title = TextLine(
-        title=u"Title",
-        description=u"The title of the documentation module.",
+        title="Title",
+        description="The title of the documentation module.",
         required=True)
 
     description = Text(
-        title=u"Module Description",
-        description=u"This text describes the functionality of the module.",
+        title="Module Description",
+        description="This text describes the functionality of the module.",
         required=True)
 
     def withParentAndName(parent, name):

@@ -23,7 +23,7 @@ from zope.app.apidoc.codemodule.interfaces import ITextFile
 
 
 @implementer(ILocation, ITextFile)
-class TextFile(object):
+class TextFile:
     """This class represents a function declared in the module."""
 
     def __init__(self, path, name, package):
