@@ -76,9 +76,9 @@ way up to the root, but we just want to go to the root module.
   >>> bc.context = details.context
   >>> bc.request = details.request
   >>> pprint(bc(), width=1)
-  [{'name': u'[top]',
+  [{'name': '[top]',
     'url': 'http://127.0.0.1/++apidoc++/Code'},
-   {'name': u'zope',
+   {'name': 'zope',
     'url': 'http://127.0.0.1/++apidoc++/Code/zope'},
    {'name': 'app',
     'url': 'http://127.0.0.1/++apidoc++/Code/zope/app'},
@@ -192,7 +192,7 @@ Get all implemented interfaces (as paths) of this class.
 Get info about the class' __init__ method, which is its constructor.
 
   >>> pprint(details.getConstructor())
-  {'doc': u'<p>Initialize object.</p>\n',
+  {'doc': '<p>Initialize object.</p>\n',
    'signature': '()'}
 
 :meth:`class_.ClassDetails.getAttributes`
@@ -207,27 +207,27 @@ Get all attributes of this class.
    'read_perm': 'zope.Public',
    'type': 'Message',
    'type_link': 'zope/i18nmessageid/message/Message',
-   'value': "u'Code Browser'",
-   'write_perm': u'n/a'}
+   'value': "'Code Browser'",
+   'write_perm': 'n/a'}
 
 :meth:`class_.ClassDetails.getMethods`
 --------------------------------------
 Get all methods of this class.
 
   >>> pprint(details.getMethods()[-3:-1])
-  [{'doc': u'<p>Setup module and class tree.</p>\n',
+  [{'doc': '<p>Setup module and class tree.</p>\n',
     'interface': None,
     'name': 'setup',
-    'read_perm': u'n/a',
+    'read_perm': 'n/a',
     'signature': '()',
-    'write_perm': u'n/a'},
-   {'doc': u'',
+    'write_perm': 'n/a'},
+   {'doc': '',
     'interface': {'path': 'zope.interface.common.mapping.IEnumerableMapping',
                   'url': 'zope.interface.common.mapping.IEnumerableMapping'},
     'name': 'values',
     'read_perm': 'zope.Public',
     'signature': '()',
-    'write_perm': u'n/a'}]
+    'write_perm': 'n/a'}]
 
 :meth:`class_.ClassDetails.getDoc`
 ----------------------------------
@@ -257,7 +257,7 @@ Here are the methods:
 Get the doc string of the function in a rendered format.
 
   >>> details.getDocString()
-  u'<p>This is the foo function.</p>\n'
+  '<p>This is the foo function.</p>\n'
 
 :meth:`function.FunctionDetails.getAttributes`
 ----------------------------------------------
@@ -268,7 +268,7 @@ Get all attributes of this function.
   >>> pprint(attr)
   {'name': 'deprecated',
    'type': 'bool',
-   'type_link': '__builtin__/bool',
+   'type_link': 'builtins/bool',
    'value': 'True'}
 
 :meth:`function.FunctionDetails.getBaseURL`
@@ -324,7 +324,7 @@ Here are the methods for the directive details:
 Return the name of the directive, including prefix, if applicable.
 
   >>> details.fullTagName()
-  u'configure'
+  'configure'
 
 :meth:`zcml.DirectiveDetails.line`
 ----------------------------------
@@ -356,7 +356,7 @@ Returns the URL of the directive docuemntation in the ZCML documentation
 module.
 
   >>> details.url()
-  u'http://127.0.0.1/++apidoc++/ZCML/ALL/configure/index.html'
+  'http://127.0.0.1/++apidoc++/ZCML/ALL/configure/index.html'
 
 :meth:`zcml.DirectiveDetails.objectURL`
 ---------------------------------------
@@ -383,22 +383,22 @@ will be listed too.
   >>> pprint(details.attributes())
   [{'name': 'xmlns',
     'url': None,
-    'value': u'http://namespaces.zope.org/zope',
+    'value': 'http://namespaces.zope.org/zope',
     'values': []},
-   {'name': u'xmlns:apidoc',
+   {'name': 'xmlns:apidoc',
     'url': None,
-    'value': u'http://namespaces.zope.org/apidoc',
+    'value': 'http://namespaces.zope.org/apidoc',
     'values': []},
-   {'name': u'xmlns:browser',
+   {'name': 'xmlns:browser',
     'url': None,
-    'value': u'http://namespaces.zope.org/browser',
+    'value': 'http://namespaces.zope.org/browser',
     'values': []}]
 
   >>> details.context = details.context.subs[0]
   >>> pprint(details.attributes())
-  [{'name': u'class',
+  [{'name': 'class',
     'url': 'http://127.0.0.1/++apidoc++/Code/zope/app/apidoc/codemodule/module/Module/index.html',
-    'value': u'.module.Module',
+    'value': '.module.Module',
     'values': []}]
 
 :meth:`zcml.DirectiveDetails.hasSubDirectives`
@@ -416,7 +416,7 @@ returned.
 Returns a list of all sub-directives:
 
   >>> details.getElements()
-  [<Directive (u'http://namespaces.zope.org/zope', u'allow')>]
+  [<Directive ('http://namespaces.zope.org/zope', 'allow')>]
 
 Other Examples
 --------------
@@ -514,7 +514,7 @@ This little helper function returns the path to the type class:
   'zope/app/apidoc/apidoc/APIDocumentation'
 
   >>> introspector.getTypeLink(dict)
-  '__builtin__/dict'
+  'builtins/dict'
 
   >>> introspector.getTypeLink(type(None)) is None
   True
@@ -631,36 +631,36 @@ object's attributes:
   >>> pprint(list(inspect.getAttributes()))
   [{'interface': None,
     'name': 'data',
-    'read_perm': u'n/a',
+    'read_perm': 'n/a',
     'type': 'OOBTree',
     'type_link': 'BTrees/OOBTree/OOBTree',
     'value': '<BTrees.OOBTree.OOBTree object at ...>',
     'value_linkable': True,
-    'write_perm': u'n/a'}]
+    'write_perm': 'n/a'}]
 
 Of course, the methods are listed as well:
 
   >>> pprint(list(inspect.getMethods()))
   [...
-   {'doc': u'',
+   {'doc': '',
     'interface': 'zope.component.interfaces.IPossibleSite',
     'name': 'getSiteManager',
     'read_perm': 'zope.Public',
     'signature': '()',
-    'write_perm': u'n/a'},
+    'write_perm': 'n/a'},
    ...
-   {'doc': u'',
+   {'doc': '',
     'interface': 'zope.container.interfaces.IBTreeContainer',
     'name': 'keys',
     'read_perm': 'zope.View',
     'signature': '(key=None)',
-    'write_perm': u'n/a'},
-   {'doc': u'',
+    'write_perm': 'n/a'},
+   {'doc': '',
     'interface': 'zope.component.interfaces.IPossibleSite',
     'name': 'setSiteManager',
     'read_perm': 'zope.ManageServices',
     'signature': '(sm)',
-    'write_perm': u'n/a'},
+    'write_perm': 'n/a'},
    ...]
 
 The final methods deal with inspecting the objects data further. For exmaple,
@@ -685,11 +685,11 @@ and then get the sequence items:
   [{'index': 0,
     'value': "'one'",
     'value_type': 'str',
-    'value_type_link': '__builtin__/str'},
+    'value_type_link': 'builtins/str'},
    {'index': 1,
     'value': "'two'",
     'value_type': 'str',
-    'value_type_link': '__builtin__/str'}]
+    'value_type_link': 'builtins/str'}]
 
 Similar functionality exists for a mapping. But we first have to add an item:
 
@@ -702,8 +702,8 @@ Now let's have a look:
 
   >>> pprint(inspect.getMappingItems())
   [...
-   {'key': u'list',
-    'key_string': "u'list'",
+   {'key': 'list',
+    'key_string': "'list'",
     'value': "['one', 'two']",
     'value_type': 'ContainedProxy',
     'value_type_link': 'zope/container/contained/ContainedProxy'},

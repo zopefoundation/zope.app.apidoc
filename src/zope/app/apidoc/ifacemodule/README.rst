@@ -25,10 +25,10 @@ After registering an interface
 Now let's lookup an interface that is registered.
 
   >>> module.get('IFoo')
-  <InterfaceClass __builtin__.IFoo>
+  <InterfaceClass builtins.IFoo>
 
   >>> module.get(IFoo.__module__ + '.IFoo')
-  <InterfaceClass __builtin__.IFoo>
+  <InterfaceClass builtins.IFoo>
 
 
 Now we find an interface that is not in the site manager, but exists.
@@ -42,7 +42,7 @@ Finally, you can list all registered interfaces:
   >>> from pprint import pprint
   >>> pprint(ifaces)
   [...
-   (u'IFoo', <InterfaceClass __builtin__.IFoo>),
+   ('IFoo', <InterfaceClass builtins.IFoo>),
    ...
-   (u'__builtin__.IFoo', <InterfaceClass __builtin__.IFoo>),
+   ('builtins.IFoo', <InterfaceClass builtins.IFoo>),
     ...]

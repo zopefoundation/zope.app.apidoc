@@ -143,43 +143,43 @@ class IDirective(zope.interface.Interface):
     """Representation of a directive in IZCMLFile."""
 
     name = zope.schema.Tuple(
-        title=u'Name',
-        description=u'Name of the directive in the form (Namespace. Name)',
+        title='Name',
+        description='Name of the directive in the form (Namespace. Name)',
         required=True)
 
     schema = zope.schema.Field(
-        title=u'Schema',
-        description=u'Schema describing the directive attributes',
+        title='Schema',
+        description='Schema describing the directive attributes',
         required=True)
 
     attrs = zope.schema.Field(
-        title=u'Attributes',
-        description=u"SAX parser representation of the directive's attributes",
+        title='Attributes',
+        description="SAX parser representation of the directive's attributes",
         required=True)
 
     context = zope.schema.Field(
-        title=u'Configuration Context',
-        description=u'Configuration context while the directive was parsed.',
+        title='Configuration Context',
+        description='Configuration context while the directive was parsed.',
         required=True)
 
     prefixes = zope.schema.Dict(
-        title=u'Prefixes',
-        description=u'Mapping from namespace URIs to prefixes.',
+        title='Prefixes',
+        description='Mapping from namespace URIs to prefixes.',
         required=True)
 
     info = zope.schema.Field(
-        title=u'Info',
-        description=u'ParserInfo objects containing line and column info.',
+        title='Info',
+        description='ParserInfo objects containing line and column info.',
         required=True)
 
     __parent__ = zope.schema.Field(
-        title=u'Parent',
-        description=u'Parent Directive',
+        title='Parent',
+        description='Parent Directive',
         required=True)
 
     subs = zope.schema.List(
-        title=u'Sub-Directives',
-        description=u'List of sub-directives',
+        title='Sub-Directives',
+        description='List of sub-directives',
         required=True)
 
 

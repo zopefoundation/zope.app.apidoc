@@ -17,8 +17,6 @@
 __docformat__ = 'restructuredtext'
 import types
 
-import six
-
 import zope.interface.declarations
 from zope.component import getGlobalSiteManager
 from zope.component.interfaces import IFactory
@@ -45,8 +43,7 @@ def _adapterishRegistrations(registry):
     for registrations in (registry.registeredAdapters,
                           registry.registeredSubscriptionAdapters,
                           registry.registeredHandlers):
-        for r in registrations():
-            yield r
+        yield from registrations()
 
 
 def _ignore_adapter(reg, withViews=False):
@@ -202,14 +199,14 @@ def getAdapterInfoDictionary(reg):
     if isReferencable(path):
         url = path.replace('.', '/')
 
-    if isinstance(reg.info, six.string_types):
+    if isinstance(reg.info, str):
         doc = reg.info
         zcml = None
     else:
         doc = None
         zcml = getParserInfoInfoDictionary(reg.info)
 
-    name = getattr(reg, 'name', u'')
+    name = getattr(reg, 'name', '')
     name = name.decode('utf-8') if isinstance(name, bytes) else name
     return {
         'provided': getInterfaceInfoDictionary(reg.provided),
@@ -237,9 +234,9 @@ def getFactoryInfoDictionary(reg):
 
     path = getPythonPath(callable)
 
-    return {'name': six.text_type(reg.name) or _('<i>no name</i>'),
-            'title': getattr(factory, 'title', u''),
-            'description': renderText(getattr(factory, 'description', u''),
+    return {'name': str(reg.name) or _('<i>no name</i>'),
+            'title': getattr(factory, 'title', ''),
+            'description': renderText(getattr(factory, 'description', ''),
                                       module=callable.__module__),
             'url': isReferencable(path) and path.replace('.', '/') or None}
 
@@ -253,14 +250,13 @@ def getUtilityInfoDictionary(reg):
     # TODO: Once we support passive display of instances, this insanity can go
     #       away.
     if not isinstance(component, (types.MethodType, types.FunctionType,
-                                  six.class_types,
-                                  InterfaceClass)):
+                                  type, InterfaceClass)):
         component = getattr(component, '__class__', component)
 
     path = getPythonPath(component)
 
     # provided interface id
-    iface_id = '%s.%s' % (reg.provided.__module__, reg.provided.getName())
+    iface_id = '{}.{}'.format(reg.provided.__module__, reg.provided.getName())
 
     # Determine the URL
     if isinstance(component, InterfaceClass):
@@ -270,7 +266,7 @@ def getUtilityInfoDictionary(reg):
         if isReferencable(path):
             url = 'Code/%s' % path.replace('.', '/')
 
-    return {'name': six.text_type(reg.name) or _('<i>no name</i>'),
+    return {'name': str(reg.name) or _('<i>no name</i>'),
             'url_name': utilitymodule.encodeName(reg.name or '__noname__'),
             'iface_id': iface_id,
             'path': path,

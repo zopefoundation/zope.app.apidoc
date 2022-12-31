@@ -16,8 +16,6 @@
 import operator
 import sys
 
-from six import iteritems
-
 from zope.testing.cleanup import addCleanUp
 
 
@@ -48,7 +46,7 @@ class ClassRegistry(dict):
 
         Methods returns a sorted list of 2-tuples of the form (path, class).
         """
-        return sorted(((path, klass) for path, klass in iteritems(self)
+        return sorted(((path, klass) for path, klass in self.items()
                        if iface.implementedBy(klass)),
                       key=_pathgetter)
 
@@ -57,7 +55,7 @@ class ClassRegistry(dict):
 
         Methods returns a sorted list of 2-tuples of the form (path, class).
         """
-        return sorted(((path, klass2) for path, klass2 in iteritems(self)
+        return sorted(((path, klass2) for path, klass2 in self.items()
                        if issubclass(klass2, klass) and klass2 is not klass),
                       key=_pathgetter)
 

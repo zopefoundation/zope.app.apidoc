@@ -52,7 +52,7 @@ Now we can instantiate the class (which is usually done when traversing
 
   >>> modules = sorted(doc.keys())
   >>> modules
-  [u'Interface', u'ZCML']
+  ['Interface', 'ZCML']
 
   >>> doc['ZCML']
   <zope.app.apidoc.zcmlmodule.ZCMLModule 'ZCML' at ...>

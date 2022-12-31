@@ -51,7 +51,7 @@ class TypeInterface(ReadContainerBase):
       <class 'zope.interface.interface.InterfaceClass'>
 
       >>> typeiface.items()
-      [(u'Foo', <InterfaceClass zope.app.apidoc.typemodule.type.IDerivedFoo>)]
+      [('Foo', <InterfaceClass zope.app.apidoc.typemodule.type.IDerivedFoo>)]
 
     """
 

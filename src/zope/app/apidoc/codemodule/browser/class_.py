@@ -48,7 +48,7 @@ def getInterfaceInfo(iface):
             'url': isReferencable(path) and path or None}
 
 
-class ClassDetails(object):
+class ClassDetails:
     """Represents the details of the class."""
 
     context = None

@@ -80,8 +80,8 @@ You can get a list of available utilities as well, of course:
 
   >>> ut_iface.items()
   [...
-   (b'VXRpbGl0eQ==', <...apidoc.utilitymodule.utilitymodule.Utility ...>),
-   (b'X19ub25hbWVfXw==', <...apidoc.utilitymodule.utilitymodule.Utility ...>)]
+   ('VXRpbGl0eQ==', <...apidoc.utilitymodule.utilitymodule.Utility ...>),
+   ('X19ub25hbWVfXw==', <...apidoc.utilitymodule.utilitymodule.Utility ...>)]
 
 Bu what are those strange names? Since utility names can be any string, it is
 hard to deal with them in a URL. Thus the system will advertise and use the
@@ -101,15 +101,15 @@ The utility names are en- and decoded using two helper methods:
 Round trips of :func:`encoding <encodeName>` and :func:`decoding
 <decodeName>` should be possible:
 
-  >>> encoded = encodeName(u'Some Utility')
+  >>> encoded = encodeName('Some Utility')
   >>> encoded
-  b'U29tZSBVdGlsaXR5'
+  'U29tZSBVdGlsaXR5'
 
   >>> decodeName(encoded)
-  u'Some Utility'
+  'Some Utility'
 
 If a string is not encoded, the decoding process will simply return the
 original string:
 
-  >>> decodeName(u'Some Utility')
-  u'Some Utility'
+  >>> decodeName('Some Utility')
+  'Some Utility'

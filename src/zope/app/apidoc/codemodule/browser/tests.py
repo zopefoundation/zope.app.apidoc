@@ -137,12 +137,12 @@ class TestClass(unittest.TestCase):
         from zope.app.apidoc.codemodule.class_ import Class
 
         # Such as in zope.hookable._py_hookable
-        class WithProperty(object):
+        class WithProperty:
             @property
             def __doc__(self):
                 return "Some Docs"
 
-        class Parent(object):
+        class Parent:
             def getPath(self):
                 return '/'
 

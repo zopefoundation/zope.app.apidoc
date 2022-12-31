@@ -14,8 +14,6 @@
 """Views/Presentation Utilities
 
 """
-import six
-
 from zope.browserresource.icon import IconViewFactory
 from zope.component import getGlobalSiteManager
 from zope.i18nmessageid import ZopeMessageFactory as _
@@ -63,7 +61,7 @@ def getViewFactoryData(factory):
         info['template_obj'] = factory.index
 
     # Basic Type is a factory
-    elif isinstance(factory, (six.string_types, float, int, list, tuple)):
+    elif isinstance(factory, (str, float, int, list, tuple)):
         info['referencable'] = False
 
     elif factory.__module__ is not None:
@@ -149,14 +147,14 @@ def filterViewRegistrations(regs, iface, level=SPECIFIC_INTERFACE_LEVEL):
 def getViewInfoDictionary(reg):
     """Build up an information dictionary for a view registration."""
     # get configuration info
-    if isinstance(reg.info, six.string_types):
+    if isinstance(reg.info, str):
         doc = reg.info
         zcml = None
     else:
         doc = None
         zcml = getParserInfoInfoDictionary(reg.info)
 
-    info = {'name': six.text_type(reg.name) or _('<i>no name</i>'),
+    info = {'name': str(reg.name) or _('<i>no name</i>'),
             'type': getPythonPath(getPresentationType(reg.required[-1])),
             'factory': getViewFactoryData(reg.factory),
             'required': [getInterfaceInfoDictionary(iface)

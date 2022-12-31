@@ -32,11 +32,11 @@ from zope.app.apidoc.codemodule.interfaces import IRootDirective
 from zope.app.apidoc.codemodule.interfaces import IZCMLFile
 
 
-class MyConfigHandler(xmlconfig.ConfigurationHandler, object):
+class MyConfigHandler(xmlconfig.ConfigurationHandler):
     """Special configuration handler to generate an XML tree."""
 
     def __init__(self, context):
-        super(MyConfigHandler, self).__init__(context)
+        super().__init__(context)
         self.rootElement = self.currentElement = None
         self.prefixes = {}
 
@@ -50,14 +50,14 @@ class MyConfigHandler(xmlconfig.ConfigurationHandler, object):
         arguments = expression.split(None)
         verb = arguments.pop(0)
         if verb in ('installed', 'not-installed'):
-            return super(MyConfigHandler, self).evaluateCondition(expression)
+            return super().evaluateCondition(expression)
         return True
 
     def startElementNS(self, name, qname, attrs):
         # The last stack item is parent of the stack item that we are about to
         # create
         stackitem = self.context.stack[-1]
-        super(MyConfigHandler, self).startElementNS(name, qname, attrs)
+        super().startElementNS(name, qname, attrs)
 
         # Get the parser info from the correct context
         info = self.context.stack[-1].context.info
@@ -82,12 +82,12 @@ class MyConfigHandler(xmlconfig.ConfigurationHandler, object):
         self.currentElement = element
 
     def endElementNS(self, name, qname):
-        super(MyConfigHandler, self).endElementNS(name, qname)
+        super().endElementNS(name, qname)
         self.currentElement = self.currentElement.__parent__
 
 
 @implementer(IDirective)
-class Directive(object):
+class Directive:
     """Representation of a ZCML directive."""
 
     def __init__(self, name, schema, attrs, context, info, prefixes):
@@ -105,7 +105,7 @@ class Directive(object):
 
 
 @implementer(ILocation, IZCMLFile)
-class ZCMLFile(object):
+class ZCMLFile:
     """Representation of an entire ZCML file."""
 
     def __init__(self, filename, package, parent, name):

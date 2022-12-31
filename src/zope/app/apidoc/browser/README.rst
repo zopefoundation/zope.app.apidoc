@@ -15,11 +15,17 @@ Not Found View
 The `APIDOC` skin defines a custom not found view, since it fits the look and
 feel better and does not have all the O-wrap clutter:
 
+  >>> # work around for https://github.com/python/cpython/issues/90113
+  >>> browser.handleErrors = False
+  >>> browser.raiseHttpErrors = False
+
   >>> browser.open('http://localhost/++apidoc++/non-existent/')
   Traceback (most recent call last):
   ...
-  urllib.error.HTTPError: HTTP Error 404: Not Found
+  zope.publisher.interfaces.NotFound: ...
 
+  >>> browser.handleErrors = True
+  >>> browser.raiseHttpErrors = True
   >>> try:
   ...     browser.open('http://localhost/++apidoc++/non-existent/')
   ... except Exception:

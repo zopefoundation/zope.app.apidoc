@@ -64,7 +64,7 @@ class CodeModule(Module):
 
     def __init__(self):
         """Initialize object."""
-        super(CodeModule, self).__init__(None, '', None, False)
+        super().__init__(None, '', None, False)
         self.__isSetup = False
 
     def setup(self):
@@ -80,13 +80,10 @@ class CodeModule(Module):
 
         # And the builtins are always available, since that's the
         # most common root module linked to from docs.
-        builtin_module = safe_import('__builtin__') or safe_import('builtins')
+        builtin_module = safe_import('builtins')
         assert builtin_module is not None
         builtin_module = Module(self, builtin_module.__name__, builtin_module)
-        # Register with both names for consistency in the tests between Py2 and
-        # Py3
-        self._children['builtins'] = self._children['__builtin__'] = (
-            builtin_module)
+        self._children['builtins'] = builtin_module
 
     def withParentAndName(self, parent, name):
         located = type(self)()
@@ -112,11 +109,11 @@ class CodeModule(Module):
 
     def get(self, key, default=None):
         self.setup()
-        return super(CodeModule, self).get(key, default)
+        return super().get(key, default)
 
     def items(self):
         self.setup()
-        return super(CodeModule, self).items()
+        return super().items()
 
 
 def _cleanUp():

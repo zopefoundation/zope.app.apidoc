@@ -37,7 +37,7 @@ def getAllTextOfInterface(iface):
     return text
 
 
-class Menu(object):
+class Menu:
     """Menu for the Interface Documentation Module."""
 
     context = None

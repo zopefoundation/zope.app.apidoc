@@ -45,7 +45,7 @@ class InterfaceDetails(BrowserView):
     """View class for an Interface."""
 
     def __init__(self, context, request):
-        super(InterfaceDetails, self).__init__(context, request)
+        super().__init__(context, request)
         self._prepareViews()
 
     def getAPIDocRootURL(self):
@@ -268,7 +268,7 @@ class InterfaceDetails(BrowserView):
         }
 
 
-class InterfaceBreadCrumbs(object):
+class InterfaceBreadCrumbs:
     """View that provides breadcrumbs for interface objects"""
 
     context = None

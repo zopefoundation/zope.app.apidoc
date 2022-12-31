@@ -59,7 +59,7 @@ class ModuleDetails(BrowserView):
     """Represents the details of a module or package."""
 
     def __init__(self, context, request):
-        super(ModuleDetails, self).__init__(context, request)
+        super().__init__(context, request)
         items = sorted(self.context.items())
         self.text_files = []
         self.zcml_files = []

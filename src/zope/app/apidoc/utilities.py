@@ -22,8 +22,6 @@ import re
 import sys
 import types
 
-import six
-
 import zope.i18nmessageid
 from zope.component import createObject
 from zope.component import getMultiAdapter
@@ -73,7 +71,7 @@ def truncateSysPath(path):
 
 
 @implementer(IReadContainer)
-class ReadContainerBase(object):
+class ReadContainerBase:
     """Base for :class:`zope.container.interfaces.IReadContainer` objects."""
 
     __parent__ = None
@@ -81,9 +79,9 @@ class ReadContainerBase(object):
 
     def __repr__(self):
         if self.__name__ is None:
-            return super(ReadContainerBase, self).__repr__()
+            return super().__repr__()
         c = type(self)
-        return "<%s.%s '%s' at 0x%x>" % (
+        return "<{}.{} '{}' at 0x{:x}>".format(
             c.__module__, c.__name__, self.__name__, id(self))
 
     def get(self, key, default=None):
@@ -135,28 +133,21 @@ def getPythonPath(obj):
     if obj is None:
         return None
 
-    # Even for methods `im_class` and `__module__` is not allowed to be
+    # Even methods like `__module__` are not allowed to be
     # accessed (which is probably not a bad idea). So, we remove the security
     # proxies for this check.
     naked = removeSecurityProxy(obj)
     qname = ''
     if isinstance(getattr(naked, '__qualname__', None), str):
-        # Python 3 (being sure to protect against non-str __qualname__
-        # that we could get on some versions of Cython. See
-        # https://github.com/zopefoundation/zope.app.apidoc/issues/25).
-        # This makes unbound functions inside classes do the same
-        # thing as they do an Python 2: return just their class name.
+        # Return just the class name, if `__qualname__` is a string:
         qname = naked.__qualname__
         qname = qname.split('.')[0]
-    if hasattr(naked, 'im_class'):
-        # Python 2, unbound methods
-        naked = naked.im_class
     if isinstance(naked, types.MethodType):
         naked = type(naked.__self__)
     module = getattr(naked, '__module__', _marker)
     if module is _marker:
         return naked.__name__
-    return '%s.%s' % (module, qname or naked.__name__)
+    return '{}.{}'.format(module, qname or naked.__name__)
 
 
 def isReferencable(path):
@@ -233,76 +224,12 @@ def _checkFunctionType(func):
             (type(func), func))
 
 
-def _simpleGetFunctionSignature(func, ignore_self=False):
-    """Return the signature of a function or method."""
-    _checkFunctionType(func)
-
-    try:
-        args, varargs, varkw, defaults = inspect.getargspec(func)
-    except TypeError:
-        # On Python 2, inspect.getargspec can't handle certain types
-        # of callable things, like object.__init__ (<slot wrapper '__init__'>
-        # is not a python function), but it *can* handle them on Python 3.
-        # Punt on Python 2
-        return '(<unknown>)'
-
-    placeholder = object()
-    sig = '('
-    # By filling up the default tuple, we now have equal indeces for args and
-    # default.
-    if defaults is not None:
-        defaults = (placeholder,) * (len(args) - len(defaults)) + defaults
-    else:
-        defaults = (placeholder,) * len(args)
-
-    str_args = []
-
-    for name, default in zip(args, defaults):
-        # Neglect self, since it is always there and not part of the signature.
-        # This way the implementation and interface signatures should match.
-        if name == 'self' and (
-            isinstance(
-                func,
-                types.MethodType) or ignore_self):
-            # NOTE: this is actually covered, and removing the condition will
-            # break tests. The coverage report doesn't show it, though, for
-            # some reason.
-            continue  # pragma: no cover
-
-        # Make sure the name is a string
-        if isinstance(name, (tuple, list)):
-            name = '(' + ', '.join(name) + ')'
-        elif not isinstance(name, str):  # pragma: no cover
-            name = repr(name)
-
-        if default is placeholder:
-            str_args.append(name)
-        else:
-            str_args.append(name + '=' + repr(default))
-
-    if varargs:
-        str_args.append('*' + varargs)
-    if varkw:
-        str_args.append('**' + varkw)
-
-    sig += ', '.join(str_args)
-    return sig + ')'
-
-
-def _py33GetFunctionSignature(func, ignore_self=False):
+def getFunctionSignature(func, ignore_self=False):
     _checkFunctionType(func)
     result = str(inspect.signature(func))
     if ignore_self and result.startswith("(self"):
         result = result.replace("(self)", "()").replace("(self, ", '(')
     return result
-
-
-try:
-    inspect.signature
-except AttributeError:
-    getFunctionSignature = _simpleGetFunctionSignature
-else:
-    getFunctionSignature = _py33GetFunctionSignature
 
 
 def getPublicAttributes(obj):
@@ -397,10 +324,10 @@ def dedentString(text):
 def renderText(text, module=None, format=None, dedent=True):
     # dedent is ignored, we always dedent
     if not text:
-        return u''
+        return ''
 
     if module is not None:
-        if isinstance(module, six.string_types):
+        if isinstance(module, str):
             module = sys.modules.get(module, None)
         if format is None:
             format = getDocFormat(module)
@@ -416,7 +343,7 @@ def renderText(text, module=None, format=None, dedent=True):
     try:
         text = dedentString(text)
     except TypeError as e:
-        return u'Failed to render non-text (%r): %s' % (text, e,)
+        return 'Failed to render non-text ({!r}): {}'.format(text, e)
 
     source = createObject(format, text)
 

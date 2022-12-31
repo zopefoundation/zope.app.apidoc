@@ -134,7 +134,7 @@ and get the id (for example):
 
   >>> iface = details.getInterface()
   >>> iface.getId()
-  '__builtin__.IBlah'
+  'builtins.IBlah'
 
 
 :meth:`UtilityDetails.getComponent`
@@ -162,4 +162,4 @@ Now we can get the component information:
 
   >>> from pprint import pprint
   >>> pprint(details.getComponent(), width=1)
-  {'path': '__builtin__.Foo', 'url': None}
+  {'path': 'builtins.Foo', 'url': None}

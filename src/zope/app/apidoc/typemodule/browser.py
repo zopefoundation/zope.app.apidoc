@@ -23,7 +23,7 @@ from zope.app.apidoc.browser.utilities import findAPIDocumentationRootURL
 from zope.app.apidoc.typemodule.type import TypeInterface
 
 
-class Menu(object):
+class Menu:
     """Menu View Helper Class"""
 
     context = None
@@ -41,4 +41,5 @@ class Menu(object):
     def getMenuLink(self, node):
         """Return the HTML link of the node that is displayed in the menu."""
         root_url = findAPIDocumentationRootURL(self.context, self.request)
-        return '%s/Interface/%s/index.html' % (root_url, getName(node.context))
+        return '{}/Interface/{}/index.html'.format(
+            root_url, getName(node.context))

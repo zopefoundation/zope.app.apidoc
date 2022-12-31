@@ -24,8 +24,8 @@ class IRootModule(zope.interface.Interface):
     module."""
 
     module = zope.schema.TextLine(
-        title=u"Root Module Name",
-        description=u"This is the Python path of the new root module.",
+        title="Root Module Name",
+        description="This is the Python path of the new root module.",
         required=True
     )
 
@@ -35,8 +35,8 @@ class IModuleImport(zope.interface.Interface):
        not."""
 
     allow = zope.schema.Bool(
-        title=u"Allow Importing Modules",
-        description=u"When set to true, new modules will be imported by path.",
+        title="Allow Importing Modules",
+        description="When set to true, new modules will be imported by path.",
         required=True,
         default=False
     )

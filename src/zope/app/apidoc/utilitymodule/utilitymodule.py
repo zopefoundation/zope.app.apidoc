@@ -57,7 +57,7 @@ def decodeName(name):
 
 
 @implementer(ILocation)
-class Utility(object):
+class Utility:
     """Representation of a utility for the API Documentation"""
 
     def __init__(self, parent, reg):

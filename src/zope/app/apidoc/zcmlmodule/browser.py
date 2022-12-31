@@ -17,8 +17,6 @@
 __docformat__ = 'restructuredtext'
 import keyword
 
-import six
-
 from zope.configuration.xmlconfig import ParserInfo
 from zope.location import LocationProxy
 from zope.security.proxy import isinstance
@@ -35,7 +33,7 @@ from zope.app.apidoc.zcmlmodule import Directive
 from zope.app.apidoc.zcmlmodule import Namespace
 
 
-class Menu(object):
+class Menu:
     """Menu View Helper Class"""
     context = None
     request = None
@@ -57,7 +55,7 @@ class Menu(object):
             ns = getParent(obj)
             apidoc_url = findAPIDocumentationRootURL(
                 self.context, self.request)
-            return '%s/ZCML/%s/%s/index.html' % (
+            return '{}/ZCML/{}/{}/index.html'.format(
                 apidoc_url, getName(ns), getName(obj))
         return None
 
@@ -69,7 +67,7 @@ def _getFieldName(field):
     return name
 
 
-class DirectiveDetails(object):
+class DirectiveDetails:
     """View class for a Directive."""
 
     context = None
@@ -112,7 +110,7 @@ class DirectiveDetails(object):
 
     def getInfo(self):
         """Get the file where the directive was declared."""
-        if isinstance(self.context.info, six.string_types):
+        if isinstance(self.context.info, str):
             return self.context.info
         return None
 

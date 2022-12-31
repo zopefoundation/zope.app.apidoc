@@ -76,7 +76,7 @@ class APIDocumentation(ReadContainerBase):
                 in items]
 
 
-class apidocNamespace(object):
+class apidocNamespace:
     """Used to traverse to an API Documentation.
 
     Instantiating this object with a request will apply the
