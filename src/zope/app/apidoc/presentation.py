@@ -61,7 +61,7 @@ def getViewFactoryData(factory):
         info['template_obj'] = factory.index
 
     # Basic Type is a factory
-    elif isinstance(factory, ((str,), float, int, list, tuple)):
+    elif isinstance(factory, (str, float, int, list, tuple)):
         info['referencable'] = False
 
     elif factory.__module__ is not None:

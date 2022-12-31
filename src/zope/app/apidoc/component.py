@@ -250,8 +250,7 @@ def getUtilityInfoDictionary(reg):
     # TODO: Once we support passive display of instances, this insanity can go
     #       away.
     if not isinstance(component, (types.MethodType, types.FunctionType,
-                                  (type,),
-                                  InterfaceClass)):
+                                  type, InterfaceClass)):
         component = getattr(component, '__class__', component)
 
     path = getPythonPath(component)
