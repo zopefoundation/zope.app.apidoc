@@ -97,7 +97,7 @@ setup(
     include_package_data=True,
     package_dir={'': 'src'},
     namespace_packages=['zope', 'zope.app'],
-    Add missing python_requires.
+    python_requires='>=3.7',
     install_requires=[
         'persistent',
         'ZODB',
